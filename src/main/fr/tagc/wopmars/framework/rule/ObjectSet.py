@@ -14,6 +14,7 @@ class ObjectSet(set):
 
     def __init__(self, seq=(), s_type="", dicto={}):
         super().__init__(seq)
+        # il faut pas faire ca
         assert(s_type == "input" or s_type == "output" or s_type == "params" or s_type == "wrapper" or s_type == "")
         # 2 possible types at the moment. Should i do a factory?
         # TODO ask Lionel
@@ -25,6 +26,7 @@ class ObjectSet(set):
                 self.add(Option(k, dicto[k]))
         elif s_type == "wrapper":
             pass
+
 
 
     def __eq__(self, other):

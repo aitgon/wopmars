@@ -1,6 +1,7 @@
 """
 This module contains the ToolWrapper class
 """
+from src.main.fr.tagc.wopmars.utils.DictUtils import DictUtils
 
 
 class ToolWrapper:
@@ -8,35 +9,30 @@ class ToolWrapper:
     The class ToolWrapper is the superclass of the Wrapper which
     will be designed by the users.
     """    
-    def __init__(self, inputSet=None, outputSet=None, optionSet=None):
+    def __init__(self, input_dict={}, output_dict={}, option_dict={}):
         """
         The constructor
         
         More documentation
-        :param inputSet: ObjectSet([IOPUT])
-        :param outputSet: ObjectSet([IOPUT])
-        :param optionSet: ObjectSet([Option])
+        :param input_dict: dict(String: IOPUT)
+        :param output_dict: dict(String: IOPUT)
+        :param option_dict: dict(String: Option)
         :return: void
         """
-        self.__inputSet = inputSet
-        self.__outputSet = outputSet
-        self.__optionSet = optionSet
+        self.__input_dict = input_dict
+        self.__output_dict = output_dict
+        self.__option_dict = option_dict
 
     def __eq__(self, other):
         """
         Two ToolWrapper objects are equals if their attributes are equals
-        :param other:
+        :param other: ToolWrapper
         :return:
         """
-        # print(self, other)
-        # print(1, self.__inputSet == other.get_input_set(), "\n",
-        #       2, self.__outputSet == other.get_output_set(), "\n",
-        #       3, self.__optionSet == other.get_option_set())
+        return (DictUtils.all_elm_of_one_dict_in_one_other(self.__input_dict, other.get_input_dict()) and
+                DictUtils.all_elm_of_one_dict_in_one_other(self.__output_dict, other.get_output_dict()) and
+                DictUtils.all_elm_of_one_dict_in_one_other(self.__option_dict, other.get_option_dict()))
 
-        return (self.__inputSet == other.get_input_set() and
-                self.__outputSet == other.get_output_set() and
-                self.__optionSet == other.get_option_set())
-        # TODO verifier si ce test passe
 
     def __hash__(self):
         """
@@ -45,13 +41,13 @@ class ToolWrapper:
         """
         return id(self)
 
-    def get_input_set(self):
-        return self.__inputSet
+    def get_input_dict(self):
+        return self.__input_dict
 
-    def get_output_set(self):
-        return self.__outputSet
+    def get_output_dict(self):
+        return self.__output_dict
 
-    def get_option_set(self):
-        return self.__optionSet
+    def get_option_dict(self):
+        return self.__option_dict
 
     # TODO verify that important methods have not been overwritten by the user

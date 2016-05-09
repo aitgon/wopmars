@@ -9,8 +9,6 @@ class FooWrapper1(ToolWrapper):
     """
     Documentation for the class
     """    
-    pass
-
     @staticmethod
     def get_input_file():
         return ["input1"]

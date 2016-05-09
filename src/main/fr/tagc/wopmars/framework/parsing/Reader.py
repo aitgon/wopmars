@@ -5,7 +5,9 @@ import yaml
 import importlib
 import re
 
+from src.main.fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
 from src.main.fr.tagc.wopmars.framework.rule.ObjectSet import ObjectSet
+from src.main.fr.tagc.wopmars.framework.rule.Option import Option
 from src.main.fr.tagc.wopmars.utils.exceptions.ParsingException import ParsingException
 
 
@@ -14,7 +16,7 @@ class Reader:
     The reader class is used to read the workflow definition file,
     build the ToolWrapper objects and perform tests on the quality
     of the definition file.
-    """    
+    """
     def __init__(self, s_definition_file_path):
         """
         Constructor of the reader which also test the feasability of the read
@@ -30,7 +32,9 @@ class Reader:
                 self.__dict_workflow_definition = yaml.load(def_file)
                 # TODO ask Lionel if the multiple parsing of the dict is a problem
                 self.is_grammar_respected()
-                self.is_content_respected()
+
+                # c'est nul de chez nul c'est à l'outil lui même de faire ça, pas au reader!!!!!!!
+                # self.is_content_respected()
             # check the yaml syntax
             except yaml.YAMLError as exc:
                 # TODO ask Lionel if that exception is properly chosen
@@ -49,23 +53,30 @@ class Reader:
         :return: The set of builded ToolWrappers in an ObjectSet object
         """
         # Tests about grammar and syntax are performed here (file's existence is also tested here)
-
-        set_wrapper = ObjectSet(s_type="wrapper")
+        set_wrapper = set()
 
         for rule in self.__dict_workflow_definition:
             str_wrapper_name = rule.split()[-1].strip(":")
-            # Importing the module in the mod variable
-            dict_object_set = dict(set_input=None, set_params=None, set_output=None)
-
+            dict_dict_elm = dict(dict_input={}, dict_params={}, dict_output={})
+            # print(str_wrapper_name)
             for key_second_step in self.__dict_workflow_definition[rule]:
-                dict_object_set["set_" + key_second_step] = ObjectSet(s_type=key_second_step, dicto=self.__dict_workflow_definition[rule][key_second_step])
-
+                # print("{'", end="")
+                for elm in self.__dict_workflow_definition[rule][key_second_step]:
+                    # print(elm, end="': ")
+                    if key_second_step == "params":
+                        obj_created = Option(elm, self.__dict_workflow_definition[rule][key_second_step][elm])
+                        # print("Option('" + elm + "', '" + str(self.__dict_workflow_definition[rule][key_second_step][elm]) + "')", end=", ")
+                    else:
+                        obj_created = IOFilePut(elm, self.__dict_workflow_definition[rule][key_second_step][elm])
+                        # print("IOFilePut('" + elm + "', '" + str(self.__dict_workflow_definition[rule][key_second_step][elm]) + "')", end=", ")
+                    dict_dict_elm["dict_" + key_second_step][elm] = obj_created
+                # print("}")
+            # Importing the module in the mod variable
             mod = importlib.import_module("src.main.fr.tagc.wopmars.toolwrappers." + str_wrapper_name)
             # Instantiate the refered class and add it to the set of objects
-            set_wrapper.add(eval("mod." + str_wrapper_name)(inputSet=dict_object_set["set_input"],
-                                                            outputSet=dict_object_set["set_output"],
-                                                            optionSet=dict_object_set["set_params"]))
-
+            set_wrapper.add(eval("mod." + str_wrapper_name)(input_dict=dict_dict_elm["dict_input"],
+                                                            output_dict=dict_dict_elm["dict_output"],
+                                                            option_dict=dict_dict_elm["dict_params"]))
         return set_wrapper
 
     def is_grammar_respected(self):
@@ -95,6 +106,9 @@ class Reader:
 
         :return: void
         """
+
+        # TODO: CEST A L'OUTIL DE FAIRE CA
+
         for s_key_step1 in self.__dict_workflow_definition:
             str_wrapper_name = s_key_step1.split()[-1].strip(":")
             mod = importlib.import_module("src.main.fr.tagc.wopmars.toolwrappers." + str_wrapper_name)
