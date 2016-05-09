@@ -1,0 +1,3 @@
+failure FooWrapper1:
+    input:
+        input1: "myfile.txt"

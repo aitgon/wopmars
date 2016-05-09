@@ -1,0 +1,20 @@
+rule FooWrapper1:
+    input:
+        Something: "aFile.txt"
+    params:
+        -t: 5
+
+rule FooWrapper2:
+    output:
+        Resultat: "the second file.txt"
+    params:
+        -o: "an_option"
+
+rule FooWrapper3:
+    input:
+        AnOtherThing: "the_second_file.txt"
+    output:
+        Resultat: "the final_file.txt"
+    params:
+        -f: 10.285
+
