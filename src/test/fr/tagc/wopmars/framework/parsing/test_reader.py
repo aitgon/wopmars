@@ -23,6 +23,9 @@ class TestReader(TestCase):
         s_path_to_wrong_example_definition_file2 = s_root_path + "resources/example_def_file_wrong_grammar.yml"
         s_path_to_wrong_example_definition_file3 = s_root_path + "resources/example_def_file_wrong_grammar2.yml"
 
+        s_path_to_wrong_example_definition_file4 = s_root_path + "resources/example_def_file_wrong_content.yml"
+        s_path_to_wrong_example_definition_file5 = s_root_path + "resources/example_def_file_wrong_content2.yml"
+
         self.assertRaises(WopMarsParsingException, Reader, s_path_to_wrong_example_definition_file1)
         self.assertRaises(WopMarsParsingException, Reader, s_path_to_not_existing_example_definition_file)
         self.assertRaises(WopMarsParsingException, Reader, s_path_to_wrong_example_definition_file2)
@@ -31,6 +34,9 @@ class TestReader(TestCase):
             self.__my_reader = Reader(s_path_to_example_definition_file)
         except:
             raise AssertionError('Should not raise exception')
+
+        self.__reader_wrong_content = Reader(s_path_to_wrong_example_definition_file4)
+        self.__reader_wrong_content2 = Reader(s_path_to_wrong_example_definition_file5)
 
     def test_read(self):
 
@@ -51,6 +57,9 @@ class TestReader(TestCase):
 
         self.assertTrue((SetUtils.all_elm_of_one_set_in_one_other(result, expected) and
                          SetUtils.all_elm_of_one_set_in_one_other(expected, result)))
+
+        self.assertRaises(WopMarsParsingException, self.__reader_wrong_content.read)
+        self.assertRaises(WopMarsParsingException, self.__reader_wrong_content2.read)
 
 
 if __name__ == "__main__":
