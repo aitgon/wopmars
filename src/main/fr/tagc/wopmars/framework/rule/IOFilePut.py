@@ -29,7 +29,7 @@ class IOFilePut(IOPut):
         """
         return self.__path
 
-    # TODO should i use overide decorator?
+    # TODO ask lionel should i use overide decorator?
     def is_ready(self):
         """
         Check if the file exists on the hard drive
