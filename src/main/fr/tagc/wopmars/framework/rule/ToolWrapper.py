@@ -25,7 +25,6 @@ class ToolWrapper:
         self.__output_file_dict = output_dict
         self.__option_dict = option_dict
 
-
     def is_content_respected(self):
         """
         This method checks if the parameters dictionary are properly formed, according to the specifications of the
@@ -50,21 +49,25 @@ class ToolWrapper:
         """
         if set(self.__input_file_dict.keys()) != set(self.get_input_file()):
             raise WopMarsParsingException(3, "The given input variable's names are not correct, they should be: " +
-                                          "\n\t'{0}'".format("'\n\t'".join(self.get_input_file())))
+                                          "\n\t'{0}'".format("'\n\t'".join(self.get_input_file())) +
+                                          "\n" + "They are:" +
+                                          "\n\t'{0}'".format("'\n\t'".join(self.__input_file_dict.keys()))
+                                          )
 
     def is_output_respected(self):
         """
         Check if the output dictionary given in the constructor is properly formed for the tool.
         :return:
         """
-        if set(self.__input_file_dict.keys()) != set(self.get_input_file()):
+        if set(self.__output_file_dict.keys()) != set(self.get_output_file()):
             raise WopMarsParsingException(3, "The given output variable's names are not correct, they should be: " +
-                                          "\n\t'{0}'".format("'\n\t'".join(self.get_output_file())))
-
+                                          "\n\t'{0}'".format("'\n\t'".join(self.get_output_file())) +
+                                          "\n" + "They are:" +
+                                          "\n\t'{0}'".format("'\n\t'".join(self.__output_file_dict.keys()))
+                                          )
 
     def is_options_respected(self):
         pass
-
 
     def __eq__(self, other):
         """
@@ -75,7 +78,6 @@ class ToolWrapper:
         return (DictUtils.all_elm_of_one_dict_in_one_other(self.__input_file_dict, other.get_input_file_dict()) and
                 DictUtils.all_elm_of_one_dict_in_one_other(self.__output_file_dict, other.get_output_file_dict()) and
                 DictUtils.all_elm_of_one_dict_in_one_other(self.__option_dict, other.get_option_dict()))
-
 
     def __hash__(self):
         """

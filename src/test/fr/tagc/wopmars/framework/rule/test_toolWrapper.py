@@ -21,28 +21,17 @@ class TestToolWrapper(TestCase):
                                           {"output1": IOFilePut("output1", "file2.txt")},
                                           {"param1": IOFilePut("param1", 3)})
 
-        self.__foowrapper_right = FooWrapper3({"input1": IOFilePut("input1", "file1.txt"),
-                                               "input2": IOFilePut("input2", "file1.txt"),
-                                               "input3": IOFilePut("input3", "file1.txt")},
-
+        self.__foowrapper_right = FooWrapper3({"input1": IOFilePut("input1", "file1.txt")},
                                               {"output1": IOFilePut("output1", "file2.txt")},
-
                                               {"param1": IOFilePut("param1", 3)})
 
-        self.__foowrapper_wrong1 = FooWrapper3({"failure": IOFilePut("input1", "file1.txt"),
-                                                "input2": IOFilePut("input2", "file1.txt"),
-                                                "input3": IOFilePut("input3", "file1.txt")},
-
+        self.__foowrapper_wrong1 = FooWrapper3({"failure": IOFilePut("input1", "file1.txt")},
                                                {"output1": IOFilePut("output1", "file2.txt")},
-
                                                {"param1": IOFilePut("param1", 3)})
 
-        self.__foowrapper_wrong2 = FooWrapper3({"failure": IOFilePut("input1", "file1.txt"),
-                                                "input2": IOFilePut("input2", "file1.txt"),
-                                                "input3": IOFilePut("input3", "file1.txt")},
-
+        self.__foowrapper_wrong2 = FooWrapper3({"input1": IOFilePut("input1", "file1.txt"),
+                                                "input2": IOFilePut("input2", "file1.txt")},
                                                {"output1": IOFilePut("output1", "file2.txt")},
-
                                                {"param1": IOFilePut("param1", 3)})
 
     def test_eq(self):

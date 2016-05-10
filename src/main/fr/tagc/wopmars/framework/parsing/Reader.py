@@ -106,67 +106,6 @@ class Reader:
                                                      "\' doesn't match the grammar: it should be " +
                                                      "'params', 'input' or 'output'")
 
-    def is_content_respected(self):
-        """
-        Check if the definition file respects the name rules given by the wrapper developper.
-
-        Throw an exception if not.
-
-        :return: void
-        """
-
-        # TODO: CEST A L'OUTIL DE FAIRE CA
-
-        for s_key_step1 in self.__dict_workflow_definition:
-            str_wrapper_name = s_key_step1.split()[-1].strip(":")
-            mod = importlib.import_module("src.main.fr.tagc.wopmars.toolwrappers." + str_wrapper_name)
-            # TODO verifier que les tools existent: voir avec lionel comment les outils doivent être développés
-
-            # the folowing blocks of code are VERY dirty
-            # i have to find a way to make it better
-            # TODO refactor this code  ->
-
-            # Check if the input variables are ok
-            list_input_file = eval("mod." + str_wrapper_name).get_input_file()
-            # Build a regex from the list given by the tool's get method
-            regex_input = re.compile("(^{0}$)".format('$)|(^'.join(list_input_file)))
-            for s_input in self.__dict_workflow_definition[s_key_step1]["input"]:
-                if not regex_input.search(s_input):
-                    raise WopMarsParsingException("The line containing :\'" +
-                                                  str(s_input) +
-                                           "\' doesn't match the grammar: it should be with " +
-                                           "'{0}'".format("', '".join(list_input_file)))
-
-            # Check if the output variables are ok
-            list_output_file = eval("mod." + str_wrapper_name).get_output_file()
-            # Build a regex from the list given by the tool's get method
-            regex_output = re.compile("(^{0}$)".format('$)|(^'.join(list_output_file)))
-            for s_output in self.__dict_workflow_definition[s_key_step1]["output"]:
-                if not regex_output.search(s_output):
-                    raise WopMarsParsingException("The line containing :\'" +
-                                                  str(s_output) +
-                                           "\' doesn't match the grammar: it should be with " +
-                                           "'{0}'".format("', '".join(list_output_file)))
-
-            # Check if the output variables are ok
-            dict_options = eval("mod." + str_wrapper_name).get_params()
-            # Build a regex from the list given by the tool's get method
-            regex_option = re.compile("(^{0}$)".format('$)|(^'.join(dict_options.keys())))
-            for s_option in self.__dict_workflow_definition[s_key_step1]["params"]:
-                if not regex_option.search(s_option):
-                    raise WopMarsParsingException("The line containing :\'" +
-                                                  str(s_option) +
-                                           "\' doesn't match the grammar: it should be with " +
-                                           "'{0}'".format("', '".join(dict_options.keys())))
-                # TODO check the type of the corresponding item
-
-            # for s_key_step2 in self.__dict_workflow_definition[s_key_step1]:
-        #         if not regex_step2.search(s_key_step2):
-        #             raise ParsingException("The line containing :\'" + str(s_key_step2) +
-        #                                    "\' doesn't match the grammar: " +
-        #                                    "it should start with 'params', " +
-        #                                    "'input' or 'output'")
-
 if __name__ == "__main__":
     my_reader = Reader("/home/giffon/Documents/WopMars/projet/src/resources/example_def_file_wrong_content.yml")
     set_toolwrappers = my_reader.read()
