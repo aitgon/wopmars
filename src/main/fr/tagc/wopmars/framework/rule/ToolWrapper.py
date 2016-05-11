@@ -35,7 +35,6 @@ class ToolWrapper:
 
         # the options have to be checked first because they can alter the behavior of the is_input_respected and
         # is_output_respected methods
-        # TODO faire et tester cette méthode -> aller voir les méthodes liées des ToolWrappers
         self.is_options_respected()
 
         self.is_input_respected()
@@ -45,6 +44,7 @@ class ToolWrapper:
         """
         Check if the input dictionary given in the constructor is properly formed for the tool.
 
+        It checks if the output variable names exists or not.
         If not, throws a WopMarsParsingException(3)
         :return:void
         """
@@ -58,7 +58,9 @@ class ToolWrapper:
     def is_output_respected(self):
         """
         Check if the output dictionary given in the constructor is properly formed for the tool.
-        :return:
+
+        It checks if the output variable names exists or not. Throws WopMarsParsingException if not
+        :return:void
         """
         if set(self.__output_file_dict.keys()) != set(self.get_output_file()):
             raise WopMarsParsingException(3, "The given output variable's names are not correct, they should be: " +
@@ -68,7 +70,31 @@ class ToolWrapper:
                                           )
 
     def is_options_respected(self):
-        pass
+        """
+        This method check if the params given in the constructor are properly formed for the tool.
+
+        It checks if the params names given by the user exists or not, if the type correspond and if the required
+        options are given
+        :return:
+        """
+        dict_wrapper_opt_carac = self.get_params()
+
+        # check if the given options are authorized
+        if not set(self.__option_dict.keys()).issubset(dict_wrapper_opt_carac):
+            raise WopMarsParsingException(4, "The given option variable's names are not correct, they should be in: " +
+                                          "\n\t'{0}'".format("'\n\t'".join(dict_wrapper_opt_carac)) +
+                                          "\n" + "They are:" +
+                                          "\n\t'{0}'".format("'\n\t'".join(self.__option_dict.keys()))
+                                          )
+
+        # check if the types correspond
+        for opt in self.__option_dict:
+            self.__option_dict[opt].correspond(dict_wrapper_opt_carac[opt])
+
+        # check if the required options are given
+        for opt in dict_wrapper_opt_carac:
+            if "required" in dict_wrapper_opt_carac[opt].lower() and opt not in self.__option_dict.keys():
+                raise WopMarsParsingException(4, "The option " + opt + " has not been provided but it is required.")
 
     def __eq__(self, other):
         """
@@ -116,6 +142,6 @@ class ToolWrapper:
     def get_output_db(self):
         return []
 
-    def get_options(self):
+    def get_params(self):
         # TODO get_options
         return {}

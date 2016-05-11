@@ -1,0 +1,6 @@
+rule FooWrapper3:
+    input:
+        input1: "the_second_file.txt"
+    output:
+        output1: "the final_file.txt"
+

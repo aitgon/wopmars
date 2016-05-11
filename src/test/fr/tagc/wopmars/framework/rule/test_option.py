@@ -2,6 +2,7 @@ import unittest
 from unittest import TestCase
 
 from src.main.fr.tagc.wopmars.framework.rule.Option import Option
+from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
 
 
 class TestOption(TestCase):
@@ -23,25 +24,37 @@ class TestOption(TestCase):
         self.__option_bool3 = Option("option7", False)
 
     def test_correspond(self):
-        self.assertTrue(self.__option_string1.correspond("str"))
-        self.assertTrue(self.__option_string1.correspond("bool"))
-        self.assertFalse(self.__option_string1.correspond("int"))
-        self.assertFalse(self.__option_string1.correspond("float"))
+        try:
+            self.__option_string1.correspond("str")
+            self.__option_string1.correspond("bool")
+        except:
+            raise AssertionError("Souldn't raise an exception.")
+        self.assertRaises(WopMarsParsingException, self.__option_string1.correspond, "int")
+        self.assertRaises(WopMarsParsingException, self.__option_string1.correspond, "float")
 
-        self.assertTrue(self.__option_int1.correspond("str"))
-        self.assertTrue(self.__option_int1.correspond("int"))
-        self.assertTrue(self.__option_int1.correspond("float"))
-        self.assertTrue(self.__option_int1.correspond("bool"))
+        try:
+            self.__option_int1.correspond("str")
+            self.__option_int1.correspond("int")
+            self.__option_int1.correspond("float")
+            self.__option_int1.correspond("bool")
+        except:
+            raise AssertionError("Shouldn't raise an exception.")
 
-        self.assertTrue(self.__option_float1.correspond("str"))
-        self.assertFalse(self.__option_float1.correspond("int"))
-        self.assertTrue(self.__option_float1.correspond("float"))
-        self.assertTrue(self.__option_float1.correspond("bool"))
+        try:
+            self.__option_float1.correspond("str")
+            self.__option_float1.correspond("float")
+            self.__option_float1.correspond("bool")
+        except:
+            raise AssertionError("Shouldn't raise an exception.")
+        self.assertRaises(WopMarsParsingException, self.__option_float1.correspond, "int")
 
-        self.assertTrue(self.__option_bool1.correspond("str"))
-        self.assertTrue(self.__option_bool1.correspond("int"))
-        self.assertTrue(self.__option_bool1.correspond("float"))
-        self.assertTrue(self.__option_bool1.correspond("bool"))
+        try:
+            self.__option_bool1.correspond("str")
+            self.__option_bool1.correspond("int")
+            self.__option_bool1.correspond("float")
+            self.__option_bool1.correspond("bool")
+        except:
+            raise AssertionError("Shouldn't raise an exception.")
 
     def test_eq(self):
         self.assertEqual(self.__option_string1, self.__option_string2)
@@ -55,7 +68,6 @@ class TestOption(TestCase):
         self.assertEqual(self.__option_float1, self.__option_float2)
         self.assertNotEqual(self.__option_float1, self.__option_float3)
         self.assertNotEqual(self.__option_float1, self.__option_string3)
-
 
         self.assertEqual(self.__option_bool1, self.__option_bool2)
         self.assertNotEqual(self.__option_bool1, self.__option_bool3)

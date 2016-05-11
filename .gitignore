@@ -1,5 +1,5 @@
 *.idea
-
+*.sonar
 __pycache__
 
 rapport/

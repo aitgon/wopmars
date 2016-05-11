@@ -10,20 +10,23 @@ class WopMarsParsingException(Exception):
     This exception is thrown with a context and a message. The context is supposed to explain where the exception has
     occured while the message gives more specific details about the exception.
     """
+    # Those strings will be call byt the __str__ method depending on the context (which is the index of the string in
+    # the tuple
     tpl_string_contexts = (
         "",
-        "The YAML specification is not respected",
-        "The grammar of the WopMars's definition file is not respected",
-        "The ToolWrapper specification is not respected",
+        "The YAML specification is not respected:",
+        "The grammar of the WopMars's definition file is not respected:",
+        "The ToolWrapper Input/Output specification is not respected:",
+        "The ToolWrapper Option specification is not respected:",
     )
 
     def __init__(self, context, message):
         """
-        :param context: integer in range(4)
+        :param context: integer in range(5)
         :param message: string
         :return: void
         """
-        assert(context in range(4))
+        assert(context in range(len(WopMarsParsingException.tpl_string_contexts)))
         self.__context = context
         self.__message = message
 

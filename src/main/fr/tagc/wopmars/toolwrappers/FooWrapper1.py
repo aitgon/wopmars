@@ -1,13 +1,13 @@
 """
-Example of module documentation which can be
-multiple-lined
+Module containing the FooWrapper1 class
 """
 from src.main.fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
 
 
 class FooWrapper1(ToolWrapper):
     """
-    Documentation for the class
+    This class has been done for example/testing purpose.
+    Modifications may lead to failure in tests.
     """    
     def get_input_file(self):
         return ["input1"]
@@ -21,7 +21,6 @@ class FooWrapper1(ToolWrapper):
     def get_output_db(self):
         return ["outputdb1"]
 
-    def get_options(self):
-        # TODO get_options
-        pass
+    def get_params(self):
+        return {"param1": "int"}
 

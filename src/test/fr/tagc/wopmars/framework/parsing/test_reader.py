@@ -25,6 +25,9 @@ class TestReader(TestCase):
 
         s_path_to_wrong_example_definition_file4 = s_root_path + "resources/example_def_file_wrong_content.yml"
         s_path_to_wrong_example_definition_file5 = s_root_path + "resources/example_def_file_wrong_content2.yml"
+        s_path_to_wrong_example_definition_file6 = s_root_path + "resources/example_def_file_wrong_content3.yml"
+        s_path_to_wrong_example_definition_file7 = s_root_path + "resources/example_def_file_wrong_content4.yml"
+        s_path_to_wrong_example_definition_file8 = s_root_path + "resources/example_def_file_wrong_content5.yml"
 
         self.assertRaises(WopMarsParsingException, Reader, s_path_to_wrong_example_definition_file1)
         self.assertRaises(WopMarsParsingException, Reader, s_path_to_not_existing_example_definition_file)
@@ -37,6 +40,9 @@ class TestReader(TestCase):
 
         self.__reader_wrong_content = Reader(s_path_to_wrong_example_definition_file4)
         self.__reader_wrong_content2 = Reader(s_path_to_wrong_example_definition_file5)
+        self.__reader_wrong_content3 = Reader(s_path_to_wrong_example_definition_file6)
+        self.__reader_wrong_content4 = Reader(s_path_to_wrong_example_definition_file7)
+        self.__reader_wrong_content5 = Reader(s_path_to_wrong_example_definition_file8)
 
     def test_read(self):
 
@@ -60,7 +66,9 @@ class TestReader(TestCase):
 
         self.assertRaises(WopMarsParsingException, self.__reader_wrong_content.read)
         self.assertRaises(WopMarsParsingException, self.__reader_wrong_content2.read)
-
+        self.assertRaises(WopMarsParsingException, self.__reader_wrong_content3.read)
+        self.assertRaises(WopMarsParsingException, self.__reader_wrong_content4.read)
+        self.assertRaises(WopMarsParsingException, self.__reader_wrong_content5.read)
 
 if __name__ == "__main__":
     unittest.main()
