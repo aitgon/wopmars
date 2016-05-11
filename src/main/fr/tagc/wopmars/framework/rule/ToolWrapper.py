@@ -125,11 +125,11 @@ class ToolWrapper:
     def create_base_object_from_class_names(self):
         # TODO this method will return (or set self attributes) from class names to base. Il n'y a peut etre pas besoin
         # que cette méthode soit dans self
-        # TODO? Faire une espèce de factory de factory -> BaseFactory et WrapperFactory héritantes de Factory
+        # TODO ask lionel Faire une espèce de factory de factory -> BaseFactory et WrapperFactory héritantes de Factory
         pass
 
-# TODO vérifier que les méthodes importantes ont bien été réecrites par le développeur et que les autres ne le sont pas
-# Ceci pourra être fait avec les décorateurs
+    # TODO vérifier que les méthodes importantes ont bien été réecrites par le développeur et que les autres ne
+    # le sont pas Ceci pourra être fait avec les décorateurs
     def get_input_file(self):
         return []
 
@@ -143,5 +143,4 @@ class ToolWrapper:
         return []
 
     def get_params(self):
-        # TODO get_options
         return {}

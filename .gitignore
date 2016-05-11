@@ -7,3 +7,8 @@ rapport/
 launchsonar.sh
 
 sonar-project.properties
+
+coverage.xml
+.coverage
+
+nosetests.xml
