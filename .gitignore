@@ -3,3 +3,7 @@
 __pycache__
 
 rapport/
+
+launchsonar.sh
+
+sonar-project.properties

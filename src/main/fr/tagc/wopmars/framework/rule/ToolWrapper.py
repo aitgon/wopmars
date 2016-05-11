@@ -35,6 +35,7 @@ class ToolWrapper:
 
         # the options have to be checked first because they can alter the behavior of the is_input_respected and
         # is_output_respected methods
+        # TODO faire et tester cette méthode -> aller voir les méthodes liées des ToolWrappers
         self.is_options_respected()
 
         self.is_input_respected()
@@ -95,13 +96,13 @@ class ToolWrapper:
     def get_option_dict(self):
         return self.__option_dict
 
-    # TODO verify that important methods have not been overwritten by the user
-
     def create_base_object_from_class_names(self):
-        # TODO this method will return (or set self attributes) from class names to base
+        # TODO this method will return (or set self attributes) from class names to base. Il n'y a peut etre pas besoin
+        # que cette méthode soit dans self
+        # TODO? Faire une espèce de factory de factory -> BaseFactory et WrapperFactory héritantes de Factory
         pass
 
-# TODO vérifier que les méthodes importantes ont bien été réecrites par le développeur
+# TODO vérifier que les méthodes importantes ont bien été réecrites par le développeur et que les autres ne le sont pas
 # Ceci pourra être fait avec les décorateurs
     def get_input_file(self):
         return []
@@ -116,4 +117,5 @@ class ToolWrapper:
         return []
 
     def get_options(self):
+        # TODO get_options
         return {}

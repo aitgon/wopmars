@@ -17,7 +17,6 @@ class Option:
         """
         self.__key = key
         self.__value = value
-        # TODO: gérer le type dans les Option?
 
     def correspond(self, carac):
         """
@@ -35,7 +34,7 @@ class Option:
                     eval(s_formated_type)(self.__value)
                 except ValueError:
                     return False
-                    # TODO une exception devrait etre là
+                    # TODO faire exception parsing exception
         return True
 
     def __eq__(self, other):

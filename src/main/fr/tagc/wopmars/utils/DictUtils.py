@@ -7,6 +7,7 @@ class DictUtils:
     """
     Class containing methods that are usefull for dealing with dicts
     """
+    # TODO: tesunitaire sur cette classe
     @staticmethod
     def all_elm_of_one_dict_in_one_other(one, other):
         """
@@ -23,7 +24,6 @@ class DictUtils:
                 return False
         return True
 
-# TODO: tesunitaire sur cette classe
 
 if __name__ == "__main__":
     print(DictUtils.all_elm_of_one_dict_in_one_other({"a": 1}, {"a": 1, "b": 2}))

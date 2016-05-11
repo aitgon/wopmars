@@ -22,5 +22,6 @@ class FooWrapper1(ToolWrapper):
         return ["outputdb1"]
 
     def get_options(self):
+        # TODO get_options
         pass
-    # TODO get_options
+

@@ -32,10 +32,6 @@ class Reader:
                 self.__dict_workflow_definition = yaml.load(def_file)
                 # Check if the grammar is respected, throws an exception if not
                 self.is_grammar_respected()
-
-                # TODO vérifier le contenu du fichier au moment de l'instantiation des outils
-                # self.is_content_respected()
-
             # YAMLError is thrown if the YAML specifications are not respected by the definition file
             except yaml.YAMLError as exc:
                 raise WopMarsParsingException(1, str(exc))
