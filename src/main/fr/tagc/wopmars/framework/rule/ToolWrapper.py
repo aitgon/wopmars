@@ -20,7 +20,7 @@ class ToolWrapper:
         :param option_dict: dict(String: Option)
         :return: void
         """
-        assert(type(input_dict) == dict and type(output_dict) == dict and type(option_dict) == dict)
+        assert type(input_dict) == dict and type(output_dict) == dict and type(option_dict) == dict
         self.__input_file_dict = input_dict
         self.__output_file_dict = output_dict
         self.__option_dict = option_dict
@@ -102,9 +102,9 @@ class ToolWrapper:
         :param other: ToolWrapper
         :return:
         """
-        return (DictUtils.all_elm_of_one_dict_in_one_other(self.__input_file_dict, other.get_input_file_dict()) and
-                DictUtils.all_elm_of_one_dict_in_one_other(self.__output_file_dict, other.get_output_file_dict()) and
-                DictUtils.all_elm_of_one_dict_in_one_other(self.__option_dict, other.get_option_dict()))
+        return (DictUtils.elm_of_one_dict_in_one_other(self.__input_file_dict, other.get_input_file_dict()) and
+                DictUtils.elm_of_one_dict_in_one_other(self.__output_file_dict, other.get_output_file_dict()) and
+                DictUtils.elm_of_one_dict_in_one_other(self.__option_dict, other.get_option_dict()))
 
     def __hash__(self):
         """
@@ -122,7 +122,7 @@ class ToolWrapper:
     def get_option_dict(self):
         return self.__option_dict
 
-    def create_base_object_from_class_names(self):
+    def create_base_object_from_name(self):
         # TODO this method will return (or set self attributes) from class names to base. Il n'y a peut etre pas besoin
         # que cette méthode soit dans self
         # TODO ask lionel Faire une espèce de factory de factory -> BaseFactory et WrapperFactory héritantes de Factory

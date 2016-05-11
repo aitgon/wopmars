@@ -26,7 +26,7 @@ class WopMarsParsingException(Exception):
         :param message: string
         :return: void
         """
-        assert(context in range(len(WopMarsParsingException.tpl_string_contexts)))
+        assert context in range(len(WopMarsParsingException.tpl_string_contexts))
         self.__context = context
         self.__message = message
 
