@@ -15,7 +15,7 @@ class IODbPut(IOPut):
         which has been created by a tool developper
         :return:
         """
-        assert(isinstance(table, Base))
+        assert isinstance(table, Base)
         self.__table = table
         super().__init__(self.__table.__class__.__name__)
 
@@ -35,16 +35,13 @@ class IODbPut(IOPut):
         :param other: IODbPut
         :return: boolean: True if the table attributes are the same, False if not
         """
-        assert(isinstance(other, self.__class__))
+        # TODO method __eq__ doit aussi vérifier le contenu des tables
+        assert isinstance(other, self.__class__)
         return isinstance(self.__table, other.get_table().__class__)
 
-    # TODO method __eq__ doit aussi vérifier le contenu des tables
-
     def is_ready(self):
+        # TODO faire correctement cette méthode pour qu'elle vérifie que les tables existent et sont remplies
         return False
-
-    # TODO faire correctement cette méthode pour qu'elle
-        # vérifie que les tables existent et sont remplies
 
     def __hash__(self):
         return id(self)

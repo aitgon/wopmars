@@ -3,14 +3,13 @@ import os
 from unittest import TestCase
 from src.main.fr.tagc.wopmars.framework.parsing.Reader import Reader
 from src.main.fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
-from src.main.fr.tagc.wopmars.framework.rule.ObjectSet import ObjectSet
 from src.main.fr.tagc.wopmars.framework.rule.Option import Option
 from src.main.fr.tagc.wopmars.toolwrappers.FooWrapper1 import FooWrapper1
 from src.main.fr.tagc.wopmars.toolwrappers.FooWrapper2 import FooWrapper2
 from src.main.fr.tagc.wopmars.toolwrappers.FooWrapper3 import FooWrapper3
 from src.main.fr.tagc.wopmars.utils.PathFinder import PathFinder
 from src.main.fr.tagc.wopmars.utils.SetUtils import SetUtils
-from src.main.fr.tagc.wopmars.utils.exceptions.ParsingException import ParsingException
+from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
 
 
 class TestReader(TestCase):
@@ -24,14 +23,26 @@ class TestReader(TestCase):
         s_path_to_wrong_example_definition_file2 = s_root_path + "resources/example_def_file_wrong_grammar.yml"
         s_path_to_wrong_example_definition_file3 = s_root_path + "resources/example_def_file_wrong_grammar2.yml"
 
-        self.assertRaises(ParsingException, Reader, s_path_to_wrong_example_definition_file1)
-        self.assertRaises(ParsingException, Reader, s_path_to_not_existing_example_definition_file)
-        self.assertRaises(ParsingException, Reader, s_path_to_wrong_example_definition_file2)
-        self.assertRaises(ParsingException, Reader, s_path_to_wrong_example_definition_file3)
+        s_path_to_wrong_example_definition_file4 = s_root_path + "resources/example_def_file_wrong_content.yml"
+        s_path_to_wrong_example_definition_file5 = s_root_path + "resources/example_def_file_wrong_content2.yml"
+        s_path_to_wrong_example_definition_file6 = s_root_path + "resources/example_def_file_wrong_content3.yml"
+        s_path_to_wrong_example_definition_file7 = s_root_path + "resources/example_def_file_wrong_content4.yml"
+        s_path_to_wrong_example_definition_file8 = s_root_path + "resources/example_def_file_wrong_content5.yml"
+
+        self.assertRaises(WopMarsParsingException, Reader, s_path_to_wrong_example_definition_file1)
+        self.assertRaises(WopMarsParsingException, Reader, s_path_to_not_existing_example_definition_file)
+        self.assertRaises(WopMarsParsingException, Reader, s_path_to_wrong_example_definition_file2)
+        self.assertRaises(WopMarsParsingException, Reader, s_path_to_wrong_example_definition_file3)
         try:
             self.__my_reader = Reader(s_path_to_example_definition_file)
         except:
             raise AssertionError('Should not raise exception')
+
+        self.__reader_wrong_content = Reader(s_path_to_wrong_example_definition_file4)
+        self.__reader_wrong_content2 = Reader(s_path_to_wrong_example_definition_file5)
+        self.__reader_wrong_content3 = Reader(s_path_to_wrong_example_definition_file6)
+        self.__reader_wrong_content4 = Reader(s_path_to_wrong_example_definition_file7)
+        self.__reader_wrong_content5 = Reader(s_path_to_wrong_example_definition_file8)
 
     def test_read(self):
 
@@ -53,6 +64,11 @@ class TestReader(TestCase):
         self.assertTrue((SetUtils.all_elm_of_one_set_in_one_other(result, expected) and
                          SetUtils.all_elm_of_one_set_in_one_other(expected, result)))
 
+        self.assertRaises(WopMarsParsingException, self.__reader_wrong_content.read)
+        self.assertRaises(WopMarsParsingException, self.__reader_wrong_content2.read)
+        self.assertRaises(WopMarsParsingException, self.__reader_wrong_content3.read)
+        self.assertRaises(WopMarsParsingException, self.__reader_wrong_content4.read)
+        self.assertRaises(WopMarsParsingException, self.__reader_wrong_content5.read)
 
 if __name__ == "__main__":
     unittest.main()

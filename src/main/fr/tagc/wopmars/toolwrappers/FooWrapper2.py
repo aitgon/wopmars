@@ -1,31 +1,25 @@
 """
-Example of module documentation which can be
-multiple-lined
+Module containing the FooWrapper2 class
 """
 from src.main.fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
 
 
 class FooWrapper2(ToolWrapper):
     """
-    Documentation for the class
+    This class has been done for example/testing purpose.
+    Modifications may lead to failure in tests.
     """
-    @staticmethod
-    def get_input_file():
-        return ["input1", "input2", "input3"]
+    def get_input_file(self):
+        return []
 
-    @staticmethod
-    def get_input_db():
+    def get_input_db(self):
         return ["inputdb1"]
 
-    @staticmethod
-    def get_output_file():
+    def get_output_file(self):
         return ["output1"]
 
-    @staticmethod
-    def get_output_db():
+    def get_output_db(self):
         return ["outputdb1"]
 
-    @staticmethod
-    def get_params():
-        return {"param1": ""}
-        # TODO get_options
+    def get_params(self):
+        return {"param1": "str"}

@@ -2,6 +2,7 @@
 Module contianing the Option class
 """
 from src.main.fr.tagc.wopmars.utils.OptionUtils import OptionUtils
+from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
 
 
 class Option:
@@ -17,26 +18,31 @@ class Option:
         """
         self.__key = key
         self.__value = value
-        # TODO: gérer le type dans les Option?
 
     def correspond(self, carac):
         """
-        Check if the option value correspond to the caracteristics given by the tool wrapper
+        Check if the option value correspond to the type given by the tool wrapper. Throws a WopMarsParsingException if
+        not.
 
-        :param carac: String contenant les caracteristiques de l'option au format: "carac1|carac2|carc3"
+        :param carac: String containing the carac of the option in the format: "carac1|carac2|carc3"
         :return:
         """
+        # get a list of caracs
         list_splitted_carac = carac.split("|")
         for s_type in list_splitted_carac:
             s_formated_type = s_type.strip().lower()
+            # check if the carac is a castable type
             if s_formated_type in OptionUtils.static_option_castable:
                 try:
-                    # Trying to cast the value to the specified type in s_formated_type
+                    # try the cast
                     eval(s_formated_type)(self.__value)
                 except ValueError:
-                    return False
-                    # TODO une exception devrait etre là
-        return True
+                    # if it fails, raise an exception: the type has not been respected
+                    raise WopMarsParsingException(4, "The given option value of " + str(self.__key) +
+                                                  " should be of type " + s_formated_type)
+            else:
+                # TODO exception de développeur métier qui a mal fait les choses
+                pass
 
     def __eq__(self, other):
         return self.__value == other.get_value() and self.__key == other.get_key()

@@ -17,6 +17,7 @@ class SetUtils:
         :param other: set
         :return: boolean: True if all elements of one are in the other
         """
+        # TODO: tesunitaire sur cette classe
         for elm in one:
             is_in = False
             for elm2 in other:
@@ -27,8 +28,8 @@ class SetUtils:
                     # __eq__ method, it is possible that 2 elm which are equals can appear in the same set because they
                     # are two distinct instances - it could happens if the user specify twice the same rule with the
                     # exact same parameters and I/O put...
+                    # I don't know if this information is important.
             if not is_in:
                 return False
         return True
 
-# TODO: tesunitaire sur cette classe

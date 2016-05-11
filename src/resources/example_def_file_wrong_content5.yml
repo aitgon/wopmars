@@ -1,8 +1,6 @@
 rule FooWrapper3:
     input:
-        failure: "the_second_file.txt"
+        input1: "the_second_file.txt"
     output:
         output1: "the final_file.txt"
-    params:
-        param1: 10.285
 
