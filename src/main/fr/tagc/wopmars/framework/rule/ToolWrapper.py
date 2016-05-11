@@ -131,6 +131,8 @@ class ToolWrapper:
     # TODO vérifier que les méthodes importantes ont bien été réecrites par le développeur et que les autres ne
     # le sont pas Ceci pourra être fait avec les décorateurs
     def get_input_file(self):
+        # TODO ask lionel pour cette histoire de convention au sujet des
+        # méthodes qui devraient être statiques
         return []
 
     def get_input_db(self):
