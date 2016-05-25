@@ -3,6 +3,7 @@ Module containing the Parser class
 """
 import sys
 
+from src.main.fr.tagc.wopmars.framework.management.DAG import DAG
 from src.main.fr.tagc.wopmars.framework.parsing.Reader import Reader
 from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
 
@@ -13,16 +14,16 @@ class Parser:
 
     The aim of the Parser is to send the DAG representing the execution graph
     """    
-    def __init__(self):
+    def __init__(self, path):
         """
         First line short documentation
         
         More documentation
         :return:
         """
-        # TODO fill the constructor of parser
+        self.__reader = Reader(path)
 
-    def parse(self, path):
+    def parse(self):
         """
         Organize the parsing of the Workflow Definition File
 
@@ -32,12 +33,13 @@ class Parser:
         :return: the DAG
         """
         try:
-            my_reader = Reader(path)
-            set_toolwrappers = my_reader.read()
+            set_toolwrappers = self.__reader.read()
+            dag_tools = DAG(set_toolwrappers)
         except WopMarsParsingException as e:
             sys.exit(str(e))
+        return dag_tools
         # TODO fill the method parse
 
 if __name__ == '__main__':
-    p = Parser()
-    p.parse("/home/giffon/Documents/wopmars/src/resources/example_def_file.yml")
+    p = Parser("/home/giffon/Documents/wopmars/src/resources/example_def_file2.yml")
+    p.parse()

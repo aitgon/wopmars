@@ -104,5 +104,4 @@ class Reader:
 
 if __name__ == "__main__":
     my_reader = Reader("/home/giffon/Documents/wopmars/src/resources/example_def_file_wrong_content.yml")
-    # Todo le fichier wrong content 1 passe
     set_toolwrappers = my_reader.read()
