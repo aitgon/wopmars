@@ -35,9 +35,9 @@ class Parser:
             my_reader = Reader(path)
             set_toolwrappers = my_reader.read()
         except WopMarsParsingException as e:
-            sys.exit(e)
+            sys.exit(str(e))
         # TODO fill the method parse
 
 if __name__ == '__main__':
     p = Parser()
-    p.parse("/home/giffon/Documents/WopMars/projet/src/resources/example_def_file.yml")
+    p.parse("/home/giffon/Documents/wopmars/src/resources/example_def_file.yml")

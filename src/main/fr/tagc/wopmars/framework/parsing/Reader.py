@@ -93,15 +93,16 @@ class Reader:
         for s_key_step1 in self.__dict_workflow_definition:
             if not regex_step1.search(s_key_step1):
                 raise WopMarsParsingException(2, "The line containing:\'" +
-                                                 str(s_key_step1) +
-                                                 "\' doesn't match the grammar: it should start with 'rule'" +
-                                                 "and contains only one word after the 'rule' keyword")
+                                              str(s_key_step1) +
+                                              "\' doesn't match the grammar: it should start with 'rule'" +
+                                              "and contains only one word after the 'rule' keyword")
             for s_key_step2 in self.__dict_workflow_definition[s_key_step1]:
                 if not regex_step2.search(s_key_step2):
                     raise WopMarsParsingException(2, "The line containing:\'" + str(s_key_step2) +
-                                                     "\' doesn't match the grammar: it should be " +
-                                                     "'params', 'input' or 'output'")
+                                                  "\' doesn't match the grammar: it should be " +
+                                                  "'params', 'input' or 'output'")
 
 if __name__ == "__main__":
-    my_reader = Reader("/home/giffon/Documents/WopMars/projet/src/resources/example_def_file_wrong_content.yml")
+    my_reader = Reader("/home/giffon/Documents/wopmars/src/resources/example_def_file_wrong_content.yml")
+    # Todo le fichier wrong content 1 passe
     set_toolwrappers = my_reader.read()

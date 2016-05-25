@@ -47,6 +47,13 @@ class TestToolWrapper(TestCase):
                                               {"output1": IOFilePut("output1", "file2.txt")},
                                               {})
 
+        self.__toolwrapper_first = ToolWrapper({"input1": IOFilePut("input1", "file1.txt")},
+                                               {"output1": IOFilePut("output1", "file2.txt")},
+                                               {})
+
+        self.__toolwrapper_second = ToolWrapper({"input1": IOFilePut("input1", "file2.txt")},
+                                                {"output1": IOFilePut("output1", "file3.txt")},
+                                                {})
 
     def test_eq(self):
         self.assertEqual(self.__toolwrapper1, self.__toolwrapper2)
@@ -63,6 +70,10 @@ class TestToolWrapper(TestCase):
         self.assertRaises(WopMarsParsingException, self.__foowrapper_wrong3.is_content_respected)
         self.assertRaises(WopMarsParsingException, self.__foowrapper_wrong4.is_content_respected)
         self.assertRaises(WopMarsParsingException, self.__foowrapper_wrong5.is_content_respected)
+
+    def test_follows(self):
+        self.assertTrue(self.__toolwrapper_second.follows(self.__toolwrapper_first))
+        self.assertFalse(self.__toolwrapper_first.follows(self.__toolwrapper_second))
 
 if __name__ == '__main__':
     unittest.main()

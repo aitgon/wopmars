@@ -2,7 +2,7 @@
 Module containing the FooWrapper2 class
 """
 from src.main.fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
-
+# TODO faire en sorte que les imports commencent a fr
 
 class FooWrapper2(ToolWrapper):
     """

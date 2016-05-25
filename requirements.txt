@@ -1,0 +1,4 @@
+PyYAML==3.11
+SQLAlchemy==1.0.12
+decorator==4.0.9
+networkx==1.11

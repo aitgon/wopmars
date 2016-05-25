@@ -16,6 +16,7 @@ class TestIOFilePut(TestCase):
         self.__io_file_existing = IOFilePut("existing_file", s_path_to_example_existing_file)
         self.__io_file_existing2 = IOFilePut("existing_file", s_path_to_example_existing_file)
         self.__io_file_existing3 = IOFilePut("existing_file", s_path_to_example_existing_file2)
+        self.__io_file_existing4 = IOFilePut("existing_file2", s_path_to_example_existing_file2)
         self.__io_file_not_existing = IOFilePut("not_existing_file", s_path_to_example_not_existing_file)
 
     def test_is_ready(self):
@@ -24,6 +25,7 @@ class TestIOFilePut(TestCase):
 
     def test_eq(self):
         self.assertEqual(self.__io_file_existing, self.__io_file_existing2)
+        self.assertEqual(self.__io_file_existing3, self.__io_file_existing4)
         self.assertNotEqual(self.__io_file_existing, self.__io_file_existing3)
 
 if __name__ == "__main__":

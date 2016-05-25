@@ -49,7 +49,8 @@ class ToolWrapper:
         :return:void
         """
         if set(self.__input_file_dict.keys()) != set(self.get_input_file()):
-            raise WopMarsParsingException(3, "The given input variable's names are not correct, they should be: " +
+            raise WopMarsParsingException(3, "The given input variable's names for " + self.__class__.__name__ +
+                                          " are not correct, they should be: " +
                                           "\n\t'{0}'".format("'\n\t'".join(self.get_input_file())) +
                                           "\n" + "They are:" +
                                           "\n\t'{0}'".format("'\n\t'".join(self.__input_file_dict.keys()))
@@ -63,7 +64,8 @@ class ToolWrapper:
         :return:void
         """
         if set(self.__output_file_dict.keys()) != set(self.get_output_file()):
-            raise WopMarsParsingException(3, "The given output variable's names are not correct, they should be: " +
+            raise WopMarsParsingException(3, "The given output variable names for " + self.__class__.__name__ +
+                                          " are not correct, they should be: " +
                                           "\n\t'{0}'".format("'\n\t'".join(self.get_output_file())) +
                                           "\n" + "They are:" +
                                           "\n\t'{0}'".format("'\n\t'".join(self.__output_file_dict.keys()))
@@ -81,7 +83,8 @@ class ToolWrapper:
 
         # check if the given options are authorized
         if not set(self.__option_dict.keys()).issubset(dict_wrapper_opt_carac):
-            raise WopMarsParsingException(4, "The given option variable's names are not correct, they should be in: " +
+            raise WopMarsParsingException(4, "The given option variable for " + self.__class__.__name__ +
+                                          " are not correct, they should be in: " +
                                           "\n\t'{0}'".format("'\n\t'".join(dict_wrapper_opt_carac)) +
                                           "\n" + "They are:" +
                                           "\n\t'{0}'".format("'\n\t'".join(self.__option_dict.keys()))
@@ -95,6 +98,9 @@ class ToolWrapper:
         for opt in dict_wrapper_opt_carac:
             if "required" in dict_wrapper_opt_carac[opt].lower() and opt not in self.__option_dict.keys():
                 raise WopMarsParsingException(4, "The option " + opt + " has not been provided but it is required.")
+
+    def follows(self, other):
+        return DictUtils.at_least_one_value_of_one_in_an_other(self.__input_file_dict, other.get_output_file_dict())
 
     def __eq__(self, other):
         """
@@ -112,6 +118,9 @@ class ToolWrapper:
         :return:
         """
         return id(self)
+
+
+    ####### Method relatives to framework #######
 
     def get_input_file_dict(self):
         return self.__input_file_dict
