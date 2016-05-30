@@ -18,7 +18,8 @@ class WopMarsParsingException(Exception):
         "The grammar of the WopMars's definition file is not respected:",
         "The ToolWrapper Input/Output specification is not respected:",
         "The ToolWrapper Option specification is not respected:",
-        "The ToolWrapper has not been found:"
+        "The ToolWrapper has not been found:",
+        "The specified Workflow cannot be represented as a DAG."
     )
 
     def __init__(self, context, message):

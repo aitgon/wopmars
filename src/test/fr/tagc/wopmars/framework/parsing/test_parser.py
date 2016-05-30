@@ -19,15 +19,20 @@ class TestParser(TestCase):
         s_path_to_example_definition_file = s_root_path + "resources/example_def_file2.yml"
         s_path_to_not_existing_example_definition_file = s_root_path + "definition_file_that_doesnt_exists.yml"
         s_path_to_wrong_example_definition_file1 = s_root_path + "resources/example_def_file_wrong_content.yml"
+        s_path_to_wrong_example_definition_file_not_dag = s_root_path + "resources/example_def_file_not_a_dag.yml"
 
         self.__parser_right = Parser(s_path_to_example_definition_file)
         self.__parser_wrong = Parser(s_path_to_wrong_example_definition_file1)
+        self.__parser_wrong_not_dag = Parser(s_path_to_wrong_example_definition_file_not_dag)
         with self.assertRaises(SystemExit):
             Parser(s_path_to_not_existing_example_definition_file)
 
     def test_parse(self):
         with self.assertRaises(SystemExit):
             self.__parser_wrong.parse()
+
+        with self.assertRaises(SystemExit):
+            self.__parser_wrong_not_dag.parse()
 
         set_toolwrappers = set()
 
@@ -55,8 +60,6 @@ class TestParser(TestCase):
         self.assertEqual(int_nodes_expected, int_nodes_obtained)
         self.assertTrue(SetUtils.all_elm_of_one_set_in_one_other(set_edges_expected, set_edges_obtained))
         self.assertTrue(SetUtils.all_elm_of_one_set_in_one_other(set_edges_obtained, set_edges_expected))
-
-
 
 if __name__ == '__main__':
     unittest.main()

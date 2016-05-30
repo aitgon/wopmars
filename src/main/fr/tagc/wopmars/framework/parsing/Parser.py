@@ -7,6 +7,7 @@ from fr.tagc.wopmars.framework.management.DAG import DAG
 from fr.tagc.wopmars.framework.parsing.Reader import Reader
 from fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
 
+from networkx.algorithms.dag import is_directed_acyclic_graph
 
 class Parser:
     """
@@ -39,6 +40,8 @@ class Parser:
         try:
             set_toolwrappers = self.__reader.read()
             dag_tools = DAG(set_toolwrappers)
+            if not is_directed_acyclic_graph(dag_tools):
+                raise WopMarsParsingException(6, "")
             # todo loging
             print("Writing the dot file...", end="")
             # TODO faire une condition avec le optionmanager quand il sera crée
@@ -51,7 +54,7 @@ class Parser:
         return dag_tools
 
 if __name__ == '__main__':
-    p = Parser("/home/giffon/Documents/wopmars/src/resources/example_def_file4.yml")
+    p = Parser("/home/giffon/Documents/wopmars/src/resources/example_def_file_not_a_dag.yml")
     p.parse()
 
     # opening the file
