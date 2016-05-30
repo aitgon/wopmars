@@ -7,18 +7,19 @@ class Observable:
     """
     class Observable
     """    
-    def __init__(self):
-        self.__set_observer = set([])
-
     def get_observers(self):
         """
 
         :return: set observers
         """
-        return self.__set_observer
+        raise NotImplementedError
 
     def subscribe(self, obs):
-        self.__set_observer.add(obs)
+        raise NotImplementedError
 
-    def unsubscribe(self, obs):
-        self.__set_observer.discard(obs)
+    def fire_failure(self):
+        raise NotImplementedError
+
+    def fire_success(self):
+        raise NotImplementedError
+

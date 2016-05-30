@@ -1,7 +1,7 @@
 """
 Module containing the WorkflowManager class
 """
-from queue import LifoQueue
+from queue import Queue
 
 
 from fr.tagc.wopmars.framework.parsing.Parser import Parser
@@ -25,7 +25,7 @@ class WorkflowManager(ToolWrapperObserver):
         """
         # Todo optionmanager
         self.__parser = Parser(path)
-        self.__queue_exec = LifoQueue()
+        self.__queue_exec = Queue()
         self.__dag_tools = None
 
     def run(self):
@@ -34,6 +34,7 @@ class WorkflowManager(ToolWrapperObserver):
         :return:
         """
         self.__dag_tools = self.__parser.parse()
+        # start at the begining of the dag
         self.execute_from()
 
     def execute_from(self, node=None):
@@ -43,10 +44,8 @@ class WorkflowManager(ToolWrapperObserver):
         :param node: ToolWrapper a node of the DAG
         :return: void
         """
-        if not node:
-            list_tw = self.__dag_tools.successors()
-        else:
-            list_tw = self.__dag_tools.successors(node)
+
+        list_tw = self.__dag_tools.successors(node)
         # all origin elements are in queue
         for tw in list_tw:
             self.__queue_exec.put(tw)
@@ -61,10 +60,8 @@ class WorkflowManager(ToolWrapperObserver):
         """
         while not self.__queue_exec.empty():
             tw = self.__queue_exec.get()
-            # todo ask lionel vérifier que le patron de conception est ok
             tw.subscribe(self)
             tw.start()
-            tw.unsubscribe(self)
 
     def notify_success(self, toolwrapper):
         """

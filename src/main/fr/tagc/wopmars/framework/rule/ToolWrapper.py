@@ -1,6 +1,8 @@
 """
 This module contains the ToolWrapper class
 """
+import copy
+
 from fr.tagc.wopmars.utils.DictUtils import DictUtils
 from fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
 from fr.tagc.wopmars.framework.management.Observable import Observable
@@ -22,7 +24,7 @@ class ToolWrapper(Observable):
         :return: void
         """
         assert type(input_file_dict) == dict and type(output_file_dict) == dict and type(option_dict) == dict
-        super().__init__()
+        self.__set_observer = set([])
         self.__input_file_dict = input_file_dict
         self.__output_file_dict = output_file_dict
         self.__option_dict = option_dict
@@ -124,6 +126,16 @@ class ToolWrapper(Observable):
         self.run()
         self.fire_success()
 
+    def get_observers(self):
+        """
+
+        :return: set observers
+        """
+        return self.__set_observer
+
+    def subscribe(self, obs):
+        self.__set_observer.add(obs)
+
     def fire_failure(self):
         """
         Notify all ToolWrapperObservers that the execution has failed.
@@ -159,9 +171,12 @@ class ToolWrapper(Observable):
         :param other: ToolWrapper
         :return:
         """
-        return (DictUtils.elm_of_one_dict_in_one_other(self.__input_file_dict, other.get_input_file_dict()) and
+        return (
+                self.__class__ == other.__class__ and
+                DictUtils.elm_of_one_dict_in_one_other(self.__input_file_dict, other.get_input_file_dict()) and
                 DictUtils.elm_of_one_dict_in_one_other(self.__output_file_dict, other.get_output_file_dict()) and
-                DictUtils.elm_of_one_dict_in_one_other(self.__option_dict, other.get_option_dict()))
+                DictUtils.elm_of_one_dict_in_one_other(self.__option_dict, other.get_option_dict())
+        )
 
     def __hash__(self):
         """

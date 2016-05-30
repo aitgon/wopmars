@@ -50,7 +50,14 @@ class DAG(nx.DiGraph):
         nx.draw(self)
         write_dot(self, path)
 
-    def successors(self, node=None):
+    def successors(self, node):
+        """
+        Get the successors of a node.
+
+        The method is overwhelmed because if a node is None, then, the root ndoes are returned
+        :param node:
+        :return:
+        """
         if not node:
             return [n for n, d in self.in_degree().items() if d == 0]
         else:
