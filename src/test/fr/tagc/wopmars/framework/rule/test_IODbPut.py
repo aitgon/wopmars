@@ -1,9 +1,9 @@
 import unittest
 from unittest import TestCase
 
-from src.main.fr.tagc.wopmars.base.FooBase2 import FooBase2
-from src.main.fr.tagc.wopmars.framework.rule.IODbPut import IODbPut
-from src.main.fr.tagc.wopmars.base.FooBase import FooBase
+from fr.tagc.wopmars.base.FooBase2 import FooBase2
+from fr.tagc.wopmars.framework.rule.IODbPut import IODbPut
+from fr.tagc.wopmars.base.FooBase import FooBase
 
 
 class TestIODbPut(TestCase):

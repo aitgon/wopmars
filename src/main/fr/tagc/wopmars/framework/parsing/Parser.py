@@ -3,26 +3,33 @@ Module containing the Parser class
 """
 import sys
 
-from src.main.fr.tagc.wopmars.framework.parsing.Reader import Reader
-from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
+from fr.tagc.wopmars.framework.management.DAG import DAG
+from fr.tagc.wopmars.framework.parsing.Reader import Reader
+from fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
 
+from networkx.algorithms.dag import is_directed_acyclic_graph
 
 class Parser:
     """
     The Parser is used to organize the parsing of the Workflow Definition File.
 
     The aim of the Parser is to send the DAG representing the execution graph
-    """    
-    def __init__(self):
+    """
+    def __init__(self, path):
         """
         First line short documentation
         
         More documentation
         :return:
         """
-        # TODO fill the constructor of parser
+        try:
+            self.__reader = Reader(path)
+        except WopMarsParsingException as e:
+            print()
+            # todo ask lionel le programme devrait quitter ici ou plus haut? pareil pour la méthode parse()
+            sys.exit(str(e))
 
-    def parse(self, path):
+    def parse(self):
         """
         Organize the parsing of the Workflow Definition File
 
@@ -32,12 +39,26 @@ class Parser:
         :return: the DAG
         """
         try:
-            my_reader = Reader(path)
-            set_toolwrappers = my_reader.read()
+            set_toolwrappers = self.__reader.read()
+            dag_tools = DAG(set_toolwrappers)
+            if not is_directed_acyclic_graph(dag_tools):
+                raise WopMarsParsingException(6, "")
+            # todo loging
+            print("Writing the dot file...", end="")
+            # TODO faire une condition avec le optionmanager quand il sera crée
+            dag_tools.write_dot("/home/giffon/dag.dot")
+            # TODO loging
+            print(" -> done.")
         except WopMarsParsingException as e:
-            sys.exit(e)
-        # TODO fill the method parse
+            print()
+            sys.exit(str(e))
+        return dag_tools
 
 if __name__ == '__main__':
-    p = Parser()
-    p.parse("/home/giffon/Documents/WopMars/projet/src/resources/example_def_file.yml")
+    p = Parser("/home/giffon/Documents/wopmars/src/resources/example_def_file4.yml")
+    p.parse()
+
+    # opening the file
+    import os
+
+    os.system("dot -Tps /home/giffon/dag.dot -o /home/giffon/dag.ps; xdg-open /home/giffon/dag.ps")

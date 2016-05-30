@@ -1,7 +1,7 @@
 """
 Main module of the product, entry-point.
 """
-from src.main.fr.tagc.wopmars.framework.parsing.Parser import Parser
+from fr.tagc.wopmars.framework.parsing.Parser import Parser
 
 
 class WopMars:

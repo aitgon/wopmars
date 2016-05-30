@@ -1,0 +1,41 @@
+rule FooWrapper4:
+    input:
+        input1: "aFile0.txt"
+    output:
+        output1: "aFile4.txt"
+
+rule FooWrapper5:
+    input:
+        input1: "aFile4.txt"
+    output:
+        output1: "aFile5.txt"
+
+rule FooWrapper6:
+    input:
+        input1: "aFile4.txt"
+    output:
+        output1: "aFile6.txt"
+
+rule FooWrapper0:
+    input:
+        input1: "aFile.txt"
+    output:
+        output1: "aFile0.txt"
+
+rule FooWrapper00:
+    input:
+        input1: "bFile.txt"
+    output:
+        output1: "bFile00.txt"
+
+rule FooWrapperF:
+    input:
+        input1: "bFile00.txt"
+    output:
+        output1: "bFileF.txt"
+
+rule FooWrapperF:
+    input:
+        input1: "cFile00.txt"
+    output:
+        output1: "cFileF.txt"

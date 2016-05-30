@@ -2,7 +2,7 @@
 Example of module documentation which can be
 multiple-lined
 """
-from src.main.fr.tagc.wopmars.base.Base import Base
+from fr.tagc.wopmars.base.Base import Base
 from sqlalchemy import Column, Integer
 
 

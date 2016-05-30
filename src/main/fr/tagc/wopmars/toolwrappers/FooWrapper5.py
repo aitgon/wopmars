@@ -1,14 +1,14 @@
 """
-Module containing the FooWrapper2 class
+Module containing the FooWrapper1 class
 """
 from fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
+import time
 
-
-class FooWrapper3(ToolWrapper):
+class FooWrapper5(ToolWrapper):
     """
     This class has been done for example/testing purpose.
     Modifications may lead to failure in tests.
-    """
+    """    
     def get_input_file(self):
         return ["input1"]
 
@@ -22,4 +22,8 @@ class FooWrapper3(ToolWrapper):
         return ["outputdb1"]
 
     def get_params(self):
-        return {"param1": "float|required"}
+        return {"param1": "int"}
+
+    def run(self):
+        print(self.__class__.__name__ + " en cours d'exécution.")
+        time.sleep(1)

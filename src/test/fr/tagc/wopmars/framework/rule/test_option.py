@@ -1,8 +1,8 @@
 import unittest
 from unittest import TestCase
 
-from src.main.fr.tagc.wopmars.framework.rule.Option import Option
-from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
+from fr.tagc.wopmars.framework.rule.Option import Option
+from fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
 
 
 class TestOption(TestCase):

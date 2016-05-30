@@ -1,28 +1,32 @@
 """
 This module contains the ToolWrapper class
 """
-from src.main.fr.tagc.wopmars.utils.DictUtils import DictUtils
-from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
+import copy
+
+from fr.tagc.wopmars.utils.DictUtils import DictUtils
+from fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
+from fr.tagc.wopmars.framework.management.Observable import Observable
 
 
-class ToolWrapper:
+class ToolWrapper(Observable):
     """
     The class ToolWrapper is the superclass of the Wrapper which
     will be designed by the wrapper developers.
     """    
-    def __init__(self, input_dict={}, output_dict={}, option_dict={}):
+    def __init__(self, input_file_dict={}, output_file_dict={}, option_dict={}):
         """
         The constructor
         
         More documentation
-        :param input_dict: dict(String: IOPUT)
-        :param output_dict: dict(String: IOPUT)
+        :param input_file_dict: dict(String: IOPUT)
+        :param output_file_dict: dict(String: IOPUT)
         :param option_dict: dict(String: Option)
         :return: void
         """
-        assert type(input_dict) == dict and type(output_dict) == dict and type(option_dict) == dict
-        self.__input_file_dict = input_dict
-        self.__output_file_dict = output_dict
+        assert type(input_file_dict) == dict and type(output_file_dict) == dict and type(option_dict) == dict
+        self.__set_observer = set([])
+        self.__input_file_dict = input_file_dict
+        self.__output_file_dict = output_file_dict
         self.__option_dict = option_dict
 
     def is_content_respected(self):
@@ -49,7 +53,8 @@ class ToolWrapper:
         :return:void
         """
         if set(self.__input_file_dict.keys()) != set(self.get_input_file()):
-            raise WopMarsParsingException(3, "The given input variable's names are not correct, they should be: " +
+            raise WopMarsParsingException(3, "The given input variable's names for " + self.__class__.__name__ +
+                                          " are not correct, they should be: " +
                                           "\n\t'{0}'".format("'\n\t'".join(self.get_input_file())) +
                                           "\n" + "They are:" +
                                           "\n\t'{0}'".format("'\n\t'".join(self.__input_file_dict.keys()))
@@ -63,7 +68,8 @@ class ToolWrapper:
         :return:void
         """
         if set(self.__output_file_dict.keys()) != set(self.get_output_file()):
-            raise WopMarsParsingException(3, "The given output variable's names are not correct, they should be: " +
+            raise WopMarsParsingException(3, "The given output variable names for " + self.__class__.__name__ +
+                                          " are not correct, they should be: " +
                                           "\n\t'{0}'".format("'\n\t'".join(self.get_output_file())) +
                                           "\n" + "They are:" +
                                           "\n\t'{0}'".format("'\n\t'".join(self.__output_file_dict.keys()))
@@ -81,7 +87,8 @@ class ToolWrapper:
 
         # check if the given options are authorized
         if not set(self.__option_dict.keys()).issubset(dict_wrapper_opt_carac):
-            raise WopMarsParsingException(4, "The given option variable's names are not correct, they should be in: " +
+            raise WopMarsParsingException(4, "The given option variable for " + self.__class__.__name__ +
+                                          " are not correct, they should be in: " +
                                           "\n\t'{0}'".format("'\n\t'".join(dict_wrapper_opt_carac)) +
                                           "\n" + "They are:" +
                                           "\n\t'{0}'".format("'\n\t'".join(self.__option_dict.keys()))
@@ -96,15 +103,80 @@ class ToolWrapper:
             if "required" in dict_wrapper_opt_carac[opt].lower() and opt not in self.__option_dict.keys():
                 raise WopMarsParsingException(4, "The option " + opt + " has not been provided but it is required.")
 
+    def follows(self, other):
+        """
+        Check whether the "other" follows "self" in the execution DAG.
+
+        Check whether "other" has one output value in "self" possible input values.
+        :param other: ToolWrapper that is possibly a predecessor of "self"
+        :return: bool True if "self" follows "other"
+        """
+        return DictUtils.at_least_one_value_of_one_in_an_other(self.__input_file_dict, other.get_output_file_dict())
+
+    def start(self):
+        """
+        Run the tool and fire events.
+        :return:
+        """
+        # todo loging
+        print(self.__class__.__name__ + " started.")
+        if not self.are_inputs_ready():
+            self.fire_failure()
+            return
+        self.run()
+        self.fire_success()
+
+    def get_observers(self):
+        """
+
+        :return: set observers
+        """
+        return self.__set_observer
+
+    def subscribe(self, obs):
+        self.__set_observer.add(obs)
+
+    def fire_failure(self):
+        """
+        Notify all ToolWrapperObservers that the execution has failed.
+        :return:
+        """
+        for obs in self.get_observers():
+            obs.notify_failure(self)
+
+    def fire_success(self):
+        """
+        Notify all ToolWrapperObservers that the run has suceeded
+
+        :return:
+        """
+        for obs in self.get_observers():
+            obs.notify_success(self)
+
+    def are_inputs_ready(self):
+        """
+        Check if inputs are ready
+
+        :return: bool - True if inputs are ready.
+        """
+        for input_name in self.__input_file_dict:
+            if not self.__input_file_dict[input_name].is_ready():
+                return False
+        return True
+
+    # todo verifier que les classes sont identiques dans la méthode eq
     def __eq__(self, other):
         """
         Two ToolWrapper objects are equals if their attributes are equals
         :param other: ToolWrapper
         :return:
         """
-        return (DictUtils.elm_of_one_dict_in_one_other(self.__input_file_dict, other.get_input_file_dict()) and
+        return (
+                self.__class__ == other.__class__ and
+                DictUtils.elm_of_one_dict_in_one_other(self.__input_file_dict, other.get_input_file_dict()) and
                 DictUtils.elm_of_one_dict_in_one_other(self.__output_file_dict, other.get_output_file_dict()) and
-                DictUtils.elm_of_one_dict_in_one_other(self.__option_dict, other.get_option_dict()))
+                DictUtils.elm_of_one_dict_in_one_other(self.__option_dict, other.get_option_dict())
+        )
 
     def __hash__(self):
         """
@@ -112,6 +184,25 @@ class ToolWrapper:
         :return:
         """
         return id(self)
+
+    def __repr__(self):
+        """
+        Return the string representing the toolwrapper in the DAG.
+
+        :return: String representing the toolwrapper
+        """
+        s = "\""
+        s += self.__class__.__name__
+        s += "\\n"
+        for key in self.__input_file_dict:
+            s += "\\n\t\t" + key + ": " + str(self.__input_file_dict[key])
+        s += "\\n"
+        for key in self.__output_file_dict:
+            s += "\\n\t\t" + key + ": " + str(self.__output_file_dict[key])
+        s += "\""
+        return s
+
+    # ###### Method relatives to the framework #######
 
     def get_input_file_dict(self):
         return self.__input_file_dict
@@ -129,10 +220,8 @@ class ToolWrapper:
         pass
 
     # TODO vérifier que les méthodes importantes ont bien été réecrites par le développeur et que les autres ne
-    # le sont pas Ceci pourra être fait avec les décorateurs
+    # le sont pas Ceci pourra être fait avec les décorateurs (peut-être)
     def get_input_file(self):
-        # TODO ask lionel pour cette histoire de convention au sujet des
-        # méthodes qui devraient être statiques
         return []
 
     def get_input_db(self):
@@ -146,3 +235,6 @@ class ToolWrapper:
 
     def get_params(self):
         return {}
+
+    def run(self):
+        pass

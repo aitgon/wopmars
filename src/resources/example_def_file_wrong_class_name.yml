@@ -1,0 +1,5 @@
+rule BadClassNameWrapper:
+    input:
+        input1: "aFile.txt"
+    params:
+        param1: 5
