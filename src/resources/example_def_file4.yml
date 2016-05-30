@@ -33,3 +33,9 @@ rule FooWrapperF:
         input1: "bFile00.txt"
     output:
         output1: "bFileF.txt"
+
+rule FooWrapperF:
+    input:
+        input1: "cFile00.txt"
+    output:
+        output1: "cFileF.txt"

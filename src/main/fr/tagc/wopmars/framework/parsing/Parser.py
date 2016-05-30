@@ -26,6 +26,7 @@ class Parser:
             self.__reader = Reader(path)
         except WopMarsParsingException as e:
             print()
+            # todo ask lionel le programme devrait quitter ici ou plus haut? pareil pour la méthode parse()
             sys.exit(str(e))
 
     def parse(self):
@@ -54,7 +55,7 @@ class Parser:
         return dag_tools
 
 if __name__ == '__main__':
-    p = Parser("/home/giffon/Documents/wopmars/src/resources/example_def_file_not_a_dag.yml")
+    p = Parser("/home/giffon/Documents/wopmars/src/resources/example_def_file4.yml")
     p.parse()
 
     # opening the file

@@ -31,6 +31,7 @@ class DAG(nx.DiGraph):
         if set_tools:
             # pour chaque outil 1
             for tool1 in set_tools:
+                self.add_node(tool1)
                 # pour chaque autre outil 2
                 for tool2 in set_tools.difference(set([tool1])):
                     # est-ce-que l'outil 1 est après l'outil 2?

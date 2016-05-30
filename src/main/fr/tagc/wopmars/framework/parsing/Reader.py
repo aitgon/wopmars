@@ -103,8 +103,8 @@ class Reader:
 
         :return: void
         """
-        regex_step1 = re.compile("(^rule [^\s]+$)")
-        regex_step2 = re.compile("(^params$)|(^input$)|(^output$)")
+        regex_step1 = re.compile(r"(^rule [^\s]+$)")
+        regex_step2 = re.compile(r"(^params$)|(^input$)|(^output$)")
 
         # The found words are tested against the regex to see if they match or not
         for s_key_step1 in self.__dict_workflow_definition:

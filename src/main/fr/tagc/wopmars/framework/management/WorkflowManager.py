@@ -28,6 +28,7 @@ class WorkflowManager(ToolWrapperObserver):
         self.__queue_exec = Queue()
         self.__dag_tools = None
 
+    #todo ask lionel en testant cette méthode, je teste tout, non?
     def run(self):
         """
         Get the dag then execute it
