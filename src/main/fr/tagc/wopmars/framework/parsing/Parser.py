@@ -3,9 +3,9 @@ Module containing the Parser class
 """
 import sys
 
-from src.main.fr.tagc.wopmars.framework.management.DAG import DAG
-from src.main.fr.tagc.wopmars.framework.parsing.Reader import Reader
-from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
+from fr.tagc.wopmars.framework.management.DAG import DAG
+from fr.tagc.wopmars.framework.parsing.Reader import Reader
+from fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
 
 
 class Parser:
@@ -13,7 +13,7 @@ class Parser:
     The Parser is used to organize the parsing of the Workflow Definition File.
 
     The aim of the Parser is to send the DAG representing the execution graph
-    """    
+    """
     def __init__(self, path):
         """
         First line short documentation
@@ -21,7 +21,11 @@ class Parser:
         More documentation
         :return:
         """
-        self.__reader = Reader(path)
+        try:
+            self.__reader = Reader(path)
+        except WopMarsParsingException as e:
+            print()
+            sys.exit(str(e))
 
     def parse(self):
         """
@@ -35,11 +39,22 @@ class Parser:
         try:
             set_toolwrappers = self.__reader.read()
             dag_tools = DAG(set_toolwrappers)
+            # todo loging
+            print("Writing the dot file...", end="")
+            # TODO faire une condition avec le optionmanager quand il sera crée
+            dag_tools.write_dot("/home/giffon/dag.dot")
+            # TODO loging
+            print(" -> done.")
         except WopMarsParsingException as e:
+            print()
             sys.exit(str(e))
         return dag_tools
-        # TODO fill the method parse
 
 if __name__ == '__main__':
-    p = Parser("/home/giffon/Documents/wopmars/src/resources/example_def_file2.yml")
+    p = Parser("/home/giffon/Documents/wopmars/src/resources/example_def_file4.yml")
     p.parse()
+
+    # opening the file
+    import os
+
+    os.system("dot -Tps /home/giffon/dag.dot -o /home/giffon/dag.ps; xdg-open /home/giffon/dag.ps")

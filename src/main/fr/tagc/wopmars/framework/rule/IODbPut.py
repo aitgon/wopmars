@@ -1,8 +1,8 @@
 """
 Module containing the IODbPut class.
 """
-from src.main.fr.tagc.wopmars.base.Base import Base
-from src.main.fr.tagc.wopmars.framework.rule.IOPut import IOPut
+from fr.tagc.wopmars.base.Base import Base
+from fr.tagc.wopmars.framework.rule.IOPut import IOPut
 
 
 class IODbPut(IOPut):
@@ -45,3 +45,7 @@ class IODbPut(IOPut):
 
     def __hash__(self):
         return id(self)
+
+    def __repr__(self):
+        return "table:\"" + self.__table + "\""
+

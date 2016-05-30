@@ -1,8 +1,8 @@
 """
 Module contianing the Option class
 """
-from src.main.fr.tagc.wopmars.utils.OptionUtils import OptionUtils
-from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
+from fr.tagc.wopmars.utils.OptionUtils import OptionUtils
+from fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
 
 
 class Option:

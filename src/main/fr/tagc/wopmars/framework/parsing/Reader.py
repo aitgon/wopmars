@@ -5,9 +5,9 @@ import yaml
 import importlib
 import re
 
-from src.main.fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
-from src.main.fr.tagc.wopmars.framework.rule.Option import Option
-from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
+from fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
+from fr.tagc.wopmars.framework.rule.Option import Option
+from fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
 
 
 class Reader:
@@ -26,12 +26,20 @@ class Reader:
 
         # Tests about grammar and syntax are performed here (file's existence is also tested here)
         try:
+            #todo loging
+            print("Reading the definition file...", end="")
             def_file = open(self.__s_definition_file_path, 'r')
+
             try:
                 # The workflow definition file is loaded as-it in memory by the pyyaml library
                 self.__dict_workflow_definition = yaml.load(def_file)
-                # Check if the grammar is respected, throws an exception if not
+                # todo loging
+                print(" -> done.")
+                #todo loging
+                print("Checking whether the file is well formed...", end="")
                 self.is_grammar_respected()
+                # todo loging
+                print(" -> done.")
             # YAMLError is thrown if the YAML specifications are not respected by the definition file
             except yaml.YAMLError as exc:
                 raise WopMarsParsingException(1, str(exc))
@@ -70,12 +78,21 @@ class Reader:
             # TODO ask lionel factory pour faire ça? - Vérifier avec Lionel et Aïtor comment on va gérer les classes wrappers
             # au nvieau de l'arborescence des fichiers.
 
-            # Importing the module in the mod variable
-            mod = importlib.import_module("src.main.fr.tagc.wopmars.toolwrappers." + str_wrapper_name)
+
+            # todo try except pour vérifier que la classe wrapper existe
+            try:
+                # Importing the module in the mod variable
+                mod = importlib.import_module("fr.tagc.wopmars.toolwrappers." + str_wrapper_name)
+            except ImportError:
+                raise WopMarsParsingException(5, str_wrapper_name + " module is not in the pythonpath.")
             # Instantiate the refered class and add it to the set of objects
-            toolwrapper_wrapper = eval("mod." + str_wrapper_name)(input_dict=dict_dict_elm["dict_input"],
-                                                                  output_dict=dict_dict_elm["dict_output"],
-                                                                  option_dict=dict_dict_elm["dict_params"])
+
+            try:
+                toolwrapper_wrapper = eval("mod." + str_wrapper_name)(input_file_dict=dict_dict_elm["dict_input"],
+                                                                      output_file_dict=dict_dict_elm["dict_output"],
+                                                                      option_dict=dict_dict_elm["dict_params"])
+            except AttributeError:
+                raise WopMarsParsingException(5, "The class " + str_wrapper_name + " doesn't exist.")
             toolwrapper_wrapper.is_content_respected()
             set_wrapper.add(toolwrapper_wrapper)
         return set_wrapper
@@ -103,5 +120,5 @@ class Reader:
                                                   "'params', 'input' or 'output'")
 
 if __name__ == "__main__":
-    my_reader = Reader("/home/giffon/Documents/wopmars/src/resources/example_def_file_wrong_content.yml")
+    my_reader = Reader("/home/giffon/Documents/wopmars/src/resources/example_def_file.yml")
     set_toolwrappers = my_reader.read()

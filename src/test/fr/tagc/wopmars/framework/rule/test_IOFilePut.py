@@ -2,8 +2,8 @@ import os
 import unittest
 from unittest import TestCase
 
-from src.main.fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
-from src.main.fr.tagc.wopmars.utils.PathFinder import PathFinder
+from fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
+from fr.tagc.wopmars.utils.PathFinder import PathFinder
 
 
 class TestIOFilePut(TestCase):

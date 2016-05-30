@@ -1,7 +1,7 @@
 """
 Module containing the FooWrapper1 class
 """
-from src.main.fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
+from fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
 
 
 class FooWrapper1(ToolWrapper):

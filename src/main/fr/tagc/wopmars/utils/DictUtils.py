@@ -1,14 +1,12 @@
 """
 This module contains the DictUtils class.
 """
-from src.main.fr.tagc.wopmars.utils.SetUtils import SetUtils
 
 
 class DictUtils:
     """
     Class containing methods that are usefull for dealing with dicts
     """
-    # TODO: tesunitaire sur cette classe
     @staticmethod
     def elm_of_one_dict_in_one_other(one, other):
         """
@@ -18,7 +16,7 @@ class DictUtils:
         :param other: dict
         :return: boolean: True if all elements of one are in the other
         """
-        if set(one.keys()) != set(other.keys()):
+        if len(set(one.keys()).difference(set(other.keys()))):
             return False
         for elm in one:
             if one[elm] != other[elm]:

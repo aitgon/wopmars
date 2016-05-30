@@ -1,8 +1,8 @@
 """
 Module containing the FooWrapper1 class
 """
-from src.main.fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
-
+from fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
+import time
 
 class FooWrapper5(ToolWrapper):
     """
@@ -24,3 +24,6 @@ class FooWrapper5(ToolWrapper):
     def get_params(self):
         return {"param1": "int"}
 
+    def run(self):
+        print(self.__class__.__name__ + " en cours d'exécution.")
+        time.sleep(1)

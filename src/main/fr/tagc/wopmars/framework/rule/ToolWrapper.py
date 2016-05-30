@@ -1,28 +1,30 @@
 """
 This module contains the ToolWrapper class
 """
-from src.main.fr.tagc.wopmars.utils.DictUtils import DictUtils
-from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
+from fr.tagc.wopmars.utils.DictUtils import DictUtils
+from fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
+from fr.tagc.wopmars.framework.management.Observable import Observable
 
 
-class ToolWrapper:
+class ToolWrapper(Observable):
     """
     The class ToolWrapper is the superclass of the Wrapper which
     will be designed by the wrapper developers.
     """    
-    def __init__(self, input_dict={}, output_dict={}, option_dict={}):
+    def __init__(self, input_file_dict={}, output_file_dict={}, option_dict={}):
         """
         The constructor
         
         More documentation
-        :param input_dict: dict(String: IOPUT)
-        :param output_dict: dict(String: IOPUT)
+        :param input_file_dict: dict(String: IOPUT)
+        :param output_file_dict: dict(String: IOPUT)
         :param option_dict: dict(String: Option)
         :return: void
         """
-        assert type(input_dict) == dict and type(output_dict) == dict and type(option_dict) == dict
-        self.__input_file_dict = input_dict
-        self.__output_file_dict = output_dict
+        assert type(input_file_dict) == dict and type(output_file_dict) == dict and type(option_dict) == dict
+        super().__init__()
+        self.__input_file_dict = input_file_dict
+        self.__output_file_dict = output_file_dict
         self.__option_dict = option_dict
 
     def is_content_respected(self):
@@ -100,8 +102,57 @@ class ToolWrapper:
                 raise WopMarsParsingException(4, "The option " + opt + " has not been provided but it is required.")
 
     def follows(self, other):
+        """
+        Check whether the "other" follows "self" in the execution DAG.
+
+        Check whether "other" has one output value in "self" possible input values.
+        :param other: ToolWrapper that is possibly a predecessor of "self"
+        :return: bool True if "self" follows "other"
+        """
         return DictUtils.at_least_one_value_of_one_in_an_other(self.__input_file_dict, other.get_output_file_dict())
 
+    def start(self):
+        """
+        Run the tool and fire events.
+        :return:
+        """
+        # todo loging
+        print(self.__class__.__name__ + " started.")
+        if not self.are_inputs_ready():
+            self.fire_failure()
+            return
+        self.run()
+        self.fire_success()
+
+    def fire_failure(self):
+        """
+        Notify all ToolWrapperObservers that the execution has failed.
+        :return:
+        """
+        for obs in self.get_observers():
+            obs.notify_failure(self)
+
+    def fire_success(self):
+        """
+        Notify all ToolWrapperObservers that the run has suceeded
+
+        :return:
+        """
+        for obs in self.get_observers():
+            obs.notify_success(self)
+
+    def are_inputs_ready(self):
+        """
+        Check if inputs are ready
+
+        :return: bool - True if inputs are ready.
+        """
+        for input_name in self.__input_file_dict:
+            if not self.__input_file_dict[input_name].is_ready():
+                return False
+        return True
+
+    # todo verifier que les classes sont identiques dans la méthode eq
     def __eq__(self, other):
         """
         Two ToolWrapper objects are equals if their attributes are equals
@@ -119,8 +170,24 @@ class ToolWrapper:
         """
         return id(self)
 
+    def __repr__(self):
+        """
+        Return the string representing the toolwrapper in the DAG.
 
-    ####### Method relatives to framework #######
+        :return: String representing the toolwrapper
+        """
+        s = "\""
+        s += self.__class__.__name__
+        s += "\\n"
+        for key in self.__input_file_dict:
+            s += "\\n\t\t" + key + ": " + str(self.__input_file_dict[key])
+        s += "\\n"
+        for key in self.__output_file_dict:
+            s += "\\n\t\t" + key + ": " + str(self.__output_file_dict[key])
+        s += "\""
+        return s
+
+    # ###### Method relatives to the framework #######
 
     def get_input_file_dict(self):
         return self.__input_file_dict
@@ -138,10 +205,8 @@ class ToolWrapper:
         pass
 
     # TODO vérifier que les méthodes importantes ont bien été réecrites par le développeur et que les autres ne
-    # le sont pas Ceci pourra être fait avec les décorateurs
+    # le sont pas Ceci pourra être fait avec les décorateurs (peut-être)
     def get_input_file(self):
-        # TODO ask lionel pour cette histoire de convention au sujet des
-        # méthodes qui devraient être statiques
         return []
 
     def get_input_db(self):
@@ -155,3 +220,6 @@ class ToolWrapper:
 
     def get_params(self):
         return {}
+
+    def run(self):
+        pass

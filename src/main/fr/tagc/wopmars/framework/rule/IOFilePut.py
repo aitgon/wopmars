@@ -3,7 +3,7 @@ Module containing the IOFilePut class
 """
 import os
 
-from src.main.fr.tagc.wopmars.framework.rule.IOPut import IOPut
+from fr.tagc.wopmars.framework.rule.IOPut import IOPut
 
 
 class IOFilePut(IOPut):
@@ -42,3 +42,6 @@ class IOFilePut(IOPut):
 
     def __hash__(self):
         return id(self)
+
+    def __repr__(self):
+        return "file:'" + self.__path + "'"
