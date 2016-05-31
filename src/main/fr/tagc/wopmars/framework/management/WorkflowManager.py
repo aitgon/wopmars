@@ -3,6 +3,7 @@ Module containing the WorkflowManager class
 """
 from queue import Queue
 
+import copy
 
 from fr.tagc.wopmars.framework.parsing.Parser import Parser
 from fr.tagc.wopmars.framework.management.ToolWrapperObserver import ToolWrapperObserver
@@ -59,10 +60,14 @@ class WorkflowManager(ToolWrapperObserver):
 
         :return: void
         """
-        while not self.__queue_exec.empty():
+        int_queue_size_ini = self.__queue_exec.qsize()
+        index = 0
+        # todo tests unitaires poussés
+        while index < int_queue_size_ini and not self.__queue_exec.empty():
             tw = self.__queue_exec.get()
             tw.subscribe(self)
             tw.start()
+            index += 1
 
     def notify_success(self, toolwrapper):
         """
