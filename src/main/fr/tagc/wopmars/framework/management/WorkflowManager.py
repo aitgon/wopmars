@@ -7,10 +7,7 @@ from queue import Queue
 from fr.tagc.wopmars.framework.parsing.Parser import Parser
 from fr.tagc.wopmars.framework.management.ToolWrapperObserver import ToolWrapperObserver
 
-
-# todo test sur cette classe
 from fr.tagc.wopmars.utils.OptionManager import OptionManager
-
 
 class WorkflowManager(ToolWrapperObserver):
     """
@@ -26,7 +23,6 @@ class WorkflowManager(ToolWrapperObserver):
         :param something:
         :return:
         """
-        # Todo optionmanager
         self.__parser = Parser(OptionManager()["DEFINITION_FILE"])
         self.__queue_exec = Queue()
         self.__dag_tools = None
