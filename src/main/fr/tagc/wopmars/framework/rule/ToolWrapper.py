@@ -4,6 +4,7 @@ This module contains the ToolWrapper class
 import copy
 
 from fr.tagc.wopmars.utils.DictUtils import DictUtils
+from fr.tagc.wopmars.utils.Logger import Logger
 from fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
 from fr.tagc.wopmars.framework.management.Observable import Observable
 
@@ -118,8 +119,7 @@ class ToolWrapper(Observable):
         Run the tool and fire events.
         :return:
         """
-        # todo loging
-        print(self.__class__.__name__ + " started.")
+        Logger().info(self.__class__.__name__ + " started.")
         if not self.are_inputs_ready():
             self.fire_failure()
             return

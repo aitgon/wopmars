@@ -10,6 +10,8 @@ from networkx.drawing.nx_pydot import write_dot
 
 from fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
 from fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
+from fr.tagc.wopmars.utils.Logger import Logger
+from fr.tagc.wopmars.utils.SetUtils import SetUtils
 
 
 class DAG(nx.DiGraph):
@@ -26,8 +28,7 @@ class DAG(nx.DiGraph):
         :return: None
         """
         super().__init__()
-        #todo loging
-        print("Building the execution DAG...", end="")
+        Logger().info("Building the execution DAG...")
         if set_tools:
             # pour chaque outil 1
             for tool1 in set_tools:
@@ -38,7 +39,7 @@ class DAG(nx.DiGraph):
                     if tool1.follows(tool2):
                         # dépendance entre outil 2 et outil 1
                         self.add_edge(tool2, tool1)
-        print(" -> done.")
+        Logger().info("DAG built.")
 
     def write_dot(self, path):
         """
@@ -64,6 +65,27 @@ class DAG(nx.DiGraph):
         else:
             return super().successors(node)
 
+    def __eq__(self, other):
+        """
+        Test if self equals other.
+
+        Check the number of nodes and the set of edges of each graphs.
+
+        :param other: A DAG
+        :return: True if self == other
+        """
+        assert(other.__class__.__name__ == "DAG")
+        int_nodes_self = len(self.nodes())
+        int_nodes_other = len(other.nodes())
+
+        set_edges_self = set(self.edges())
+        set_edges_other = set(other.edges())
+
+        return (
+            int_nodes_self == int_nodes_other and
+            SetUtils.all_elm_of_one_set_in_one_other(set_edges_self, set_edges_other) and
+            SetUtils.all_elm_of_one_set_in_one_other(set_edges_other, set_edges_self)
+        )
 
 if __name__ == "__main__":
     toolwrapper_first = ToolWrapper({"input1": IOFilePut("input1", "file1.txt")},

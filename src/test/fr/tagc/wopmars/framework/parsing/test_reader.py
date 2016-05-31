@@ -17,41 +17,51 @@ class TestReader(TestCase):
     def setUp(self):
         s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
 
-        s_path_to_example_definition_file = s_root_path + "resources/example_def_file.yml"
-        s_path_to_not_existing_example_definition_file = s_root_path + "definition_file_that_doesnt_exists.yml"
-        s_path_to_wrong_example_definition_file1 = s_root_path + "resources/example_def_file_wrong_yaml.yml"
-        s_path_to_wrong_example_definition_file2 = s_root_path + "resources/example_def_file_wrong_grammar.yml"
-        s_path_to_wrong_example_definition_file3 = s_root_path + "resources/example_def_file_wrong_grammar2.yml"
+        # The good -------------------------------:
 
-        s_path_to_wrong_example_definition_file4 = s_root_path + "resources/example_def_file_wrong_content.yml"
-        s_path_to_wrong_example_definition_file5 = s_root_path + "resources/example_def_file_wrong_content2.yml"
-        s_path_to_wrong_example_definition_file6 = s_root_path + "resources/example_def_file_wrong_content3.yml"
-        s_path_to_wrong_example_definition_file7 = s_root_path + "resources/example_def_file_wrong_content4.yml"
-        s_path_to_wrong_example_definition_file8 = s_root_path + "resources/example_def_file_wrong_content5.yml"
-
-        s_path_to_wrong_example_definition_file9 = s_root_path + "resources/example_def_file_wrong_class_name.yml"
-        s_path_to_wrong_example_definition_file10 = s_root_path + "resources/example_def_file_wrong_rule.yml"
-
-        self.assertRaises(WopMarsParsingException, Reader, s_path_to_wrong_example_definition_file1)
-        self.assertRaises(WopMarsParsingException, Reader, s_path_to_not_existing_example_definition_file)
-        self.assertRaises(WopMarsParsingException, Reader, s_path_to_wrong_example_definition_file2)
-        self.assertRaises(WopMarsParsingException, Reader, s_path_to_wrong_example_definition_file3)
+        self.__f_example_definition_file = open(s_root_path + "resources/example_def_file.yml")
         try:
-            self.__my_reader = Reader(s_path_to_example_definition_file)
+            self.__reader_right = Reader(self.__f_example_definition_file)
         except:
             raise AssertionError('Should not raise exception')
 
-        self.__reader_wrong_content = Reader(s_path_to_wrong_example_definition_file4)
-        self.__reader_wrong_content2 = Reader(s_path_to_wrong_example_definition_file5)
-        self.__reader_wrong_content3 = Reader(s_path_to_wrong_example_definition_file6)
-        self.__reader_wrong_content4 = Reader(s_path_to_wrong_example_definition_file7)
-        self.__reader_wrong_content5 = Reader(s_path_to_wrong_example_definition_file8)
-        self.__reader_wrong_content6 = Reader(s_path_to_wrong_example_definition_file9)
-        self.__reader_wrong_content7 = Reader(s_path_to_wrong_example_definition_file10)
+        # The ugly (malformed file) --------------------:
+
+        self.__list_f_to_exception_init = [
+            open(s_root_path + s_path) for s_path in [
+                "resources/example_def_file_wrong_yaml.yml",
+                "resources/example_def_file_wrong_grammar.yml",
+                "resources/example_def_file_wrong_grammar2.yml",
+                ]
+        ]
+
+        [self.assertRaises(WopMarsParsingException, Reader, file) for file in self.__list_f_to_exception_init]
+
+        # The bad (invalid file) ----------------------:
+
+        self.__list_f_to_exception_read = [
+            open(s_root_path + s_path) for s_path in [
+                "resources/example_def_file_wrong_content.yml",
+                "resources/example_def_file_wrong_content2.yml",
+                "resources/example_def_file_wrong_content3.yml",
+                "resources/example_def_file_wrong_content4.yml",
+                "resources/example_def_file_wrong_content5.yml",
+                "resources/example_def_file_wrong_class_name.yml",
+                "resources/example_def_file_wrong_rule.yml",
+            ]
+        ]
+
+        self.__list_reader_exception_read = [Reader(file) for file in self.__list_f_to_exception_read]
+
+    def tearDown(self):
+        self.__f_example_definition_file.close()
+        [f.close() for f in self.__list_f_to_exception_init]
+        [f.close() for f in self.__list_f_to_exception_read]
 
     def test_read(self):
 
-        result = self.__my_reader.read()
+        result = self.__reader_right.read()
+
         expected = set()
 
         expected.add(FooWrapper3(input_file_dict={'input1': IOFilePut('input1', 'the_second_file.txt')},
@@ -66,16 +76,15 @@ class TestReader(TestCase):
                                  output_file_dict={'output1': IOFilePut('output1', 'the second file.txt')},
                                  option_dict={'param1': Option('param1', 'an_option')}))
 
+        # The good ------------------------------------:
+
         self.assertTrue((SetUtils.all_elm_of_one_set_in_one_other(result, expected) and
                          SetUtils.all_elm_of_one_set_in_one_other(expected, result)))
 
-        self.assertRaises(WopMarsParsingException, self.__reader_wrong_content.read)
-        self.assertRaises(WopMarsParsingException, self.__reader_wrong_content2.read)
-        self.assertRaises(WopMarsParsingException, self.__reader_wrong_content3.read)
-        self.assertRaises(WopMarsParsingException, self.__reader_wrong_content4.read)
-        self.assertRaises(WopMarsParsingException, self.__reader_wrong_content5.read)
-        self.assertRaises(WopMarsParsingException, self.__reader_wrong_content6.read)
-        self.assertRaises(WopMarsParsingException, self.__reader_wrong_content7.read)
+        # The bad -------------------------------------:
+
+        [self.assertRaises(WopMarsParsingException, reader.read) for reader in self.__list_reader_exception_read]
+
 
 if __name__ == "__main__":
     unittest.main()

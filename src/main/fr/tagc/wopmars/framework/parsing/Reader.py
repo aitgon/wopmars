@@ -7,6 +7,7 @@ import re
 
 from fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
 from fr.tagc.wopmars.framework.rule.Option import Option
+from fr.tagc.wopmars.utils.Logger import Logger
 from fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
 
 
@@ -16,38 +17,38 @@ class Reader:
     build the ToolWrapper objects and perform tests on the quality
     of the definition file.
     """
-    def __init__(self, s_definition_file_path):
+    def __init__(self, f_definition_file):
         """
         Constructor of the reader which also test the feasability of the read
 
-        :param s_definition_file_path: String: the Path to the definition file
+        :param f_definition_file_path: file: the definition file open in read mode
         """
-        self.__s_definition_file_path = s_definition_file_path
+        # todo ask lionel faire passer le fichier plutot que la string, maintenant qu'ile st ouvert...
+        # self.__s_definition_file_path = s_definition_file_path
 
         # Tests about grammar and syntax are performed here (file's existence is also tested here)
-        try:
-            #todo loging
-            print("Reading the definition file...", end="")
-            def_file = open(self.__s_definition_file_path, 'r')
+        # todo enlever tous ces morceaux de code commentés
+        # try:
 
-            try:
-                # The workflow definition file is loaded as-it in memory by the pyyaml library
-                self.__dict_workflow_definition = yaml.load(def_file)
-                # todo loging
-                print(" -> done.")
-                #todo loging
-                print("Checking whether the file is well formed...", end="")
-                self.is_grammar_respected()
-                # todo loging
-                print(" -> done.")
-            # YAMLError is thrown if the YAML specifications are not respected by the definition file
-            except yaml.YAMLError as exc:
-                raise WopMarsParsingException(1, str(exc))
-            finally:
-                def_file.close()
-        except FileNotFoundError:
-            raise WopMarsParsingException(0, "The specified file at " +
-                                          self.__s_definition_file_path + " doesn't exist.")
+        # def_file = open(self.__s_definition_file_path, 'r')
+
+        try:
+            # The workflow definition file is loaded as-it in memory by the pyyaml library
+            Logger().info("Reading the definition file: " + str(f_definition_file.name) + "...")
+            # self.__dict_workflow_definition = yaml.load(def_file)
+            self.__dict_workflow_definition = yaml.load(f_definition_file)
+            Logger().info("Read complete.")
+            Logger().info("Checking whether the file is well formed...")
+            self.is_grammar_respected()
+            Logger().info("File well formed.")
+        # YAMLError is thrown if the YAML specifications are not respected by the definition file
+        except yaml.YAMLError as exc:
+            raise WopMarsParsingException(1, str(exc))
+            # finally:
+            #     def_file.close()
+        # except FileNotFoundError:
+        #     raise WopMarsParsingException(0, "The specified file at " +
+        #                                   self.__s_definition_file_path + " doesn't exist.")
 
     def read(self):
         """
@@ -84,6 +85,7 @@ class Reader:
                 # Importing the module in the mod variable
                 mod = importlib.import_module("fr.tagc.wopmars.toolwrappers." + str_wrapper_name)
             except ImportError:
+                print()
                 raise WopMarsParsingException(5, str_wrapper_name + " module is not in the pythonpath.")
             # Instantiate the refered class and add it to the set of objects
 
@@ -92,6 +94,7 @@ class Reader:
                                                                       output_file_dict=dict_dict_elm["dict_output"],
                                                                       option_dict=dict_dict_elm["dict_params"])
             except AttributeError:
+                print()
                 raise WopMarsParsingException(5, "The class " + str_wrapper_name + " doesn't exist.")
             toolwrapper_wrapper.is_content_respected()
             set_wrapper.add(toolwrapper_wrapper)

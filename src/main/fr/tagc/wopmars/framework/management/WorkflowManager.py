@@ -6,16 +6,17 @@ from queue import Queue
 
 from fr.tagc.wopmars.framework.parsing.Parser import Parser
 from fr.tagc.wopmars.framework.management.ToolWrapperObserver import ToolWrapperObserver
+from fr.tagc.wopmars.utils.Logger import Logger
 
+from fr.tagc.wopmars.utils.OptionManager import OptionManager
 
-# todo test sur cette classe
 class WorkflowManager(ToolWrapperObserver):
     """
     The WorkflowManager class manage all the software execution.
 
     He will ask the parser to build the DAG then execute it.
     """    
-    def __init__(self, path):
+    def __init__(self):
         """
         First line short documentation
         
@@ -23,8 +24,7 @@ class WorkflowManager(ToolWrapperObserver):
         :param something:
         :return:
         """
-        # Todo optionmanager
-        self.__parser = Parser(path)
+        self.__parser = Parser(OptionManager()["DEFINITION_FILE"])
         self.__queue_exec = Queue()
         self.__dag_tools = None
 
@@ -72,8 +72,7 @@ class WorkflowManager(ToolWrapperObserver):
         :param toolwrapper: ToolWrapper that just succeed
         :return:
         """
-        # todo loging
-        print(str(toolwrapper.__class__.__name__) + " a fini.")
+        Logger().info(str(toolwrapper.__class__.__name__) + " has succeed.")
         # Continue the dag execution from the toolwrapper that just finished.
         self.execute_from(toolwrapper)
 
@@ -84,10 +83,10 @@ class WorkflowManager(ToolWrapperObserver):
         :param toolwrapper: ToolWrapper that just failed
         :return:
         """
-        # todo loging
-        print(str(toolwrapper.__class__.__name__) + " a échoué.")
+        # todo gérer le fait de ne pas boucler à l'infini
+        Logger().info(str(toolwrapper.__class__.__name__) + " has failed.")
         self.__queue_exec.put(toolwrapper)
 
 if __name__ == "__main__":
-    my_workflow = WorkflowManager("/home/giffon/Documents/wopmars/src/resources/example_def_file3.yml")
+    my_workflow = WorkflowManager()
     my_workflow.run()

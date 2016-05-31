@@ -4,11 +4,13 @@ from unittest import TestCase
 from fr.tagc.wopmars.framework.management.DAG import DAG
 from fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
 from fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
+from fr.tagc.wopmars.utils.OptionManager import OptionManager
 
 
 class TestDAG(TestCase):
 
     def setUp(self):
+        OptionManager({'-v': 3, "--dot": None})
         #        first
         #       /    \
         #   second   third
