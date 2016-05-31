@@ -29,7 +29,7 @@ class Reader:
         # todo enlever tous ces morceaux de code commentés
         # try:
         #todo loging
-        print("Reading the definition file...", end="")
+        print("Reading the definition file: " + str(f_definition_file.name) + "...", end="")
         # def_file = open(self.__s_definition_file_path, 'r')
 
         try:
@@ -38,13 +38,14 @@ class Reader:
             self.__dict_workflow_definition = yaml.load(f_definition_file)
             # todo loging
             print(" -> done.")
-            #todo loging
+            # todo loging
             print("Checking whether the file is well formed...", end="")
             self.is_grammar_respected()
             # todo loging
-            print(" -> done.")
+            print(" -> done.\n")
         # YAMLError is thrown if the YAML specifications are not respected by the definition file
         except yaml.YAMLError as exc:
+            print()
             raise WopMarsParsingException(1, str(exc))
             # finally:
             #     def_file.close()
@@ -87,6 +88,7 @@ class Reader:
                 # Importing the module in the mod variable
                 mod = importlib.import_module("fr.tagc.wopmars.toolwrappers." + str_wrapper_name)
             except ImportError:
+                print()
                 raise WopMarsParsingException(5, str_wrapper_name + " module is not in the pythonpath.")
             # Instantiate the refered class and add it to the set of objects
 
@@ -95,6 +97,7 @@ class Reader:
                                                                       output_file_dict=dict_dict_elm["dict_output"],
                                                                       option_dict=dict_dict_elm["dict_params"])
             except AttributeError:
+                print()
                 raise WopMarsParsingException(5, "The class " + str_wrapper_name + " doesn't exist.")
             toolwrapper_wrapper.is_content_respected()
             set_wrapper.add(toolwrapper_wrapper)

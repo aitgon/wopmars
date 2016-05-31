@@ -93,5 +93,5 @@ class WorkflowManager(ToolWrapperObserver):
         self.__queue_exec.put(toolwrapper)
 
 if __name__ == "__main__":
-    my_workflow = WorkflowManager("/home/giffon/Documents/wopmars/src/resources/example_def_file3.yml")
+    my_workflow = WorkflowManager()
     my_workflow.run()

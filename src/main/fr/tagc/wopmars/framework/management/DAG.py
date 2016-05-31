@@ -10,6 +10,7 @@ from networkx.drawing.nx_pydot import write_dot
 
 from fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
 from fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
+from fr.tagc.wopmars.utils.SetUtils import SetUtils
 
 
 class DAG(nx.DiGraph):
@@ -64,6 +65,27 @@ class DAG(nx.DiGraph):
         else:
             return super().successors(node)
 
+    def __eq__(self, other):
+        """
+        Test if self equals other.
+
+        Check the number of nodes and the set of edges of each graphs.
+
+        :param other: A DAG
+        :return: True if self == other
+        """
+        assert(other.__class__.__name__ == "DAG")
+        int_nodes_self = len(self.nodes())
+        int_nodes_other = len(other.nodes())
+
+        set_edges_self = set(self.edges())
+        set_edges_other = set(other.edges())
+
+        return (
+            int_nodes_self == int_nodes_other and
+            SetUtils.all_elm_of_one_set_in_one_other(set_edges_self, set_edges_other) and
+            SetUtils.all_elm_of_one_set_in_one_other(set_edges_other, set_edges_self)
+        )
 
 if __name__ == "__main__":
     toolwrapper_first = ToolWrapper({"input1": IOFilePut("input1", "file1.txt")},

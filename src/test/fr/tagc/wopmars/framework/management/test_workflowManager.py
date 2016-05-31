@@ -8,6 +8,8 @@ from fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsPars
 
 
 class TestWorkflowManager(TestCase):
+
+    # todo ask lionel comment gérer les différents cas de figure d'un singleton dans un test unitaire?
     def setUp(self):
         s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
         s_path_to_example_definition_file = s_root_path + "resources/example_def_file3.yml"
