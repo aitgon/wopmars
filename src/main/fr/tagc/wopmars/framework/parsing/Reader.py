@@ -7,6 +7,7 @@ import re
 
 from fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
 from fr.tagc.wopmars.framework.rule.Option import Option
+from fr.tagc.wopmars.utils.Logger import Logger
 from fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
 
 
@@ -28,24 +29,20 @@ class Reader:
         # Tests about grammar and syntax are performed here (file's existence is also tested here)
         # todo enlever tous ces morceaux de code commentés
         # try:
-        #todo loging
-        print("Reading the definition file: " + str(f_definition_file.name) + "...", end="")
+
         # def_file = open(self.__s_definition_file_path, 'r')
 
         try:
             # The workflow definition file is loaded as-it in memory by the pyyaml library
+            Logger().info("Reading the definition file: " + str(f_definition_file.name) + "...")
             # self.__dict_workflow_definition = yaml.load(def_file)
             self.__dict_workflow_definition = yaml.load(f_definition_file)
-            # todo loging
-            print(" -> done.")
-            # todo loging
-            print("Checking whether the file is well formed...", end="")
+            Logger().info("Read complete.")
+            Logger().info("Checking whether the file is well formed...")
             self.is_grammar_respected()
-            # todo loging
-            print(" -> done.\n")
+            Logger().info("File well formed.")
         # YAMLError is thrown if the YAML specifications are not respected by the definition file
         except yaml.YAMLError as exc:
-            print()
             raise WopMarsParsingException(1, str(exc))
             # finally:
             #     def_file.close()

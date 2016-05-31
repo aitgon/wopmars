@@ -6,6 +6,7 @@ from queue import Queue
 
 from fr.tagc.wopmars.framework.parsing.Parser import Parser
 from fr.tagc.wopmars.framework.management.ToolWrapperObserver import ToolWrapperObserver
+from fr.tagc.wopmars.utils.Logger import Logger
 
 from fr.tagc.wopmars.utils.OptionManager import OptionManager
 
@@ -71,8 +72,7 @@ class WorkflowManager(ToolWrapperObserver):
         :param toolwrapper: ToolWrapper that just succeed
         :return:
         """
-        # todo loging
-        print(str(toolwrapper.__class__.__name__) + " a fini.")
+        Logger().info(str(toolwrapper.__class__.__name__) + " has succeed.")
         # Continue the dag execution from the toolwrapper that just finished.
         self.execute_from(toolwrapper)
 
@@ -84,8 +84,7 @@ class WorkflowManager(ToolWrapperObserver):
         :return:
         """
         # todo gérer le fait de ne pas boucler à l'infini
-        # todo loging
-        print(str(toolwrapper.__class__.__name__) + " a échoué.")
+        Logger().info(str(toolwrapper.__class__.__name__) + " has failed.")
         self.__queue_exec.put(toolwrapper)
 
 if __name__ == "__main__":

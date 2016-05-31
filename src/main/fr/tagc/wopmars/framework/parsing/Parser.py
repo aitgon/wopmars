@@ -5,6 +5,7 @@ import sys
 
 from fr.tagc.wopmars.framework.management.DAG import DAG
 from fr.tagc.wopmars.framework.parsing.Reader import Reader
+from fr.tagc.wopmars.utils.Logger import Logger
 from fr.tagc.wopmars.utils.OptionManager import OptionManager
 from fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
 
@@ -48,21 +49,10 @@ class Parser:
             if s_dot_option:
                 if s_dot_option[-4:] != '.dot':
                     s_dot_option += ".dot"
-                # todo loging
-                print("Writing the dot file...", end="")
+                Logger().info("Writing the dot file...")
                 dag_tools.write_dot(s_dot_option)
-                # TODO loging
-                print(" -> done.")
+                Logger().info("Dot file wrote.")
         except WopMarsParsingException as e:
-            print()
-            sys.exit(str(e))
+            Logger().error(str(e))
+            sys.exit()
         return dag_tools
-
-if __name__ == '__main__':
-    p = Parser("/home/giffon/Documents/wopmars/src/resources/example_def_file4.yml")
-    p.parse()
-
-    # opening the file
-    import os
-
-    os.system("dot -Tps /home/giffon/dag.dot -o /home/giffon/dag.ps; xdg-open /home/giffon/dag.ps")
