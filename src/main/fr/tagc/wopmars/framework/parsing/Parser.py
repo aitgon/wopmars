@@ -15,7 +15,7 @@ class Parser:
 
     The aim of the Parser is to send the DAG representing the execution graph
     """
-    def __init__(self, path):
+    def __init__(self, file):
         """
         First line short documentation
         
@@ -23,7 +23,7 @@ class Parser:
         :return:
         """
         try:
-            self.__reader = Reader(path)
+            self.__reader = Reader(file)
         except WopMarsParsingException as e:
             print()
             # todo ask lionel le programme devrait quitter ici ou plus haut? pareil pour la méthode parse()

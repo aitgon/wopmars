@@ -9,13 +9,16 @@ from fr.tagc.wopmars.framework.management.ToolWrapperObserver import ToolWrapper
 
 
 # todo test sur cette classe
+from fr.tagc.wopmars.utils.OptionManager import OptionManager
+
+
 class WorkflowManager(ToolWrapperObserver):
     """
     The WorkflowManager class manage all the software execution.
 
     He will ask the parser to build the DAG then execute it.
     """    
-    def __init__(self, path):
+    def __init__(self):
         """
         First line short documentation
         
@@ -24,7 +27,7 @@ class WorkflowManager(ToolWrapperObserver):
         :return:
         """
         # Todo optionmanager
-        self.__parser = Parser(path)
+        self.__parser = Parser(OptionManager()["DEFINITION_FILE"])
         self.__queue_exec = Queue()
         self.__dag_tools = None
 
@@ -84,6 +87,7 @@ class WorkflowManager(ToolWrapperObserver):
         :param toolwrapper: ToolWrapper that just failed
         :return:
         """
+        # todo gérer le fait de ne pas boucler à l'infini
         # todo loging
         print(str(toolwrapper.__class__.__name__) + " a échoué.")
         self.__queue_exec.put(toolwrapper)

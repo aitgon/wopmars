@@ -4,6 +4,7 @@ Module containing the OptionManager class.
 from fr.tagc.wopmars.utils.Singleton import singleton
 
 
+
 @singleton
 class OptionManager(dict):
     """

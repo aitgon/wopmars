@@ -16,38 +16,41 @@ class Reader:
     build the ToolWrapper objects and perform tests on the quality
     of the definition file.
     """
-    def __init__(self, s_definition_file_path):
+    def __init__(self, f_definition_file):
         """
         Constructor of the reader which also test the feasability of the read
 
-        :param s_definition_file_path: String: the Path to the definition file
+        :param f_definition_file_path: file: the definition file open in read mode
         """
-        self.__s_definition_file_path = s_definition_file_path
+        # todo ask lionel faire passer le fichier plutot que la string, maintenant qu'ile st ouvert...
+        # self.__s_definition_file_path = s_definition_file_path
 
         # Tests about grammar and syntax are performed here (file's existence is also tested here)
-        try:
-            #todo loging
-            print("Reading the definition file...", end="")
-            def_file = open(self.__s_definition_file_path, 'r')
+        # todo enlever tous ces morceaux de code commentés
+        # try:
+        #todo loging
+        print("Reading the definition file...", end="")
+        # def_file = open(self.__s_definition_file_path, 'r')
 
-            try:
-                # The workflow definition file is loaded as-it in memory by the pyyaml library
-                self.__dict_workflow_definition = yaml.load(def_file)
-                # todo loging
-                print(" -> done.")
-                #todo loging
-                print("Checking whether the file is well formed...", end="")
-                self.is_grammar_respected()
-                # todo loging
-                print(" -> done.")
-            # YAMLError is thrown if the YAML specifications are not respected by the definition file
-            except yaml.YAMLError as exc:
-                raise WopMarsParsingException(1, str(exc))
-            finally:
-                def_file.close()
-        except FileNotFoundError:
-            raise WopMarsParsingException(0, "The specified file at " +
-                                          self.__s_definition_file_path + " doesn't exist.")
+        try:
+            # The workflow definition file is loaded as-it in memory by the pyyaml library
+            # self.__dict_workflow_definition = yaml.load(def_file)
+            self.__dict_workflow_definition = yaml.load(f_definition_file)
+            # todo loging
+            print(" -> done.")
+            #todo loging
+            print("Checking whether the file is well formed...", end="")
+            self.is_grammar_respected()
+            # todo loging
+            print(" -> done.")
+        # YAMLError is thrown if the YAML specifications are not respected by the definition file
+        except yaml.YAMLError as exc:
+            raise WopMarsParsingException(1, str(exc))
+            # finally:
+            #     def_file.close()
+        # except FileNotFoundError:
+        #     raise WopMarsParsingException(0, "The specified file at " +
+        #                                   self.__s_definition_file_path + " doesn't exist.")
 
     def read(self):
         """
