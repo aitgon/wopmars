@@ -24,11 +24,10 @@ class WopMars:
     def __init__(self):
         self.__s_workflow_definition_filename = "path/to/the/file"
 
-    def run(self):
+    def run(self, argv):
         """
         Entry-point of the program
         """
-        # , error='Invalid year'
         try:
             schema_option = Schema({
                 # todo ask lionel est-ce-que les message sont assez clairs?
@@ -36,15 +35,14 @@ class WopMars:
                 '-v': Or(0, And(Use(int), lambda n: 0 < n < 4))
             }, ignore_extra_keys=True)
 
-            # si la ligne de commande est mal faite, docopt interrompt le tout
-            dict_options = schema_option.validate(docopt(__doc__))
+            # if the command line is malformed, docopt interrupt the software.
+            dict_options = schema_option.validate(docopt(__doc__, argv=argv))
             OptionManager(dict_options)
         except SchemaError as schema_msg:
-            # todo ask lionel est-ce-que les message sont assez clairs?
             sys.exit(schema_msg)
 
         wm = WorkflowManager()
         wm.run()
 
 if __name__ == "__main__":
-    WopMars().run()
+    WopMars().run(sys.argv[1:])
