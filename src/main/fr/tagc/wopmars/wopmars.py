@@ -35,7 +35,7 @@ class WopMars:
         try:
             # todo trouver une solution pour rendre les messages plus explicites
             schema_option = Schema({
-                # todo ask lionel est-ce-que les message sont assez clairs?
+                # todo ask lionel est-ce-que les message sont assez clairs? je suppose que non...
                 'DEFINITION_FILE': Use(open, error='The definition file is not readable. The path may not exists.'),
                 '-v': Or(0, And(Use(int), lambda n: 1 < n < 4)),
                 '--dot': Use(PathFinder.check_valid_path, error='The destination path for dot file is not valid')
@@ -44,7 +44,7 @@ class WopMars:
             dict_options = schema_option.validate(docopt(__doc__, argv=argv))
             OptionManager(dict_options)
         except SchemaError as schema_msg:
-            # todo afficher de la couleur dans la console?
+            # todo ask lionel afficher de la couleur dans la console?
             Logger().error(schema_msg)
             sys.exit()
 

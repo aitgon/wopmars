@@ -8,12 +8,13 @@ from fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
 from fr.tagc.wopmars.toolwrappers.FooWrapper4 import FooWrapper4
 from fr.tagc.wopmars.toolwrappers.FooWrapper5 import FooWrapper5
 from fr.tagc.wopmars.toolwrappers.FooWrapper6 import FooWrapper6
+from fr.tagc.wopmars.utils.OptionManager import OptionManager
 from fr.tagc.wopmars.utils.PathFinder import PathFinder
-from fr.tagc.wopmars.utils.SetUtils import SetUtils
 
 
 class TestParser(TestCase):
     def setUp(self):
+        OptionManager({'-v': 3, "--dot": None})
         s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
 
         # The good -------------------------------:

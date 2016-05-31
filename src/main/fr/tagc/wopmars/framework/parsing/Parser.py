@@ -11,6 +11,7 @@ from fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsPars
 
 from networkx.algorithms.dag import is_directed_acyclic_graph
 
+
 class Parser:
     """
     The Parser is used to organize the parsing of the Workflow Definition File.
