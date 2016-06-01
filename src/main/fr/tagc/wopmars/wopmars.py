@@ -13,7 +13,7 @@ Options:
   -d FILE --dot=FILE  Write dot file (with .dot extension).
 """
 import sys
-import os
+import re
 
 from docopt import docopt
 from schema import Schema, And, Or, Use, SchemaError
@@ -32,20 +32,24 @@ class WopMars:
         """
         Entry-point of the program
         """
+        # if the command line is malformed, docopt interrupt the software.
+        dict_options = OptionManager(docopt(__doc__, argv=argv))
         try:
-            # todo trouver une solution pour rendre les messages plus explicites
             schema_option = Schema({
-                # todo ask lionel est-ce-que les message sont assez clairs? je suppose que non...
-                'DEFINITION_FILE': Use(open, error='The definition file is not readable. The path may not exists.'),
-                '-v': Or(0, And(Use(int), lambda n: 1 < n < 4)),
-                '--dot': Use(PathFinder.check_valid_path, error='The destination path for dot file is not valid')
+                'DEFINITION_FILE': Use(open),
+                '-v': Or(0, And(Use(int), lambda n: 1 < n < 5)),
+                '--dot': Use(PathFinder.check_valid_path)
             })
-            # if the command line is malformed, docopt interrupt the software.
-            dict_options = schema_option.validate(docopt(__doc__, argv=argv))
-            OptionManager(dict_options)
+
+            OptionManager().validate(schema_option)
         except SchemaError as schema_msg:
-            # todo ask lionel afficher de la couleur dans la console?
-            Logger().error(schema_msg)
+            match_open_def = re.match(r"^open\('(.[^\)]+)'\)", str(schema_msg))
+            match_dot_def = re.match(r"^check_valid_path\(('.[^\)]+')\)", str(schema_msg))
+
+            if match_open_def:
+                Logger().error("The file " + match_open_def.group(1) + " cannot be opened. It may not exist.")
+            elif match_dot_def:
+                Logger().error("The path " + match_dot_def.group(1) + " is not valid.")
             sys.exit()
 
         Logger().debug(dict_options)

@@ -14,31 +14,26 @@ from fr.tagc.wopmars.utils.PathFinder import PathFinder
 
 class TestParser(TestCase):
     def setUp(self):
-        OptionManager({'-v': 3, "--dot": None})
+        OptionManager({'-v': 1, "--dot": None})
         s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
 
         # The good -------------------------------:
 
-        self.__f_example_definition_file = open(s_root_path + "resources/example_def_file2.yml")
+        self.__s_example_definition_file = s_root_path + "resources/example_def_file2.yml"
         try:
-            self.__parser_right = Parser(self.__f_example_definition_file)
+            self.__parser_right = Parser(self.__s_example_definition_file)
         except:
             raise AssertionError('Should not raise exception')
 
         # The ugly (malformed file) ----------------------------:
 
-        self.__f_wrong_example_definition_file_malformed = open(s_root_path + "resources/example_def_file_wrong_yaml.yml")
+        self.__s_wrong_example_definition_file_malformed = s_root_path + "resources/example_def_file_wrong_yaml.yml"
         with self.assertRaises(SystemExit):
-            Parser(self.__f_wrong_example_definition_file_malformed)
+            Parser(self.__s_wrong_example_definition_file_malformed)
 
         # The bad (invalid file) -----------------------------------:
-        self.__f_wrong_example_definition_file_invalid = open(s_root_path + "resources/example_def_file_wrong_content.yml")
-        self.__parser_wrong = Parser(self.__f_wrong_example_definition_file_invalid)
-
-    def tearDown(self):
-        self.__f_example_definition_file.close()
-        self.__f_wrong_example_definition_file_malformed.close()
-        self.__f_wrong_example_definition_file_invalid.close()
+        self.__s_wrong_example_definition_file_invalid = s_root_path + "resources/example_def_file_wrong_content.yml"
+        self.__parser_wrong = Parser(self.__s_wrong_example_definition_file_invalid)
 
     def test_parse(self):
 
@@ -65,8 +60,6 @@ class TestParser(TestCase):
         # The bad --------------------------:
         with self.assertRaises(SystemExit):
             self.__parser_wrong.parse()
-
-
 
 if __name__ == '__main__':
     unittest.main()

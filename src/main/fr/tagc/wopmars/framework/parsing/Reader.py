@@ -17,7 +17,7 @@ class Reader:
     build the ToolWrapper objects and perform tests on the quality
     of the definition file.
     """
-    def __init__(self, f_definition_file):
+    def __init__(self, s_definition_file):
         """
         Constructor of the reader which also test the feasability of the read
 
@@ -28,27 +28,25 @@ class Reader:
 
         # Tests about grammar and syntax are performed here (file's existence is also tested here)
         # todo enlever tous ces morceaux de code commentés
-        # try:
-
-        # def_file = open(self.__s_definition_file_path, 'r')
-
         try:
-            # The workflow definition file is loaded as-it in memory by the pyyaml library
-            Logger().info("Reading the definition file: " + str(f_definition_file.name) + "...")
-            # self.__dict_workflow_definition = yaml.load(def_file)
-            self.__dict_workflow_definition = yaml.load(f_definition_file)
-            Logger().info("Read complete.")
-            Logger().info("Checking whether the file is well formed...")
-            self.is_grammar_respected()
-            Logger().info("File well formed.")
-        # YAMLError is thrown if the YAML specifications are not respected by the definition file
-        except yaml.YAMLError as exc:
-            raise WopMarsParsingException(1, str(exc))
-            # finally:
-            #     def_file.close()
-        # except FileNotFoundError:
-        #     raise WopMarsParsingException(0, "The specified file at " +
-        #                                   self.__s_definition_file_path + " doesn't exist.")
+            def_file = open(s_definition_file, 'r')
+            try:
+                # The workflow definition file is loaded as-it in memory by the pyyaml library
+                Logger().info("Reading the definition file: " + str(s_definition_file) + "...")
+                # self.__dict_workflow_definition = yaml.load(def_file)
+                self.__dict_workflow_definition = yaml.load(def_file)
+                Logger().info("Read complete.")
+                Logger().info("Checking whether the file is well formed...")
+                self.is_grammar_respected()
+                Logger().info("File well formed.")
+            # YAMLError is thrown if the YAML specifications are not respected by the definition file
+            except yaml.YAMLError as exc:
+                raise WopMarsParsingException(1, str(exc))
+            finally:
+                def_file.close()
+        except FileNotFoundError:
+            raise WopMarsParsingException(0, "The specified file at " +
+                                          s_definition_file + " doesn't exist.")
 
     def read(self):
         """

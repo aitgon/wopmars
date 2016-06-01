@@ -7,6 +7,7 @@ from fr.tagc.wopmars.framework.rule.Option import Option
 from fr.tagc.wopmars.toolwrappers.FooWrapper1 import FooWrapper1
 from fr.tagc.wopmars.toolwrappers.FooWrapper2 import FooWrapper2
 from fr.tagc.wopmars.toolwrappers.FooWrapper3 import FooWrapper3
+from fr.tagc.wopmars.utils.OptionManager import OptionManager
 from fr.tagc.wopmars.utils.PathFinder import PathFinder
 from fr.tagc.wopmars.utils.SetUtils import SetUtils
 from fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
@@ -15,20 +16,22 @@ from fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsPars
 class TestReader(TestCase):
 
     def setUp(self):
+        OptionManager({'-v': 1, "--dot": None})
+
         s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
 
         # The good -------------------------------:
 
-        self.__f_example_definition_file = open(s_root_path + "resources/example_def_file.yml")
+        self.__s_example_definition_file = s_root_path + "resources/example_def_file.yml"
         try:
-            self.__reader_right = Reader(self.__f_example_definition_file)
+            self.__reader_right = Reader(self.__s_example_definition_file)
         except:
             raise AssertionError('Should not raise exception')
 
         # The ugly (malformed file) --------------------:
 
         self.__list_f_to_exception_init = [
-            open(s_root_path + s_path) for s_path in [
+            s_root_path + s_path for s_path in [
                 "resources/example_def_file_wrong_yaml.yml",
                 "resources/example_def_file_wrong_grammar.yml",
                 "resources/example_def_file_wrong_grammar2.yml",
@@ -39,8 +42,8 @@ class TestReader(TestCase):
 
         # The bad (invalid file) ----------------------:
 
-        self.__list_f_to_exception_read = [
-            open(s_root_path + s_path) for s_path in [
+        self.__list_s_to_exception_read = [
+            s_root_path + s_path for s_path in [
                 "resources/example_def_file_wrong_content.yml",
                 "resources/example_def_file_wrong_content2.yml",
                 "resources/example_def_file_wrong_content3.yml",
@@ -51,12 +54,7 @@ class TestReader(TestCase):
             ]
         ]
 
-        self.__list_reader_exception_read = [Reader(file) for file in self.__list_f_to_exception_read]
-
-    def tearDown(self):
-        self.__f_example_definition_file.close()
-        [f.close() for f in self.__list_f_to_exception_init]
-        [f.close() for f in self.__list_f_to_exception_read]
+        self.__list_reader_exception_read = [Reader(file) for file in self.__list_s_to_exception_read]
 
     def test_read(self):
 

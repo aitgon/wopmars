@@ -20,19 +20,26 @@ class Logger:
 
         :return:
         """
-        formatter = logging.Formatter('%(asctime)s :: %(levelname)s :: %(message)s')
 
         # Rotating file -------------------:
+
+        formatter_file = logging.Formatter('%(asctime)s :: %(levelname)s :: %(message)s')
 
         # file in append mode of size 1 Mo and 1 backup
         file_handler = RotatingFileHandler('/home/giffon/wopmars.log', 'a', 1000000, 1)
         file_handler.setLevel(logging.DEBUG)
-        file_handler.setFormatter(formatter)
+        file_handler.setFormatter(formatter_file)
 
         # stream ------------------:
 
+        # todo ask lionel afficher de la couleur dans la console?
+        formatter_stream = logging.Formatter('%(levelname)s :: %(message)s')
+
         stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(formatter_stream)
+
         verbosity = OptionManager()["-v"]
+
         if verbosity == 1:
             stream_handler.setLevel(logging.ERROR)
         elif verbosity == 2:
@@ -41,7 +48,6 @@ class Logger:
             stream_handler.setLevel(logging.INFO)
         elif verbosity == 4:
             stream_handler.setLevel(logging.DEBUG)
-        stream_handler.setFormatter(formatter)
 
         # configure logger -------------------:
 
