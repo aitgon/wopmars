@@ -52,10 +52,11 @@ class WopMars:
                 Logger().error("The path " + match_dot_def.group(1) + " is not valid.")
             sys.exit()
 
-        Logger().debug(dict_options)
+        Logger().debug("Command line Args:" + str(dict_options))
 
         wm = WorkflowManager()
         wm.run()
 
 if __name__ == "__main__":
     WopMars().run(sys.argv[1:])
+    # WopMars().run(["", "/home/giffon/Documents/wopmars/src/resources/example_def_file3.yml"])

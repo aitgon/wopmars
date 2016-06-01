@@ -27,7 +27,7 @@ class OptionManager(dict):
         s = ""
 
         s += "{\n\t"
-        s += ",\n\t".join(["'" + str(k) + "':" + str(self[k]) for k in sorted(self.keys(), reverse=True)])
+        s += ",\n\t".join(["'" + str(k) + "': " + str(self[k]) for k in sorted(self.keys(), reverse=True)])
         s += "\n}"
 
         return s

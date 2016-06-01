@@ -29,6 +29,8 @@ class ToolWrapper(Observable):
         self.__input_file_dict = input_file_dict
         self.__output_file_dict = output_file_dict
         self.__option_dict = option_dict
+        # todo enum type
+        self.__state = "NEW"
 
     def is_content_respected(self):
         """
@@ -120,9 +122,9 @@ class ToolWrapper(Observable):
         :return:
         """
         Logger().info(self.__class__.__name__ + " started.")
-        if not self.are_inputs_ready():
-            self.fire_failure()
-            return
+        # if not self.are_inputs_ready():
+        #     self.fire_failure()
+        #     return
         self.run()
         self.fire_success()
 
@@ -161,8 +163,15 @@ class ToolWrapper(Observable):
         """
         for input_name in self.__input_file_dict:
             if not self.__input_file_dict[input_name].is_ready():
+                # todo enum
+                self.__state = "NOT READY"
                 return False
+        # todo enum
+        self.__state = "READY"
         return True
+
+    def get_state(self):
+        return self.__state
 
     # todo verifier que les classes sont identiques dans la méthode eq
     def __eq__(self, other):
