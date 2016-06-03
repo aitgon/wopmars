@@ -5,7 +5,7 @@ import copy
 
 from fr.tagc.wopmars.utils.DictUtils import DictUtils
 from fr.tagc.wopmars.utils.Logger import Logger
-from fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
+from fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 from fr.tagc.wopmars.framework.management.Observable import Observable
 
 
@@ -13,12 +13,22 @@ class ToolWrapper(Observable):
     """
     The class ToolWrapper is the superclass of the Wrapper which
     will be designed by the wrapper developers.
-    """    
+    """
+
+    NEW = 1
+    READY = 2
+    NOT_READY = 3
+
     def __init__(self, input_file_dict={}, output_file_dict={}, option_dict={}):
         """
-        The constructor
-        
-        More documentation
+        The constructor of the toolwrapper, must not be overwritten.
+
+        set_observer is the set of all observers of the toolwrappers.
+        input_file_dict is the dict containing the IOFilePut objects of the file input of the toolwrapper.
+        option_dict is the dict containing the Option objects of the params of the toolwrapper.
+        output_file_dict is the dict containing the IOFilePut objects of the file output of the toolwrapper.
+        state is the constant refering to the state of the toolwrapper, it is initialized at "NEW"
+
         :param input_file_dict: dict(String: IOPUT)
         :param output_file_dict: dict(String: IOPUT)
         :param option_dict: dict(String: Option)
@@ -29,8 +39,7 @@ class ToolWrapper(Observable):
         self.__input_file_dict = input_file_dict
         self.__output_file_dict = output_file_dict
         self.__option_dict = option_dict
-        # todo enum type
-        self.__state = "NEW"
+        self.__state = ToolWrapper.NEW
 
     def is_content_respected(self):
         """
@@ -56,12 +65,13 @@ class ToolWrapper(Observable):
         :return:void
         """
         if set(self.__input_file_dict.keys()) != set(self.get_input_file()):
-            raise WopMarsParsingException(3, "The given input variable's names for " + self.__class__.__name__ +
-                                          " are not correct, they should be: " +
-                                          "\n\t'{0}'".format("'\n\t'".join(self.get_input_file())) +
-                                          "\n" + "They are:" +
-                                          "\n\t'{0}'".format("'\n\t'".join(self.__input_file_dict.keys()))
-                                          )
+            raise WopMarsException("The content of the definition file is not valid.",
+                                   "The given input variable's names for " + self.__class__.__name__ +
+                                   " are not correct, they should be: " +
+                                   "\n\t'{0}'".format("'\n\t'".join(self.get_input_file())) +
+                                   "\n" + "They are:" +
+                                   "\n\t'{0}'".format("'\n\t'".join(self.__input_file_dict.keys()))
+                                   )
 
     def is_output_respected(self):
         """
@@ -71,12 +81,13 @@ class ToolWrapper(Observable):
         :return:void
         """
         if set(self.__output_file_dict.keys()) != set(self.get_output_file()):
-            raise WopMarsParsingException(3, "The given output variable names for " + self.__class__.__name__ +
-                                          " are not correct, they should be: " +
-                                          "\n\t'{0}'".format("'\n\t'".join(self.get_output_file())) +
-                                          "\n" + "They are:" +
-                                          "\n\t'{0}'".format("'\n\t'".join(self.__output_file_dict.keys()))
-                                          )
+            raise WopMarsException("The content of the definition file is not valid.",
+                                   "The given output variable names for " + self.__class__.__name__ +
+                                   " are not correct, they should be: " +
+                                   "\n\t'{0}'".format("'\n\t'".join(self.get_output_file())) +
+                                   "\n" + "They are:" +
+                                   "\n\t'{0}'".format("'\n\t'".join(self.__output_file_dict.keys()))
+                                   )
 
     def is_options_respected(self):
         """
@@ -90,12 +101,13 @@ class ToolWrapper(Observable):
 
         # check if the given options are authorized
         if not set(self.__option_dict.keys()).issubset(dict_wrapper_opt_carac):
-            raise WopMarsParsingException(4, "The given option variable for " + self.__class__.__name__ +
-                                          " are not correct, they should be in: " +
-                                          "\n\t'{0}'".format("'\n\t'".join(dict_wrapper_opt_carac)) +
-                                          "\n" + "They are:" +
-                                          "\n\t'{0}'".format("'\n\t'".join(self.__option_dict.keys()))
-                                          )
+            raise WopMarsException("The content of the definition file is not valid.",
+                                   "The given option variable for " + self.__class__.__name__ +
+                                   " are not correct, they should be in: " +
+                                   "\n\t'{0}'".format("'\n\t'".join(dict_wrapper_opt_carac)) +
+                                   "\n" + "They are:" +
+                                   "\n\t'{0}'".format("'\n\t'".join(self.__option_dict.keys()))
+                                   )
 
         # check if the types correspond
         for opt in self.__option_dict:
@@ -104,7 +116,8 @@ class ToolWrapper(Observable):
         # check if the required options are given
         for opt in dict_wrapper_opt_carac:
             if "required" in dict_wrapper_opt_carac[opt].lower() and opt not in self.__option_dict.keys():
-                raise WopMarsParsingException(4, "The option " + opt + " has not been provided but it is required.")
+                raise WopMarsException("The content of the definition file is not valid.",
+                                       "The option " + opt + " has not been provided but it is required.")
 
     def follows(self, other):
         """
@@ -122,25 +135,30 @@ class ToolWrapper(Observable):
         :return:
         """
         Logger().info(self.__class__.__name__ + " started.")
-        # if not self.are_inputs_ready():
-        #     self.fire_failure()
-        #     return
         self.run()
         self.fire_success()
 
     def get_observers(self):
         """
+        Return the set of observers.
 
         :return: set observers
         """
         return self.__set_observer
 
     def subscribe(self, obs):
+        """
+        An observer subscribes to the obervable.
+
+        :param obs:
+        :return:
+        """
         self.__set_observer.add(obs)
 
     def fire_failure(self):
         """
         Notify all ToolWrapperObservers that the execution has failed.
+
         :return:
         """
         for obs in self.get_observers():
@@ -163,17 +181,14 @@ class ToolWrapper(Observable):
         """
         for input_name in self.__input_file_dict:
             if not self.__input_file_dict[input_name].is_ready():
-                # todo enum
-                self.__state = "NOT READY"
+                self.__state = ToolWrapper.NOT_READY
                 return False
-        # todo enum
-        self.__state = "READY"
+        self.__state = ToolWrapper.READY
         return True
 
     def get_state(self):
         return self.__state
 
-    # todo verifier que les classes sont identiques dans la méthode eq
     def __eq__(self, other):
         """
         Two ToolWrapper objects are equals if their attributes are equals
@@ -181,7 +196,7 @@ class ToolWrapper(Observable):
         :return:
         """
         return (
-                self.__class__ == other.__class__ and
+                isinstance(other, self.__class__) and
                 DictUtils.elm_of_one_dict_in_one_other(self.__input_file_dict, other.get_input_file_dict()) and
                 DictUtils.elm_of_one_dict_in_one_other(self.__output_file_dict, other.get_output_file_dict()) and
                 DictUtils.elm_of_one_dict_in_one_other(self.__option_dict, other.get_option_dict())
@@ -225,11 +240,8 @@ class ToolWrapper(Observable):
     def create_base_object_from_name(self):
         # TODO this method will return (or set self attributes) from class names to base. Il n'y a peut etre pas besoin
         # que cette méthode soit dans self
-        # TODO ask lionel Faire une espèce de factory de factory -> BaseFactory et WrapperFactory héritantes de Factory
         pass
 
-    # TODO vérifier que les méthodes importantes ont bien été réecrites par le développeur et que les autres ne
-    # le sont pas Ceci pourra être fait avec les décorateurs (peut-être)
     def get_input_file(self):
         return []
 

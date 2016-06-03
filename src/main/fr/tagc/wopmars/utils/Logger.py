@@ -32,7 +32,7 @@ class Logger:
 
         # stream ------------------:
 
-        # todo ask lionel afficher de la couleur dans la console?
+        # todo ask aitor afficher de la couleur dans la console? oui
         formatter_stream = logging.Formatter('%(levelname)s :: %(message)s')
 
         stream_handler = logging.StreamHandler()

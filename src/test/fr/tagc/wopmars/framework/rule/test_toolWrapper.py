@@ -11,7 +11,7 @@ from fr.tagc.wopmars.framework.rule.Option import Option
 from fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
 from fr.tagc.wopmars.toolwrappers.FooWrapper3 import FooWrapper3
 from fr.tagc.wopmars.utils.PathFinder import PathFinder
-from fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
+from fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
 class TestToolWrapper(TestCase):
@@ -84,11 +84,11 @@ class TestToolWrapper(TestCase):
         except:
             raise AssertionError('Should not raise exception')
 
-        self.assertRaises(WopMarsParsingException, self.__foowrapper_wrong1.is_content_respected)
-        self.assertRaises(WopMarsParsingException, self.__foowrapper_wrong2.is_content_respected)
-        self.assertRaises(WopMarsParsingException, self.__foowrapper_wrong3.is_content_respected)
-        self.assertRaises(WopMarsParsingException, self.__foowrapper_wrong4.is_content_respected)
-        self.assertRaises(WopMarsParsingException, self.__foowrapper_wrong5.is_content_respected)
+        self.assertRaises(WopMarsException, self.__foowrapper_wrong1.is_content_respected)
+        self.assertRaises(WopMarsException, self.__foowrapper_wrong2.is_content_respected)
+        self.assertRaises(WopMarsException, self.__foowrapper_wrong3.is_content_respected)
+        self.assertRaises(WopMarsException, self.__foowrapper_wrong4.is_content_respected)
+        self.assertRaises(WopMarsException, self.__foowrapper_wrong5.is_content_respected)
 
     def test_follows(self):
         self.assertTrue(self.__toolwrapper_second.follows(self.__toolwrapper_first))

@@ -8,7 +8,7 @@ import re
 from fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
 from fr.tagc.wopmars.framework.rule.Option import Option
 from fr.tagc.wopmars.utils.Logger import Logger
-from fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
+from fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
 class Reader:
@@ -19,21 +19,22 @@ class Reader:
     """
     def __init__(self, s_definition_file):
         """
-        Constructor of the reader which also test the feasability of the read
+        Constructor of the reader.
 
-        :param f_definition_file_path: file: the definition file open in read mode
+        Open the definition file and load it's content in a dictionnary thanks to the PyYaml library. If PyYaml raise
+        an exception, a WopMarsParsingException is raised instead.
+
+        The method is_grammar_respected is called and can raise WopMarsParsingException too.
+
+        :raise: WopMarsParsingException: if the Yaml Spec are not respected
+        :param: s_definition_file: String: the definition file open in read mode
         """
-        # todo ask lionel faire passer le fichier plutot que la string, maintenant qu'ile st ouvert...
-        # self.__s_definition_file_path = s_definition_file_path
-
         # Tests about grammar and syntax are performed here (file's existence is also tested here)
-        # todo enlever tous ces morceaux de code commentés
         try:
             def_file = open(s_definition_file, 'r')
             try:
                 # The workflow definition file is loaded as-it in memory by the pyyaml library
                 Logger().info("Reading the definition file: " + str(s_definition_file) + "...")
-                # self.__dict_workflow_definition = yaml.load(def_file)
                 self.__dict_workflow_definition = yaml.load(def_file)
                 Logger().info("Read complete.")
                 Logger().info("Checking whether the file is well formed...")
@@ -41,12 +42,13 @@ class Reader:
                 Logger().info("File well formed.")
             # YAMLError is thrown if the YAML specifications are not respected by the definition file
             except yaml.YAMLError as exc:
-                raise WopMarsParsingException(1, str(exc))
+                raise WopMarsException("Error while parsing the configuration file: \n\t"
+                                       "The YAML specification is not respected:", str(exc))
             finally:
                 def_file.close()
         except FileNotFoundError:
-            raise WopMarsParsingException(0, "The specified file at " +
-                                          s_definition_file + " doesn't exist.")
+            raise WopMarsException("Error while parsing the configuration file: \n\tInput error:",
+                                   "The specified file at " + s_definition_file + " doesn't exist.")
 
     def read(self):
         """
@@ -74,17 +76,12 @@ class Reader:
                         # In theory, there cannot be a IODbPut specification in the definition file
                         obj_created = IOFilePut(elm, self.__dict_workflow_definition[rule][key_second_step][elm])
                     dict_dict_elm["dict_" + key_second_step][elm] = obj_created
-            # TODO ask lionel factory pour faire ça? - Vérifier avec Lionel et Aïtor comment on va gérer les classes wrappers
-            # au nvieau de l'arborescence des fichiers.
-
-
-            # todo try except pour vérifier que la classe wrapper existe
             try:
                 # Importing the module in the mod variable
                 mod = importlib.import_module("fr.tagc.wopmars.toolwrappers." + str_wrapper_name)
             except ImportError:
-                print()
-                raise WopMarsParsingException(5, str_wrapper_name + " module is not in the pythonpath.")
+                raise WopMarsException("Error while parsing the configuration file: \n\t",
+                                       str_wrapper_name + " module is not in the pythonpath.")
             # Instantiate the refered class and add it to the set of objects
 
             try:
@@ -92,8 +89,8 @@ class Reader:
                                                                       output_file_dict=dict_dict_elm["dict_output"],
                                                                       option_dict=dict_dict_elm["dict_params"])
             except AttributeError:
-                print()
-                raise WopMarsParsingException(5, "The class " + str_wrapper_name + " doesn't exist.")
+                raise WopMarsException("Error while parsing the configuration file: \n\t",
+                                       "The class " + str_wrapper_name + " doesn't exist.")
             toolwrapper_wrapper.is_content_respected()
             set_wrapper.add(toolwrapper_wrapper)
         return set_wrapper
@@ -102,6 +99,19 @@ class Reader:
         """
         Check if the definition file respects the grammar. Throw an exception if not.
 
+        The grammar is the following:
+
+        NEWLINE configfile
+        WoPMaRS = rule
+        rule       = "rule" (identifier | "") ":" ruleparams
+        ni         = NEWLINE INDENT
+        ruleparams = [ni input] [ni output] [ni params]
+        NEWLINE WoPMaRS
+        input      = "input" ":" ((identifier ”:” stringliteral),?)+
+        output     = "output" ":" ((identifier ”:” stringliteral),?)+
+        params     = "params" ":" ((identifier ”:” stringliteral),?)+
+
+        :raise: WopMarsParsingException
         :return: void
         """
         regex_step1 = re.compile(r"(^rule [^\s]+$)")
@@ -110,16 +120,16 @@ class Reader:
         # The found words are tested against the regex to see if they match or not
         for s_key_step1 in self.__dict_workflow_definition:
             if not regex_step1.search(s_key_step1):
-                raise WopMarsParsingException(2, "The line containing:\'" +
-                                              str(s_key_step1) +
-                                              "\' doesn't match the grammar: it should start with 'rule'" +
-                                              "and contains only one word after the 'rule' keyword")
+                raise WopMarsException("Error while parsing the configuration file: \n\t"
+                                       "The grammar of the WopMars's definition file is not respected:",
+                                       "The line containing:\'" +
+                                       str(s_key_step1) +
+                                       "\' doesn't match the grammar: it should start with 'rule'" +
+                                       "and contains only one word after the 'rule' keyword")
             for s_key_step2 in self.__dict_workflow_definition[s_key_step1]:
                 if not regex_step2.search(s_key_step2):
-                    raise WopMarsParsingException(2, "The line containing:\'" + str(s_key_step2) +
-                                                  "\' doesn't match the grammar: it should be " +
-                                                  "'params', 'input' or 'output'")
-
-if __name__ == "__main__":
-    my_reader = Reader("/home/giffon/Documents/wopmars/src/resources/example_def_file.yml")
-    set_toolwrappers = my_reader.read()
+                    raise WopMarsException("Error while parsing the configuration file: \n\t"
+                                           "The grammar of the WopMars's definition file is not respected:",
+                                           "The line containing:\'" + str(s_key_step2) +
+                                           "\' doesn't match the grammar: it should be " +
+                                           "'params', 'input' or 'output'")

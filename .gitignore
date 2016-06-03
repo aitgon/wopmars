@@ -15,3 +15,5 @@ coverage.xml
 nosetests.xml
 
 wopmars.log
+
+doc/*

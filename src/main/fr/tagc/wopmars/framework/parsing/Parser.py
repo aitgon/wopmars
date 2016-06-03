@@ -7,7 +7,7 @@ from fr.tagc.wopmars.framework.management.DAG import DAG
 from fr.tagc.wopmars.framework.parsing.Reader import Reader
 from fr.tagc.wopmars.utils.Logger import Logger
 from fr.tagc.wopmars.utils.OptionManager import OptionManager
-from fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
+from fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 from networkx.algorithms.dag import is_directed_acyclic_graph
 
@@ -20,40 +20,38 @@ class Parser:
     """
     def __init__(self, s_file_path):
         """
-        First line short documentation
+        The constructor of Parser.
+
+        Initialize the reader with the definition_file path.
         
-        More documentation
         :return:
         """
-        try:
-            self.__reader = Reader(s_file_path)
-        except WopMarsParsingException as e:
-            print()
-            # todo ask lionel le programme devrait quitter ici ou plus haut? pareil pour la méthode parse()
-            sys.exit(str(e))
+
+        self.__reader = Reader(s_file_path)
 
     def parse(self):
         """
         Organize the parsing of the Workflow Definition File
 
-        Call the reader to extract the content and build the objects
-        Call the dag to build itself
+        Call the "read()" method of the reader to extract the set of objects of the workflow.
+        Call the dag to build itself from the set of tools.
 
+        If The "--dot" option is set, the dot file is wrote here.
+
+        :raise: WopMarsParsingException if the workflow is not a DAG.
         :return: the DAG
         """
-        try:
-            set_toolwrappers = self.__reader.read()
-            dag_tools = DAG(set_toolwrappers)
-            if not is_directed_acyclic_graph(dag_tools):
-                raise WopMarsParsingException(6, "")
-            s_dot_option = OptionManager()["--dot"]
-            if s_dot_option:
-                if s_dot_option[-4:] != '.dot':
-                    s_dot_option += ".dot"
-                Logger().info("Writing the dot file...")
-                dag_tools.write_dot(s_dot_option)
-                Logger().info("Dot file wrote.")
-        except WopMarsParsingException as e:
-            Logger().error(str(e))
-            sys.exit()
+
+        set_toolwrappers = self.__reader.read()
+        dag_tools = DAG(set_toolwrappers)
+        if not is_directed_acyclic_graph(dag_tools):
+            raise WopMarsException("Error while parsing the configuration file: \n\tThe workflow is malformed:",
+                                   "The specified Workflow cannot be represented as a DAG.")
+        s_dot_option = OptionManager()["--dot"]
+        if s_dot_option:
+            if s_dot_option[-4:] != '.dot':
+                s_dot_option += ".dot"
+            Logger().info("Writing the dot file...")
+            dag_tools.write_dot(s_dot_option)
+            Logger().info("Dot file wrote.")
         return dag_tools

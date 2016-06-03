@@ -8,7 +8,6 @@ Arguments:
 
 Options:
   -h --help           Show this help.
-  --version           Show version.
   -v                  Set verbosity level.
   -d FILE --dot=FILE  Write dot file (with .dot extension).
 """
@@ -22,6 +21,7 @@ from fr.tagc.wopmars.framework.management.WorkflowManager import WorkflowManager
 from fr.tagc.wopmars.utils.Logger import Logger
 from fr.tagc.wopmars.utils.OptionManager import OptionManager
 from fr.tagc.wopmars.utils.PathFinder import PathFinder
+from fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
 class WopMars:
@@ -33,7 +33,8 @@ class WopMars:
         Entry-point of the program
         """
         # if the command line is malformed, docopt interrupt the software.
-        dict_options = OptionManager(docopt(__doc__, argv=argv))
+        OptionManager(docopt(__doc__, argv=argv))
+
         try:
             schema_option = Schema({
                 'DEFINITION_FILE': Use(open),
@@ -43,20 +44,32 @@ class WopMars:
 
             OptionManager().validate(schema_option)
         except SchemaError as schema_msg:
+            Logger().debug("Command line Args:" + str(OptionManager()))
+            # regex for the different possible error messages.
             match_open_def = re.match(r"^open\('(.[^\)]+)'\)", str(schema_msg))
             match_dot_def = re.match(r"^check_valid_path\(('.[^\)]+')\)", str(schema_msg))
+            match_wrong_key = re.match(r"^Wrong keys ('.[^\)]+')", str(schema_msg))
 
+            # Check the different regex..
             if match_open_def:
                 Logger().error("The file " + match_open_def.group(1) + " cannot be opened. It may not exist.")
             elif match_dot_def:
                 Logger().error("The path " + match_dot_def.group(1) + " is not valid.")
+            elif match_wrong_key:
+                Logger().error("The option key " + match_wrong_key.group(1) + " is not known.")
+            else:
+                Logger().error("An unknown error has occured. Message: " + str(schema_msg))
             sys.exit()
 
-        Logger().debug("Command line Args:" + str(dict_options))
+        Logger().debug("Command line Args:" + str(OptionManager()))
 
-        wm = WorkflowManager()
-        wm.run()
+        try:
+            wm = WorkflowManager()
+            wm.run()
+        except WopMarsException as WE:
+            Logger().error(str(WE))
+            sys.exit()
 
 if __name__ == "__main__":
     WopMars().run(sys.argv[1:])
-    # WopMars().run(["", "/home/giffon/Documents/wopmars/src/resources/example_def_file3.yml"])
+

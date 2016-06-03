@@ -10,7 +10,7 @@ from fr.tagc.wopmars.toolwrappers.FooWrapper3 import FooWrapper3
 from fr.tagc.wopmars.utils.OptionManager import OptionManager
 from fr.tagc.wopmars.utils.PathFinder import PathFinder
 from fr.tagc.wopmars.utils.SetUtils import SetUtils
-from fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
+from fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
 class TestReader(TestCase):
@@ -38,7 +38,7 @@ class TestReader(TestCase):
                 ]
         ]
 
-        [self.assertRaises(WopMarsParsingException, Reader, file) for file in self.__list_f_to_exception_init]
+        [self.assertRaises(WopMarsException, Reader, file) for file in self.__list_f_to_exception_init]
 
         # The bad (invalid file) ----------------------:
 
@@ -81,7 +81,7 @@ class TestReader(TestCase):
 
         # The bad -------------------------------------:
 
-        [self.assertRaises(WopMarsParsingException, reader.read) for reader in self.__list_reader_exception_read]
+        [self.assertRaises(WopMarsException, reader.read) for reader in self.__list_reader_exception_read]
 
 
 if __name__ == "__main__":

@@ -9,9 +9,12 @@ import sys
 
 from fr.tagc.wopmars.framework.parsing.Parser import Parser
 from fr.tagc.wopmars.framework.management.ToolWrapperObserver import ToolWrapperObserver
+from fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
 from fr.tagc.wopmars.utils.Logger import Logger
 
 from fr.tagc.wopmars.utils.OptionManager import OptionManager
+from fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
+
 
 class WorkflowManager(ToolWrapperObserver):
     """
@@ -21,10 +24,16 @@ class WorkflowManager(ToolWrapperObserver):
     """    
     def __init__(self):
         """
-        First line short documentation
-        
-        More documentation
-        :param something:
+        Constructor of WorkflowManager.
+
+        It initialize the parser with the path of the definition file given by the OptionManager.
+
+        The parser will give the DAG which will be executed.
+        The queue_exec is the Thread pool. It will contains the tools that will wait for being executed.
+        The list_queue_buffer will be filled with the tool that the WorkflowManager couldn't execute.
+        The count_exec is a counter that keep trace of the tools that are currently executed.
+        The dag_tools will contian the dag representing the workflow.
+
         :return:
         """
         self.__parser = Parser(OptionManager()["DEFINITION_FILE"])
@@ -33,27 +42,32 @@ class WorkflowManager(ToolWrapperObserver):
         self.__count_exec = 0
         self.__dag_tools = None
 
-    #todo ask lionel en testant cette méthode, je teste tout, non?
     def run(self):
         """
-        Get the dag then execute it
+        Get the dag then execute it.
+
+        The dag is taken thanks to the "parse()" method of the parser.
+        Then, execute_from is called with no argument to get the origin nodes.
         :return:
         """
         self.__dag_tools = self.__parser.parse()
-        # start at the begining of the dag
         self.execute_from()
 
     def execute_from(self, node=None):
         """
-        Execute the dag.
+        Execute the dag from the given node.
 
-        :param node: ToolWrapper a node of the DAG
+        The next nodes are taken thanks to the "successors()" method of the DAG and are put into the queue.
+        The "run_queue()" is then called.
+
+        If node is set to None, the behavior of the function is the same.
+
+        :param node: ToolWrapper a node of the DAG or None, if it executes from the root.
         :return: void
         """
-
         list_tw = self.__dag_tools.successors(node)
         Logger().debug("Next tools: " + str([t.__class__.__name__ for t in list_tw]))
-        # all origin elements are in queue
+        # The toolwrappers
         for tw in list_tw:
             self.__queue_exec.put(tw)
 
@@ -61,20 +75,26 @@ class WorkflowManager(ToolWrapperObserver):
 
     def run_queue(self):
         """
-        Call start() method of all elements of the queue
+        Call start() method of all elements of the queue.
 
+        The tools inside the queue are taken then their inputs are checked. If they are ready, the tools are started.
+        If not, they are put in a buffer list of "not ready tools" of "ready but has not necessary ressources available
+        tools".
+
+        After that, the code check for the state of the workflow and gather the informations to see if the workflow
+        are finished, if it encounter an error or if it is currently running.
+
+        :raise WopMarsException: The workflow encounter a problem and must stop.
         :return: void
         """
-        # int_queue_size_ini = self.__queue_exec.qsize()
-        # index = 0
-        # # todo tests unitaires poussés
-        # while index < int_queue_size_ini and not self.__queue_exec.empty():
-        #     tw = self.__queue_exec.get()
-        #     tw.subscribe(self)
-        #     tw.start()
-        #     index += 1
 
-        ######
+        #
+        # # TODO THIS METHOD IS NOT THREAD-SAFE
+        #
+
+        # If no tools have been added to the queue:
+        #  - All tools have been executed and the queue is empty, so nothing happens
+        #  - There were remaing tools in the queue but they weren't ready, so they are tested again
         while not self.__queue_exec.empty():
             Logger().debug("Queue size: " + str(self.__queue_exec.qsize()))
             tw = self.__queue_exec.get()
@@ -86,25 +106,35 @@ class WorkflowManager(ToolWrapperObserver):
                 tw.start()
             else:
                 Logger().debug("ToolWrapper not ready: " + str(tw.__class__.__name__))
+                # The buffer contains the ToolWrappers that have inputs which are not ready yet.
                 self.__list_queue_buffer.append(tw)
 
         Logger().debug("Buffer: " + str([t.__class__.__name__ for t in self.__list_queue_buffer]))
         Logger().debug("Running ToolWrappers: " + str(self.__count_exec))
 
+        # There is no more ToolWrapper that are waiting to be executed.
+        # Is there some tools that are currently being executed?
         if self.__count_exec == 0:
+            # Is there some tools that weren't ready?
             if len(self.__list_queue_buffer) == 0:
+                # If there is no tool waiting and no tool being executed, the workflow has finished.
                 Logger().info("The workflow has completed.")
                 sys.exit()
             elif not self.check_buffer():
-                # todo throw exception?
-                Logger().error("The workflow has failed. The inputs are not ready for the remaining tools: " +
-                               ", ".join([t.__class__.__name__ for t in self.__list_queue_buffer]) + ". ")
-                sys.exit()
+                # If there is no tool being executed but there is that are waiting something, the workflow has an issue
+                raise WopMarsException("The workflow has failed.",
+                                       "The inputs are not ready for the remaining tools: " +
+                                       ", ".join([t.__class__.__name__ for t in self.__list_queue_buffer]) + ". ")
+            # If there is one tool that is ready, it means that it is in queue because ressources weren't available.
 
     def check_buffer(self):
+        """
+        Check if the buffer contains ToolWrapper that are ready.
+
+        :return: bool: True if there is at least one toolwrapper that is READY in the buffer.
+        """
         for tw in self.__list_queue_buffer:
-            # todo enum_type
-            if tw.get_state() == "READY":
+            if tw.get_state() == ToolWrapper.READY:
                 return True
         return False
 
@@ -128,11 +158,7 @@ class WorkflowManager(ToolWrapperObserver):
         :param toolwrapper: ToolWrapper that just failed
         :return:
         """
-        # todo n'est jamais atteint
-        # todo gérer le fait de ne pas boucler à l'infini
-        Logger().info(str(toolwrapper.__class__.__name__) + " has failed.")
-        self.__count_exec -= 1
-        self.__queue_exec.put(toolwrapper)
+        pass
 
 if __name__ == "__main__":
     my_workflow = WorkflowManager()

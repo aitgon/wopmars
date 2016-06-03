@@ -4,7 +4,7 @@ from unittest import TestCase
 
 from fr.tagc.wopmars.framework.management.WorkflowManager import WorkflowManager
 from fr.tagc.wopmars.utils.PathFinder import PathFinder
-from fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
+from fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
 class TestWorkflowManager(TestCase):
