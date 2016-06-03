@@ -3,36 +3,34 @@ import unittest
 from unittest import TestCase
 
 from fr.tagc.wopmars.framework.management.WorkflowManager import WorkflowManager
+from fr.tagc.wopmars.utils.OptionManager import OptionManager
 from fr.tagc.wopmars.utils.PathFinder import PathFinder
 from fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
 class TestWorkflowManager(TestCase):
 
-    # todo ask lionel comment gérer les différents cas de figure d'un singleton dans un test unitaire?
     def setUp(self):
+        OptionManager({'-v': 1, 'DEFINITION_FILE': None, "--dot": None})
         s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
-        s_path_to_example_definition_file = s_root_path + "resources/example_def_file3.yml"
-        s_path_to_not_existing_example_definition_file = s_root_path + "definition_file_that_doesnt_exists.yml"
-        s_path_to_wrong_example_definition_file_not_dag = s_root_path + "resources/example_def_file_not_a_dag.yml"
 
-        self.__workflow_manager_wrong = WorkflowManager(s_path_to_wrong_example_definition_file_not_dag)
-        try:
-            self.__workflow_manager_right = WorkflowManager(s_path_to_example_definition_file)
-        except:
-            raise AssertionError('Should not raise exception')
+        s_path_to_example_definition_file_finishing = s_root_path + "resources/example_def_file3.yml"
+        s_path_to_example_definition_file_that_end_with_error = \
+            s_root_path + \
+            "resources/example_def_file_toolwrapper_never_ready.yml"
 
-        with self.assertRaises(SystemExit):
-            WorkflowManager(s_path_to_not_existing_example_definition_file)
+        OptionManager()["DEFINITION_FILE"] = s_path_to_example_definition_file_finishing
+        self.__finishing_wm = WorkflowManager()
+
+        OptionManager()["DEFINITION_FILE"] = s_path_to_example_definition_file_that_end_with_error
+        self.__error_wm = WorkflowManager()
 
     def test_run(self):
-        try:
-            self.__workflow_manager_right.run()
-        except:
-            raise AssertionError('Should not raise exception')
-
         with self.assertRaises(SystemExit):
-            self.__workflow_manager_wrong.run()
+            self.__finishing_wm.run()
+
+        with self.assertRaises(WopMarsException):
+            self.__error_wm.run()
 
 if __name__ == '__main__':
     unittest.main()

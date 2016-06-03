@@ -1,0 +1,18 @@
+rule FooWrapper4:
+    input:
+        input1: "/home/giffon/Documents/wopmars/src/resources/aFile1.txt"
+    output:
+        output1: "/home/giffon/Documents/wopmars/src/resources/aFile2.txt"
+
+rule FooWrapper5:
+    input:
+        input1: "/home/giffon/Documents/wopmars/src/resources/aFile2.txt"
+    output:
+        output1: "/home/giffon/Documents/wopmars/src/resources/aFile4.txt"
+
+rule FooWrapper6:
+    input:
+        input1: "/home/giffon/Documents/wopmars/src/resources/aFile5.txt"
+    output:
+        output1: "/home/giffon/Documents/wopmars/src/resources/aFile4.txt"
+

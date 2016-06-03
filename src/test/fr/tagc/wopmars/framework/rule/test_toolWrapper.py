@@ -1,8 +1,5 @@
 import os
 import sys
-for p in sys.path:
-    print(p)
-
 import unittest
 from unittest import TestCase
 

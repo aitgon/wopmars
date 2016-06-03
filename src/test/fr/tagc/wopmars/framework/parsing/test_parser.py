@@ -10,6 +10,7 @@ from fr.tagc.wopmars.toolwrappers.FooWrapper5 import FooWrapper5
 from fr.tagc.wopmars.toolwrappers.FooWrapper6 import FooWrapper6
 from fr.tagc.wopmars.utils.OptionManager import OptionManager
 from fr.tagc.wopmars.utils.PathFinder import PathFinder
+from fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
 class TestParser(TestCase):
@@ -19,24 +20,21 @@ class TestParser(TestCase):
 
         # The good -------------------------------:
 
-        self.__s_example_definition_file = s_root_path + "resources/example_def_file2.yml"
-        try:
-            self.__parser_right = Parser(self.__s_example_definition_file)
-        except:
-            raise AssertionError('Should not raise exception')
-
-        # The ugly (malformed file) ----------------------------:
-
-        self.__s_wrong_example_definition_file_malformed = s_root_path + "resources/example_def_file_wrong_yaml.yml"
-        with self.assertRaises(SystemExit):
-            Parser(self.__s_wrong_example_definition_file_malformed)
+        s_example_definition_file = s_root_path + "resources/example_def_file2.yml"
+        self.__parser_right = Parser(s_example_definition_file)
 
         # The bad (invalid file) -----------------------------------:
-        self.__s_wrong_example_definition_file_invalid = s_root_path + "resources/example_def_file_wrong_content.yml"
-        self.__parser_wrong = Parser(self.__s_wrong_example_definition_file_invalid)
+        s_wrong_example_definition_file_invalid = s_root_path + "resources/example_def_file_not_a_dag.yml"
+        self.__parser_wrong = Parser(s_wrong_example_definition_file_invalid)
+
+        # Dot path --------------:
+
+        self.__dot_path = s_root_path + "test.dot"
+
+    def tearDown(self):
+        OptionManager()["--dot"] = None 
 
     def test_parse(self):
-
         # The good --------------------------:
         set_toolwrappers = set()
 
@@ -52,14 +50,23 @@ class TestParser(TestCase):
                                          output_file_dict={'output1': IOFilePut('output1', 'aFile4.txt')},
                                          option_dict={}))
 
+        OptionManager()["--dot"] = None
+
         dag_expected = DAG(set_toolwrappers)
         dag_obtained = self.__parser_right.parse()
 
         self.assertEqual(dag_expected, dag_obtained)
 
         # The bad --------------------------:
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(WopMarsException):
             self.__parser_wrong.parse()
+
+        # Verify the dot file ----------------:
+
+        OptionManager()["--dot"] = self.__dot_path
+        self.__parser_right.parse()
+        self.assertTrue(os.path.isfile(self.__dot_path))
+        os.remove(self.__dot_path)
 
 if __name__ == '__main__':
     unittest.main()
