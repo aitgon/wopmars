@@ -17,11 +17,11 @@ import re
 from docopt import docopt
 from schema import Schema, And, Or, Use, SchemaError
 
-from fr.tagc.wopmars.framework.management.WorkflowManager import WorkflowManager
-from fr.tagc.wopmars.utils.Logger import Logger
-from fr.tagc.wopmars.utils.OptionManager import OptionManager
-from fr.tagc.wopmars.utils.PathFinder import PathFinder
-from fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
+from src.main.fr.tagc.wopmars.framework.management.WorkflowManager import WorkflowManager
+from src.main.fr.tagc.wopmars.utils.Logger import Logger
+from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
+from src.main.fr.tagc.wopmars.utils.PathFinder import PathFinder
+from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
 class WopMars:
@@ -44,7 +44,7 @@ class WopMars:
 
             OptionManager().validate(schema_option)
         except SchemaError as schema_msg:
-            Logger().debug("Command line Args:" + str(OptionManager()))
+            Logger().debug("\nCommand line Args:" + str(OptionManager()))
             # regex for the different possible error messages.
             match_open_def = re.match(r"^open\('(.[^\)]+)'\)", str(schema_msg))
             match_dot_def = re.match(r"^check_valid_path\(('.[^\)]+')\)", str(schema_msg))
@@ -61,7 +61,7 @@ class WopMars:
                 Logger().error("An unknown error has occured. Message: " + str(schema_msg))
             sys.exit()
 
-        Logger().debug("Command line Args:" + str(OptionManager()))
+        Logger().debug("\nCommand line Args:" + str(OptionManager()))
 
         try:
             wm = WorkflowManager()
@@ -71,5 +71,14 @@ class WopMars:
             sys.exit()
 
 if __name__ == "__main__":
-    WopMars().run(sys.argv[1:])
+    cmd_line_working = ["/home/giffon/Documents/wopmars/src/resources/example_def_file5.yml", "--dot", "/home/giffon/ex.dot"]
+    cmd_line_never_ready = ["/home/giffon/Documents/wopmars/src/resources/example_def_file_toolwrapper_never_ready.yml", "-vvvv"]
+    cmd_line_error_parsing = ["/home/giffon/Documents/wopmars/src/resources/example_def_file_not_a_dag.yml", "-vvvv"]
+    cmd_line_wrong_arg = ["/home/giffon/Documents/wopmars/src/resources/example_def_file_not_a_dag.yml", "--fail"]
+    # WopMars().run(cmd_line_working)
+    # WopMars().run(cmd_line_never_ready)
+    # WopMars().run(cmd_line_error_parsing)
+    WopMars().run(cmd_line_wrong_arg)
+
+    # WopMars().run(sys.argv[1:])
 

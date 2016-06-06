@@ -3,7 +3,8 @@ Module containing the IOFilePut class
 """
 import os
 
-from fr.tagc.wopmars.framework.rule.IOPut import IOPut
+from src.main.fr.tagc.wopmars.utils.Logger import Logger
+from src.main.fr.tagc.wopmars.framework.rule.IOPut import IOPut
 
 
 class IOFilePut(IOPut):
@@ -35,6 +36,7 @@ class IOFilePut(IOPut):
 
         :return: boolean: True if it exists, false if not
         """
+        Logger().debug("Checking if " + self.get_name() + " is ready: " + self.__path)
         return os.path.isfile(self.__path)
 
     def __eq__(self, other):

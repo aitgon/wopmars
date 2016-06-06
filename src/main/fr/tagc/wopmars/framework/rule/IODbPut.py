@@ -1,8 +1,8 @@
 """
 Module containing the IODbPut class.
 """
-from fr.tagc.wopmars.base.Base import Base
-from fr.tagc.wopmars.framework.rule.IOPut import IOPut
+from src.main.fr.tagc.wopmars.base.Base import Base
+from src.main.fr.tagc.wopmars.framework.rule.IOPut import IOPut
 
 
 class IODbPut(IOPut):

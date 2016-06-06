@@ -17,7 +17,6 @@ class SetUtils:
         :param other: set
         :return: boolean: True if all elements of one are in the other
         """
-        # TODO: tesunitaire sur cette classe
         for elm in one:
             is_in = False
             for elm2 in other:

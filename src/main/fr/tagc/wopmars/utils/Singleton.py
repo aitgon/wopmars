@@ -4,11 +4,10 @@ Module containing the Singleton function.
 
 
 def singleton(cls):
-    instance = None
+    instances = {}
 
     def class_instanciation_or_not(*args, **kwargs):
-        nonlocal instance
-        if not instance:
-            instance = cls(*args, **kwargs)
-        return instance
+        if cls not in instances:
+            instances[cls] = cls(*args, **kwargs)
+        return instances[cls]
     return class_instanciation_or_not

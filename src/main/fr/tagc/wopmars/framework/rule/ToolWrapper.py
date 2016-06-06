@@ -1,12 +1,12 @@
 """
 This module contains the ToolWrapper class
 """
-import copy
 
-from fr.tagc.wopmars.utils.DictUtils import DictUtils
-from fr.tagc.wopmars.utils.Logger import Logger
-from fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
-from fr.tagc.wopmars.framework.management.Observable import Observable
+
+from src.main.fr.tagc.wopmars.utils.DictUtils import DictUtils
+from src.main.fr.tagc.wopmars.utils.Logger import Logger
+from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
+from src.main.fr.tagc.wopmars.framework.management.Observable import Observable
 
 
 class ToolWrapper(Observable):
@@ -179,10 +179,13 @@ class ToolWrapper(Observable):
 
         :return: bool - True if inputs are ready.
         """
+        Logger().debug("Inputs of " + str(self.__class__.__name__) + ": " + str(self.__input_file_dict.keys()))
         for input_name in self.__input_file_dict:
             if not self.__input_file_dict[input_name].is_ready():
+                Logger().debug("Input: " + str(input_name) + " is not ready.")
                 self.__state = ToolWrapper.NOT_READY
                 return False
+        Logger().debug("Input: " + str(input_name) + " is ready.")
         self.__state = ToolWrapper.READY
         return True
 
@@ -195,6 +198,7 @@ class ToolWrapper(Observable):
         :param other: ToolWrapper
         :return:
         """
+
         return (
                 isinstance(other, self.__class__) and
                 DictUtils.elm_of_one_dict_in_one_other(self.__input_file_dict, other.get_input_file_dict()) and
@@ -259,3 +263,12 @@ class ToolWrapper(Observable):
 
     def run(self):
         pass
+
+    def input(self, key):
+        return self.__input_file_dict[key].get_path()
+
+    def output(self, key):
+        return self.__output_file_dict[key].get_path()
+
+    def option(self, key):
+        return self.__option_dict[key].get_value()

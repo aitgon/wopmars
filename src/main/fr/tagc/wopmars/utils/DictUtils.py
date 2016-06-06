@@ -31,6 +31,18 @@ class DictUtils:
                     return True
         return False
 
+    @staticmethod
+    def pretty_repr(d, indent=0):
+        s = ""
+        for key, value in d.items():
+            s += '\t' * indent + str(key) + "\n"
+            if isinstance(value, dict):
+                s += DictUtils.pretty_repr(value, indent + 1)
+            else:
+                s += '\t' * (indent + 1) + str(value) + "\n"
+        return s
 
 if __name__ == "__main__":
-    print(DictUtils.elm_of_one_dict_in_one_other({"a": 1}, {"a": 1, "b": 2}))
+    d = {'rule FooWrapper7': {'output': {'output1': '/home/giffon/Documents/wopmars/src/resources/aFile5.txt'}, 'input': {'input1': '/home/giffon/Documents/wopmars/src/resources/aFile1.txt'}}, 'rule FooWrapper9': {'input': {'input2': '/home/giffon/Documents/wopmars/src/resources/aFile6.txt', 'input1': '/home/giffon/Documents/wopmars/src/resources/aFile5.txt'}}, 'rule FooWrapper8': {'output': {'output1': '/home/giffon/Documents/wopmars/src/resources/aFile6.txt'}, 'input': {'input1': '/home/giffon/Documents/wopmars/src/resources/aFile2.txt'}}}
+    d2 = {"a": {"c": 1}, "b":{"c":2} }
+    print(DictUtils.pretty_repr(d))

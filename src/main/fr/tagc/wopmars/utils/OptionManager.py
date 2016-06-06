@@ -1,7 +1,7 @@
 """
 Module containing the OptionManager class.
 """
-from fr.tagc.wopmars.utils.Singleton import singleton
+from src.main.fr.tagc.wopmars.utils.Singleton import singleton
 
 
 

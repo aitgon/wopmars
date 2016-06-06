@@ -1,19 +1,16 @@
 """
 Module containing the WorkflowManager class
 """
-from queue import Queue
-
-import copy
-
 import sys
 
-from fr.tagc.wopmars.framework.parsing.Parser import Parser
-from fr.tagc.wopmars.framework.management.ToolWrapperObserver import ToolWrapperObserver
-from fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
-from fr.tagc.wopmars.utils.Logger import Logger
+from src.main.fr.tagc.wopmars.utils.UniqueQueue import UniqueQueue
+from src.main.fr.tagc.wopmars.framework.parsing.Parser import Parser
+from src.main.fr.tagc.wopmars.framework.management.ToolWrapperObserver import ToolWrapperObserver
+from src.main.fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
+from src.main.fr.tagc.wopmars.utils.Logger import Logger
 
-from fr.tagc.wopmars.utils.OptionManager import OptionManager
-from fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
+from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
+from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
 class WorkflowManager(ToolWrapperObserver):
@@ -37,7 +34,7 @@ class WorkflowManager(ToolWrapperObserver):
         :return:
         """
         self.__parser = Parser(OptionManager()["DEFINITION_FILE"])
-        self.__queue_exec = Queue()
+        self.__queue_exec = UniqueQueue()
         self.__list_queue_buffer = []
         self.__count_exec = 0
         self.__dag_tools = None
@@ -98,6 +95,7 @@ class WorkflowManager(ToolWrapperObserver):
         while not self.__queue_exec.empty():
             Logger().debug("Queue size: " + str(self.__queue_exec.qsize()))
             tw = self.__queue_exec.get()
+            Logger().debug("Current ToolWrapper: " + str(tw.__class__.__name__))
             if tw.are_inputs_ready():
                 Logger().debug("ToolWrapper ready: " + str(tw.__class__.__name__))
                 # todo verification des ressources
@@ -161,5 +159,8 @@ class WorkflowManager(ToolWrapperObserver):
         pass
 
 if __name__ == "__main__":
+    OptionManager()["DEFINITION_FILE"] = "/home/giffon/Documents/wopmars/src/resources/example_def_file5.yml"
+    OptionManager()["-v"] = 4
+    OptionManager()["--dot"] = None
     my_workflow = WorkflowManager()
     my_workflow.run()

@@ -1,16 +1,18 @@
-import unittest
 import os
+import unittest
 from unittest import TestCase
-from fr.tagc.wopmars.framework.parsing.Reader import Reader
-from fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
-from fr.tagc.wopmars.framework.rule.Option import Option
-from fr.tagc.wopmars.toolwrappers.FooWrapper1 import FooWrapper1
-from fr.tagc.wopmars.toolwrappers.FooWrapper2 import FooWrapper2
-from fr.tagc.wopmars.toolwrappers.FooWrapper3 import FooWrapper3
-from fr.tagc.wopmars.utils.OptionManager import OptionManager
-from fr.tagc.wopmars.utils.PathFinder import PathFinder
-from fr.tagc.wopmars.utils.SetUtils import SetUtils
-from fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
+
+from FooWrapper1 import FooWrapper1
+from FooWrapper2 import FooWrapper2
+from FooWrapper3 import FooWrapper3
+
+from src.main.fr.tagc.wopmars.framework.parsing.Reader import Reader
+from src.main.fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
+from src.main.fr.tagc.wopmars.framework.rule.Option import Option
+from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
+from src.main.fr.tagc.wopmars.utils.PathFinder import PathFinder
+from src.main.fr.tagc.wopmars.utils.SetUtils import SetUtils
+from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
 class TestReader(TestCase):

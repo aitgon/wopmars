@@ -1,8 +1,8 @@
 import unittest
 from unittest import TestCase
 
-from fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
-from fr.tagc.wopmars.utils.SetUtils import SetUtils
+from src.main.fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
+from src.main.fr.tagc.wopmars.utils.SetUtils import SetUtils
 
 
 class TestSetUtils(TestCase):

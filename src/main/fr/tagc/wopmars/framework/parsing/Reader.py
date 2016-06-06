@@ -5,10 +5,11 @@ import yaml
 import importlib
 import re
 
-from fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
-from fr.tagc.wopmars.framework.rule.Option import Option
-from fr.tagc.wopmars.utils.Logger import Logger
-from fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
+from src.main.fr.tagc.wopmars.utils.DictUtils import DictUtils
+from src.main.fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
+from src.main.fr.tagc.wopmars.framework.rule.Option import Option
+from src.main.fr.tagc.wopmars.utils.Logger import Logger
+from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
 class Reader:
@@ -36,6 +37,7 @@ class Reader:
                 # The workflow definition file is loaded as-it in memory by the pyyaml library
                 Logger().info("Reading the definition file: " + str(s_definition_file) + "...")
                 self.__dict_workflow_definition = yaml.load(def_file)
+                Logger().debug("\n" + DictUtils.pretty_repr(self.__dict_workflow_definition))
                 Logger().info("Read complete.")
                 Logger().info("Checking whether the file is well formed...")
                 self.is_grammar_respected()
@@ -78,9 +80,9 @@ class Reader:
                     dict_dict_elm["dict_" + key_second_step][elm] = obj_created
             try:
                 # Importing the module in the mod variable
-                mod = importlib.import_module("fr.tagc.wopmars.toolwrappers." + str_wrapper_name)
+                mod = importlib.import_module(str_wrapper_name)
             except ImportError:
-                raise WopMarsException("Error while parsing the configuration file: \n\t",
+                raise WopMarsException("Error while parsing the configuration file:",
                                        str_wrapper_name + " module is not in the pythonpath.")
             # Instantiate the refered class and add it to the set of objects
 

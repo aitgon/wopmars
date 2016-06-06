@@ -3,11 +3,11 @@ Module containing the Parser class
 """
 import sys
 
-from fr.tagc.wopmars.framework.management.DAG import DAG
-from fr.tagc.wopmars.framework.parsing.Reader import Reader
-from fr.tagc.wopmars.utils.Logger import Logger
-from fr.tagc.wopmars.utils.OptionManager import OptionManager
-from fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
+from src.main.fr.tagc.wopmars.framework.management.DAG import DAG
+from src.main.fr.tagc.wopmars.framework.parsing.Reader import Reader
+from src.main.fr.tagc.wopmars.utils.Logger import Logger
+from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
+from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 from networkx.algorithms.dag import is_directed_acyclic_graph
 

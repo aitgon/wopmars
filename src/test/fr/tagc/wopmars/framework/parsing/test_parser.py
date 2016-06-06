@@ -2,15 +2,16 @@ import os
 import unittest
 from unittest import TestCase
 
-from fr.tagc.wopmars.framework.management.DAG import DAG
-from fr.tagc.wopmars.framework.parsing.Parser import Parser
-from fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
-from fr.tagc.wopmars.toolwrappers.FooWrapper4 import FooWrapper4
-from fr.tagc.wopmars.toolwrappers.FooWrapper5 import FooWrapper5
-from fr.tagc.wopmars.toolwrappers.FooWrapper6 import FooWrapper6
-from fr.tagc.wopmars.utils.OptionManager import OptionManager
-from fr.tagc.wopmars.utils.PathFinder import PathFinder
-from fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
+from FooWrapper4 import FooWrapper4
+from FooWrapper5 import FooWrapper5
+from FooWrapper6 import FooWrapper6
+
+from src.main.fr.tagc.wopmars.framework.management.DAG import DAG
+from src.main.fr.tagc.wopmars.framework.parsing.Parser import Parser
+from src.main.fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
+from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
+from src.main.fr.tagc.wopmars.utils.PathFinder import PathFinder
+from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
 class TestParser(TestCase):

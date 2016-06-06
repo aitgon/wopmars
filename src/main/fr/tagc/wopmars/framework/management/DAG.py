@@ -8,10 +8,10 @@ import networkx as nx
 from networkx.drawing.nx_pydot import write_dot
 
 
-from fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
-from fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
-from fr.tagc.wopmars.utils.Logger import Logger
-from fr.tagc.wopmars.utils.SetUtils import SetUtils
+from src.main.fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
+from src.main.fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
+from src.main.fr.tagc.wopmars.utils.Logger import Logger
+from src.main.fr.tagc.wopmars.utils.SetUtils import SetUtils
 
 
 class DAG(nx.DiGraph):
