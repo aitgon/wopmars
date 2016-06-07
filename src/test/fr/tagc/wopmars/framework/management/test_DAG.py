@@ -10,7 +10,7 @@ from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
 class TestDAG(TestCase):
 
     def setUp(self):
-        OptionManager({'-v': 3, "--dot": None})
+        OptionManager({'-v': 1, "--dot": None})
         #        first
         #       /    \
         #   second   third

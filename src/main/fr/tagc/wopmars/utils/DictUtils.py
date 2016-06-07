@@ -41,8 +41,3 @@ class DictUtils:
             else:
                 s += '\t' * (indent + 1) + str(value) + "\n"
         return s
-
-if __name__ == "__main__":
-    d = {'rule FooWrapper7': {'output': {'output1': '/home/giffon/Documents/wopmars/src/resources/aFile5.txt'}, 'input': {'input1': '/home/giffon/Documents/wopmars/src/resources/aFile1.txt'}}, 'rule FooWrapper9': {'input': {'input2': '/home/giffon/Documents/wopmars/src/resources/aFile6.txt', 'input1': '/home/giffon/Documents/wopmars/src/resources/aFile5.txt'}}, 'rule FooWrapper8': {'output': {'output1': '/home/giffon/Documents/wopmars/src/resources/aFile6.txt'}, 'input': {'input1': '/home/giffon/Documents/wopmars/src/resources/aFile2.txt'}}}
-    d2 = {"a": {"c": 1}, "b":{"c":2} }
-    print(DictUtils.pretty_repr(d))

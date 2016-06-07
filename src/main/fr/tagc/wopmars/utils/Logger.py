@@ -85,13 +85,3 @@ class Logger:
 
         self.__logger.critical(msg)
 
-
-if __name__ == "__main__":
-    OptionManager()["-v"] = 4
-    l = Logger()
-    l.info("salut")
-    l.debug("salut")
-    l.error("salut")
-    l.warning("salut")
-    l.critical("salut")
-

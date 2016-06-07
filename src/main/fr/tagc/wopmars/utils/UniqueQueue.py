@@ -19,5 +19,3 @@ class UniqueQueue(Queue):
         if item not in self.queue:
             # Todo ask lionel il vaut peut etre mieux enlever l'élement déjà présent et le mettre à la fin de la queue
             self.queue.append(item)
-            return True
-        return False

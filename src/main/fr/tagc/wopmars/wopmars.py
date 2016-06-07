@@ -25,10 +25,9 @@ from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsEx
 
 
 class WopMars:
-    def __init__(self):
-        self.__s_workflow_definition_filename = "path/to/the/file"
 
-    def run(self, argv):
+    @staticmethod
+    def run(argv):
         """
         Entry-point of the program
         """
@@ -77,7 +76,7 @@ if __name__ == "__main__":
     cmd_line_never_ready = ["/home/giffon/Documents/wopmars/src/resources/example_def_file_toolwrapper_never_ready.yml", "-vvvv"]
     cmd_line_error_parsing = ["/home/giffon/Documents/wopmars/src/resources/example_def_file_not_a_dag.yml", "-vvvv"]
     cmd_line_wrong_arg = ["/home/giffon/Documents/wopmars/src/resources/example_def_file_not_a_dag.yml", "--fail"]
-    WopMars().run(cmd_line_working)
+    WopMars.run(cmd_line_working)
     # WopMars().run(cmd_line_never_ready)
     # WopMars().run(cmd_line_error_parsing)
     # WopMars().run(cmd_line_wrong_arg)

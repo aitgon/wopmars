@@ -122,6 +122,7 @@ class WorkflowManager(ToolWrapperObserver):
                 # If there is no tool waiting and no tool being executed, the workflow has finished.
                 Logger().info("The workflow has completed.")
                 sys.exit()
+            # uniquement en environnement multiThread
             elif not self.check_buffer():
                 # If there is no tool being executed but there is that are waiting something, the workflow has an issue
                 raise WopMarsException("The workflow has failed.",
@@ -150,6 +151,15 @@ class WorkflowManager(ToolWrapperObserver):
         Logger().info(str(thread_toolwrapper.get_toolwrapper().__class__.__name__) + " has succeed.")
         # Continue the dag execution from the toolwrapper that just finished.
         self.__count_exec -= 1
+
+        if len(self.__list_queue_buffer):
+            Logger().debug("Fill the queue with the Buffer: " + str(self.__list_queue_buffer))
+        i = 0
+        for tw_thread in self.__list_queue_buffer:
+            self.__queue_exec.put(tw_thread)
+            del self.__list_queue_buffer[i]
+            i += 1
+
         self.execute_from(thread_toolwrapper.get_toolwrapper())
 
     def notify_failure(self, thread_toolwrapper):

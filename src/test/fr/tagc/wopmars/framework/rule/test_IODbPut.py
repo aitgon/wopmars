@@ -9,6 +9,8 @@ from FooBase import FooBase
 
 class TestIODbPut(TestCase):
     def setUp(self):
+
+
         self.__io_base_existing = IODbPut(FooBase)
         self.__io_base_existing2 = IODbPut(FooBase)
         self.__io_base_existing3 = IODbPut(FooBase2)

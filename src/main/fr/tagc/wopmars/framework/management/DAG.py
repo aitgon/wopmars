@@ -80,7 +80,7 @@ class DAG(nx.DiGraph):
         :param other: A DAG
         :return: True if self == other
         """
-        assert(isinstance(other, self.__class__))
+        assert isinstance(other, self.__class__)
         int_nodes_self = len(self.nodes())
         int_nodes_other = len(other.nodes())
 

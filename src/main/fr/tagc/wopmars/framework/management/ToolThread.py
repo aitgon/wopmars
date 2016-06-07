@@ -22,13 +22,6 @@ class ToolThread(threading.Thread, Observable):
         threading.Thread.__init__(self)
         self.__set_observer = set([])
         self.__toolwrapper = toolwrapper
-        self.__commited = True
-
-    def set_commited(self, bool):
-        self.__commited = bool
-
-    def get_commited(self):
-        return self.__commited
 
     def get_toolwrapper(self):
         return self.__toolwrapper
@@ -39,7 +32,7 @@ class ToolThread(threading.Thread, Observable):
         :return:
         """
         Logger().info(self.__toolwrapper.__class__.__name__ + " started.")
-        session_tw = SQLManager().get_session()
+        session_tw = SQLManager.instance().get_session()
         self.__toolwrapper.set_session(session_tw)
         self.__toolwrapper.run()
         session_tw.commit()
@@ -81,7 +74,7 @@ class ToolThread(threading.Thread, Observable):
             obs.notify_success(self)
 
     def __eq__(self, other):
-        assert(isinstance(other, self.__class__))
+        assert isinstance(other, self.__class__)
         return self.__toolwrapper == other.get_toolwrapper()
 
     def __hash__(self):

@@ -39,7 +39,6 @@ class ToolWrapper(Observable):
         :return: void
         """
         assert type(input_file_dict) == dict and type(output_file_dict) == dict and type(option_dict) == dict
-        # self.__set_observer = set([])
         self.__input_file_dict = input_file_dict
         self.__output_file_dict = output_file_dict
         self.__input_table_dict = {}
@@ -56,7 +55,7 @@ class ToolWrapper(Observable):
         if len(list_output_tables):
             Logger().debug("Loading output_tables: " + str(list_output_tables))
             self.load_tables(list_output_tables, "output")
-        Base.metadata.create_all(SQLManager().get_engine())
+        Base.metadata.create_all(SQLManager.instance().get_engine())
 
     def load_tables(self, list_string_tables, io):
         for s_table in list_string_tables:
@@ -66,10 +65,16 @@ class ToolWrapper(Observable):
                     self.__input_table_dict[s_table] = IODbPut(eval("mod." + s_table))
                 elif io == "output":
                     self.__output_table_dict[s_table] = IODbPut(eval("mod." + s_table))
+                else:
+                    Logger().debug("The io of the ToolWrapper.load_tables() method should be 'input' or 'output'... "
+                                   "Nothing happened.")
                 Logger().debug(s_table + " table class loaded.")
             except AttributeError:
                 raise WopMarsException("Error while parsing the configuration file: \n\t",
                                        "The class table " + s_table + " doesn't exist.")
+            except ImportError:
+                raise WopMarsException("Error while parsing the configuration file: \n\t",
+                                       "The module " + s_table + " doesn't exist.")
 
     def is_content_respected(self):
         """
