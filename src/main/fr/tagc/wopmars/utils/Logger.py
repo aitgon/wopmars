@@ -5,6 +5,7 @@ import logging
 import os
 from logging.handlers import RotatingFileHandler
 
+from src.main.fr.tagc.wopmars.utils.Singleton import SingletonMixin
 from src.main.fr.tagc.wopmars.utils.ColorPrint import ColorPrint
 from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
 from src.main.fr.tagc.wopmars.utils.PathFinder import PathFinder

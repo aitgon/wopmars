@@ -17,7 +17,7 @@ class FooWrapper9(ToolWrapper):
 
     def run(self):
         print(self.__class__.__name__ + " en cours d'exécution.")
-        time.sleep(1)
+        time.sleep(5)
         print("Suppression de " + self.input("input1") + " et " + self.input("input2") + ".")
         os.remove(self.input("input1"))
         os.remove(self.input("input2"))

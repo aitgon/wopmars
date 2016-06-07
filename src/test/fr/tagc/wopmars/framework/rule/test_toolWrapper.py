@@ -7,7 +7,7 @@ from src.main.fr.tagc.wopmars.framework.rule.Option import Option
 from src.main.fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
 from src.main.fr.tagc.wopmars.utils.PathFinder import PathFinder
 from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
-from test.fr.tagc.wopmars.toolwrappers.FooWrapper3 import FooWrapper3
+from src.test.fr.tagc.wopmars.toolwrappers.FooWrapper3 import FooWrapper3
 
 
 class TestToolWrapper(TestCase):

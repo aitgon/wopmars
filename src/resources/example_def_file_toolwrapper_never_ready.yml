@@ -8,7 +8,7 @@ rule FooWrapper5:
     input:
         input1: "/home/giffon/Documents/wopmars/src/resources/aFile2.txt"
     output:
-        output1: "/home/giffon/Documents/wopmars/src/resources/aFile4.txt"
+        output1: "/home/giffon/Documents/wopmars/src/resources/aFile5.txt"
 
 rule FooWrapper6:
     input:

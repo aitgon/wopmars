@@ -35,7 +35,7 @@ class ToolWrapper(Observable):
         :return: void
         """
         assert type(input_file_dict) == dict and type(output_file_dict) == dict and type(option_dict) == dict
-        self.__set_observer = set([])
+        # self.__set_observer = set([])
         self.__input_file_dict = input_file_dict
         self.__output_file_dict = output_file_dict
         self.__option_dict = option_dict
@@ -129,49 +129,50 @@ class ToolWrapper(Observable):
         """
         return DictUtils.at_least_one_value_of_one_in_an_other(self.__input_file_dict, other.get_output_file_dict())
 
-    def start(self):
-        """
-        Run the tool and fire events.
-        :return:
-        """
-        Logger().info(self.__class__.__name__ + " started.")
-        self.run()
-        self.fire_success()
+# todo enlever commentaires
+    # def start(self):
+    #     """
+    #     Run the tool and fire events.
+    #     :return:
+    #     """
+    #     Logger().info(self.__class__.__name__ + " started.")
+    #     self.run()
+    #     self.fire_success()
 
-    def get_observers(self):
-        """
-        Return the set of observers.
-
-        :return: set observers
-        """
-        return self.__set_observer
-
-    def subscribe(self, obs):
-        """
-        An observer subscribes to the obervable.
-
-        :param obs:
-        :return:
-        """
-        self.__set_observer.add(obs)
-
-    def fire_failure(self):
-        """
-        Notify all ToolWrapperObservers that the execution has failed.
-
-        :return:
-        """
-        for obs in self.get_observers():
-            obs.notify_failure(self)
-
-    def fire_success(self):
-        """
-        Notify all ToolWrapperObservers that the run has suceeded
-
-        :return:
-        """
-        for obs in self.get_observers():
-            obs.notify_success(self)
+    # def get_observers(self):
+    #     """
+    #     Return the set of observers.
+    #
+    #     :return: set observers
+    #     """
+    #     return self.__set_observer
+    #
+    # def subscribe(self, obs):
+    #     """
+    #     An observer subscribes to the obervable.
+    #
+    #     :param obs:
+    #     :return:
+    #     """
+    #     self.__set_observer.add(obs)
+    #
+    # def fire_failure(self):
+    #     """
+    #     Notify all ToolWrapperObservers that the execution has failed.
+    #
+    #     :return:
+    #     """
+    #     for obs in self.get_observers():
+    #         obs.notify_failure(self)
+    #
+    # def fire_success(self):
+    #     """
+    #     Notify all ToolWrapperObservers that the run has suceeded
+    #
+    #     :return:
+    #     """
+    #     for obs in self.get_observers():
+    #         obs.notify_success(self)
 
     def are_inputs_ready(self):
         """

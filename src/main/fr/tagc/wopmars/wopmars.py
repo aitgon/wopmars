@@ -33,6 +33,8 @@ class WopMars:
         Entry-point of the program
         """
         # if the command line is malformed, docopt interrupt the software.
+        # todo catch systemexit
+        # todo optionmanager fichier de definition facultatif
         OptionManager(docopt(__doc__, argv=argv))
 
         try:

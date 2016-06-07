@@ -3,6 +3,7 @@ Module containing the WorkflowManager class
 """
 import sys
 
+from src.main.fr.tagc.wopmars.framework.management.ToolThread import ToolThread
 from src.main.fr.tagc.wopmars.utils.UniqueQueue import UniqueQueue
 from src.main.fr.tagc.wopmars.framework.parsing.Parser import Parser
 from src.main.fr.tagc.wopmars.framework.management.ToolWrapperObserver import ToolWrapperObserver
@@ -62,11 +63,12 @@ class WorkflowManager(ToolWrapperObserver):
         :param node: ToolWrapper a node of the DAG or None, if it executes from the root.
         :return: void
         """
+
         list_tw = self.__dag_tools.successors(node)
         Logger().debug("Next tools: " + str([t.__class__.__name__ for t in list_tw]))
         # The toolwrappers
         for tw in list_tw:
-            self.__queue_exec.put(tw)
+            self.__queue_exec.put(ToolThread(tw))
 
         self.run_queue()
 
@@ -94,20 +96,22 @@ class WorkflowManager(ToolWrapperObserver):
         #  - There were remaing tools in the queue but they weren't ready, so they are tested again
         while not self.__queue_exec.empty():
             Logger().debug("Queue size: " + str(self.__queue_exec.qsize()))
-            tw = self.__queue_exec.get()
+            thread_tw = self.__queue_exec.get()
+            tw = thread_tw.get_toolwrapper()
             Logger().debug("Current ToolWrapper: " + str(tw.__class__.__name__))
             if tw.are_inputs_ready():
                 Logger().debug("ToolWrapper ready: " + str(tw.__class__.__name__))
                 # todo verification des ressources
-                tw.subscribe(self)
+                thread_tw.subscribe(self)
                 self.__count_exec += 1
-                tw.start()
+                # todo multithreading
+                thread_tw.run()
             else:
                 Logger().debug("ToolWrapper not ready: " + str(tw.__class__.__name__))
                 # The buffer contains the ToolWrappers that have inputs which are not ready yet.
-                self.__list_queue_buffer.append(tw)
+                self.__list_queue_buffer.append(thread_tw)
 
-        Logger().debug("Buffer: " + str([t.__class__.__name__ for t in self.__list_queue_buffer]))
+        Logger().debug("Buffer: " + str([t.get_toolwrapper().__class__.__name__ for t in self.__list_queue_buffer]))
         Logger().debug("Running ToolWrappers: " + str(self.__count_exec))
 
         # There is no more ToolWrapper that are waiting to be executed.
@@ -122,7 +126,7 @@ class WorkflowManager(ToolWrapperObserver):
                 # If there is no tool being executed but there is that are waiting something, the workflow has an issue
                 raise WopMarsException("The workflow has failed.",
                                        "The inputs are not ready for the remaining tools: " +
-                                       ", ".join([t.__class__.__name__ for t in self.__list_queue_buffer]) + ". ")
+                                       ", ".join([t.get_toolwrapper().__class__.__name__ for t in self.__list_queue_buffer]) + ". ")
             # If there is one tool that is ready, it means that it is in queue because ressources weren't available.
 
     def check_buffer(self):
@@ -132,11 +136,11 @@ class WorkflowManager(ToolWrapperObserver):
         :return: bool: True if there is at least one toolwrapper that is READY in the buffer.
         """
         for tw in self.__list_queue_buffer:
-            if tw.get_state() == ToolWrapper.READY:
+            if tw.get_toolwrapper().get_state() == ToolWrapper.READY:
                 return True
         return False
 
-    def notify_success(self, toolwrapper):
+    def notify_success(self, thread_toolwrapper):
         """
         Handle toolwrapper success by continuing the dag.
 
@@ -144,12 +148,12 @@ class WorkflowManager(ToolWrapperObserver):
         :param toolwrapper: ToolWrapper that just succeed
         :return:
         """
-        Logger().info(str(toolwrapper.__class__.__name__) + " has succeed.")
+        Logger().info(str(thread_toolwrapper.get_toolwrapper().__class__.__name__) + " has succeed.")
         # Continue the dag execution from the toolwrapper that just finished.
         self.__count_exec -= 1
-        self.execute_from(toolwrapper)
+        self.execute_from(thread_toolwrapper.get_toolwrapper())
 
-    def notify_failure(self, toolwrapper):
+    def notify_failure(self, thread_toolwrapper):
         """
         Handle toolwrapper failure by re-puting it in the queue.
 
