@@ -88,7 +88,7 @@ class WorkflowManager(ToolWrapperObserver):
         """
 
         #
-        # # TODO THIS METHOD IS NOT THREAD-SAFE
+        # # TODO THIS METHOD IS NOT THREAD-SAFE (peut etre que si, à voir)
         #
 
         # If no tools have been added to the queue:
@@ -142,10 +142,9 @@ class WorkflowManager(ToolWrapperObserver):
 
     def notify_success(self, thread_toolwrapper):
         """
-        Handle toolwrapper success by continuing the dag.
+        Handle thread_toolwrapper success by continuing the dag.
 
-        Implementation of the super class method.
-        :param toolwrapper: ToolWrapper that just succeed
+        :param thread_toolwrapper: ToolWrapper thread that just succeed
         :return:
         """
         Logger().info(str(thread_toolwrapper.get_toolwrapper().__class__.__name__) + " has succeed.")
@@ -155,9 +154,9 @@ class WorkflowManager(ToolWrapperObserver):
 
     def notify_failure(self, thread_toolwrapper):
         """
-        Handle toolwrapper failure by re-puting it in the queue.
+        Handle thread_toolwrapper failure by re-puting it in the queue.
 
-        :param toolwrapper: ToolWrapper that just failed
+        :param thread_toolwrapper: ToolWrapper thread that just failed
         :return:
         """
         pass

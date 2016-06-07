@@ -22,6 +22,13 @@ class ToolThread(threading.Thread, Observable):
         threading.Thread.__init__(self)
         self.__set_observer = set([])
         self.__toolwrapper = toolwrapper
+        self.__commited = True
+
+    def set_commited(self, bool):
+        self.__commited = bool
+
+    def get_commited(self):
+        return self.__commited
 
     def get_toolwrapper(self):
         return self.__toolwrapper
@@ -35,6 +42,7 @@ class ToolThread(threading.Thread, Observable):
         session_tw = SQLManager().get_session()
         self.__toolwrapper.set_session(session_tw)
         self.__toolwrapper.run()
+        session_tw.commit()
         self.fire_success()
 
     def get_observers(self):

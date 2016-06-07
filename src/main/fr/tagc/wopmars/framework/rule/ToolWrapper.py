@@ -1,8 +1,12 @@
 """
 This module contains the ToolWrapper class
 """
+import importlib
 
 
+from src.main.fr.tagc.wopmars.framework.bdd.Base import Base
+from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
+from src.main.fr.tagc.wopmars.framework.rule.IODbPut import IODbPut
 from src.main.fr.tagc.wopmars.utils.DictUtils import DictUtils
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
 from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
@@ -38,9 +42,34 @@ class ToolWrapper(Observable):
         # self.__set_observer = set([])
         self.__input_file_dict = input_file_dict
         self.__output_file_dict = output_file_dict
+        self.__input_table_dict = {}
+        self.__output_table_dict = {}
         self.__option_dict = option_dict
         self.__state = ToolWrapper.NEW
         self.__session = None
+
+        list_input_tables = self.get_input_table()
+        list_output_tables = self.get_output_table()
+        if len(list_input_tables):
+            Logger().debug("Loading input_tables: " + str(list_input_tables))
+            self.load_tables(list_input_tables, "input")
+        if len(list_output_tables):
+            Logger().debug("Loading output_tables: " + str(list_output_tables))
+            self.load_tables(list_output_tables, "output")
+        Base.metadata.create_all(SQLManager().get_engine())
+
+    def load_tables(self, list_string_tables, io):
+        for s_table in list_string_tables:
+            try:
+                mod = importlib.import_module(s_table)
+                if io == "input":
+                    self.__input_table_dict[s_table] = IODbPut(eval("mod." + s_table))
+                elif io == "output":
+                    self.__output_table_dict[s_table] = IODbPut(eval("mod." + s_table))
+                Logger().debug(s_table + " table class loaded.")
+            except AttributeError:
+                raise WopMarsException("Error while parsing the configuration file: \n\t",
+                                       "The class table " + s_table + " doesn't exist.")
 
     def is_content_respected(self):
         """
@@ -130,51 +159,6 @@ class ToolWrapper(Observable):
         """
         return DictUtils.at_least_one_value_of_one_in_an_other(self.__input_file_dict, other.get_output_file_dict())
 
-# todo enlever commentaires
-    # def start(self):
-    #     """
-    #     Run the tool and fire events.
-    #     :return:
-    #     """
-    #     Logger().info(self.__class__.__name__ + " started.")
-    #     self.run()
-    #     self.fire_success()
-
-    # def get_observers(self):
-    #     """
-    #     Return the set of observers.
-    #
-    #     :return: set observers
-    #     """
-    #     return self.__set_observer
-    #
-    # def subscribe(self, obs):
-    #     """
-    #     An observer subscribes to the obervable.
-    #
-    #     :param obs:
-    #     :return:
-    #     """
-    #     self.__set_observer.add(obs)
-    #
-    # def fire_failure(self):
-    #     """
-    #     Notify all ToolWrapperObservers that the execution has failed.
-    #
-    #     :return:
-    #     """
-    #     for obs in self.get_observers():
-    #         obs.notify_failure(self)
-    #
-    # def fire_success(self):
-    #     """
-    #     Notify all ToolWrapperObservers that the run has suceeded
-    #
-    #     :return:
-    #     """
-    #     for obs in self.get_observers():
-    #         obs.notify_success(self)
-
     def are_inputs_ready(self):
         """
         Check if inputs are ready
@@ -254,13 +238,13 @@ class ToolWrapper(Observable):
     def get_input_file(self):
         return []
 
-    def get_input_db(self):
+    def get_input_table(self):
         return []
 
     def get_output_file(self):
         return []
 
-    def get_output_db(self):
+    def get_output_table(self):
         return []
 
     def get_params(self):
@@ -269,11 +253,44 @@ class ToolWrapper(Observable):
     def run(self):
         pass
 
-    def input(self, key):
+
+    ### Methods availables for the tool developer
+
+    def input_file(self, key):
+        """
+        Return the path of the specified input file.
+
+        :param key: String the name of the variable containing the path
+        :return:
+        """
         return self.__input_file_dict[key].get_path()
 
-    def output(self, key):
+    def input_table(self, key):
+        """
+        Return the input table object of the given name.
+
+        :param key: String: the name of the Table object.
+        :return:
+        """
+        return self.__input_table_dict[key].get_table()
+
+    def output_file(self, key):
+        """
+        Return the path of the specified output file.
+
+        :param key: String the name of the variable containing the path
+        :return:
+        """
         return self.__output_file_dict[key].get_path()
+
+    def output_table(self, key):
+        """
+        Return the output table object of the given name.
+
+        :param key: String: the name of the Table object.
+        :return:
+        """
+        return self.__output_table_dict[key].get_table()
 
     def option(self, key):
         return self.__option_dict[key].get_value()

@@ -15,7 +15,7 @@ class FooWrapper7(ToolWrapper):
         return ["input1"]
 
     def get_input_table(self):
-        return ["table1"]
+        return ["FooBase"]
 
     def get_output_file(self):
         return ["output1"]
@@ -23,6 +23,9 @@ class FooWrapper7(ToolWrapper):
     def run(self):
         print(self.__class__.__name__ + " en cours d'exécution.")
         time.sleep(1)
-        print("Ecriture de " + self.output("output1"))
-        os.system("touch " + self.output("output1"))
-        pass
+        print("Ecriture de " + self.output_file("output1"))
+        os.system("touch " + self.output_file("output1"))
+        self.session().add(self.input_table("FooBase")(name="coucou"))
+        self.session().add(self.input_table("FooBase")(name="salut"))
+        self.session().add(self.input_table("FooBase")(name="bonjour"))
+        self.session().commit()
