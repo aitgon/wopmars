@@ -73,14 +73,14 @@ class WopMars:
             sys.exit()
 
 if __name__ == "__main__":
-    cmd_line_working = ["/home/giffon/Documents/wopmars/src/resources/example_def_file5.yml", "--dot", "/home/giffon/ex.dot"]
+    cmd_line_working = ["/home/giffon/Documents/wopmars/src/resources/example_def_file5.yml", "--dot", "/home/giffon/ex.dot", "-vvvv"]
     cmd_line_never_ready = ["/home/giffon/Documents/wopmars/src/resources/example_def_file_toolwrapper_never_ready.yml", "-vvvv"]
     cmd_line_error_parsing = ["/home/giffon/Documents/wopmars/src/resources/example_def_file_not_a_dag.yml", "-vvvv"]
     cmd_line_wrong_arg = ["/home/giffon/Documents/wopmars/src/resources/example_def_file_not_a_dag.yml", "--fail"]
-    # WopMars().run(cmd_line_working)
-    # WopMars().run(cmd_line_never_ready)
-    # WopMars().run(cmd_line_error_parsing)
-    WopMars().run(cmd_line_wrong_arg)
+    WopMars().run(cmd_line_working)
+    WopMars().run(cmd_line_never_ready)
+    WopMars().run(cmd_line_error_parsing)
+    # WopMars().run(cmd_line_wrong_arg)
 
     # WopMars().run(sys.argv[1:])
 

@@ -40,6 +40,7 @@ class ToolWrapper(Observable):
         self.__output_file_dict = output_file_dict
         self.__option_dict = option_dict
         self.__state = ToolWrapper.NEW
+        self.__session = None
 
     def is_content_respected(self):
         """
@@ -186,12 +187,15 @@ class ToolWrapper(Observable):
                 Logger().debug("Input: " + str(input_name) + " is not ready.")
                 self.__state = ToolWrapper.NOT_READY
                 return False
-        Logger().debug("Input: " + str(input_name) + " is ready.")
+            Logger().debug("Input: " + str(input_name) + " is ready.")
         self.__state = ToolWrapper.READY
         return True
 
     def get_state(self):
         return self.__state
+
+    def set_session(self, session):
+        self.__session = session
 
     def __eq__(self, other):
         """
@@ -273,3 +277,6 @@ class ToolWrapper(Observable):
 
     def option(self, key):
         return self.__option_dict[key].get_value()
+
+    def session(self):
+        return self.__session

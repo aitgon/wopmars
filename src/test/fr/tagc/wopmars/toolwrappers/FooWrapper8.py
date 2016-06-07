@@ -15,8 +15,6 @@ class FooWrapper8(ToolWrapper):
     def get_input_file(self):
         return ["input1"]
 
-    def get_out
-
     def get_output_file(self):
         return ["output1"]
 

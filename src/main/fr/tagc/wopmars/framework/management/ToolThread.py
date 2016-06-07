@@ -3,6 +3,7 @@ Module containing the ToolThread class.
 """
 import threading
 
+from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
 from src.main.fr.tagc.wopmars.framework.management.Observable import Observable
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
 
@@ -31,6 +32,8 @@ class ToolThread(threading.Thread, Observable):
         :return:
         """
         Logger().info(self.__toolwrapper.__class__.__name__ + " started.")
+        session_tw = SQLManager().get_session()
+        self.__toolwrapper.set_session(session_tw)
         self.__toolwrapper.run()
         self.fire_success()
 
@@ -68,3 +71,10 @@ class ToolThread(threading.Thread, Observable):
         """
         for obs in self.get_observers():
             obs.notify_success(self)
+
+    def __eq__(self, other):
+        assert(isinstance(other, self.__class__))
+        return self.__toolwrapper == other.get_toolwrapper()
+
+    def __hash__(self):
+        return id(self)
