@@ -51,7 +51,7 @@ class Parser:
         if s_dot_option:
             if s_dot_option[-4:] != '.dot':
                 s_dot_option += ".dot"
-            Logger().info("Writing the dot file...")
+            Logger.instance().info("Writing the dot file...")
             dag_tools.write_dot(s_dot_option)
-            Logger().info("Dot file wrote.")
+            Logger.instance().info("Dot file wrote.")
         return dag_tools

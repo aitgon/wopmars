@@ -31,7 +31,7 @@ class DAG(nx.DiGraph):
         :return: None
         """
         super().__init__()
-        Logger().info("Building the execution DAG...")
+        Logger.instance().info("Building the execution DAG...")
         if set_tools:
             # for each tool
             for tool1 in set_tools:
@@ -41,7 +41,7 @@ class DAG(nx.DiGraph):
                     # is there a dependency between tool1 and tool2?
                     if tool1.follows(tool2):
                         self.add_edge(tool2, tool1)
-        Logger().info("DAG built.")
+        Logger.instance().info("DAG built.")
 
     def write_dot(self, path):
         """

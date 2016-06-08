@@ -31,7 +31,7 @@ class ToolThread(threading.Thread, Observable):
         Run the tool and fire events.
         :return:
         """
-        Logger().info(self.__toolwrapper.__class__.__name__ + " started.")
+        Logger.instance().info(self.__toolwrapper.__class__.__name__ + " started.")
         session_tw = SQLManager.instance().get_session()
         self.__toolwrapper.set_session(session_tw)
         self.__toolwrapper.run()

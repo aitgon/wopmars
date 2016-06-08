@@ -27,11 +27,11 @@ class FooWrapper8(ToolWrapper):
         return ["FooBase"]
 
     def run(self):
-        Logger().info(self.__class__.__name__ + " en cours d'exécution.")
+        Logger.instance().info(self.__class__.__name__ + " en cours d'exécution.")
         time.sleep(1)
-        Logger().info("Ecriture de " + self.output_file("output1"))
+        Logger.instance().info("Ecriture de " + self.output_file("output1"))
         os.system("touch " + self.output_file("output1"))
-        Logger().info("Remplissage de la table " + str(self.input_table("FooBase")))
+        Logger.instance().info("Remplissage de la table " + str(self.input_table("FooBase")))
         self.session().add(self.input_table("FooBase")(name="kiki"))
         self.session().add(self.input_table("FooBase")(name="kika"))
         self.session().add(self.input_table("FooBase")(name="kiku"))

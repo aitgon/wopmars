@@ -65,7 +65,7 @@ class WorkflowManager(ToolWrapperObserver):
         """
 
         list_tw = self.__dag_tools.successors(node)
-        Logger().debug("Next tools: " + str([t.__class__.__name__ for t in list_tw]))
+        Logger.instance().debug("Next tools: " + str([t.__class__.__name__ for t in list_tw]))
         # The toolwrappers
         for tw in list_tw:
             self.__queue_exec.put(ToolThread(tw))
@@ -95,24 +95,24 @@ class WorkflowManager(ToolWrapperObserver):
         #  - All tools have been executed and the queue is empty, so nothing happens
         #  - There were remaing tools in the queue but they weren't ready, so they are tested again
         while not self.__queue_exec.empty():
-            Logger().debug("Queue size: " + str(self.__queue_exec.qsize()))
+            Logger.instance().debug("Queue size: " + str(self.__queue_exec.qsize()))
             thread_tw = self.__queue_exec.get()
             tw = thread_tw.get_toolwrapper()
-            Logger().debug("Current ToolWrapper: " + str(tw.__class__.__name__))
+            Logger.instance().debug("Current ToolWrapper: " + str(tw.__class__.__name__))
             if tw.are_inputs_ready():
-                Logger().debug("ToolWrapper ready: " + str(tw.__class__.__name__))
+                Logger.instance().debug("ToolWrapper ready: " + str(tw.__class__.__name__))
                 # todo verification des ressources
                 thread_tw.subscribe(self)
                 self.__count_exec += 1
                 # todo multithreading
                 thread_tw.run()
             else:
-                Logger().debug("ToolWrapper not ready: " + str(tw.__class__.__name__))
+                Logger.instance().debug("ToolWrapper not ready: " + str(tw.__class__.__name__))
                 # The buffer contains the ToolWrappers that have inputs which are not ready yet.
                 self.__list_queue_buffer.append(thread_tw)
 
-        Logger().debug("Buffer: " + str([t.get_toolwrapper().__class__.__name__ for t in self.__list_queue_buffer]))
-        Logger().debug("Running ToolWrappers: " + str(self.__count_exec))
+        Logger.instance().debug("Buffer: " + str([t.get_toolwrapper().__class__.__name__ for t in self.__list_queue_buffer]))
+        Logger.instance().debug("Running ToolWrappers: " + str(self.__count_exec))
 
         # There is no more ToolWrapper that are waiting to be executed.
         # Is there some tools that are currently being executed?
@@ -120,7 +120,7 @@ class WorkflowManager(ToolWrapperObserver):
             # Is there some tools that weren't ready?
             if len(self.__list_queue_buffer) == 0:
                 # If there is no tool waiting and no tool being executed, the workflow has finished.
-                Logger().info("The workflow has completed.")
+                Logger.instance().info("The workflow has completed.")
                 sys.exit()
             # uniquement en environnement multiThread
             elif not self.check_buffer():
@@ -148,12 +148,12 @@ class WorkflowManager(ToolWrapperObserver):
         :param thread_toolwrapper: ToolWrapper thread that just succeed
         :return:
         """
-        Logger().info(str(thread_toolwrapper.get_toolwrapper().__class__.__name__) + " has succeed.")
+        Logger.instance().info(str(thread_toolwrapper.get_toolwrapper().__class__.__name__) + " has succeed.")
         # Continue the dag execution from the toolwrapper that just finished.
         self.__count_exec -= 1
 
         if len(self.__list_queue_buffer):
-            Logger().debug("Fill the queue with the Buffer: " + str(self.__list_queue_buffer))
+            Logger.instance().debug("Fill the queue with the Buffer: " + str(self.__list_queue_buffer))
         i = 0
         for tw_thread in self.__list_queue_buffer:
             self.__queue_exec.put(tw_thread)

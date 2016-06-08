@@ -69,5 +69,10 @@ class TestParser(TestCase):
         self.assertTrue(os.path.isfile(self.__dot_path))
         os.remove(self.__dot_path)
 
+        OptionManager()["--dot"] = self.__dot_path[:-4]
+        self.__parser_right.parse()
+        self.assertTrue(os.path.isfile(self.__dot_path))
+        os.remove(self.__dot_path)
+
 if __name__ == '__main__':
     unittest.main()

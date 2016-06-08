@@ -58,6 +58,11 @@ class TestReader(TestCase):
 
         self.__list_reader_exception_read = [Reader(file) for file in self.__list_s_to_exception_read]
 
+        # Not existing file
+
+        with self.assertRaises(WopMarsException):
+            Reader(s_root_path + "Not existing file.")
+
     def test_read(self):
 
         result = self.__reader_right.read()

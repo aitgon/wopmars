@@ -8,6 +8,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 from src.main.fr.tagc.wopmars.framework.bdd.WopMarsSession import WopMarsSession
+from src.main.fr.tagc.wopmars.utils.Logger import Logger
 from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
 from src.main.fr.tagc.wopmars.utils.Singleton import SingletonMixin
 
@@ -30,7 +31,7 @@ class SQLManager(SingletonMixin):
         self.__dict_thread_session = {}
         self.__dict_session_condition = {}
         self.__queue_commit = Queue()
-        self.__cv_current_commit = threading.Condition()
+        self.__lock_current_commit = threading.Lock()
         self.__available = True
 
     def get_session(self):
@@ -41,10 +42,9 @@ class SQLManager(SingletonMixin):
         return self.__engine
 
     def commit(self, session):
-        with self.__cv_current_commit:
-            while not self.__available:
-                self.__cv_current_commit.wait()
-            self.__available = False
+        # todo ask lionel est-ce-que ce logging est bon? devrais-je donner plus de détails?
+        Logger.instance().debug(str(session) + " want the lock on SQLManager.")
+        with self.__lock_current_commit:
+            Logger.instance().debug(str(session) + " has taken the lock on SQLManager.")
             session.commit()
-            self.__available = True
-            self.__cv_current_commit.notify()
+            Logger.instance().debug(str(session) + " has been commited.")

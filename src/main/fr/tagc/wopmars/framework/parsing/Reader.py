@@ -35,13 +35,13 @@ class Reader:
             def_file = open(s_definition_file, 'r')
             try:
                 # The workflow definition file is loaded as-it in memory by the pyyaml library
-                Logger().info("Reading the definition file: " + str(s_definition_file) + "...")
+                Logger.instance().info("Reading the definition file: " + str(s_definition_file) + "...")
                 self.__dict_workflow_definition = yaml.load(def_file)
-                Logger().debug("\n" + DictUtils.pretty_repr(self.__dict_workflow_definition))
-                Logger().info("Read complete.")
-                Logger().info("Checking whether the file is well formed...")
+                Logger.instance().debug("\n" + DictUtils.pretty_repr(self.__dict_workflow_definition))
+                Logger.instance().info("Read complete.")
+                Logger.instance().info("Checking whether the file is well formed...")
                 self.is_grammar_respected()
-                Logger().info("File well formed.")
+                Logger.instance().info("File well formed.")
             # YAMLError is thrown if the YAML specifications are not respected by the definition file
             except yaml.YAMLError as exc:
                 raise WopMarsException("Error while parsing the configuration file: \n\t"
@@ -62,7 +62,7 @@ class Reader:
         :return: The set of builded ToolWrappers
         """
         set_wrapper = set()
-        Logger().debug("Parsing rules: " + str(self.__dict_workflow_definition))
+        Logger.instance().debug("Parsing rules: " + str(self.__dict_workflow_definition))
         for rule in self.__dict_workflow_definition:
             # the name of the wrapper is extracted after the "rule" keyword
             str_wrapper_name = rule.split()[-1].strip(":")
@@ -78,7 +78,7 @@ class Reader:
                         # In theory, there cannot be a IODbPut specification in the definition file
                         obj_created = IOFilePut(elm, self.__dict_workflow_definition[rule][key_second_step][elm])
                     dict_dict_elm["dict_" + key_second_step][elm] = obj_created
-            Logger().debug("Loading " + str_wrapper_name + ".")
+            Logger.instance().debug("Loading " + str_wrapper_name + ".")
             try:
                 # Importing the module in the mod variable
                 mod = importlib.import_module(str_wrapper_name)
@@ -91,7 +91,7 @@ class Reader:
                 toolwrapper_wrapper = eval("mod." + str_wrapper_name)(input_file_dict=dict_dict_elm["dict_input"],
                                                                       output_file_dict=dict_dict_elm["dict_output"],
                                                                       option_dict=dict_dict_elm["dict_params"])
-                Logger().debug(str_wrapper_name + " ToolWrapper loaded.")
+                Logger.instance().debug(str_wrapper_name + " ToolWrapper loaded.")
             except AttributeError:
                 raise WopMarsException("Error while parsing the configuration file: \n\t",
                                        "The class " + str_wrapper_name + " doesn't exist.")

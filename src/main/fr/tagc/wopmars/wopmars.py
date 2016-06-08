@@ -47,7 +47,7 @@ class WopMars:
 
             OptionManager().validate(schema_option)
         except SchemaError as schema_msg:
-            Logger().debug("\nCommand line Args:" + str(OptionManager()))
+            Logger.instance().debug("\nCommand line Args:" + str(OptionManager()))
             # regex for the different possible error messages.
             match_open_def = re.match(r"^open\('(.[^\)]+)'\)", str(schema_msg))
             match_dot_def = re.match(r"^check_valid_path\(('.[^\)]+')\)", str(schema_msg))
@@ -55,22 +55,22 @@ class WopMars:
 
             # Check the different regex..
             if match_open_def:
-                Logger().error("The file " + match_open_def.group(1) + " cannot be opened. It may not exist.")
+                Logger.instance().error("The file " + match_open_def.group(1) + " cannot be opened. It may not exist.")
             elif match_dot_def:
-                Logger().error("The path " + match_dot_def.group(1) + " is not valid.")
+                Logger.instance().error("The path " + match_dot_def.group(1) + " is not valid.")
             elif match_wrong_key:
-                Logger().error("The option key " + match_wrong_key.group(1) + " is not known.")
+                Logger.instance().error("The option key " + match_wrong_key.group(1) + " is not known.")
             else:
-                Logger().error("An unknown error has occured. Message: " + str(schema_msg))
+                Logger.instance().error("An unknown error has occured. Message: " + str(schema_msg))
             sys.exit()
 
-        Logger().debug("\nCommand line Args:" + str(OptionManager()))
+        Logger.instance().debug("\nCommand line Args:" + str(OptionManager()))
 
         try:
             wm = WorkflowManager()
             wm.run()
         except WopMarsException as WE:
-            Logger().error(str(WE))
+            Logger.instance().error(str(WE))
             sys.exit()
 
 if __name__ == "__main__":

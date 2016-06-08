@@ -50,10 +50,10 @@ class ToolWrapper(Observable):
         list_input_tables = self.get_input_table()
         list_output_tables = self.get_output_table()
         if len(list_input_tables):
-            Logger().debug("Loading input_tables: " + str(list_input_tables))
+            Logger.instance().debug("Loading input_tables: " + str(list_input_tables))
             self.load_tables(list_input_tables, "input")
         if len(list_output_tables):
-            Logger().debug("Loading output_tables: " + str(list_output_tables))
+            Logger.instance().debug("Loading output_tables: " + str(list_output_tables))
             self.load_tables(list_output_tables, "output")
         Base.metadata.create_all(SQLManager.instance().get_engine())
 
@@ -66,9 +66,9 @@ class ToolWrapper(Observable):
                 elif io == "output":
                     self.__output_table_dict[s_table] = IODbPut(eval("mod." + s_table))
                 else:
-                    Logger().debug("The io of the ToolWrapper.load_tables() method should be 'input' or 'output'... "
+                    Logger.instance().debug("The io of the ToolWrapper.load_tables() method should be 'input' or 'output'... "
                                    "Nothing happened.")
-                Logger().debug(s_table + " table class loaded.")
+                Logger.instance().debug(s_table + " table class loaded.")
             except AttributeError:
                 raise WopMarsException("Error while parsing the configuration file: \n\t",
                                        "The class table " + s_table + " doesn't exist.")
@@ -170,13 +170,13 @@ class ToolWrapper(Observable):
 
         :return: bool - True if inputs are ready.
         """
-        Logger().debug("Inputs of " + str(self.__class__.__name__) + ": " + str(self.__input_file_dict.keys()))
+        Logger.instance().debug("Inputs of " + str(self.__class__.__name__) + ": " + str(self.__input_file_dict.keys()))
         for input_name in self.__input_file_dict:
             if not self.__input_file_dict[input_name].is_ready():
-                Logger().debug("Input: " + str(input_name) + " is not ready.")
+                Logger.instance().debug("Input: " + str(input_name) + " is not ready.")
                 self.__state = ToolWrapper.NOT_READY
                 return False
-            Logger().debug("Input: " + str(input_name) + " is ready.")
+            Logger.instance().debug("Input: " + str(input_name) + " is ready.")
         self.__state = ToolWrapper.READY
         return True
 

@@ -12,8 +12,7 @@ from src.main.fr.tagc.wopmars.utils.PathFinder import PathFinder
 from src.main.fr.tagc.wopmars.utils.Singleton import singleton
 
 
-@singleton
-class Logger:
+class Logger(SingletonMixin):
     """
     class Logger
     """
