@@ -1,3 +1,4 @@
-rule FooWrapper1:
+rule rule3:
+    tool: FooWrapper3
     input:
 failure

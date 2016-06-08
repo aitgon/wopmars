@@ -9,6 +9,7 @@ from src.main.fr.tagc.wopmars.utils.DictUtils import DictUtils
 from src.main.fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
 from src.main.fr.tagc.wopmars.framework.rule.Option import Option
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
+from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
 from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
@@ -64,20 +65,26 @@ class Reader:
         set_wrapper = set()
         Logger.instance().debug("Parsing rules: " + str(self.__dict_workflow_definition))
         for rule in self.__dict_workflow_definition:
+            str_wrapper_name = None
             # the name of the wrapper is extracted after the "rule" keyword
-            str_wrapper_name = rule.split()[-1].strip(":")
+            str_rule_name = rule.split()[-1].strip(":")
             # The dict is re-initialized for each wrapper
             dict_dict_elm = dict(dict_input={}, dict_params={}, dict_output={})
             for key_second_step in self.__dict_workflow_definition[rule]:
-                # key_second_step is supposed to be "input", "output" or "params"
-                for elm in self.__dict_workflow_definition[rule][key_second_step]:
-                    # The 2 possible objects can be created
-                    if key_second_step == "params":
-                        obj_created = Option(elm, self.__dict_workflow_definition[rule][key_second_step][elm])
-                    else:
-                        # In theory, there cannot be a IODbPut specification in the definition file
-                        obj_created = IOFilePut(elm, self.__dict_workflow_definition[rule][key_second_step][elm])
-                    dict_dict_elm["dict_" + key_second_step][elm] = obj_created
+                # key_second_step is supposed to be "tool", "input", "output" or "params"
+                if type(self.__dict_workflow_definition[rule][key_second_step]) == dict:
+                    for elm in self.__dict_workflow_definition[rule][key_second_step]:
+                        # The 2 possible objects can be created
+                        if key_second_step == "params":
+                            obj_created = Option(elm, self.__dict_workflow_definition[rule][key_second_step][elm])
+                        else:
+                            # In theory, there cannot be a IODbPut specification in the definition file
+                            obj_created = IOFilePut(elm, self.__dict_workflow_definition[rule][key_second_step][elm])
+                        dict_dict_elm["dict_" + key_second_step][elm] = obj_created
+                else:
+                    str_wrapper_name = self.__dict_workflow_definition[rule][key_second_step]
+
+
             Logger.instance().debug("Loading " + str_wrapper_name + ".")
             try:
                 # Importing the module in the mod variable
@@ -109,31 +116,66 @@ class Reader:
         WoPMaRS = rule
         rule       = "rule" (identifier | "") ":" ruleparams
         ni         = NEWLINE INDENT
-        ruleparams = [ni input] [ni output] [ni params]
+        ruleparams = [ni tool] [ni input] [ni output] [ni params]
         NEWLINE WoPMaRS
-        input      = "input" ":" ((identifier ”:” stringliteral),?)+
-        output     = "output" ":" ((identifier ”:” stringliteral),?)+
-        params     = "params" ":" ((identifier ”:” stringliteral),?)+
+        tool       = "tool"   ":"  identifier ”:” stringliteral
+        input      = "input"  ":" (identifier ”:” stringliteral ni?)+
+        output     = "output" ":" (identifier ”:” stringliteral ni?)+
+        params     = "params" ":" (identifier ”:” stringliteral ni?)+
 
         :raise: WopMarsParsingException
         :return: void
         """
-        regex_step1 = re.compile(r"(^rule [^\s]+$)")
-        regex_step2 = re.compile(r"(^params$)|(^input$)|(^output$)")
+        exemple_file_def = """
+    rule RULENAME:
+        tool: TOOLNAME
+        input:
+            INPUTNAME: INPUTVALUE
+        output:
+            OUTPUTNAME: OUTPUTVALUE
+        params:
+            OPTIONNAME: OPTIONVALUE
 
+    rule ...etc...
+        """
+
+        regex_step1 = re.compile(r"(^rule [^\s]+$)")
+        regex_step2 = re.compile(r"(^params$)|(^tool$)|(^input$)|(^output$)")
+
+        # todo regex sur les "identifier : stringliteral"?
         # The found words are tested against the regex to see if they match or not
         for s_key_step1 in self.__dict_workflow_definition:
+            bool_toolwrapper = False
             if not regex_step1.search(s_key_step1):
                 raise WopMarsException("Error while parsing the configuration file: \n\t"
                                        "The grammar of the WopMars's definition file is not respected:",
                                        "The line containing:\'" +
                                        str(s_key_step1) +
                                        "\' doesn't match the grammar: it should start with 'rule'" +
-                                       "and contains only one word after the 'rule' keyword")
+                                       "and contains only one word after the 'rule' keyword" +
+                                       "\nexemple:" + exemple_file_def)
             for s_key_step2 in self.__dict_workflow_definition[s_key_step1]:
                 if not regex_step2.search(s_key_step2):
                     raise WopMarsException("Error while parsing the configuration file: \n\t"
                                            "The grammar of the WopMars's definition file is not respected:",
-                                           "The line containing:\'" + str(s_key_step2) +
-                                           "\' doesn't match the grammar: it should be " +
-                                           "'params', 'input' or 'output'")
+                                           "The line containing:'" + str(s_key_step2) + "'" +
+                                           " for rule '" + str(s_key_step1) + "'" +
+                                           " doesn't match the grammar: it should be " +
+                                           "'tool', 'params', 'input' or 'output'" +
+                                       "\nexemple:" + exemple_file_def)
+                if s_key_step2 == "tool":
+                    bool_toolwrapper = True
+
+            if not bool_toolwrapper:
+                raise WopMarsException("Error while parsing the configuration file: \n\t"
+                                       "The grammar of the WopMars's definition file is not respected:",
+                                       "The rule '" + str(s_key_step1) + "' doesn't contain any tool." +
+                                       "\nexemple:" + exemple_file_def
+                                       )
+
+if __name__ == '__main__':
+    OptionManager()["-v"] = 3
+    try:
+        r = Reader("/home/giffon/Documents/wopmars/src/resources/example_def_file.yml")
+    except Exception as e:
+        print(e)

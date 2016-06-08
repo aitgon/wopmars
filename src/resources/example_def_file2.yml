@@ -1,16 +1,19 @@
-rule FooWrapper4:
+rule rule4:
+    tool: FooWrapper4
     input:
         input1: "aFile.txt"
     output:
         output1: "aFile2.txt"
 
-rule FooWrapper5:
+rule rule5:
+    tool: FooWrapper5
     input:
         input1: "aFile2.txt"
     output:
         output1: "aFile3.txt"
 
-rule FooWrapper6:
+rule rule6:
+    tool: FooWrapper6
     input:
         input1: "aFile2.txt"
     output:
