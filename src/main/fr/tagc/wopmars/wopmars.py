@@ -14,7 +14,7 @@ Options:
 import sys
 import re
 
-from docopt import docopt
+from docopt import docopt, DocoptExit
 from schema import Schema, And, Or, Use, SchemaError
 
 from src.main.fr.tagc.wopmars.framework.management.WorkflowManager import WorkflowManager
@@ -32,9 +32,11 @@ class WopMars:
         Entry-point of the program
         """
         # if the command line is malformed, docopt interrupt the software.
-        # todo catch systemexit
         # todo optionmanager fichier de definition facultatif
-        OptionManager(docopt(__doc__, argv=argv))
+        try:
+            OptionManager(docopt(__doc__, argv=argv))
+        except DocoptExit as SE:
+            sys.exit("Bad argument in the command line.\n" + str(SE))
 
         try:
             schema_option = Schema({
@@ -76,10 +78,10 @@ if __name__ == "__main__":
     cmd_line_never_ready = ["/home/giffon/Documents/wopmars/src/resources/example_def_file_toolwrapper_never_ready.yml", "-vvvv"]
     cmd_line_error_parsing = ["/home/giffon/Documents/wopmars/src/resources/example_def_file_not_a_dag.yml", "-vvvv"]
     cmd_line_wrong_arg = ["/home/giffon/Documents/wopmars/src/resources/example_def_file_not_a_dag.yml", "--fail"]
-    WopMars.run(cmd_line_working)
+    # WopMars.run(cmd_line_working)
     # WopMars().run(cmd_line_never_ready)
     # WopMars().run(cmd_line_error_parsing)
-    # WopMars().run(cmd_line_wrong_arg)
+    WopMars().run(cmd_line_wrong_arg)
 
     # WopMars().run(sys.argv[1:])
 
