@@ -76,6 +76,8 @@ class ToolWrapper(Observable):
                 raise WopMarsException("Error while parsing the configuration file: \n\t",
                                        "The module " + s_table + " doesn't exist.")
 
+    ### PARSING METHODS
+
     def is_content_respected(self):
         """
         This method checks if the parameters dictionary are properly formed, according to the specifications of the
@@ -164,6 +166,8 @@ class ToolWrapper(Observable):
         """
         return DictUtils.at_least_one_value_of_one_in_an_other(self.__input_file_dict, other.get_output_file_dict())
 
+    ### Workflow Manager methods
+
     def are_inputs_ready(self):
         """
         Check if inputs are ready
@@ -182,6 +186,15 @@ class ToolWrapper(Observable):
 
     def get_state(self):
         return self.__state
+
+    def get_input_file_dict(self):
+        return self.__input_file_dict
+
+    def get_output_file_dict(self):
+        return self.__output_file_dict
+
+    def get_option_dict(self):
+        return self.__option_dict
 
     def set_session(self, session):
         self.__session = session
@@ -224,21 +237,7 @@ class ToolWrapper(Observable):
         s += "\""
         return s
 
-    # ###### Method relatives to the framework #######
-
-    def get_input_file_dict(self):
-        return self.__input_file_dict
-
-    def get_output_file_dict(self):
-        return self.__output_file_dict
-
-    def get_option_dict(self):
-        return self.__option_dict
-
-    def create_base_object_from_name(self):
-        # TODO this method will return (or set self attributes) from class names to base. Il n'y a peut etre pas besoin
-        # que cette méthode soit dans self
-        pass
+    # ###### Method that worker developper should implement#######
 
     def get_input_file(self):
         return []

@@ -22,6 +22,7 @@ from src.main.fr.tagc.wopmars.utils.Logger import Logger
 from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
 from src.main.fr.tagc.wopmars.utils.PathFinder import PathFinder
 from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
+# TODO faire en sorte que les imports commencent a fr
 
 
 class WopMars:

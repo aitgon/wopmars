@@ -170,10 +170,3 @@ class WorkflowManager(ToolWrapperObserver):
         :return:
         """
         pass
-
-if __name__ == "__main__":
-    OptionManager()["DEFINITION_FILE"] = "/home/giffon/Documents/wopmars/src/resources/example_def_file5.yml"
-    OptionManager()["-v"] = 4
-    OptionManager()["--dot"] = None
-    my_workflow = WorkflowManager()
-    my_workflow.run()

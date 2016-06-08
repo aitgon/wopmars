@@ -30,6 +30,8 @@ class TestWorkflowManager(TestCase):
         self.__error_wm = WorkflowManager()
 
     def test_run(self):
+        OptionManager()["--dot"] = None
+
         with self.assertRaises(SystemExit):
             self.__finishing_wm.run()
 

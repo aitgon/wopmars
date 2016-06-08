@@ -19,15 +19,19 @@ class WopMarsSession:
         self.__session = session
 
     def commit(self):
-        Logger.instance().debug(str(self.__session) + " is about to commit.")
-        # Logger.instance().debug("Operations to be commited in session" + str(self.__session) + ": \n\tUpdates:\n\t\t" +
-        #                "\n\t\t".join([str(k) for k in self.__session.dirty]) +
-        #                "\n\tInserts:\n\t\t" +
-        #                "\n\t\t".join([str(k) for k in self.__session.new]))
+        # Logger.instance().debug(str(self.__session) + " is about to commit.")
+        Logger.instance().debug("Operations to be commited in session" + str(self.__session) + ": \n\tUpdates:\n\t\t" +
+                                "\n\t\t".join([str(k) for k in self.__session.dirty]) +
+                                "\n\tInserts:\n\t\t" +
+                                "\n\t\t".join([str(k) for k in self.__session.new]))
         self.__manager.commit(self.__session)
 
     def rollback(self):
-        pass
+        Logger.instance().debug("Operations to be commited in session" + str(self.__session) + ": \n\tUpdates:\n\t\t" +
+                                "\n\t\t".join([str(k) for k in self.__session.dirty]) +
+                                "\n\tInserts:\n\t\t" +
+                                "\n\t\t".join([str(k) for k in self.__session.new]))
+        self.__session.rollback()
 
     def query(self, table):
         return self.__session.query(table)

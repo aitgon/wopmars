@@ -18,16 +18,33 @@ class ConcurrentCommitingThread(threading.Thread):
         thread_session.close()
 
 
+class ConcurrentRollBackingThread(threading.Thread):
+    def run(self):
+        thread_session = SQLManager.instance().get_session()
+        for i in range(1000):
+            foo = FooBase(name="string " + str(i))
+            thread_session.add(foo)
+        thread_session.rollback()
+
+        thread_session.close()
+
+
 class TestSQLManager(TestCase):
     def setUp(self):
         OptionManager({'-v':4})
+        self.__local_session = SQLManager().get_session()
+
         SQLManager()
         self.__t1 = ConcurrentCommitingThread()
         self.__t2 = ConcurrentCommitingThread()
         self.__t3 = ConcurrentCommitingThread()
 
+        self.__t4 = ConcurrentRollBackingThread()
+        self.__t5 = ConcurrentRollBackingThread()
+        self.__t6 = ConcurrentRollBackingThread()
+
     def test_commit(self):
-        list_threads = [self.__t1, self.__t2, self.__t3]
+        list_threads = [self.__t1, self.__t2, self.__t3, self.__t4, self.__t5, self.__t6]
         try:
             for t in list_threads:
                 t.start()
@@ -38,12 +55,19 @@ class TestSQLManager(TestCase):
             print(e)
             raise AssertionError("Should not raise an exception")
 
+        self.assertTrue(len(self.__local_session.query(FooBase).filter(FooBase.name.like('string %')).all()) == 3000)
+
     def tearDown(self):
-        local_session = SQLManager().get_session()
-        foo_objects = local_session.query(FooBase).filter(FooBase.name.like('string %')).all()
-        for obj in foo_objects:
-            local_session.delete(obj)
-        local_session.commit()
+        try:
+            foo_objects = self.__local_session.query(FooBase).filter(FooBase.name.like('string %')).all()
+            for obj in foo_objects:
+                self.__local_session.delete(obj)
+            self.__local_session.commit()
+            self.__local_session.close()
+        except Exception as e:
+            self.__local_session.rollback()
+            self.__local_session.close()
+            raise e
 
 if __name__ == '__main__':
     unittest.main()

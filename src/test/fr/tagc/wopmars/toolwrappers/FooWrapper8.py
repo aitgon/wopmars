@@ -32,7 +32,7 @@ class FooWrapper8(ToolWrapper):
         Logger.instance().info("Ecriture de " + self.output_file("output1"))
         os.system("touch " + self.output_file("output1"))
         Logger.instance().info("Remplissage de la table " + str(self.input_table("FooBase")))
-        self.session().add(self.input_table("FooBase")(name="kiki"))
+        self.session().add(self.input_table("FooBase")(name="snp"))
         self.session().add(self.input_table("FooBase")(name="kika"))
         self.session().add(self.input_table("FooBase")(name="kiku"))
         self.session().commit()
