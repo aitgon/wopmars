@@ -16,7 +16,8 @@ from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsEx
 
 class TestParser(TestCase):
     def setUp(self):
-        OptionManager({'-v': 1, "--dot": None})
+        OptionManager()["-v"] = 4
+        OptionManager()["--dot"] = None
         s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
 
         # The good -------------------------------:
@@ -36,6 +37,8 @@ class TestParser(TestCase):
         OptionManager()["--dot"] = None 
 
     def test_parse(self):
+        OptionManager()["-v"] = 4
+
         # The good --------------------------:
         set_toolwrappers = set()
 
@@ -68,11 +71,7 @@ class TestParser(TestCase):
         self.__parser_right.parse()
         self.assertTrue(os.path.isfile(self.__dot_path))
         os.remove(self.__dot_path)
-
-        OptionManager()["--dot"] = self.__dot_path[:-4]
-        self.__parser_right.parse()
-        self.assertTrue(os.path.isfile(self.__dot_path))
-        os.remove(self.__dot_path)
+        os.remove(self.__dot_path[:-4] + ".ps")
 
 if __name__ == '__main__':
     unittest.main()

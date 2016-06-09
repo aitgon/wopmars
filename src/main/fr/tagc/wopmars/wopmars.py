@@ -1,7 +1,7 @@
 """WopMars: Workflow Python Manager for Reproducible Science.
 
 Usage:
-  wopmars.py [-v...] [-d FILE] DEFINITION_FILE
+  wopmars.py [-v...] [-d FILE] [-L FILE] DEFINITION_FILE
 
 Arguments:
   DEFINITION_FILE  Path to the definition file of the workflow.
@@ -9,7 +9,8 @@ Arguments:
 Options:
   -h --help           Show this help.
   -v                  Set verbosity level.
-  -d FILE --dot=FILE  Write dot file (with .dot extension).
+  -d FILE --dot=FILE  Write dot representing the workflow in the FILE file (with .dot extension).
+  -L FILE --log=FILE  Write logs in FILE file
 """
 import sys
 import re
@@ -43,7 +44,8 @@ class WopMars:
             schema_option = Schema({
                 'DEFINITION_FILE': Use(open),
                 '-v': Or(0, And(Use(int), lambda n: 1 < n < 5)),
-                '--dot': Use(PathFinder.check_valid_path)
+                '--dot': Use(PathFinder.check_valid_path),
+                "--log": Use(PathFinder.check_valid_path)
             })
 
             OptionManager().validate(schema_option)
@@ -82,7 +84,7 @@ if __name__ == "__main__":
     # WopMars.run(cmd_line_working)
     # WopMars().run(cmd_line_never_ready)
     # WopMars().run(cmd_line_error_parsing)
-    WopMars().run(cmd_line_wrong_arg)
+    # WopMars().run(cmd_line_wrong_arg)
 
-    # WopMars().run(sys.argv[1:])
+    WopMars().run(sys.argv[1:])
 

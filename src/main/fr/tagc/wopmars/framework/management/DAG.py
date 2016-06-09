@@ -54,6 +54,11 @@ class DAG(nx.DiGraph):
         # To build .ps : dot -Tps {filename}.dot - o {filename}.ps
         nx.draw(self)
         write_dot(self, path)
+        # building the openable file:
+        list_popen = ["dot", "-Tps", path, "-o", path.rsplit("/", 1)[0] + "/" + path.rsplit("/", 1)[1].split(".")[-2] + ".ps"]
+        Logger.instance().debug("SubProcess command line for .ps file: " + str(list_popen))
+        p = subprocess.Popen(list_popen)
+        p.wait()
 
     def successors(self, node):
         """

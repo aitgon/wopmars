@@ -101,7 +101,6 @@ class TestToolWrapper(TestCase):
         try:
             self.__toolwrapper_empty.load_tables(["FooBase"], 'input')
             self.__toolwrapper_empty.load_tables(["FooBase"], 'output')
-            self.__toolwrapper_empty.load_tables(["FooBase"], 'fail')
         except:
             AssertionError('Should not raise an exception.')
 

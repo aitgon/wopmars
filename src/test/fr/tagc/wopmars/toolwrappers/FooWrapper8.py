@@ -13,15 +13,9 @@ class FooWrapper8(ToolWrapper):
     """
     This class has been done for example/testing purpose.
     Modifications may lead to failure in tests.
-    """    
-    def get_input_file(self):
-        return ["input1"]
-
+    """
     def get_output_file(self):
         return ["output1"]
-
-    def get_input_table(self):
-        return ["FooBase"]
 
     def get_output_table(self):
         return ["FooBase"]
@@ -31,8 +25,5 @@ class FooWrapper8(ToolWrapper):
         time.sleep(1)
         Logger.instance().info("Ecriture de " + self.output_file("output1"))
         os.system("touch " + self.output_file("output1"))
-        Logger.instance().info("Remplissage de la table " + str(self.input_table("FooBase")))
-        self.session().add(self.input_table("FooBase")(name="snp"))
-        self.session().add(self.input_table("FooBase")(name="kika"))
-        self.session().add(self.input_table("FooBase")(name="kiku"))
-        self.session().commit()
+        Logger.instance().info("Remplissage de la table " + str(self.output_table("FooBase")))
+        self.session().add(self.output_table("FooBase")(name="check"))

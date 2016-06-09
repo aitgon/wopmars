@@ -1,14 +1,10 @@
 rule rule7:
     tool: FooWrapper7
-    input:
-        input1: "/home/giffon/Documents/wopmars/src/resources/aFile1.txt"
     output:
         output1: "/home/giffon/Documents/wopmars/src/resources/aFile5.txt"
 
 rule rule8:
     tool: FooWrapper8
-    input:
-        input1: "/home/giffon/Documents/wopmars/src/resources/aFile5.txt"
     output:
         output1: "/home/giffon/Documents/wopmars/src/resources/aFile6.txt"
 

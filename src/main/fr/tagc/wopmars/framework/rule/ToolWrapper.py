@@ -39,12 +39,19 @@ class ToolWrapper(Observable):
         :return: void
         """
         assert type(input_file_dict) == dict and type(output_file_dict) == dict and type(option_dict) == dict
+        # <String>:<IOFilePut>
         self.__input_file_dict = input_file_dict
+        # <String>:<IOFilePut>
         self.__output_file_dict = output_file_dict
+        # <String>:<IODbPut>
         self.__input_table_dict = {}
+        # <String>:<IODbPut>
         self.__output_table_dict = {}
+        # <String>:<Option>
         self.__option_dict = option_dict
+        # int
         self.__state = ToolWrapper.NEW
+        # <WopMarsSession>
         self.__session = None
 
         list_input_tables = self.get_input_table()
@@ -55,25 +62,38 @@ class ToolWrapper(Observable):
         if len(list_output_tables):
             Logger.instance().debug("Loading output_tables: " + str(list_output_tables))
             self.load_tables(list_output_tables, "output")
+
+        # This line will create all tables found in PYTHONPATH (I think, or something like that)
         Base.metadata.create_all(SQLManager.instance().get_engine())
 
     def load_tables(self, list_string_tables, io):
+        """
+        Find the tables specified by the ToolWrapper class implemented by worker dev.
+
+        The table classes should be in PYTHONPATH and properly named (same name for class and module),
+        if not, an exception will be raised.
+        :param list_string_tables:
+        :param io:
+        :return:
+        """
+        # there is 2 use case of this method: "input" or "output"
+        assert io == "input" or io == "output"
         for s_table in list_string_tables:
             try:
+                # The file containing the table should be in PYTHONPATH
                 mod = importlib.import_module(s_table)
                 if io == "input":
                     self.__input_table_dict[s_table] = IODbPut(eval("mod." + s_table))
                 elif io == "output":
                     self.__output_table_dict[s_table] = IODbPut(eval("mod." + s_table))
-                else:
-                    Logger.instance().debug("The io of the ToolWrapper.load_tables() method should be 'input' or 'output'... "
-                                   "Nothing happened.")
                 Logger.instance().debug(s_table + " table class loaded.")
             except AttributeError:
                 raise WopMarsException("Error while parsing the configuration file: \n\t",
+                                       "Error with the ToolWrapper " + str(self.__class__.__name__) + ":\n\t\t" +
                                        "The class table " + s_table + " doesn't exist.")
             except ImportError:
                 raise WopMarsException("Error while parsing the configuration file: \n\t",
+                                       "Error with the ToolWrapper " + str(self.__class__.__name__) + ":\n\t\t" +
                                        "The module " + s_table + " doesn't exist.")
 
     ### PARSING METHODS
@@ -161,10 +181,18 @@ class ToolWrapper(Observable):
         Check whether the "other" follows "self" in the execution DAG.
 
         Check whether "other" has one output value in "self" possible input values.
-        :param other: ToolWrapper that is possibly a predecessor of "self"
+        The output value are given by the methods dicts of inputs and outputs:
+          * input_file_dict
+          * input_table_dict
+          * output_file_dict
+          * output_table_dict
+
+        :param other: ToolWrapper that is a predecessor of "self"
         :return: bool True if "self" follows "other"
         """
-        return DictUtils.at_least_one_value_of_one_in_an_other(self.__input_file_dict, other.get_output_file_dict())
+        return (DictUtils.at_least_one_value_of_one_in_an_other(self.__input_file_dict, other.get_output_file_dict()) or
+                DictUtils.at_least_one_value_of_one_in_an_other(self.__input_table_dict, other.get_output_table_dict()))
+
 
     ### Workflow Manager methods
 
@@ -188,10 +216,36 @@ class ToolWrapper(Observable):
         return self.__state
 
     def get_input_file_dict(self):
+        """
+        Return the dict of input_files:
+
+        :return: Dict: <String>INPUTNAME : <IOFilePut>INPUT
+        """
         return self.__input_file_dict
 
     def get_output_file_dict(self):
+        """
+        Return the dict of output_files:
+
+        :return: Dict: <String>OUTPUTNAME : <IOFilePut>OUTPUT
+        """
         return self.__output_file_dict
+
+    def get_input_table_dict(self):
+        """
+        Return the dict of input_tables:
+
+        :return: Dict: <String>INPUTNAME : <IODbPut>INPUT
+        """
+        return self.__input_table_dict
+
+    def get_output_table_dict(self):
+        """
+        Return the dict of output_tables:
+
+        :return: Dict: <String>OUTPUTNAME : <IODbPut>OUTPUT
+        """
+        return self.__output_table_dict
 
     def get_option_dict(self):
         return self.__option_dict
@@ -260,6 +314,10 @@ class ToolWrapper(Observable):
 
     ### Methods availables for the tool developer
 
+    #todo refaire les fichiers de définition test + refaire les foowrappers
+    # todo ask lionel comment faire remonter une idée dans cette méthode?
+    # todo wrapping de subProcess.POpen -> meilleure gestion des exceptions etc...
+
     def input_file(self, key):
         """
         Return the path of the specified input file.
@@ -277,7 +335,7 @@ class ToolWrapper(Observable):
         :return:
         """
         return self.__input_table_dict[key].get_table()
-
+    # todo erreur speciale developpeur métier (aide au debogage)
     def output_file(self, key):
         """
         Return the path of the specified output file.

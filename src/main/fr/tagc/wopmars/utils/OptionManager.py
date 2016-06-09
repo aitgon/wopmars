@@ -20,7 +20,24 @@ class OptionManager(dict):
         super().__init__(*args, **kwargs)
 
     def validate(self, schema):
+        self.validate_dot()
+        self.validate_log()
+
         schema.validate(self)
+
+    def validate_dot(self):
+        if self["--dot"]:
+            if self["--dot"][-1] == "/":
+                self["--dot"] += "wopmars.dot"
+            elif self["--dot"][-4:] != '.dot':
+                self["--dot"] += ".dot"
+
+    def validate_log(self):
+        if self["--log"]:
+            if self["--log"][-1] == "/":
+                self["--log"] += "wopmars.log"
+            elif self["--log"][-4:] != '.log':
+                self["--log"] += ".log"
 
     def __str__(self):
         s = ""
