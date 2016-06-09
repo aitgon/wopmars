@@ -49,7 +49,7 @@ class Parser:
                                    "The specified Workflow cannot be represented as a DAG.")
         s_dot_option = OptionManager()["--dot"]
         if s_dot_option:
-            Logger.instance().info("Writing the dot and ps files representing the workflow...")
+            Logger.instance().info("Writing the dot and ps files representing the workflow at " + str(s_dot_option))
             dag_tools.write_dot(s_dot_option)
             Logger.instance().info("Dot and ps file wrote.")
         return dag_tools

@@ -84,7 +84,6 @@ class Reader:
                 else:
                     str_wrapper_name = self.__dict_workflow_definition[rule][key_second_step]
 
-
             Logger.instance().debug("Loading " + str_wrapper_name + ".")
             try:
                 # Importing the module in the mod variable
@@ -95,7 +94,8 @@ class Reader:
             # Instantiate the refered class and add it to the set of objects
 
             try:
-                toolwrapper_wrapper = eval("mod." + str_wrapper_name)(input_file_dict=dict_dict_elm["dict_input"],
+                toolwrapper_wrapper = eval("mod." + str_wrapper_name)(rule_name=str_rule_name,
+                                                                      input_file_dict=dict_dict_elm["dict_input"],
                                                                       output_file_dict=dict_dict_elm["dict_output"],
                                                                       option_dict=dict_dict_elm["dict_params"])
                 Logger.instance().debug(str_wrapper_name + " ToolWrapper loaded.")

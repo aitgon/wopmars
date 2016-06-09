@@ -1,6 +1,8 @@
 """
 Module containing the OptionManager class.
 """
+import os
+
 from src.main.fr.tagc.wopmars.utils.Singleton import singleton
 
 
@@ -20,10 +22,25 @@ class OptionManager(dict):
         super().__init__(*args, **kwargs)
 
     def validate(self, schema):
+        self.validate_definition_file()
         self.validate_dot()
         self.validate_log()
 
         schema.validate(self)
+
+        self.make_absolute_paths()
+
+    def make_absolute_paths(self):
+        if self["DEFINITION_FILE"]:
+            self["DEFINITION_FILE"] = os.path.abspath(self["DEFINITION_FILE"])
+        if self["--log"]:
+            self["--log"] = os.path.abspath(self["--log"])
+        if self["--dot"]:
+            self["--dot"] = os.path.abspath(self["--dot"])
+
+    def validate_definition_file(self):
+        if self["DEFINITION_FILE"] is None:
+            self["DEFINITION_FILE"] = "wopfile.yml"
 
     def validate_dot(self):
         if self["--dot"]:
@@ -34,7 +51,11 @@ class OptionManager(dict):
 
     def validate_log(self):
         if self["--log"]:
-            if self["--log"][-1] == "/":
+            if self["--log"][0] == "$":
+                if not os.path.exists(os.path.expanduser("~") + "/.wopmars/"):
+                    os.makedirs(os.path.expanduser("~") + "/.wopmars/")
+                self["--log"] = os.path.expanduser("~") + "/.wopmars/wopmars.log"
+            elif self["--log"][-1] == "/":
                 self["--log"] += "wopmars.log"
             elif self["--log"][-4:] != '.log':
                 self["--log"] += ".log"

@@ -1,17 +1,19 @@
 """WopMars: Workflow Python Manager for Reproducible Science.
 
 Usage:
-  wopmars.py [-v...] [-d FILE] [-L FILE] DEFINITION_FILE
+  wopmars.py [-n] [-v...] [-d FILE] [-L FILE] [DEFINITION_FILE]
 
 Arguments:
-  DEFINITION_FILE  Path to the definition file of the workflow.
+  DEFINITION_FILE  Path to the definition file of the workflow [default: wopfile.yml].
 
 Options:
   -h --help           Show this help.
   -v                  Set verbosity level.
   -d FILE --dot=FILE  Write dot representing the workflow in the FILE file (with .dot extension).
-  -L FILE --log=FILE  Write logs in FILE file
+  -L FILE --log=FILE  Write logs in FILE file [default: $HOME/.wopmars/wopmars.log].
+  -n --noisy          Write logs in standard output.
 """
+import os
 import sys
 import re
 
@@ -34,7 +36,6 @@ class WopMars:
         Entry-point of the program
         """
         # if the command line is malformed, docopt interrupt the software.
-        # todo optionmanager fichier de definition facultatif
         try:
             OptionManager(docopt(__doc__, argv=argv))
         except DocoptExit as SE:
@@ -42,10 +43,11 @@ class WopMars:
 
         try:
             schema_option = Schema({
-                'DEFINITION_FILE': Use(open),
+                'DEFINITION_FILE': Or("wopfile.yml", Use(open)),
                 '-v': Or(0, And(Use(int), lambda n: 1 < n < 5)),
                 '--dot': Use(PathFinder.check_valid_path),
-                "--log": Use(PathFinder.check_valid_path)
+                "--log": Use(PathFinder.check_valid_path),
+                '--noisy': Use(bool)
             })
 
             OptionManager().validate(schema_option)
@@ -77,6 +79,9 @@ class WopMars:
             sys.exit()
 
 def main():
+    sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/toolwrappers/")
+    sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/base/")
+
     cmd_line_working = ["/home/giffon/Documents/wopmars/src/resources/example_def_file5.yml", "--dot", "/home/giffon/ex.dot", "-vvvv"]
     cmd_line_never_ready = ["/home/giffon/Documents/wopmars/src/resources/example_def_file_toolwrapper_never_ready.yml", "-vvvv"]
     cmd_line_error_parsing = ["/home/giffon/Documents/wopmars/src/resources/example_def_file_not_a_dag.yml", "-vvvv"]
@@ -88,3 +93,5 @@ def main():
 
     WopMars().run(sys.argv[1:])
 
+if __name__ == "__main__":
+    main()

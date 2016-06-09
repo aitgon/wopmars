@@ -23,7 +23,7 @@ class ToolWrapper(Observable):
     READY = 2
     NOT_READY = 3
 
-    def __init__(self, input_file_dict={}, output_file_dict={}, option_dict={}):
+    def __init__(self, rule_name="", input_file_dict={}, output_file_dict={}, option_dict={}):
         """
         The constructor of the toolwrapper, must not be overwritten.
 
@@ -39,6 +39,7 @@ class ToolWrapper(Observable):
         :return: void
         """
         assert type(input_file_dict) == dict and type(output_file_dict) == dict and type(option_dict) == dict
+        self.__rule_name = rule_name
         # <String>:<IOFilePut>
         self.__input_file_dict = input_file_dict
         # <String>:<IOFilePut>
@@ -281,7 +282,9 @@ class ToolWrapper(Observable):
         :return: String representing the toolwrapper
         """
         s = "\""
-        s += self.__class__.__name__
+        s += self.__rule_name
+        s += "\\n"
+        s += "tool: " + self.__class__.__name__
         s += "\\n"
         for key in self.__input_file_dict:
             s += "\\n\t\t" + key + ": " + str(self.__input_file_dict[key])
@@ -314,9 +317,7 @@ class ToolWrapper(Observable):
 
     ### Methods availables for the tool developer
 
-    #todo refaire les fichiers de définition test + refaire les foowrappers
-    # todo ask lionel comment faire remonter une idée dans cette méthode?
-    # todo wrapping de subProcess.POpen -> meilleure gestion des exceptions etc...
+    # todo refaire les fichiers de définition test + refaire les foowrappers
 
     def input_file(self, key):
         """
@@ -335,6 +336,7 @@ class ToolWrapper(Observable):
         :return:
         """
         return self.__input_table_dict[key].get_table()
+
     # todo erreur speciale developpeur métier (aide au debogage)
     def output_file(self, key):
         """

@@ -42,7 +42,6 @@ class SQLManager(SingletonMixin):
         return self.__engine
 
     def commit(self, session):
-        # todo ask lionel est-ce-que ce logging est bon? devrais-je donner plus de détails?
         Logger.instance().debug(str(session) + " want the lock on SQLManager.")
         with self.__lock_current_commit:
             Logger.instance().debug(str(session) + " has taken the lock on SQLManager.")
