@@ -18,3 +18,9 @@ wopmars.log
 
 doc/*
 log/*
+
+
+build/*
+dist/*
+wopmars.egg-info/*
+
