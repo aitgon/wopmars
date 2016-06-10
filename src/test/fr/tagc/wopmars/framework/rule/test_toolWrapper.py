@@ -15,7 +15,7 @@ from src.test.fr.tagc.wopmars.toolwrappers.FooWrapper3 import FooWrapper3
 
 class TestToolWrapper(TestCase):
     def setUp(self):
-        OptionManager({'-v': 1, "--dot": None})
+        OptionManager().initial_test_setup()
 
         ### Toolwrappers for __eq__ test
 

@@ -37,7 +37,7 @@ class TestParser(TestCase):
         OptionManager()["--dot"] = None 
 
     def test_parse(self):
-        OptionManager()["-v"] = 4
+        OptionManager().initial_test_setup()
 
         # The good --------------------------:
         set_toolwrappers = set()

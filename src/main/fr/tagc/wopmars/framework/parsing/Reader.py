@@ -34,10 +34,12 @@ class Reader:
         # Tests about grammar and syntax are performed here (file's existence is also tested here)
         try:
             def_file = open(s_definition_file, 'r')
+            s_def_file_content = def_file.read()
             try:
                 # The workflow definition file is loaded as-it in memory by the pyyaml library
                 Logger.instance().info("Reading the definition file: " + str(s_definition_file) + "...")
-                self.__dict_workflow_definition = yaml.load(def_file)
+                Reader.check_duplicate_rules(s_def_file_content)
+                self.__dict_workflow_definition = yaml.load(s_def_file_content)
                 Logger.instance().debug("\n" + DictUtils.pretty_repr(self.__dict_workflow_definition))
                 Logger.instance().info("Read complete.")
                 Logger.instance().info("Checking whether the file is well formed...")
@@ -52,6 +54,18 @@ class Reader:
         except FileNotFoundError:
             raise WopMarsException("Error while parsing the configuration file: \n\tInput error:",
                                    "The specified file at " + s_definition_file + " doesn't exist.")
+
+    @staticmethod
+    def check_duplicate_rules(file):
+        rules = re.findall(r'rule (.+?):', str(file))
+        seen = set()
+        for r in rules:
+            if r not in seen:
+                seen.add(r)
+            else:
+                raise WopMarsException("Error while parsing the configuration file:\n\t",
+                                       "The rule " + r + " is duplicated.")
+
 
     def read(self):
         """
@@ -174,8 +188,6 @@ class Reader:
                                        )
 
 if __name__ == '__main__':
-    OptionManager()["-v"] = 3
-    try:
-        r = Reader("/home/giffon/Documents/wopmars/src/resources/example_def_file.yml")
-    except Exception as e:
-        print(e)
+    s_path = "/home/giffon/Documents/wopmars/src/resources/example_def_file_duplicate_rule.yml"
+    f = open(s_path).read()
+    Reader.check_duplicate_rules(f)

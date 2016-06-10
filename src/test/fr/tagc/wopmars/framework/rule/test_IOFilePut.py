@@ -3,11 +3,13 @@ import unittest
 from unittest import TestCase
 
 from src.main.fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
+from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
 from src.main.fr.tagc.wopmars.utils.PathFinder import PathFinder
 
 
 class TestIOFilePut(TestCase):
     def setUp(self):
+        OptionManager().initial_test_setup()
         s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
         s_path_to_example_existing_file = s_root_path + "resources/example_existing_file.txt"
         s_path_to_example_existing_file2 = s_root_path + "resources/example_existing_file2.txt"

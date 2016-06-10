@@ -11,7 +11,7 @@ from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
 
 class TestIODbPut(TestCase):
     def setUp(self):
-        OptionManager()["-v"] = 4
+        OptionManager().initial_test_setup()
         self.__local_session = SQLManager.instance().get_session()
         try:
             for i in range(10):

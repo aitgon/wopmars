@@ -68,3 +68,10 @@ class OptionManager(dict):
         s += "\n}"
 
         return s
+
+    @staticmethod
+    def initial_test_setup():
+        OptionManager()["-v"] = 4
+        OptionManager()["--dot"] = None
+        OptionManager()["--log"] = os.path.expanduser("~") + "/.wopmars/wopmars.log"
+        OptionManager()["--noisy"] = True

@@ -11,7 +11,7 @@ from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsEx
 class TestWorkflowManager(TestCase):
 
     def setUp(self):
-        OptionManager({'-v': 4, 'DEFINITION_FILE': None, "--dot": None})
+        OptionManager().initial_test_setup()
         s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
 
         s_path_to_example_definition_file_finishing = s_root_path + "resources/example_def_file3.yml"

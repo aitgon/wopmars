@@ -18,8 +18,7 @@ from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsEx
 class TestReader(TestCase):
 
     def setUp(self):
-        OptionManager({'-v': 1, "--dot": None})
-
+        OptionManager().initial_test_setup()
         s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
 
         # The good -------------------------------:
@@ -32,9 +31,12 @@ class TestReader(TestCase):
 
         # The ugly (malformed file) --------------------:
 
+        self.__s_example_definition_file_duplicate_rule = s_root_path + "resources/example_def_file_duplicate_rule.yml"
+
         self.__list_f_to_exception_init = [
             s_root_path + s_path for s_path in [
                 "resources/example_def_file_wrong_yaml.yml",
+                "resources/example_def_file_duplicate_rule.yml",
                 "resources/example_def_file_wrong_grammar.yml",
                 "resources/example_def_file_wrong_grammar2.yml",
                 "resources/example_def_file_wrong_grammar3.yml",
@@ -63,6 +65,11 @@ class TestReader(TestCase):
 
         with self.assertRaises(WopMarsException):
             Reader(s_root_path + "Not existing file.")
+
+    def test_check_duplicate_rule(self):
+        with open(self.__s_example_definition_file_duplicate_rule) as file_duplicate_rule:
+            with self.assertRaises(WopMarsException):
+                Reader.check_duplicate_rules(file_duplicate_rule.read())
 
     def test_read(self):
 

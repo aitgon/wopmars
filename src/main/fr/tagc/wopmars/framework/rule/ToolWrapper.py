@@ -23,7 +23,7 @@ class ToolWrapper(Observable):
     READY = 2
     NOT_READY = 3
 
-    def __init__(self, rule_name="", input_file_dict={}, output_file_dict={}, option_dict={}):
+    def __init__(self, input_file_dict={}, output_file_dict={}, option_dict={}, rule_name=""):
         """
         The constructor of the toolwrapper, must not be overwritten.
 
@@ -197,6 +197,7 @@ class ToolWrapper(Observable):
 
     ### Workflow Manager methods
 
+    # todo check for tables too
     def are_inputs_ready(self):
         """
         Check if inputs are ready

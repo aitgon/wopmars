@@ -10,7 +10,7 @@ from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
 class ConcurrentCommitingThread(threading.Thread):
     def run(self):
         thread_session = SQLManager.instance().get_session()
-        for i in range(1000):
+        for i in range(50000):
             foo = FooBase(name="string " + str(i))
             thread_session.add(foo)
         thread_session.commit()
@@ -31,7 +31,7 @@ class ConcurrentRollBackingThread(threading.Thread):
 
 class TestSQLManager(TestCase):
     def setUp(self):
-        OptionManager({'-v':4})
+        OptionManager().initial_test_setup()
         self.__local_session = SQLManager().get_session()
 
         SQLManager()
@@ -55,7 +55,7 @@ class TestSQLManager(TestCase):
             print(e)
             raise AssertionError("Should not raise an exception")
 
-        self.assertTrue(len(self.__local_session.query(FooBase).filter(FooBase.name.like('string %')).all()) == 3000)
+        self.assertTrue(len(self.__local_session.query(FooBase).filter(FooBase.name.like('string %')).all()) == 300000)
 
     def tearDown(self):
         try:
