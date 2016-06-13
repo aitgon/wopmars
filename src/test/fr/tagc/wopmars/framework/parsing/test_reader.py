@@ -1,46 +1,54 @@
-import unittest
 import os
+import unittest
 from unittest import TestCase
-from fr.tagc.wopmars.framework.parsing.Reader import Reader
-from fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
-from fr.tagc.wopmars.framework.rule.Option import Option
-from fr.tagc.wopmars.toolwrappers.FooWrapper1 import FooWrapper1
-from fr.tagc.wopmars.toolwrappers.FooWrapper2 import FooWrapper2
-from fr.tagc.wopmars.toolwrappers.FooWrapper3 import FooWrapper3
-from fr.tagc.wopmars.utils.PathFinder import PathFinder
-from fr.tagc.wopmars.utils.SetUtils import SetUtils
-from fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
+
+from FooWrapper1 import FooWrapper1
+from FooWrapper2 import FooWrapper2
+from FooWrapper3 import FooWrapper3
+
+from src.main.fr.tagc.wopmars.framework.parsing.Reader import Reader
+from src.main.fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
+from src.main.fr.tagc.wopmars.framework.rule.Option import Option
+from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
+from src.main.fr.tagc.wopmars.utils.PathFinder import PathFinder
+from src.main.fr.tagc.wopmars.utils.SetUtils import SetUtils
+from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
 class TestReader(TestCase):
 
     def setUp(self):
+        OptionManager().initial_test_setup()
         s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
 
         # The good -------------------------------:
 
-        self.__f_example_definition_file = open(s_root_path + "resources/example_def_file.yml")
+        self.__s_example_definition_file = s_root_path + "resources/example_def_file.yml"
         try:
-            self.__reader_right = Reader(self.__f_example_definition_file)
+            self.__reader_right = Reader(self.__s_example_definition_file)
         except:
             raise AssertionError('Should not raise exception')
 
         # The ugly (malformed file) --------------------:
 
+        self.__s_example_definition_file_duplicate_rule = s_root_path + "resources/example_def_file_duplicate_rule.yml"
+
         self.__list_f_to_exception_init = [
-            open(s_root_path + s_path) for s_path in [
+            s_root_path + s_path for s_path in [
                 "resources/example_def_file_wrong_yaml.yml",
+                "resources/example_def_file_duplicate_rule.yml",
                 "resources/example_def_file_wrong_grammar.yml",
                 "resources/example_def_file_wrong_grammar2.yml",
+                "resources/example_def_file_wrong_grammar3.yml",
                 ]
         ]
 
-        [self.assertRaises(WopMarsParsingException, Reader, file) for file in self.__list_f_to_exception_init]
+        [self.assertRaises(WopMarsException, Reader, file) for file in self.__list_f_to_exception_init]
 
         # The bad (invalid file) ----------------------:
 
-        self.__list_f_to_exception_read = [
-            open(s_root_path + s_path) for s_path in [
+        self.__list_s_to_exception_read = [
+            s_root_path + s_path for s_path in [
                 "resources/example_def_file_wrong_content.yml",
                 "resources/example_def_file_wrong_content2.yml",
                 "resources/example_def_file_wrong_content3.yml",
@@ -51,12 +59,17 @@ class TestReader(TestCase):
             ]
         ]
 
-        self.__list_reader_exception_read = [Reader(file) for file in self.__list_f_to_exception_read]
+        self.__list_reader_exception_read = [Reader(file) for file in self.__list_s_to_exception_read]
 
-    def tearDown(self):
-        self.__f_example_definition_file.close()
-        [f.close() for f in self.__list_f_to_exception_init]
-        [f.close() for f in self.__list_f_to_exception_read]
+        # Not existing file
+
+        with self.assertRaises(WopMarsException):
+            Reader(s_root_path + "Not existing file.")
+
+    def test_check_duplicate_rule(self):
+        with open(self.__s_example_definition_file_duplicate_rule) as file_duplicate_rule:
+            with self.assertRaises(WopMarsException):
+                Reader.check_duplicate_rules(file_duplicate_rule.read())
 
     def test_read(self):
 
@@ -83,7 +96,7 @@ class TestReader(TestCase):
 
         # The bad -------------------------------------:
 
-        [self.assertRaises(WopMarsParsingException, reader.read) for reader in self.__list_reader_exception_read]
+        [self.assertRaises(WopMarsException, reader.read) for reader in self.__list_reader_exception_read]
 
 
 if __name__ == "__main__":

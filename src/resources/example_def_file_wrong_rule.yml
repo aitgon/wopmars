@@ -1,4 +1,5 @@
-rule Failure:
+rule rule3:
+    tool: Failure
     input:
         input1: "aFile.txt"
     params:

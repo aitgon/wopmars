@@ -1,7 +1,7 @@
 *.idea
 *.sonar
 __pycache__
-
+*.pyc
 rapport/
 soutenance/
 
@@ -15,3 +15,12 @@ coverage.xml
 nosetests.xml
 
 wopmars.log
+
+doc/*
+log/*
+
+
+build/*
+dist/*
+wopmars.egg-info/*
+

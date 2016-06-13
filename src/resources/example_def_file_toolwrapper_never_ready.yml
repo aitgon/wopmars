@@ -1,0 +1,21 @@
+rule rule4:
+    tool: FooWrapper4
+    input:
+        input1: "/home/giffon/Documents/wopmars/src/resources/aFile1.txt"
+    output:
+        output1: "/home/giffon/Documents/wopmars/src/resources/aFile2.txt"
+
+rule rule5:
+    tool: FooWrapper5
+    input:
+        input1: "/home/giffon/Documents/wopmars/src/resources/aFile2.txt"
+    output:
+        output1: "/home/giffon/Documents/wopmars/src/resources/never_done.txt"
+
+rule rule6:
+    tool: FooWrapper6
+    input:
+        input1: "/home/giffon/Documents/wopmars/src/resources/never_done.txt"
+    output:
+        output1: "/home/giffon/Documents/wopmars/src/resources/aFile6.txt"
+

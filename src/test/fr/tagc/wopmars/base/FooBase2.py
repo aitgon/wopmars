@@ -2,8 +2,9 @@
 Example of module documentation which can be
 multiple-lined
 """
-from fr.tagc.wopmars.base.Base import Base
 from sqlalchemy import Column, Integer
+
+from src.main.fr.tagc.wopmars.framework.bdd.Base import Base
 
 
 class FooBase2(Base):

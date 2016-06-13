@@ -31,6 +31,13 @@ class DictUtils:
                     return True
         return False
 
-
-if __name__ == "__main__":
-    print(DictUtils.elm_of_one_dict_in_one_other({"a": 1}, {"a": 1, "b": 2}))
+    @staticmethod
+    def pretty_repr(d, indent=0):
+        s = ""
+        for key, value in d.items():
+            s += '\t' * indent + str(key) + "\n"
+            if isinstance(value, dict):
+                s += DictUtils.pretty_repr(value, indent + 1)
+            else:
+                s += '\t' * (indent + 1) + str(value) + "\n"
+        return s

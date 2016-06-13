@@ -17,18 +17,12 @@ class SetUtils:
         :param other: set
         :return: boolean: True if all elements of one are in the other
         """
-        # TODO: tesunitaire sur cette classe
         for elm in one:
             is_in = False
             for elm2 in other:
                 if elm == elm2:
                     is_in = True
                     break # Useless to keep looking in the other set since we just want to see if elm occurs once
-                    # TODO: possible bug: since the unicity of elements of a set rely on the hash_code, and not on the
-                    # __eq__ method, it is possible that 2 elm which are equals can appear in the same set because they
-                    # are two distinct instances - it could happens if the user specify twice the same rule with the
-                    # exact same parameters and I/O put...
-                    # I don't know if this information is important.
             if not is_in:
                 return False
         return True

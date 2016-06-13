@@ -22,7 +22,7 @@ class IOPut:
         This method will be written in subclasses
         :return: boolean: True if ready, False if not
         """
-        pass
+        raise NotImplementedError
 
     def get_name(self):
         """

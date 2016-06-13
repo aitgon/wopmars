@@ -8,10 +8,10 @@ import networkx as nx
 from networkx.drawing.nx_pydot import write_dot
 
 
-from fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
-from fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
-from fr.tagc.wopmars.utils.Logger import Logger
-from fr.tagc.wopmars.utils.SetUtils import SetUtils
+from src.main.fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
+from src.main.fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
+from src.main.fr.tagc.wopmars.utils.Logger import Logger
+from src.main.fr.tagc.wopmars.utils.SetUtils import SetUtils
 
 
 class DAG(nx.DiGraph):
@@ -23,44 +23,55 @@ class DAG(nx.DiGraph):
         """
         The DAG can be build from a set of tools, analyzing the successors
         of each.
+
+        ToolWrappers has a method "follows()" wich allow to know if one tool has a dependency for one other. The tools
+        of the set_tools are compared each other to extract the dependencies.
         
         :param set_tools: A set of tools
         :return: None
         """
         super().__init__()
-        Logger().info("Building the execution DAG...")
+        Logger.instance().info("Building the execution DAG...")
         if set_tools:
-            # pour chaque outil 1
+            # for each tool
             for tool1 in set_tools:
                 self.add_node(tool1)
-                # pour chaque autre outil 2
+                # for each other tool
                 for tool2 in set_tools.difference(set([tool1])):
-                    # est-ce-que l'outil 1 est après l'outil 2?
+                    # is there a dependency between tool1 and tool2?
                     if tool1.follows(tool2):
-                        # dépendance entre outil 2 et outil 1
                         self.add_edge(tool2, tool1)
-        Logger().info("DAG built.")
+        Logger.instance().info("DAG built.")
 
     def write_dot(self, path):
         """
         Build the dot file.
 
+        The .ps can be built from the dot file with the command line: "dot -Tps {filename}.dot - o {filename}.ps"
+
         :return: void
         """
-
         # To build .ps : dot -Tps {filename}.dot - o {filename}.ps
         nx.draw(self)
         write_dot(self, path)
+        # building the openable file:
+        list_popen = ["dot", "-Tps", path, "-o", path.rsplit("/", 1)[0] + "/" + path.rsplit("/", 1)[1].split(".")[-2] + ".ps"]
+        Logger.instance().debug("SubProcess command line for .ps file: " + str(list_popen))
+        p = subprocess.Popen(list_popen)
+        p.wait()
 
     def successors(self, node):
         """
         Get the successors of a node.
 
-        The method is overwhelmed because if a node is None, then, the root ndoes are returned
-        :param node:
-        :return:
+        The method is overwhelmed because if a node is None, then, the root nodes are returned
+
+        :param node: an object that is used as Node in the DAG or None.
+        :return: [node]:  the successors of the given node or the node at the root of the DAG.
         """
         if not node:
+            # in_degree is the number of incoming edges to a node. If the degree is 0, then the node is at the root
+            # of the DAG.
             return [n for n, d in self.in_degree().items() if d == 0]
         else:
             return super().successors(node)
@@ -74,7 +85,7 @@ class DAG(nx.DiGraph):
         :param other: A DAG
         :return: True if self == other
         """
-        assert(other.__class__.__name__ == "DAG")
+        assert isinstance(other, self.__class__)
         int_nodes_self = len(self.nodes())
         int_nodes_other = len(other.nodes())
 
@@ -86,13 +97,3 @@ class DAG(nx.DiGraph):
             SetUtils.all_elm_of_one_set_in_one_other(set_edges_self, set_edges_other) and
             SetUtils.all_elm_of_one_set_in_one_other(set_edges_other, set_edges_self)
         )
-
-if __name__ == "__main__":
-    toolwrapper_first = ToolWrapper({"input1": IOFilePut("input1", "file1.txt")},
-                                           {"output1": IOFilePut("output1", "file2.txt")},
-                                           {})
-
-    toolwrapper_second = ToolWrapper({"input1": IOFilePut("input1", "file2.txt")},
-                                        {"output1": IOFilePut("output1", "file3.txt")},
-                                        {})
-    my_dag = DAG(set([toolwrapper_first, toolwrapper_second]))

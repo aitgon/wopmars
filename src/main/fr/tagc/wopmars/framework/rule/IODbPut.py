@@ -1,8 +1,11 @@
 """
 Module containing the IODbPut class.
 """
-from fr.tagc.wopmars.base.Base import Base
-from fr.tagc.wopmars.framework.rule.IOPut import IOPut
+from src.main.fr.tagc.wopmars.framework.bdd.Base import Base
+from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
+from src.main.fr.tagc.wopmars.framework.rule.IOPut import IOPut
+
+import collections
 
 
 class IODbPut(IOPut):
@@ -15,7 +18,7 @@ class IODbPut(IOPut):
         which has been created by a tool developper
         :return:
         """
-        assert isinstance(table, Base)
+        assert issubclass(table, Base)
         self.__table = table
         super().__init__(self.__table.__class__.__name__)
 
@@ -36,12 +39,34 @@ class IODbPut(IOPut):
         :return: boolean: True if the table attributes are the same, False if not
         """
         # TODO method __eq__ doit aussi vérifier le contenu des tables
-        assert isinstance(other, self.__class__)
-        return isinstance(self.__table, other.get_table().__class__)
+        session = SQLManager.instance().get_session()
+        if self.__table != other.get_table():
+            return False
+        try:
+            self_results = set(session.query(self.__table).all())
+            other_results = set(session.query(other.get_table()).all())
+            if self_results != other_results:
+                return False
+
+
+        except Exception as e:
+            session.rollback()
+            session.close()
+            raise e
+        return True
 
     def is_ready(self):
-        # TODO faire correctement cette méthode pour qu'elle vérifie que les tables existent et sont remplies
-        return False
+        session = SQLManager.instance().get_session()
+        try:
+            results = session.query(self.__table).first()
+            if results is None:
+                return False
+        except Exception as e:
+            session.rollback()
+            raise e
+        finally:
+            session.close()
+        return True
 
     def __hash__(self):
         return id(self)

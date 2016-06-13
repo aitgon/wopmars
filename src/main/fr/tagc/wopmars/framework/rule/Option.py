@@ -1,8 +1,8 @@
 """
 Module contianing the Option class
 """
-from fr.tagc.wopmars.utils.OptionUtils import OptionUtils
-from fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
+from src.main.fr.tagc.wopmars.utils.OptionUtils import OptionUtils
+from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
 class Option:
@@ -38,7 +38,7 @@ class Option:
                     eval(s_formated_type)(self.__value)
                 except ValueError:
                     # if it fails, raise an exception: the type has not been respected
-                    raise WopMarsParsingException(4, "The given option value of " + str(self.__key) +
+                    raise WopMarsException(4, "The given option value of " + str(self.__key) +
                                                   " should be of type " + s_formated_type)
             else:
                 # TODO exception de développeur métier qui a mal fait les choses

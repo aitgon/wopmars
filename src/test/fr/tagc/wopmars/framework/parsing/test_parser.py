@@ -2,45 +2,42 @@ import os
 import unittest
 from unittest import TestCase
 
-from fr.tagc.wopmars.framework.management.DAG import DAG
-from fr.tagc.wopmars.framework.parsing.Parser import Parser
-from fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
-from fr.tagc.wopmars.toolwrappers.FooWrapper4 import FooWrapper4
-from fr.tagc.wopmars.toolwrappers.FooWrapper5 import FooWrapper5
-from fr.tagc.wopmars.toolwrappers.FooWrapper6 import FooWrapper6
-from fr.tagc.wopmars.utils.OptionManager import OptionManager
-from fr.tagc.wopmars.utils.PathFinder import PathFinder
+from FooWrapper4 import FooWrapper4
+from FooWrapper5 import FooWrapper5
+from FooWrapper6 import FooWrapper6
+
+from src.main.fr.tagc.wopmars.framework.management.DAG import DAG
+from src.main.fr.tagc.wopmars.framework.parsing.Parser import Parser
+from src.main.fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
+from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
+from src.main.fr.tagc.wopmars.utils.PathFinder import PathFinder
+from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
 class TestParser(TestCase):
     def setUp(self):
-        OptionManager({'-v': 3, "--dot": None})
+        OptionManager()["-v"] = 4
+        OptionManager()["--dot"] = None
         s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
 
         # The good -------------------------------:
 
-        self.__f_example_definition_file = open(s_root_path + "resources/example_def_file2.yml")
-        try:
-            self.__parser_right = Parser(self.__f_example_definition_file)
-        except:
-            raise AssertionError('Should not raise exception')
-
-        # The ugly (malformed file) ----------------------------:
-
-        self.__f_wrong_example_definition_file_malformed = open(s_root_path + "resources/example_def_file_wrong_yaml.yml")
-        with self.assertRaises(SystemExit):
-            Parser(self.__f_wrong_example_definition_file_malformed)
+        s_example_definition_file = s_root_path + "resources/example_def_file2.yml"
+        self.__parser_right = Parser(s_example_definition_file)
 
         # The bad (invalid file) -----------------------------------:
-        self.__f_wrong_example_definition_file_invalid = open(s_root_path + "resources/example_def_file_wrong_content.yml")
-        self.__parser_wrong = Parser(self.__f_wrong_example_definition_file_invalid)
+        s_wrong_example_definition_file_invalid = s_root_path + "resources/example_def_file_not_a_dag.yml"
+        self.__parser_wrong = Parser(s_wrong_example_definition_file_invalid)
+
+        # Dot path --------------:
+
+        self.__dot_path = s_root_path + "test.dot"
 
     def tearDown(self):
-        self.__f_example_definition_file.close()
-        self.__f_wrong_example_definition_file_malformed.close()
-        self.__f_wrong_example_definition_file_invalid.close()
+        OptionManager()["--dot"] = None 
 
     def test_parse(self):
+        OptionManager().initial_test_setup()
 
         # The good --------------------------:
         set_toolwrappers = set()
@@ -57,16 +54,24 @@ class TestParser(TestCase):
                                          output_file_dict={'output1': IOFilePut('output1', 'aFile4.txt')},
                                          option_dict={}))
 
+        OptionManager()["--dot"] = None
+
         dag_expected = DAG(set_toolwrappers)
         dag_obtained = self.__parser_right.parse()
 
         self.assertEqual(dag_expected, dag_obtained)
 
         # The bad --------------------------:
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(WopMarsException):
             self.__parser_wrong.parse()
 
+        # Verify the dot file ----------------:
 
+        OptionManager()["--dot"] = self.__dot_path
+        self.__parser_right.parse()
+        self.assertTrue(os.path.isfile(self.__dot_path))
+        os.remove(self.__dot_path)
+        os.remove(self.__dot_path[:-4] + ".ps")
 
 if __name__ == '__main__':
     unittest.main()

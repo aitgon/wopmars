@@ -1,8 +1,8 @@
 import unittest
 from unittest import TestCase
 
-from fr.tagc.wopmars.framework.rule.Option import Option
-from fr.tagc.wopmars.utils.exceptions.WopMarsParsingException import WopMarsParsingException
+from src.main.fr.tagc.wopmars.framework.rule.Option import Option
+from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
 class TestOption(TestCase):
@@ -29,8 +29,8 @@ class TestOption(TestCase):
             self.__option_string1.correspond("bool")
         except:
             raise AssertionError("Souldn't raise an exception.")
-        self.assertRaises(WopMarsParsingException, self.__option_string1.correspond, "int")
-        self.assertRaises(WopMarsParsingException, self.__option_string1.correspond, "float")
+        self.assertRaises(WopMarsException, self.__option_string1.correspond, "int")
+        self.assertRaises(WopMarsException, self.__option_string1.correspond, "float")
 
         try:
             self.__option_int1.correspond("str")
@@ -46,7 +46,7 @@ class TestOption(TestCase):
             self.__option_float1.correspond("bool")
         except:
             raise AssertionError("Shouldn't raise an exception.")
-        self.assertRaises(WopMarsParsingException, self.__option_float1.correspond, "int")
+        self.assertRaises(WopMarsException, self.__option_float1.correspond, "int")
 
         try:
             self.__option_bool1.correspond("str")

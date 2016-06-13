@@ -1,0 +1,29 @@
+"""
+Module containing the FooWrapper1 class
+"""
+import os
+
+from src.main.fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
+import time
+
+from src.main.fr.tagc.wopmars.utils.Logger import Logger
+
+
+class FooWrapper8(ToolWrapper):
+    """
+    This class has been done for example/testing purpose.
+    Modifications may lead to failure in tests.
+    """
+    def get_output_file(self):
+        return ["output1"]
+
+    def get_output_table(self):
+        return ["FooBase"]
+
+    def run(self):
+        Logger.instance().info(self.__class__.__name__ + " en cours d'exécution.")
+        time.sleep(1)
+        Logger.instance().info("Ecriture de " + self.output_file("output1"))
+        os.system("touch " + self.output_file("output1"))
+        Logger.instance().info("Remplissage de la table " + str(self.output_table("FooBase")))
+        self.session().add(self.output_table("FooBase")(name="check"))

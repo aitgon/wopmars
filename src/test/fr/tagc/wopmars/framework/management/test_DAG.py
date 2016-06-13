@@ -1,16 +1,16 @@
 import unittest
 from unittest import TestCase
 
-from fr.tagc.wopmars.framework.management.DAG import DAG
-from fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
-from fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
-from fr.tagc.wopmars.utils.OptionManager import OptionManager
+from src.main.fr.tagc.wopmars.framework.management.DAG import DAG
+from src.main.fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
+from src.main.fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
+from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
 
 
 class TestDAG(TestCase):
 
     def setUp(self):
-        OptionManager({'-v': 3, "--dot": None})
+        OptionManager().initial_test_setup()
         #        first
         #       /    \
         #   second   third

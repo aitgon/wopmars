@@ -4,6 +4,7 @@ multiple-lined
 """
 import os
 
+
 class PathFinder:
     """
     Static class for finding paths
@@ -29,7 +30,7 @@ class PathFinder:
         :param path:
         :return:
         """
-        if path is None or os.access(os.path.dirname(path), os.W_OK):
+        if path is None or os.access(os.path.dirname(path), os.W_OK) or path[0] == "$":
             return path
         else:
             raise FileNotFoundError
