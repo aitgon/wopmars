@@ -10,7 +10,7 @@ from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
 class ConcurrentCommitingThread(threading.Thread):
     def run(self):
         thread_session = SQLManager.instance().get_session()
-        for i in range(50000):
+        for i in range(1000):
             foo = FooBase(name="string " + str(i))
             thread_session.add(foo)
         thread_session.commit()
@@ -18,6 +18,7 @@ class ConcurrentCommitingThread(threading.Thread):
         thread_session.close()
 
 
+# todo refaire test rollback
 class ConcurrentRollBackingThread(threading.Thread):
     def run(self):
         thread_session = SQLManager.instance().get_session()
