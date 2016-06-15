@@ -7,7 +7,6 @@ from sqlalchemy.orm import relationship
 from src.main.fr.tagc.wopmars.framework.bdd.Base import Base
 from src.main.fr.tagc.wopmars.framework.bdd.tables.IODbPut import IODbPut
 from src.main.fr.tagc.wopmars.framework.bdd.tables.RuleOption import RuleOption
-from src.main.fr.tagc.wopmars.framework.bdd.tables.RuleRule import RuleRule
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
 from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
@@ -30,12 +29,6 @@ class ToolWrapper(Base):
     files = relationship("RuleFile", back_populates="rule")
     # One rule has Many option
     options = relationship("Option", secondary="rule_option", back_populates="rules")
-
-    childrules = relationship("ToolWrapper",
-                              secondary="rule_rule",
-                              primaryjoin="ToolWrapper.id==rule_rule.c.rule_parent_id",
-                              secondaryjoin="ToolWrapper.id==rule_rule.c.rule_child_id",
-                              backref="parentrules")
 
     # parentrules = relationship etc...
     __mapper_args__ = {
