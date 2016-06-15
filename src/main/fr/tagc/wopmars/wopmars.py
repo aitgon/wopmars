@@ -20,6 +20,7 @@ import re
 from docopt import docopt, DocoptExit
 from schema import Schema, And, Or, Use, SchemaError
 
+from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
 from src.main.fr.tagc.wopmars.framework.management.WorkflowManager import WorkflowManager
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
 from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
@@ -76,6 +77,7 @@ class WopMars:
             wm.run()
         except WopMarsException as WE:
             Logger.instance().error(str(WE))
+            SQLManager.instance().get_session().rollback()
             sys.exit()
 
 def main():
