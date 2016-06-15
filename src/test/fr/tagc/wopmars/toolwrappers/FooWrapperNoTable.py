@@ -1,10 +1,8 @@
 """
 Module containing the FooWrapper1 class
 """
-import os
 
-from src.main.fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
-import time
+from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
 
 
 class FooWrapperNoTable(ToolWrapper):

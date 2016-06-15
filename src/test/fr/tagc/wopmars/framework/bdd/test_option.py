@@ -1,27 +1,32 @@
 import unittest
 from unittest import TestCase
 
-from src.main.fr.tagc.wopmars.framework.rule.Option import Option
+from src.main.fr.tagc.wopmars.framework.bdd.tables.IOFilePut import IOFilePut
+from src.main.fr.tagc.wopmars.framework.bdd.tables.Option import Option
+from src.main.fr.tagc.wopmars.framework.bdd.tables.RuleOption import RuleOption
+from src.main.fr.tagc.wopmars.framework.bdd.tables.RuleTable import RuleTable
+from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
+from src.main.fr.tagc.wopmars.framework.bdd.tables.Type import Type
 from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
 class TestOption(TestCase):
     def setUp(self):
-        self.__option_string1 = Option("option1", "value1")
-        self.__option_string2 = Option("option1", "value1")
-        self.__option_string3 = Option("option1", "value2")
+        self.__option_string1 = Option(name="option1", value="value1")
+        self.__option_string2 = Option(name="option1", value="value1")
+        self.__option_string3 = Option(name="option1", value="value2")
 
-        self.__option_int1 = Option("option3", "1")
-        self.__option_int2 = Option("option3", "1")
-        self.__option_int3 = Option("option3", "2")
+        self.__option_int1 = Option(name="option3", value="1")
+        self.__option_int2 = Option(name="option3", value="1")
+        self.__option_int3 = Option(name="option3", value="2")
 
-        self.__option_float1 = Option("option5", "1.1")
-        self.__option_float2 = Option("option5", "1.1")
-        self.__option_float3 = Option("option5", "2.2")
+        self.__option_float1 = Option(name="option5", value="1.1")
+        self.__option_float2 = Option(name="option5", value="1.1")
+        self.__option_float3 = Option(name="option5", value="2.2")
 
-        self.__option_bool1 = Option("option7", True)
-        self.__option_bool2 = Option("option7", True)
-        self.__option_bool3 = Option("option7", False)
+        self.__option_bool1 = Option(name="option7", value=True)
+        self.__option_bool2 = Option(name="option7", value=True)
+        self.__option_bool3 = Option(name="option7", value=False)
 
     def test_correspond(self):
         try:

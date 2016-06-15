@@ -3,6 +3,8 @@ Module containing the Parser class
 """
 import sys
 
+from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
+from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
 from src.main.fr.tagc.wopmars.framework.management.DAG import DAG
 from src.main.fr.tagc.wopmars.framework.parsing.Reader import Reader
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
@@ -41,8 +43,8 @@ class Parser:
         :raise: WopMarsParsingException if the workflow is not a DAG.
         :return: the DAG
         """
-
-        set_toolwrappers = self.__reader.read()
+        self.__reader.read()
+        set_toolwrappers = self.get_set_toolwrappers()
         dag_tools = DAG(set_toolwrappers)
         if not is_directed_acyclic_graph(dag_tools):
             raise WopMarsException("Error while parsing the configuration file: \n\tThe workflow is malformed:",
@@ -53,3 +55,8 @@ class Parser:
             dag_tools.write_dot(s_dot_option)
             Logger.instance().info("Dot and ps file wrote.")
         return dag_tools
+
+    def get_set_toolwrappers(self):
+        session = SQLManager.instance().get_session()
+        set_toolwrappers = set(session.query(ToolWrapper).all())
+        return set_toolwrappers

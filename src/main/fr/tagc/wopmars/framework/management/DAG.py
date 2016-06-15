@@ -1,15 +1,11 @@
 """
 Module containing the DAG class
 """
-import os
 import subprocess
 
 import networkx as nx
 from networkx.drawing.nx_pydot import write_dot
 
-
-from src.main.fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
-from src.main.fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
 from src.main.fr.tagc.wopmars.utils.SetUtils import SetUtils
 

@@ -5,10 +5,9 @@ from unittest import TestCase
 from FooWrapper4 import FooWrapper4
 from FooWrapper5 import FooWrapper5
 from FooWrapper6 import FooWrapper6
-
+from src.main.fr.tagc.wopmars.framework.bdd.tables.IOFilePut import IOFilePut
 from src.main.fr.tagc.wopmars.framework.management.DAG import DAG
 from src.main.fr.tagc.wopmars.framework.parsing.Parser import Parser
-from src.main.fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
 from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
 from src.main.fr.tagc.wopmars.utils.PathFinder import PathFinder
 from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException

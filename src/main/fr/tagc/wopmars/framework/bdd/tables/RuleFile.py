@@ -2,7 +2,7 @@
 Module containing the RuleFile class.
 """
 from sqlalchemy import Column, Integer, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 
 from src.main.fr.tagc.wopmars.framework.bdd.Base import Base
 
@@ -18,6 +18,9 @@ class RuleFile(Base):
     type = relationship("Type", back_populates="rulefiles")
 
     # One rule_file has One file
-    file = relationship("File", back_populates="rules")
+    file = relationship("IOFilePut", back_populates="rules")
     # One rule_file has One rule
-    rule = relationship("Rule", back_populates="files")
+    rule = relationship("ToolWrapper", back_populates="files", enable_typechecks=False)
+
+    def __repr__(self):
+        return str(self.file)

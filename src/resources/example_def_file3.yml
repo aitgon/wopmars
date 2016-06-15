@@ -1,7 +1,7 @@
 rule rule4:
     tool: FooWrapper4
     input:
-        input1: "/home/giffon/Documents/wopmars/src/resources/aFile1.txt"
+        input1: "/home/giffon/Documents/wopmars/src/resources/input_File1.txt"
     output:
         output1: "/home/giffon/Documents/wopmars/src/resources/aFile2.txt"
 

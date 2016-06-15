@@ -1,33 +1,48 @@
 """
 Module containing the IODbPut class.
 """
+import importlib
+
 from src.main.fr.tagc.wopmars.framework.bdd.Base import Base
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship, reconstructor
+
 from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
-from src.main.fr.tagc.wopmars.framework.rule.IOPut import IOPut
+from src.main.fr.tagc.wopmars.framework.bdd.tables.IOPut import IOPut
+from src.main.fr.tagc.wopmars.utils.Logger import Logger
+from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
-import collections
 
-
-class IODbPut(IOPut):
+class IODbPut(IOPut, Base):
     """
     This class extends IOPut and is specific to table input or output
-    """    
-    def __init__(self, table):
+    """
+    __tablename__ = "table"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String)
+
+    # One table is in Many rule_table
+    rules = relationship("RuleTable", back_populates="table")
+
+    def __init__(self, name):
         """
         :param table: Base: an object extending the Base type from SQLAlchemy
         which has been created by a tool developper
         :return:
         """
-        assert issubclass(table, Base)
-        self.__table = table
-        super().__init__(self.__table.__class__.__name__)
+        # The file containing the table should be in PYTHONPATH
+        Base.__init__(self, name=name)
+        mod = importlib.import_module(name)
+        self.__table = eval("mod." + name)
+        Logger.instance().debug(name + " table class loaded.")
+
+    # @reconstructor
+    # def init_on_load(self):
+    #     mod = importlib.import_module(self.name)
+    #     self.__table = eval("mod." + self.name)
 
     def get_table(self):
-        """
-        Return the Base object contained.
-
-        :return: Base: the SQL alchemy object corresponding to the table
-        """
         return self.__table
 
     def __eq__(self, other):
@@ -40,14 +55,13 @@ class IODbPut(IOPut):
         """
         # TODO method __eq__ doit aussi vérifier le contenu des tables
         session = SQLManager.instance().get_session()
-        if self.__table != other.get_table():
+        if self.name != other.name:
             return False
         try:
             self_results = set(session.query(self.__table).all())
             other_results = set(session.query(other.get_table()).all())
             if self_results != other_results:
                 return False
-
 
         except Exception as e:
             session.rollback()
@@ -72,5 +86,5 @@ class IODbPut(IOPut):
         return id(self)
 
     def __repr__(self):
-        return "table:\"" + self.__table + "\""
+        return "<Table:\"" + str(self.name) + "\">"
 

@@ -3,14 +3,13 @@ Module containing the WorkflowManager class
 """
 import sys
 
+from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
 from src.main.fr.tagc.wopmars.framework.management.ToolThread import ToolThread
-from src.main.fr.tagc.wopmars.utils.UniqueQueue import UniqueQueue
-from src.main.fr.tagc.wopmars.framework.parsing.Parser import Parser
 from src.main.fr.tagc.wopmars.framework.management.ToolWrapperObserver import ToolWrapperObserver
-from src.main.fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
+from src.main.fr.tagc.wopmars.framework.parsing.Parser import Parser
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
-
 from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
+from src.main.fr.tagc.wopmars.utils.UniqueQueue import UniqueQueue
 from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
