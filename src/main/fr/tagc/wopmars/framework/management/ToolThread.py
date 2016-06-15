@@ -41,7 +41,9 @@ class ToolThread(threading.Thread, Observable):
             session_tw.rollback()
             raise e
         finally:
-            session_tw.close()
+            # todo en multithreading, fermer session
+            # session_tw.close()
+            pass
         self.fire_success()
 
     def get_observers(self):

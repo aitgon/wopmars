@@ -35,12 +35,14 @@ class IODbPut(IOPut, Base):
         Base.__init__(self, name=name)
         mod = importlib.import_module(name)
         self.__table = eval("mod." + name)
+        SQLManager.instance().create_all()
         Logger.instance().debug(name + " table class loaded.")
 
-    # @reconstructor
-    # def init_on_load(self):
-    #     mod = importlib.import_module(self.name)
-    #     self.__table = eval("mod." + self.name)
+    @reconstructor
+    def init_on_load(self):
+        mod = importlib.import_module(self.name)
+        self.__table = eval("mod." + self.name)
+        SQLManager.instance().create_all()
 
     def get_table(self):
         return self.__table

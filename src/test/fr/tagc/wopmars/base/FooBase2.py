@@ -2,7 +2,7 @@
 Example of module documentation which can be
 multiple-lined
 """
-from sqlalchemy import Column, Integer
+from sqlalchemy import Column, Integer, String
 
 from src.main.fr.tagc.wopmars.framework.bdd.Base import Base
 
@@ -14,3 +14,4 @@ class FooBase2(Base):
     __tablename__ = "FooBase2"
 
     id = Column(Integer, primary_key=True)
+    name = Column(String)

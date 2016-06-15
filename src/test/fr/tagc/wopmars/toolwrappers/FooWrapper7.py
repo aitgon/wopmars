@@ -4,6 +4,7 @@ Module containing the FooWrapper1 class
 import os
 import time
 
+from FooBase2 import FooBase2
 from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
 
 class FooWrapper7(ToolWrapper):
@@ -17,3 +18,10 @@ class FooWrapper7(ToolWrapper):
 
     def get_output_table(self):
         return ["FooBase2"]
+
+    def run(self):
+        inputs = self.session().query(self.input_table("FooBase")).all()
+        for i in inputs:
+            entry = FooBase2(name=i.name)
+            self.session().add(entry)
+        time.sleep(1)

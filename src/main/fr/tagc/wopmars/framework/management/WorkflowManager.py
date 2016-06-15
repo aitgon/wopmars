@@ -47,8 +47,7 @@ class WorkflowManager(ToolWrapperObserver):
         Then, execute_from is called with no argument to get the origin nodes.
         :return:
         """
-        # todo création des tables dans la base
-        # todo remplissage de la table type (input/output)
+        # todo creation des tables dans la base
         self.__dag_tools = self.__parser.parse()
         self.execute_from()
 

@@ -333,7 +333,7 @@ class ToolWrapper(Base):
         :param key: String the name of the variable containing the path
         :return:
         """
-        return self.__input_file_dict[key].get_path()
+        return [f.file.path for f in self.files if f.file.name == key and f.type.name == "input"][0]
 
     def input_table(self, key):
         """
@@ -342,7 +342,7 @@ class ToolWrapper(Base):
         :param key: String: the name of the Table object.
         :return:
         """
-        return self.__input_table_dict[key].get_table()
+        return [t.table for t in self.tables if t.table.name == key and t.type.name == "input"][0].get_table()
 
     # todo erreur speciale developpeur métier (aide au debogage)
     def output_file(self, key):
@@ -352,7 +352,7 @@ class ToolWrapper(Base):
         :param key: String the name of the variable containing the path
         :return:
         """
-        return self.__output_file_dict[key].get_path()
+        return [f.file.path for f in self.files if f.file.name == key and f.type.name == "output"][0]
 
     def output_table(self, key):
         """
@@ -361,10 +361,10 @@ class ToolWrapper(Base):
         :param key: String: the name of the Table object.
         :return:
         """
-        return self.__output_table_dict[key].get_table()
+        return [t.table for t in self.tables if t.table.name == key and t.type.name == "output"][0].get_table()
 
     def option(self, key):
-        return self.__option_dict[key].get_value()
+        return [o.value for o in self.options if o.name == key][0]
 
     def session(self):
         return self.__session

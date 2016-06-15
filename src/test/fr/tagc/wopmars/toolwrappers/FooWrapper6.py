@@ -3,6 +3,8 @@ Module containing the FooWrapper1 class
 """
 import time
 
+from matplotlib.compat import subprocess
+
 from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
 
 class FooWrapper6(ToolWrapper):
@@ -11,6 +13,7 @@ class FooWrapper6(ToolWrapper):
     Modifications may lead to failure in tests.
     """
     __mapper_args__ = {'polymorphic_identity': "FooWrapper6"}
+
     def get_input_file(self):
         return ["input1"]
 
@@ -19,4 +22,8 @@ class FooWrapper6(ToolWrapper):
 
     def run(self):
         print(self.__class__.__name__ + " en cours d'exécution.")
+        p1 = subprocess.Popen(["touch", self.output_file('output1')])
+        p2 = subprocess.Popen(["touch", self.output_file('output2')])
+        p1.wait()
+        p2.wait()
         time.sleep(1)
