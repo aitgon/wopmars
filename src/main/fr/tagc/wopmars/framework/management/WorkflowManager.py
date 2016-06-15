@@ -3,6 +3,7 @@ Module containing the WorkflowManager class
 """
 import sys
 
+from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
 from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
 from src.main.fr.tagc.wopmars.framework.management.ToolThread import ToolThread
 from src.main.fr.tagc.wopmars.framework.management.ToolWrapperObserver import ToolWrapperObserver
@@ -47,7 +48,7 @@ class WorkflowManager(ToolWrapperObserver):
         Then, execute_from is called with no argument to get the origin nodes.
         :return:
         """
-        # todo creation des tables dans la base
+        SQLManager.instance().create_all()
         self.__dag_tools = self.__parser.parse()
         self.execute_from()
 

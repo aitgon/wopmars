@@ -3,14 +3,13 @@ Module containing the IODbPut class.
 """
 import importlib
 
-from src.main.fr.tagc.wopmars.framework.bdd.Base import Base
+from src.main.fr.tagc.wopmars.framework.bdd.Base import Base, Engine
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship, reconstructor
 
 from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
 from src.main.fr.tagc.wopmars.framework.bdd.tables.IOPut import IOPut
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
-from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
 class IODbPut(IOPut, Base):
@@ -35,14 +34,16 @@ class IODbPut(IOPut, Base):
         Base.__init__(self, name=name)
         mod = importlib.import_module(name)
         self.__table = eval("mod." + name)
-        SQLManager.instance().create_all()
+        Base.metadata.tables[self.__table.__tablename__].create(Engine, checkfirst=True)
         Logger.instance().debug(name + " table class loaded.")
 
     @reconstructor
     def init_on_load(self):
         mod = importlib.import_module(self.name)
         self.__table = eval("mod." + self.name)
-        SQLManager.instance().create_all()
+        # todo ask lionel les tables spécifiques des classes métiers ne sont pas crées au tout début....
+        # je ne sais pas pourquoi mais c'est arrangeant
+        Base.metadata.tables[self.__table.__tablename__].create(Engine, checkfirst=True)
 
     def get_table(self):
         return self.__table
@@ -78,8 +79,9 @@ class IODbPut(IOPut, Base):
         except Exception as e:
             session.rollback()
             raise e
-        finally:
-            session.close()
+        # finally:
+            # todo twthread
+            # session.close()
         return True
 
     def __hash__(self):

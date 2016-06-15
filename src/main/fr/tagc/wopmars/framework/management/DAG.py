@@ -35,6 +35,7 @@ class DAG(nx.DiGraph):
                 # for each other tool
                 for tool2 in set_tools.difference(set([tool1])):
                     # is there a dependency between tool1 and tool2?
+                    # todo mettre a jour childrule pour les entrées dans la table
                     if tool1.follows(tool2):
                         self.add_edge(tool2, tool1)
         Logger.instance().info("DAG built.")

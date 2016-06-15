@@ -36,6 +36,7 @@ class WopMars:
         """
         Entry-point of the program
         """
+
         # if the command line is malformed, docopt interrupt the software.
         try:
             OptionManager(docopt(__doc__, argv=argv))
@@ -83,15 +84,6 @@ class WopMars:
 def main():
     sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/toolwrappers/")
     sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/base/")
-
-    cmd_line_working = ["/home/giffon/Documents/wopmars/src/resources/example_def_file5.yml", "--dot", "/home/giffon/ex.dot", "-vvvv"]
-    cmd_line_never_ready = ["/home/giffon/Documents/wopmars/src/resources/example_def_file_toolwrapper_never_ready.yml", "-vvvv"]
-    cmd_line_error_parsing = ["/home/giffon/Documents/wopmars/src/resources/example_def_file_not_a_dag.yml", "-vvvv"]
-    cmd_line_wrong_arg = ["/home/giffon/Documents/wopmars/src/resources/example_def_file_not_a_dag.yml", "--fail"]
-    # WopMars.run(cmd_line_working)
-    # WopMars().run(cmd_line_never_ready)
-    # WopMars().run(cmd_line_error_parsing)
-    # WopMars().run(cmd_line_wrong_arg)
 
     WopMars().run(sys.argv[1:])
 

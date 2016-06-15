@@ -176,7 +176,6 @@ class ToolWrapper(Base):
 
     ### Workflow Manager methods
 
-    # todo check for tables too
     def are_inputs_ready(self):
         """
         Check if inputs are ready
@@ -184,13 +183,16 @@ class ToolWrapper(Base):
         :return: bool - True if inputs are ready.
         """
         input_files = [f.file for f in self.files if f.type.name == "input"]
-        Logger.instance().debug("Inputs of " + str(self.__class__.__name__) + ": " + str([f.name for f in input_files]))
-        for input_f in input_files:
-            if not input_f.is_ready():
-                Logger.instance().debug("Input: " + str(input_f.name) + " is not ready.")
+        input_tables = [t.table for t in self.tables if t.type.name == "input"]
+        inputs = input_files + input_tables
+        Logger.instance().debug("Inputs of " + str(self.__class__.__name__) + ": " + str([i.name for i in inputs]))
+        for i in inputs:
+            if not i.is_ready():
+                Logger.instance().debug("Input: " + str(i.name) + " is not ready.")
                 self.__state = ToolWrapper.NOT_READY
                 return False
-            Logger.instance().debug("Input: " + str(input_f.name) + " is ready.")
+            Logger.instance().debug("Input: " + str(i.name) + " is ready.")
+
         self.__state = ToolWrapper.READY
         return True
 

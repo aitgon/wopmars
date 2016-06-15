@@ -153,7 +153,8 @@ class Reader:
                         toolwrapper_wrapper.tables.append(rule_table_entry)
 
                     Logger.instance().debug(str_wrapper_name + " ToolWrapper loaded.")
-                except AttributeError:
+                except AttributeError as a:
+                    print(a)
                     raise WopMarsException("Error while parsing the configuration file: \n\t",
                                            "The class " + str_wrapper_name + " doesn't exist.")
                 toolwrapper_wrapper.is_content_respected()
