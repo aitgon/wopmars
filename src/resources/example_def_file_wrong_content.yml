@@ -1,9 +1,7 @@
 rule rule3:
-    tool: FooWrapper3
+    tool: FooWrapper4
     input:
         failure: "the_second_file.txt"
     output:
         output1: "the final_file.txt"
-    params:
-        param1: 10.285
 

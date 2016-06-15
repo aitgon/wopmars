@@ -12,15 +12,9 @@ class FooWrapper1(ToolWrapper):
     def get_input_file(self):
         return ["input1"]
 
-    def get_input_table(self):
-        return ["input_tbl1"]
-
     def get_output_file(self):
         return ["output1"]
 
-    def get_output_table(self):
-        return ["output_tbl1"]
-
     def get_params(self):
-        return {"param1": "int"}
+        return {"param1": "required|int"}
 

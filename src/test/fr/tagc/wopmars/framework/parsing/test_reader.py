@@ -229,9 +229,9 @@ class TestReader(TestCase):
         self.assertTrue((SetUtils.all_elm_of_one_set_in_one_other(result, expected) and
                          SetUtils.all_elm_of_one_set_in_one_other(expected, result)))
 
-        # # The bad -------------------------------------:
-        #
-        # [self.assertRaises(WopMarsException, reader.read) for reader in self.__list_reader_exception_read]
+        # The bad -------------------------------------:
+
+        [self.assertRaises(WopMarsException, reader.read) for reader in self.__list_reader_exception_read]
 
 
 if __name__ == "__main__":
