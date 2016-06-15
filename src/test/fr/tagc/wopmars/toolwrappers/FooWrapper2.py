@@ -1,6 +1,8 @@
 """
 Module containing the FooWrapper2 class
 """
+import time
+
 from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
 
 class FooWrapper2(ToolWrapper):
@@ -8,6 +10,7 @@ class FooWrapper2(ToolWrapper):
     This class has been done for example/testing purpose.
     Modifications may lead to failure in tests.
     """
+    __mapper_args__ = {'polymorphic_identity': "FooWrapper2"}
     def get_input_file(self):
         return ["input1"]
 
@@ -22,3 +25,6 @@ class FooWrapper2(ToolWrapper):
 
     def get_params(self):
         return {"param1": "str"}
+
+    def run(self):
+        time.sleep(1)

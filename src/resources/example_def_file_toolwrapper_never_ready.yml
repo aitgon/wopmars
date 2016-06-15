@@ -3,19 +3,19 @@ rule rule4:
     input:
         input1: "/home/giffon/Documents/wopmars/src/resources/input_File1.txt"
     output:
-        output1: "/home/giffon/Documents/wopmars/src/resources/aFile2.txt"
+        output1: "/home/giffon/Documents/wopmars/src/resources/output_File1.txt"
 
 rule rule5:
-    tool: FooWrapper5
+    tool: FooWrapper2
     input:
-        input1: "/home/giffon/Documents/wopmars/src/resources/aFile2.txt"
+        input1: "/home/giffon/Documents/wopmars/src/resources/output_File1.txt"
     output:
         output1: "/home/giffon/Documents/wopmars/src/resources/never_done.txt"
 
 rule rule6:
-    tool: FooWrapper6
+    tool: FooWrapper2
     input:
         input1: "/home/giffon/Documents/wopmars/src/resources/never_done.txt"
     output:
-        output1: "/home/giffon/Documents/wopmars/src/resources/aFile6.txt"
+        output1: "/home/giffon/Documents/wopmars/src/resources/output_File2.txt"
 

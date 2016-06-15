@@ -153,7 +153,8 @@ class WorkflowManager(ToolWrapperObserver):
         self.__count_exec -= 1
 
         if len(self.__list_queue_buffer):
-            Logger.instance().debug("Fill the queue with the Buffer: " + str(self.__list_queue_buffer))
+            Logger.instance().debug("Fill the queue with the Buffer: " +
+                                    str([t.get_toolwrapper().__class__.__name__ for t in self.__list_queue_buffer]))
         i = 0
         for tw_thread in self.__list_queue_buffer:
             self.__queue_exec.put(tw_thread)

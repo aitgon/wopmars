@@ -2,6 +2,7 @@ import os
 import unittest
 from unittest import TestCase
 
+from FooWrapper10 import FooWrapper10
 from FooWrapper4 import FooWrapper4
 from FooWrapper5 import FooWrapper5
 from FooWrapper6 import FooWrapper6
@@ -181,6 +182,27 @@ class TestReader(TestCase):
         rt2bis.table = t2
         rt2bis.type = input_entry
 
+        f12 = IOFilePut(name="input1", path="/home/giffon/Documents/wopmars/src/resources/output_File1.txt")
+        f13 = IOFilePut(name="input2", path="/home/giffon/Documents/wopmars/src/resources/output_File5.txt")
+        f14 = IOFilePut(name="input3", path="/home/giffon/Documents/wopmars/src/resources/output_File6.txt")
+        f15 = IOFilePut(name="output1", path="/home/giffon/Documents/wopmars/src/resources/output_File7.txt")
+
+        rf12 = RuleFile()
+        rf12.file = f12
+        rf12.type = input_entry
+
+        rf13 = RuleFile()
+        rf13.file = f13
+        rf13.type = input_entry
+
+        rf14 = RuleFile()
+        rf14.file = f14
+        rf14.type = input_entry
+
+        rf15 = RuleFile()
+        rf15.file = f15
+        rf15.type = output_entry
+
         tw1 = FooWrapper4(rule_name="rule1")
         tw1.files.extend([rf1, rf2])
         tw2 = FooWrapper5(rule_name="rule2")
@@ -195,9 +217,11 @@ class TestReader(TestCase):
         tw6 = FooWrapper9(rule_name="rule6")
         tw6.files.extend([rf10, rf11])
         tw6.tables.extend([rt2bis])
+        tw7 = FooWrapper10(rule_name="rule7")
+        tw7.files.extend([rf12, rf13, rf14, rf15])
 
 
-        expected = set([tw1, tw2, tw3, tw4, tw5, tw6])
+        expected = set([tw1, tw2, tw3, tw4, tw5, tw6, tw7])
 
 
         # The good ------------------------------------:
