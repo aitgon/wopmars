@@ -55,7 +55,6 @@ class IODbPut(IOPut, Base):
         :param other: IODbPut
         :return: boolean: True if the table attributes are the same, False if not
         """
-        # TODO method __eq__ doit aussi vérifier le contenu des tables
         session = SQLManager.instance().get_session()
         if self.name != other.name:
             return False
@@ -64,10 +63,9 @@ class IODbPut(IOPut, Base):
             other_results = set(session.query(other.get_table()).all())
             if self_results != other_results:
                 return False
-
         except Exception as e:
             session.rollback()
-            session.close()
+            # session.close()
             raise e
         return True
 

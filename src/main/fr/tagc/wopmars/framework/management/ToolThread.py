@@ -41,7 +41,7 @@ class ToolThread(threading.Thread, Observable):
             session_tw.rollback()
             raise e
         finally:
-            # todo en multithreading, fermer session
+            # todo twthread , fermer session
             # session_tw.close()
             pass
         self.fire_success()

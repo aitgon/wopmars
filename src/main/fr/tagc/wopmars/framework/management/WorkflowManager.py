@@ -101,10 +101,10 @@ class WorkflowManager(ToolWrapperObserver):
             Logger.instance().debug("Current ToolWrapper: " + str(tw.__class__.__name__))
             if tw.are_inputs_ready():
                 Logger.instance().debug("ToolWrapper ready: " + str(tw.__class__.__name__))
-                # todo verification des ressources
+                # todo twthread verification des ressources
                 thread_tw.subscribe(self)
                 self.__count_exec += 1
-                # todo multithreading
+                # todo twthread methode start
                 thread_tw.run()
             else:
                 Logger.instance().debug("ToolWrapper not ready: " + str(tw.__class__.__name__))

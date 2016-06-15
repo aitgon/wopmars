@@ -46,7 +46,7 @@ class SQLManager(SingletonMixin):
         self.__lock.release()
 
     def query(self, session, call):
-        # todo gérer le lock pour les lectures
+        # todo twthread gérer le lock pour les lectures
         Logger.instance().debug(str(session) + " want the read lock on SQLManager.")
         self.__lock.acquire_read()
         Logger.instance().debug(str(session) + " has taken the read lock on SQLManager.")

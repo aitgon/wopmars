@@ -241,7 +241,6 @@ class ToolWrapper(Base):
         :param other: ToolWrapper
         :return:
         """
-        # todo ask aitor est-ce-que demander au dev métier d'écrire le truc du polymorphisme, c'est raisonnable?
         if not isinstance(other, self.__class__):
             return False
 
@@ -321,10 +320,7 @@ class ToolWrapper(Base):
     def run(self):
         pass
 
-
     ### Methods availables for the tool developer
-
-    # todo refaire les fichiers de définition test + refaire les foowrappers
 
     def input_file(self, key):
         """
@@ -344,7 +340,7 @@ class ToolWrapper(Base):
         """
         return [t.table for t in self.tables if t.table.name == key and t.type.name == "input"][0].get_table()
 
-    # todo erreur speciale developpeur métier (aide au debogage)
+    # todo exception erreur speciale developpeur métier (aide au debogage)
     def output_file(self, key):
         """
         Return the path of the specified output file.
