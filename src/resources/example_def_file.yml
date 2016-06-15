@@ -37,3 +37,12 @@ rule rule6:
         input1: "/home/giffon/Documents/wopmars/src/resources/output_File4.txt"
     output:
         output1: "/home/giffon/Documents/wopmars/src/resources/output_File6.txt"
+
+rule rule7:
+    tool: FooWrapper10
+    input:
+        input1: "/home/giffon/Documents/wopmars/src/resources/output_File1.txt"
+        input2: "/home/giffon/Documents/wopmars/src/resources/output_File5.txt"
+        input3: "/home/giffon/Documents/wopmars/src/resources/output_File6.txt"
+    output:
+        output1: "/home/giffon/Documents/wopmars/src/resources/output_File7.txt"

@@ -4,6 +4,8 @@ Module containing the FooWrapper1 class
 import os
 import time
 
+from matplotlib.compat import subprocess
+
 from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
 
 
@@ -13,7 +15,12 @@ class FooWrapper10(ToolWrapper):
     Modifications may lead to failure in tests.
     """    
     def get_input_file(self):
-        return ["input1", "input2"]
+        return ["input1", "input2", "input3"]
 
     def get_output_file(self):
         return ["output1"]
+
+    def run(self):
+        p = subprocess.Popen(["touch", self.output_file("output1")])
+        p.wait()
+        time.sleep(1)
