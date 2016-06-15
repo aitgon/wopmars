@@ -14,6 +14,7 @@ class FooWrapper5(ToolWrapper):
     Modifications may lead to failure in tests.
     """
     __mapper_args__ = {'polymorphic_identity': "FooWrapper5"}
+
     def get_input_file(self):
         return ["input1"]
 
