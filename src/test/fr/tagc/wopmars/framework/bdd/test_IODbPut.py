@@ -7,7 +7,6 @@ from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
 from src.main.fr.tagc.wopmars.framework.bdd.tables.IODbPut import IODbPut
 from src.main.fr.tagc.wopmars.framework.bdd.tables.IOFilePut import IOFilePut
 from src.main.fr.tagc.wopmars.framework.bdd.tables.Option import Option
-from src.main.fr.tagc.wopmars.framework.bdd.tables.RuleTable import RuleTable
 from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
 from src.main.fr.tagc.wopmars.framework.bdd.tables.Type import Type
 from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager

@@ -4,7 +4,7 @@ Module containing the IODbPut class.
 import importlib
 
 from src.main.fr.tagc.wopmars.framework.bdd.Base import Base, Engine
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship, reconstructor
 
 from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
@@ -20,9 +20,13 @@ class IODbPut(IOPut, Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
+    rule_id = Column(Integer, ForeignKey("rule.id"))
+    type_id = Column(Integer, ForeignKey("type.id"))
 
-    # One table is in Many rule_table
-    rules = relationship("RuleTable", back_populates="table")
+    # One table is in one rule
+    rule = relationship("ToolWrapper", back_populates="tables", enable_typechecks=False)
+    # One file has One type
+    type = relationship("Type", back_populates="tables")
 
     def __init__(self, name):
         """

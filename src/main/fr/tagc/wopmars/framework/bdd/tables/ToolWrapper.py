@@ -6,7 +6,6 @@ from sqlalchemy.orm import relationship
 
 from src.main.fr.tagc.wopmars.framework.bdd.Base import Base
 from src.main.fr.tagc.wopmars.framework.bdd.tables.IODbPut import IODbPut
-from src.main.fr.tagc.wopmars.framework.bdd.tables.RuleOption import RuleOption
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
 from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
@@ -23,12 +22,12 @@ class ToolWrapper(Base):
     name = Column(String)
     toolwrapper = Column(String)
 
-    # One rule is in Many rule_table and has Many table
-    tables = relationship("RuleTable", back_populates="rule")
-    # One rule is in Many rule_file and has Many file
-    files = relationship("RuleFile", back_populates="rule")
+    # One rule has Many table
+    tables = relationship("IODbPut", back_populates="rule")
+    # One rule has Many file
+    files = relationship("IOFilePut", back_populates="rule")
     # One rule has Many option
-    options = relationship("Option", secondary="rule_option", back_populates="rules")
+    options = relationship("Option", back_populates="rule")
 
     # parentrules = relationship etc...
     __mapper_args__ = {
@@ -87,7 +86,7 @@ class ToolWrapper(Base):
         If not, throws a WopMarsParsingException(3)
         :return:void
         """
-        set_input_file_names = set([f_input.file.name for f_input in self.files if f_input.type.name == "input"])
+        set_input_file_names = set([f_input.name for f_input in self.files if f_input.type.name == "input"])
         if  set_input_file_names != set(self.get_input_file()):
             raise WopMarsException("The content of the definition file is not valid.",
                                    "The given input variable's names for " + self.__class__.__name__ +
@@ -104,13 +103,13 @@ class ToolWrapper(Base):
         It checks if the output variable names exists or not. Throws WopMarsParsingException if not
         :return:void
         """
-        if set([f_output.file.name for f_output in self.files if f_output.type.name == "output"]) != set(self.get_output_file()):
+        if set([f_output.name for f_output in self.files if f_output.type.name == "output"]) != set(self.get_output_file()):
             raise WopMarsException("The content of the definition file is not valid.",
                                    "The given output variable names for " + self.__class__.__name__ +
                                    " are not correct, they should be: " +
                                    "\n\t'{0}'".format("'\n\t'".join(self.get_output_file())) +
                                    "\n" + "They are:" +
-                                   "\n\t'{0}'".format("'\n\t'".join([f.file.name for f in self.files if f.type.name == "output"]))
+                                   "\n\t'{0}'".format("'\n\t'".join([f.name for f in self.files if f.type.name == "output"]))
                                    )
 
     def is_options_respected(self):
@@ -155,13 +154,13 @@ class ToolWrapper(Base):
         :param other: ToolWrapper that is a predecessor of "self"
         :return: bool True if "self" follows "other"
         """
-        for rule_f_path in [f.file.path for f in self.files if f.type.name == "input"]:
-            for rule_f2_path in [f.file.path for f in other.files if f.type.name == "output"]:
+        for rule_f_path in [f.path for f in self.files if f.type.name == "input"]:
+            for rule_f2_path in [f.path for f in other.files if f.type.name == "output"]:
                 if rule_f_path == rule_f2_path:
                     return True
 
-        for rule_t_name in [t.table.name for t in self.tables if t.type.name == "input"]:
-            for rule_t2_name in [t.table.name for t in other.tables if t.type.name == "output"]:
+        for rule_t_name in [t.name for t in self.tables if t.type.name == "input"]:
+            for rule_t2_name in [t.name for t in other.tables if t.type.name == "output"]:
                 if rule_t_name == rule_t2_name:
                     return True
 
@@ -175,8 +174,8 @@ class ToolWrapper(Base):
 
         :return: bool - True if inputs are ready.
         """
-        input_files = [f.file for f in self.files if f.type.name == "input"]
-        input_tables = [t.table for t in self.tables if t.type.name == "input"]
+        input_files = [f for f in self.files if f.type.name == "input"]
+        input_tables = [t for t in self.tables if t.type.name == "input"]
         inputs = input_files + input_tables
         Logger.instance().debug("Inputs of " + str(self.__class__.__name__) + ": " + str([i.name for i in inputs]))
         for i in inputs:
@@ -239,23 +238,23 @@ class ToolWrapper(Base):
         if not isinstance(other, self.__class__):
             return False
 
-        for input_f in [rf.file for rf in self.files if rf.type.name == "input"]:
-            is_in = bool([rf for rf in other.files if (input_f.path == rf.file.path and
-                                                       input_f.name == rf.file.name and
+        for input_f in [rf for rf in self.files if rf.type.name == "input"]:
+            is_in = bool([rf for rf in other.files if (input_f.path == rf.path and
+                                                       input_f.name == rf.name and
                                                        rf.type.name == "input")])
             if not is_in:
                 return False
 
-        for output_f in [rf.file for rf in self.files if rf.type.name == "output"]:
-            is_in = bool([rf for rf in other.files if (output_f.path == rf.file.path and
-                                                       output_f.name == rf.file.name and
+        for output_f in [rf for rf in self.files if rf.type.name == "output"]:
+            is_in = bool([rf for rf in other.files if (output_f.path == rf.path and
+                                                       output_f.name == rf.name and
                                                        rf.type.name == "output")])
             if not is_in:
                 return False
 
-        for output_f in [rf.file for rf in self.files if rf.type.name == "output"]:
-            is_in = bool([rf for rf in other.files if (output_f.path == rf.file.path and
-                                                       output_f.name == rf.file.name and
+        for output_f in [rf for rf in self.files if rf.type.name == "output"]:
+            is_in = bool([rf for rf in other.files if (output_f.path == rf.path and
+                                                       output_f.name == rf.name and
                                                        rf.type.name == "output")])
             if not is_in:
                 return False
@@ -287,10 +286,10 @@ class ToolWrapper(Base):
         s += "\\n"
         s += "tool: " + self.__class__.__name__
         s += "\\n"
-        for input_f in [f.file for f in self.files if f.type.name == "input"]:
+        for input_f in [f for f in self.files if f.type.name == "input"]:
             s += "\\n\t\t" + input_f.name + ": " + str(input_f.path)
         s += "\\n"
-        for output_f in [f.file for f in self.files if f.type.name == "output"]:
+        for output_f in [f for f in self.files if f.type.name == "output"]:
             s += "\\n\t\t" + output_f.name + ": " + str(output_f.path)
         s += "\""
         return s
@@ -324,7 +323,7 @@ class ToolWrapper(Base):
         :param key: String the name of the variable containing the path
         :return:
         """
-        return [f.file.path for f in self.files if f.file.name == key and f.type.name == "input"][0]
+        return [f.path for f in self.files if f.name == key and f.type.name == "input"][0]
 
     def input_table(self, key):
         """
@@ -333,7 +332,7 @@ class ToolWrapper(Base):
         :param key: String: the name of the Table object.
         :return:
         """
-        return [t.table for t in self.tables if t.table.name == key and t.type.name == "input"][0].get_table()
+        return [t for t in self.tables if t.name == key and t.type.name == "input"][0].get_table()
 
     # todo exception erreur speciale developpeur métier (aide au debogage)
     def output_file(self, key):
@@ -343,7 +342,7 @@ class ToolWrapper(Base):
         :param key: String the name of the variable containing the path
         :return:
         """
-        return [f.file.path for f in self.files if f.file.name == key and f.type.name == "output"][0]
+        return [f.path for f in self.files if f.name == key and f.type.name == "output"][0]
 
     def output_table(self, key):
         """
@@ -352,7 +351,7 @@ class ToolWrapper(Base):
         :param key: String: the name of the Table object.
         :return:
         """
-        return [t.table for t in self.tables if t.table.name == key and t.type.name == "output"][0].get_table()
+        return [t for t in self.tables if t.name == key and t.type.name == "output"][0].get_table()
 
     def option(self, key):
         return [o.value for o in self.options if o.name == key][0]

@@ -17,8 +17,6 @@ from FooWrapper1 import FooWrapper1
 from FooWrapper2 import FooWrapper2
 from FooWrapper3 import FooWrapper3
 from src.main.fr.tagc.wopmars.framework.bdd.tables.Option import Option
-from src.main.fr.tagc.wopmars.framework.bdd.tables.RuleFile import RuleFile
-from src.main.fr.tagc.wopmars.framework.bdd.tables.RuleTable import RuleTable
 from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
 from src.main.fr.tagc.wopmars.framework.bdd.tables.Type import Type
 from src.main.fr.tagc.wopmars.framework.parsing.Reader import Reader
@@ -99,126 +97,81 @@ class TestReader(TestCase):
         output_entry = Type(name="output")
 
         f1 = IOFilePut(name="input1", path="/home/giffon/Documents/wopmars/src/resources/input_File1.txt")
+        f1.type = input_entry
+
         f2 = IOFilePut(name="output1", path="/home/giffon/Documents/wopmars/src/resources/output_File1.txt")
+        f2.type = output_entry
 
         f3 = IOFilePut(name="input1", path="/home/giffon/Documents/wopmars/src/resources/output_File1.txt")
+        f3.type = input_entry
+
+        f3bis = IOFilePut(name="input1", path="/home/giffon/Documents/wopmars/src/resources/output_File1.txt")
+        f3bis.type = input_entry
 
         f4 = IOFilePut(name="output1", path="/home/giffon/Documents/wopmars/src/resources/output_File2.txt")
+        f4.type = output_entry
+
         f5 = IOFilePut(name="output1", path="/home/giffon/Documents/wopmars/src/resources/output_File3.txt")
+        f5.type = output_entry
+
         f6 = IOFilePut(name="output2", path="/home/giffon/Documents/wopmars/src/resources/output_File4.txt")
+        f6.type = output_entry
 
         f7 = IOFilePut(name="input1", path="/home/giffon/Documents/wopmars/src/resources/output_File3.txt")
+        f7.type = input_entry
+
         f8 = IOFilePut(name="input2", path="/home/giffon/Documents/wopmars/src/resources/output_File2.txt")
+        f8.type = input_entry
 
         f9 = IOFilePut(name="output1", path="/home/giffon/Documents/wopmars/src/resources/output_File5.txt")
+        f9.type = output_entry
 
         f10 = IOFilePut(name="input1", path="/home/giffon/Documents/wopmars/src/resources/output_File4.txt")
+        f10.type = input_entry
+
         f11 = IOFilePut(name="output1", path="/home/giffon/Documents/wopmars/src/resources/output_File6.txt")
-
-        rf1 = RuleFile()
-        rf1.file = f1
-        rf1.type = input_entry
-
-        rf2 = RuleFile()
-        rf2.file = f2
-        rf2.type = output_entry
-
-        rf3 = RuleFile()
-        rf3.file = f3
-        rf3.type = input_entry
-
-        rf3bis = RuleFile()
-        rf3bis.file = f3
-        rf3bis.type = input_entry
-
-        rf4 = RuleFile()
-        rf4.file = f4
-        rf4.type = output_entry
-
-        rf5 = RuleFile()
-        rf5.file = f5
-        rf5.type = output_entry
-
-        rf6 = RuleFile()
-        rf6.file = f6
-        rf6.type = output_entry
-
-        rf7 = RuleFile()
-        rf7.file = f7
-        rf7.type = input_entry
-
-        rf8 = RuleFile()
-        rf8.file = f8
-        rf8.type = input_entry
-
-        rf9 = RuleFile()
-        rf9.file = f9
-        rf9.type = output_entry
-
-        rf10 = RuleFile()
-        rf10.file = f10
-        rf10.type = input_entry
-
-        rf11 = RuleFile()
-        rf11.file = f11
-        rf11.type = output_entry
-
-        t1 = IODbPut(name="FooBase")
-        t2 = IODbPut(name="FooBase2")
-
-        rt1 = RuleTable()
-        rt1.table = t1
-        rt1.type = output_entry
-
-        rt1bis = RuleTable()
-        rt1bis.table = t1
-        rt1bis.type = input_entry
-
-        rt2 = RuleTable()
-        rt2.table = t2
-        rt2.type = output_entry
-
-        rt2bis = RuleTable()
-        rt2bis.table = t2
-        rt2bis.type = input_entry
+        f11.type = output_entry
 
         f12 = IOFilePut(name="input1", path="/home/giffon/Documents/wopmars/src/resources/output_File1.txt")
+        f12.type = input_entry
+
         f13 = IOFilePut(name="input2", path="/home/giffon/Documents/wopmars/src/resources/output_File5.txt")
+        f13.type = input_entry
+
         f14 = IOFilePut(name="input3", path="/home/giffon/Documents/wopmars/src/resources/output_File6.txt")
+        f14.type = input_entry
+
         f15 = IOFilePut(name="output1", path="/home/giffon/Documents/wopmars/src/resources/output_File7.txt")
+        f15.type = output_entry
 
-        rf12 = RuleFile()
-        rf12.file = f12
-        rf12.type = input_entry
+        t1 = IODbPut(name="FooBase")
+        t1.type = output_entry
 
-        rf13 = RuleFile()
-        rf13.file = f13
-        rf13.type = input_entry
+        t1bis = IODbPut(name="FooBase")
+        t1bis.type = input_entry
 
-        rf14 = RuleFile()
-        rf14.file = f14
-        rf14.type = input_entry
+        t2 = IODbPut(name="FooBase2")
+        t2.type = output_entry
 
-        rf15 = RuleFile()
-        rf15.file = f15
-        rf15.type = output_entry
+        t2bis = IODbPut(name="FooBase2")
+        t2bis.type = input_entry
 
         tw1 = FooWrapper4(rule_name="rule1")
-        tw1.files.extend([rf1, rf2])
+        tw1.files.extend([f1, f2])
         tw2 = FooWrapper5(rule_name="rule2")
-        tw2.files.extend([rf3, rf4])
-        tw2.tables.extend([rt1])
+        tw2.files.extend([f3, f4])
+        tw2.tables.extend([t1])
         tw3 = FooWrapper6(rule_name="rule3")
-        tw3.files.extend([rf3bis, rf5, rf6])
+        tw3.files.extend([f3bis, f5, f6])
         tw4 = FooWrapper7(rule_name="rule4")
-        tw4.tables.extend([rt1bis, rt2])
+        tw4.tables.extend([t1bis, t2])
         tw5 = FooWrapper8(rule_name="rule5")
-        tw5.files.extend([rf8, rf7, rf9])
+        tw5.files.extend([f8, f7, f9])
         tw6 = FooWrapper9(rule_name="rule6")
-        tw6.files.extend([rf10, rf11])
-        tw6.tables.extend([rt2bis])
+        tw6.files.extend([f10, f11])
+        tw6.tables.extend([t2bis])
         tw7 = FooWrapper10(rule_name="rule7")
-        tw7.files.extend([rf12, rf13, rf14, rf15])
+        tw7.files.extend([f12, f13, f14, f15])
 
 
         expected = set([tw1, tw2, tw3, tw4, tw5, tw6, tw7])

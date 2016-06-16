@@ -7,8 +7,6 @@ from FooWrapper2 import FooWrapper2
 from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
 from src.main.fr.tagc.wopmars.framework.bdd.tables.IODbPut import IODbPut
 from src.main.fr.tagc.wopmars.framework.bdd.tables.IOFilePut import IOFilePut
-from src.main.fr.tagc.wopmars.framework.bdd.tables.RuleFile import RuleFile
-from src.main.fr.tagc.wopmars.framework.bdd.tables.RuleTable import RuleTable
 from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
 
 from FooWrapper8 import FooWrapper8
@@ -31,223 +29,177 @@ class TestToolWrapper(TestCase):
         input_entry = Type(name="input")
         output_entry = Type(name="output")
 
-        f1 = IOFilePut(name="input1", path="file1.txt")
-        f2 = IOFilePut(name="output1", path="file2.txt")
-        f3 = IOFilePut(name="input2", path="file2.txt")
-
-        t1 = IODbPut(name="FooBase")
-        t2 = IODbPut(name="FooBase")
-
         ### Toolwrappers for __eq__ test
-
         opt1 = Option(name="param1", value="1")
-        opt2 = Option(name="param2", value="2")
-        opt3 = Option(name="param1", value="String")
 
-        rf1 = RuleFile()
-        rf1.type = input_entry
-        rf1.file = f1
+        f1 = IOFilePut(name="input1", path="file1.txt")
+        f1.type = input_entry
 
-        rf2 = RuleFile()
-        rf2.type = output_entry
-        rf2.file = f2
+        f2 = IOFilePut(name="output1", path="file2.txt")
+        f2.type = output_entry
 
         self.__toolwrapper1 = ToolWrapper(rule_name="rule1")
-        self.__toolwrapper1.files.extend([rf1, rf2])
+        self.__toolwrapper1.files.extend([f1, f2])
         self.__toolwrapper1.options.append(opt1)
 
-        rf1 = RuleFile()
-        rf1.type = input_entry
-        rf1.file = f1
+        opt1 = Option(name="param1", value="1")
 
-        rf2 = RuleFile()
-        rf2.type = output_entry
-        rf2.file = f2
+        f1 = IOFilePut(name="input1", path="file1.txt")
+        f1.type = input_entry
+
+        f2 = IOFilePut(name="output1", path="file2.txt")
+        f2.type = output_entry
 
         self.__toolwrapper2 = ToolWrapper(rule_name="rule2")
-        self.__toolwrapper2.files.extend([rf1, rf2])
+        self.__toolwrapper2.files.extend([f1, f2])
         self.__toolwrapper2.options.append(opt1)
 
-        rf1 = RuleFile()
-        rf1.type = input_entry
-        rf1.file = f1
+        opt1 = Option(name="param2", value="2")
 
-        rf2 = RuleFile()
-        rf2.type = output_entry
-        rf2.file = f2
+        f1 = IOFilePut(name="input1", path="file1.txt")
+        f1.type = input_entry
+
+        f2 = IOFilePut(name="output1", path="file2.txt")
+        f2.type = output_entry
 
         self.__toolwrapper3 = ToolWrapper(rule_name="rule3")
-        self.__toolwrapper3.files.extend([rf1, rf2])
-        self.__toolwrapper3.options.append(opt2)
+        self.__toolwrapper3.files.extend([f1, f2])
+        self.__toolwrapper3.options.append(opt1)
 
         ### ToolWrappers for content_respected
+        opt1 = Option(name="param1", value="2")
 
-        rf1 = RuleFile()
-        rf1.type = input_entry
-        rf1.file = f1
+        f1 = IOFilePut(name="input1", path="file1.txt")
+        f1.type = input_entry
 
-        rf2 = RuleFile()
-        rf2.type = output_entry
-        rf2.file = f2
+        f2 = IOFilePut(name="output1", path="file2.txt")
+        f2.type = output_entry
 
-        rt1 = RuleTable()
-        rt1.type = input_entry
-        rt1.table = t1
+        t1 = IODbPut(name="FooBase")
+        t1.table = t1
 
-        rt2 = RuleTable()
-        rt2.type = output_entry
-        rt2.table = t2
+        t2 = IODbPut(name="FooBase")
+        t2.table = t2
 
         self.__foowrapper_right_content = FooWrapper3(rule_name="rule1")
-        self.__foowrapper_right_content.files.extend([rf1, rf2])
-        self.__foowrapper_right_content.tables.extend([rt1, rt2])
+        self.__foowrapper_right_content.files.extend([f1, f2])
+        self.__foowrapper_right_content.tables.extend([t1, t2])
         self.__foowrapper_right_content.options.append(opt1)
 
-        rf1 = RuleFile()
-        rf1.type = input_entry
-        rf1.file = f1
+        opt1 = Option(name="param1", value="String")
 
-        rf2 = RuleFile()
-        rf2.type = output_entry
-        rf2.file = f2
+        f1 = IOFilePut(name="input1", path="file1.txt")
+        f1.type = input_entry
 
-        rt1 = RuleTable()
-        rt1.type = input_entry
-        rt1.table = t1
+        f2 = IOFilePut(name="output1", path="file2.txt")
+        f2.type = output_entry
 
-        rt2 = RuleTable()
-        rt2.type = output_entry
-        rt2.table = t2
+        t1 = IODbPut(name="FooBase")
+        t1.table = t1
+
+        t2 = IODbPut(name="FooBase")
+        t2.table = t2
 
         self.__foowrapper_wrong_content1 = FooWrapper3(rule_name="rule2")
-        self.__foowrapper_wrong_content1.files.extend([rf1, rf2])
-        self.__foowrapper_wrong_content1.tables.extend([rt1, rt2])
-        self.__foowrapper_wrong_content1.options.append(opt3)
+        self.__foowrapper_wrong_content1.files.extend([f1, f2])
+        self.__foowrapper_wrong_content1.tables.extend([t1, t2])
+        self.__foowrapper_wrong_content1.options.append(opt1)
 
-        rf1 = RuleFile()
-        rf1.type = input_entry
-        rf1.file = f1
+        opt1 = Option(name="param2", value="2")
 
-        rf2 = RuleFile()
-        rf2.type = input_entry
-        rf2.file = f3
+        f1 = IOFilePut(name="input1", path="file1.txt")
+        f1.type = input_entry
 
-        rf3 = RuleFile()
-        rf3.type = output_entry
-        rf3.file = f2
+        f2 = IOFilePut(name="output1", path="file2.txt")
+        f2.type = output_entry
 
-        rt1 = RuleTable()
-        rt1.type = input_entry
-        rt1.table = t1
+        f3 = IOFilePut(name="input2", path="file2.txt")
+        f3.type = input_entry
 
-        rt2 = RuleTable()
-        rt2.type = output_entry
-        rt2.table = t2
+        t1 = IODbPut(name="FooBase")
+        t1.table = t1
+
+        t2 = IODbPut(name="FooBase")
+        t2.table = t2
 
         self.__foowrapper_wrong_content2 = FooWrapper3(rule_name="rule3")
-        self.__foowrapper_wrong_content2.files.extend([rf1, rf2, rf3])
-        self.__foowrapper_wrong_content2.tables.extend([rt1, rt2])
+        self.__foowrapper_wrong_content2.files.extend([f1, f2, f3])
+        self.__foowrapper_wrong_content2.tables.extend([t1, t2])
         self.__foowrapper_wrong_content2.options.append(opt1)
 
-        rf1 = RuleFile()
-        rf1.type = input_entry
-        rf1.file = f1
+        opt1 = Option(name="param2", value="2")
 
-        rf2 = RuleFile()
-        rf2.type = output_entry
-        rf2.file = f2
+        f1 = IOFilePut(name="input1", path="file1.txt")
+        f1.type = input_entry
 
-        rt1 = RuleTable()
-        rt1.type = input_entry
-        rt1.table = t1
+        f2 = IOFilePut(name="output1", path="file2.txt")
+        f2.type = output_entry
 
-        rt2 = RuleTable()
-        rt2.type = output_entry
-        rt2.table = t2
+        t1 = IODbPut(name="FooBase")
+        t1.table = t1
+
+        t2 = IODbPut(name="FooBase")
+        t2.table = t2
 
         self.__foowrapper_wrong_content3 = FooWrapper3(rule_name="rule3")
-        self.__foowrapper_wrong_content3.files.extend([rf1, rf2])
-        self.__foowrapper_wrong_content3.tables.extend([rt1, rt2])
-        self.__foowrapper_wrong_content3.options.append(opt2)
+        self.__foowrapper_wrong_content3.files.extend([f1, f2])
+        self.__foowrapper_wrong_content3.tables.extend([t1, t2])
+        self.__foowrapper_wrong_content3.options.append(opt1)
 
-        rf1 = RuleFile()
-        rf1.type = input_entry
-        rf1.file = f1
+        opt1 = Option(name="param1", value="String")
 
-        rf2 = RuleFile()
-        rf2.type = output_entry
-        rf2.file = f2
+        f1 = IOFilePut(name="input1", path="file1.txt")
+        f1.type = input_entry
 
-        rt1 = RuleTable()
-        rt1.type = input_entry
-        rt1.table = t1
+        f2 = IOFilePut(name="output1", path="file2.txt")
+        f2.type = output_entry
 
-        rt2 = RuleTable()
-        rt2.type = output_entry
-        rt2.table = t2
+        t1 = IODbPut(name="FooBase")
+        t1.table = t1
+
+        t2 = IODbPut(name="FooBase")
+        t2.table = t2
 
         self.__foowrapper_wrong_content4 = FooWrapper3(rule_name="rule3")
-        self.__foowrapper_wrong_content4.files.extend([rf1, rf2])
-        self.__foowrapper_wrong_content4.tables.extend([rt1, rt2])
-        self.__foowrapper_wrong_content4.options.append(opt3)
+        self.__foowrapper_wrong_content4.files.extend([f1, f2])
+        self.__foowrapper_wrong_content4.tables.extend([t1, t2])
+        self.__foowrapper_wrong_content4.options.append(opt1)
 
-        rf1 = RuleFile()
-        rf1.type = input_entry
-        rf1.file = f1
+        f1 = IOFilePut(name="input1", path="file1.txt")
+        f1.type = input_entry
 
-        rf2 = RuleFile()
-        rf2.type = output_entry
-        rf2.file = f2
+        f2 = IOFilePut(name="output1", path="file2.txt")
+        f2.type = output_entry
 
-        rt1 = RuleTable()
-        rt1.type = input_entry
-        rt1.table = t1
+        t1 = IODbPut(name="FooBase")
+        t1.table = t1
 
-        rt2 = RuleTable()
-        rt2.type = output_entry
-        rt2.table = t2
+        t2 = IODbPut(name="FooBase")
+        t2.table = t2
 
         self.__foowrapper_wrong_content5 = FooWrapper3(rule_name="rule3")
-        self.__foowrapper_wrong_content5.files.extend([rf1, rf2])
-        self.__foowrapper_wrong_content5.tables.extend([rt1, rt2])
+        self.__foowrapper_wrong_content5.files.extend([f1, f2])
+        self.__foowrapper_wrong_content5.tables.extend([t1, t2])
 
         ### TooLWrappers for follows
 
-        rf1 = RuleFile()
-        rf1.type = input_entry
-        rf1.file = f1
+        f1 = IOFilePut(name="input1", path="file1.txt")
+        f1.type = input_entry
 
-        rf2 = RuleFile()
-        rf2.type = output_entry
-        rf2.file = f2
+        f2 = IOFilePut(name="output1", path="file2.txt")
+        f2.type = output_entry
 
         self.__toolwrapper_first = FooWrapper2(rule_name="rule1")
-        self.__toolwrapper_first.files.extend([rf1, rf2])
+        self.__toolwrapper_first.files.extend([f1, f2])
 
-        f4 = IOFilePut(name="input1", path="file2.txt")
-        f5 = IOFilePut(name="output1", path="file3.txt")
+        f1 = IOFilePut(name="input1", path="file2.txt")
+        f1.type = input_entry
 
-        rf1 = RuleFile()
-        rf1.type = input_entry
-        rf1.file = f4
+        f2 = IOFilePut(name="output1", path="file3.txt")
+        f2.type = output_entry
 
-        rf2 = RuleFile()
-        rf2.type = output_entry
-        rf2.file = f5
-
-        rt1 = RuleTable()
-        rt1.type = input_entry
-        rt1.table = t1
-
-        rt2 = RuleTable()
-        rt2.type = output_entry
-        rt2.table = t2
-
-        self.__toolwrapper_second = FooWrapper3(rule_name="rule2")
-        self.__toolwrapper_second.files.extend([rf1, rf2])
-        self.__toolwrapper_second.tables.extend([rt1, rt2])
-        self.__toolwrapper_second.options.append(opt1)
-
+        self.__toolwrapper_second = FooWrapper2(rule_name="rule2")
+        self.__toolwrapper_second.files.extend([f1, f2])
 
         ### ToolWrappers for are_input_ready
 
@@ -255,29 +207,23 @@ class TestToolWrapper(TestCase):
 
         s_path_to_example_file_that_exists = s_root_path + "resources/input_File1.txt"
 
-        f6 = IOFilePut(name="input1", path=s_path_to_example_file_that_exists)
-        rf1 = RuleFile()
-        rf1.type = input_entry
-        rf1.file = f6
+        f1 = IOFilePut(name="input1", path=s_path_to_example_file_that_exists)
+        f1.type = input_entry
 
-        rf2 = RuleFile()
-        rf2.type = output_entry
-        rf2.file = f2
+        f2 = IOFilePut(name="output1", path="file2.txt")
+        f2.type = output_entry
 
         self.__toolwrapper_ready = FooWrapper2(rule_name="rule2")
-        self.__toolwrapper_ready.files.extend([rf1, rf2])
+        self.__toolwrapper_ready.files.extend([f1, f2])
 
-        f7 = IOFilePut(name="input1", path="/not/existent/file")
-        rf1 = RuleFile()
-        rf1.type = input_entry
-        rf1.file = f7
+        f1 = IOFilePut(name="input1", path="/not/existent/file")
+        f1.type = input_entry
 
-        rf2 = RuleFile()
-        rf2.type = output_entry
-        rf2.file = f2
+        f2 = IOFilePut(name="output1", path="file2.txt")
+        f2.type = output_entry
 
         self.__toolwrapper_not_ready = FooWrapper2(rule_name="rule2")
-        self.__toolwrapper_not_ready.files.extend([rf1, rf2])
+        self.__toolwrapper_not_ready.files.extend([f1, f2])
 
     def test_eq(self):
         self.assertEqual(self.__toolwrapper1, self.__toolwrapper2)

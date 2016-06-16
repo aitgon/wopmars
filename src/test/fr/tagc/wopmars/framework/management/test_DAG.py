@@ -8,7 +8,6 @@ from FooWrapper8 import FooWrapper8
 from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
 from src.main.fr.tagc.wopmars.framework.bdd.tables.IOFilePut import IOFilePut
 from src.main.fr.tagc.wopmars.framework.bdd.tables.Option import Option
-from src.main.fr.tagc.wopmars.framework.bdd.tables.RuleFile import RuleFile
 
 from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
 from src.main.fr.tagc.wopmars.framework.bdd.tables.Type import Type
@@ -34,64 +33,43 @@ class TestDAG(TestCase):
         output_entry = Type(name="output")
 
         f1 = IOFilePut(name="input1", path="file1.txt")
+        f1.type = input_entry
+
         f2 = IOFilePut(name="output1", path="file2.txt")
-
-        rf1 = RuleFile()
-        rf1.type = input_entry
-        rf1.file = f1
-
-        rf2 = RuleFile()
-        rf2.type = output_entry
-        rf2.file = f2
+        f2.type = output_entry
 
         self.__toolwrapper_first = FooWrapper2(rule_name="rule1")
-        self.__toolwrapper_first.files.extend([rf1, rf2])
+        self.__toolwrapper_first.files.extend([f1, f2])
 
-        f3 = IOFilePut(name="input1", path="file2.txt")
-        f4 = IOFilePut(name="output1", path="file3.txt")
+        f1 = IOFilePut(name="input1", path="file2.txt")
+        f1.type = input_entry
 
-        rf1 = RuleFile()
-        rf1.type = input_entry
-        rf1.file = f3
-
-        rf2 = RuleFile()
-        rf2.type = output_entry
-        rf2.file = f4
+        f2 = IOFilePut(name="output1", path="file3.txt")
+        f2.type = output_entry
 
         self.__toolwrapper_second = FooWrapper2(rule_name="rule2")
-        self.__toolwrapper_second.files.extend([rf1, rf2])
+        self.__toolwrapper_second.files.extend([f1, f2])
 
-        f5 = IOFilePut(name="output1", path="file4.txt")
+        f1 = IOFilePut(name="input1", path="file2.txt")
+        f1.type = input_entry
 
-        rf1 = RuleFile()
-        rf1.type = input_entry
-        rf1.file = f3
-
-        rf2 = RuleFile()
-        rf2.type = output_entry
-        rf2.file = f5
+        f2 = IOFilePut(name="output1", path="file4.txt")
+        f2.type = output_entry
 
         self.__toolwrapper_third = FooWrapper2(rule_name="rule3")
-        self.__toolwrapper_third.files.extend([rf1, rf2])
+        self.__toolwrapper_third.files.extend([f1, f2])
 
-        f6 = IOFilePut(name="input1", path="file3.txt")
-        f7 = IOFilePut(name="input2", path="file4.txt")
-        f8 = IOFilePut(name="output1", path="file5.txt")
+        f1 = IOFilePut(name="input1", path="file3.txt")
+        f1.type = input_entry
 
-        rf1 = RuleFile()
-        rf1.type = input_entry
-        rf1.file = f6
+        f2 = IOFilePut(name="input2", path="file4.txt")
+        f2.type = input_entry
 
-        rf3 = RuleFile()
-        rf3.type = input_entry
-        rf3.file = f7
-
-        rf2 = RuleFile()
-        rf2.type = output_entry
-        rf2.file = f8
+        f3 = IOFilePut(name="output1", path="file5.txt")
+        f3.type = output_entry
 
         self.__toolwrapper_fourth = FooWrapper8(rule_name="rule4")
-        self.__toolwrapper_fourth.files.extend([rf1, rf2, rf3])
+        self.__toolwrapper_fourth.files.extend([f1, f2, f3])
 
         list_tool = [self.__toolwrapper_first,
                      self.__toolwrapper_second,

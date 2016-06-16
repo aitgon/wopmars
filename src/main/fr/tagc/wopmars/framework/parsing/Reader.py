@@ -12,8 +12,6 @@ from src.main.fr.tagc.wopmars.framework.bdd.tables.IODbPut import IODbPut
 from src.main.fr.tagc.wopmars.framework.bdd.tables.IOFilePut import IOFilePut
 
 from src.main.fr.tagc.wopmars.framework.bdd.tables.Option import Option
-from src.main.fr.tagc.wopmars.framework.bdd.tables.RuleFile import RuleFile
-from src.main.fr.tagc.wopmars.framework.bdd.tables.RuleTable import RuleTable
 from src.main.fr.tagc.wopmars.framework.bdd.tables.Type import Type
 from src.main.fr.tagc.wopmars.utils.DictUtils import DictUtils
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
@@ -129,31 +127,25 @@ class Reader:
                     toolwrapper_wrapper = toolwrapper_class(rule_name=str_rule_name)
 
                     for input_f in dict_dict_elm["dict_input"]:
-                        rule_file_entry = RuleFile()
-                        rule_file_entry.type = input_entry
-                        rule_file_entry.file = dict_dict_elm["dict_input"][input_f]
-                        toolwrapper_wrapper.files.append(rule_file_entry)
+                        dict_dict_elm["dict_input"][input_f].type = input_entry
+                        toolwrapper_wrapper.files.append(dict_dict_elm["dict_input"][input_f])
 
                     for output_f in dict_dict_elm["dict_output"]:
-                        rule_file_entry = RuleFile()
-                        rule_file_entry.type = output_entry
-                        rule_file_entry.file = dict_dict_elm["dict_output"][output_f]
-                        toolwrapper_wrapper.files.append(rule_file_entry)
+                        dict_dict_elm["dict_output"][output_f].type = output_entry
+                        toolwrapper_wrapper.files.append(dict_dict_elm["dict_output"][output_f])
 
                     for opt in dict_dict_elm["dict_params"]:
                         toolwrapper_wrapper.options.append(dict_dict_elm["dict_params"][opt])
 
                     for input_t in toolwrapper_wrapper.get_input_table():
-                        rule_table_entry = RuleTable()
-                        rule_table_entry.type = input_entry
-                        rule_table_entry.table = IODbPut(name=input_t)
-                        toolwrapper_wrapper.tables.append(rule_table_entry)
+                        table_entry = IODbPut(name=input_t)
+                        table_entry.type = input_entry
+                        toolwrapper_wrapper.tables.append(table_entry)
 
                     for output_t in toolwrapper_wrapper.get_output_table():
-                        rule_table_entry = RuleTable()
-                        rule_table_entry.type = output_entry
-                        rule_table_entry.table = IODbPut(name=output_t)
-                        toolwrapper_wrapper.tables.append(rule_table_entry)
+                        table_entry = IODbPut(name=output_t)
+                        table_entry.type = output_entry
+                        toolwrapper_wrapper.tables.append(table_entry)
 
                     Logger.instance().debug(str_wrapper_name + " ToolWrapper loaded.")
                 except AttributeError as a:
@@ -240,4 +232,3 @@ class Reader:
 if __name__ == '__main__':
     s_path = "/home/giffon/Documents/wopmars/src/resources/example_def_file_duplicate_rule.yml"
     f = open(s_path).read()
-    Reader.check_duplicate_rules(f)

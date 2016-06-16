@@ -5,7 +5,7 @@ from src.main.fr.tagc.wopmars.framework.bdd.Base import Base
 
 from src.main.fr.tagc.wopmars.utils.OptionUtils import OptionUtils
 from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 
 
@@ -20,8 +20,9 @@ class Option(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
     value = Column(String)
+    rule_id = Column(Integer, ForeignKey("rule.id"))
 
-    rules = relationship("ToolWrapper", secondary="rule_option", back_populates="options", enable_typechecks=False)
+    rule = relationship("ToolWrapper", back_populates="options", enable_typechecks=False)
 
     def correspond(self, carac):
         """
