@@ -154,7 +154,6 @@ class Reader:
                                            "The class " + str_wrapper_name + " doesn't exist.")
                 toolwrapper_wrapper.is_content_respected()
                 set_wrapper.add(toolwrapper_wrapper)
-            session.add_all([input_entry, output_entry])
             session.add_all(set_wrapper)
             session.commit()
         except Exception as e:

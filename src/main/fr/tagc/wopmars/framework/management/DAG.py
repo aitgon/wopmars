@@ -58,7 +58,7 @@ class DAG(nx.DiGraph):
         p = subprocess.Popen(list_popen)
         p.wait()
 
-    def successors(self, node=None):
+    def successors(self, node):
         """
         Get the successors of a node.
 
@@ -74,15 +74,15 @@ class DAG(nx.DiGraph):
         else:
             return super().successors(node)
 
-    # def push_to_base(self):
-    #     session = SQLManager.instance().get_session()
-    #     try:
-    #         for node in self.nodes():
-    #             session.add(node)
-    #         session.commit()
-    #     except Exception as e:
-    #         session.rollback()
-    #         raise e
+    def get_all_successors(self, node):
+        """
+        Return the set of all successors nodes from a given node in the DAG (node included).
+        :return:
+        """
+        list_successors = [node]
+        for N in self.successors(node):
+            list_successors.extend(self.get_all_successors(N))
+        return set(list_successors)
 
     def __eq__(self, other):
         """

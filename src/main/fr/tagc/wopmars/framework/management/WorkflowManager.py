@@ -5,6 +5,7 @@ import sys
 
 from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
 from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
+from src.main.fr.tagc.wopmars.framework.management.DAG import DAG
 from src.main.fr.tagc.wopmars.framework.management.ToolThread import ToolThread
 from src.main.fr.tagc.wopmars.framework.management.ToolWrapperObserver import ToolWrapperObserver
 from src.main.fr.tagc.wopmars.framework.parsing.Parser import Parser
@@ -39,6 +40,7 @@ class WorkflowManager(ToolWrapperObserver):
         self.__list_queue_buffer = []
         self.__count_exec = 0
         self.__dag_tools = None
+        self.__dag_exec = None
 
     def run(self):
         """
@@ -50,14 +52,20 @@ class WorkflowManager(ToolWrapperObserver):
         """
         SQLManager.instance().create_all()
         self.__dag_tools = self.__parser.parse()
-        if OptionManager.instance()["--from"] is not None:
-            beginning = [t for t in self.__dag_tools.nodes() if t.name == OptionManager().instance()["--from"]]
-            Logger.instance().info("Running the workflow from tool " + str(beginning[0]))
-        else:
-            beginning = self.__dag_tools.successors()
-        self.execute_from(beginning)
+        self.get_dag_to_exec()
 
-    def execute_from(self, list_tw):
+        self.execute_from()
+
+    def get_dag_to_exec(self):
+        if OptionManager.instance()["--from"] is not None:
+            node_from_rule = [n for n in self.__dag_tools if n.name == OptionManager.instance()["--from"]][0]
+            self.__dag_to_exec = DAG(self.__dag_tools.get_all_successors(node_from_rule))
+            Logger.instance().info("Running the workflow from rule " + str(OptionManager.instance()["--from"]) +
+                                   " -> " + node_from_rule.toolwrapper)
+        else:
+            self.__dag_to_exec = self.__dag_tools
+
+    def execute_from(self, tw=None):
         """
         Execute the dag from the toolwrappers in the list given.
 
@@ -68,6 +76,9 @@ class WorkflowManager(ToolWrapperObserver):
         :return: void
         """
         # The toolwrappers
+        list_tw = self.__dag_to_exec.successors(tw)
+        Logger.instance().debug("Next tools: " + str([t.__class__.__name__ for t in list_tw]))
+
         for tw in list_tw:
             self.__queue_exec.put(ToolThread(tw))
         self.run_queue()
@@ -161,10 +172,9 @@ class WorkflowManager(ToolWrapperObserver):
             del self.__list_queue_buffer[i]
             i += 1
 
-        list_tw = self.__dag_tools.successors(thread_toolwrapper.get_toolwrapper())
-        Logger.instance().debug("Next tools: " + str([t.__class__.__name__ for t in list_tw]))
 
-        self.execute_from(list_tw)
+
+        self.execute_from(thread_toolwrapper.get_toolwrapper())
 
     def notify_failure(self, thread_toolwrapper):
         """
