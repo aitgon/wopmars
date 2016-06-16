@@ -58,9 +58,23 @@ class WorkflowManager(ToolWrapperObserver):
 
     def get_dag_to_exec(self):
         if OptionManager.instance()["--from"] is not None:
-            node_from_rule = [n for n in self.__dag_tools if n.name == OptionManager.instance()["--from"]][0]
+            try:
+                node_from_rule = [n for n in self.__dag_tools if n.name == OptionManager.instance()["--from"]][0]
+            except IndexError:
+                raise WopMarsException(
+                    "The given rule to start from: " + OptionManager.instance()["--from"] + " doesn't exist.")
+
             self.__dag_to_exec = DAG(self.__dag_tools.get_all_successors(node_from_rule))
             Logger.instance().info("Running the workflow from rule " + str(OptionManager.instance()["--from"]) +
+                                   " -> " + node_from_rule.toolwrapper)
+        elif OptionManager.instance()["--to"] is not None:
+            try:
+                node_from_rule = [n for n in self.__dag_tools if n.name == OptionManager.instance()["--to"]][0]
+            except IndexError:
+                raise WopMarsException(
+                    "The given rule to go to: " + OptionManager.instance()["--to"] + " doesn't exist.")
+            self.__dag_to_exec = DAG(self.__dag_tools.get_all_predecessors(node_from_rule))
+            Logger.instance().info("Running the workflow to the rule " + str(OptionManager.instance()["--to"]) +
                                    " -> " + node_from_rule.toolwrapper)
         else:
             self.__dag_to_exec = self.__dag_tools

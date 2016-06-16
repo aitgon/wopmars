@@ -84,6 +84,16 @@ class DAG(nx.DiGraph):
             list_successors.extend(self.get_all_successors(N))
         return set(list_successors)
 
+    def get_all_predecessors(self, node):
+        """
+        Return the set of all predecessors nodes from a given node in the DAG (node included).
+        :return:
+        """
+        list_predecessors = [node]
+        for N in self.predecessors(node):
+            list_predecessors.extend(self.get_all_predecessors(N))
+        return set(list_predecessors)
+
     def __eq__(self, other):
         """
         Test if self equals other.
