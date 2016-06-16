@@ -1,6 +1,8 @@
 import unittest
 from unittest import TestCase
 
+from sqlalchemy.orm.session import make_transient
+
 from FooWrapper2 import FooWrapper2
 from FooWrapper8 import FooWrapper8
 from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
@@ -18,6 +20,7 @@ class TestDAG(TestCase):
 
     def setUp(self):
         OptionManager().initial_test_setup()
+        SQLManager.instance().create_all()
         #        first
         #       /    \
         #   second   third
@@ -97,9 +100,19 @@ class TestDAG(TestCase):
 
         self.__set_tool = set(list_tool)
 
+        SQLManager.instance().get_session().add_all(list_tool)
+        SQLManager.instance().get_session().commit()
+
+    def tearDown(self):
+        SQLManager.instance().drop_all()
+
     def test_init(self):
         try:
             my_dag = DAG(self.__set_tool)
+
+            dag_from_base = DAG(set(SQLManager.instance().get_session().query(ToolWrapper).all()))
+            self.assertEqual(my_dag, dag_from_base)
+            # todo download un set a partir de la bdd
 
             # Verifying that the nodes are correctly sorted
             self.assertTrue(self.__toolwrapper_fourth in my_dag.successors(self.__toolwrapper_third))

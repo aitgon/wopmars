@@ -74,6 +74,16 @@ class DAG(nx.DiGraph):
         else:
             return super().successors(node)
 
+    # def push_to_base(self):
+    #     session = SQLManager.instance().get_session()
+    #     try:
+    #         for node in self.nodes():
+    #             session.add(node)
+    #         session.commit()
+    #     except Exception as e:
+    #         session.rollback()
+    #         raise e
+
     def __eq__(self, other):
         """
         Test if self equals other.

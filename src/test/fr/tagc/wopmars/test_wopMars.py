@@ -19,7 +19,7 @@ class TestWopMars(TestCase):
             WopMars().run(cmd_line)
 
     def tearDown(self):
-        # SQLManager.instance().drop_all()
+        SQLManager.instance().drop_all()
         os.remove("/home/giffon/Documents/wopmars/src/resources/output_File1.txt")
         os.remove("/home/giffon/Documents/wopmars/src/resources/output_File2.txt")
         os.remove("/home/giffon/Documents/wopmars/src/resources/output_File3.txt")

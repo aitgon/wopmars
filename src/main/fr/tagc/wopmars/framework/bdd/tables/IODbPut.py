@@ -11,7 +11,7 @@ from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
 from src.main.fr.tagc.wopmars.framework.bdd.tables.IOPut import IOPut
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
 
-
+# todo retourner nom de la table
 class IODbPut(IOPut, Base):
     """
     This class extends IOPut and is specific to table input or output
