@@ -43,6 +43,13 @@ class TestWopMars(TestCase):
             WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 0)
 
+    def test_run4(self):
+        SQLManager.instance().create_all()
+        cmd_line = [self.__right_def_file, "-vvvv", "-n", "--to", "rule3"]
+        with self.assertRaises(SystemExit) as se:
+            WopMars().run(cmd_line)
+        self.assertEqual(se.exception.code, 0)
+
     def tearDown(self):
         SQLManager.instance().drop_all()
         PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/output_File1.txt")

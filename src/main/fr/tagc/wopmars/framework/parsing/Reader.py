@@ -73,8 +73,6 @@ class Reader:
                 raise WopMarsException("Error while parsing the configuration file:\n\t",
                                        "The rule " + r + " is duplicated.")
         Logger.instance().debug("No Duplicate.")
-        if OptionManager.instance()["--from"] is not None and OptionManager.instance()["--from"] not in seen:
-            raise WopMarsException("The given rule to start from: " + OptionManager.instance()["--from"] + " doesn't exist.")
 
     def read(self):
         """

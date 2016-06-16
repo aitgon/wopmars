@@ -1,7 +1,7 @@
 """WopMars: Workflow Python Manager for Reproducible Science.
 
 Usage:
-  wopmars.py [-n] [-v...] [-d FILE] [-L FILE] [-f RULE] [-t RULE] [DEFINITION_FILE]
+  wopmars.py [-n] [-v...] [-d FILE] [-L FILE] [-f RULE | -t RULE] [DEFINITION_FILE]
 
 Arguments:
   DEFINITION_FILE  Path to the definition file of the workflow [default: wopfile.yml].
