@@ -1,28 +1,27 @@
 """
 Module containing the FooWrapper1 class
 """
-from src.main.fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
-import time
 import os
+import time
 
+from FooBase2 import FooBase2
+from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
 
 class FooWrapper7(ToolWrapper):
     """
     This class has been done for example/testing purpose.
     Modifications may lead to failure in tests.
-    """    
-    def get_output_table(self):
+    """
+    __mapper_args__ = {'polymorphic_identity': "FooWrapper7"}
+    def get_input_table(self):
         return ["FooBase"]
 
-    def get_output_file(self):
-        return ["output1"]
+    def get_output_table(self):
+        return ["FooBase2"]
 
     def run(self):
-        print(self.__class__.__name__ + " en cours d'exécution.")
+        inputs = self.session().query(self.input_table("FooBase")).all()
+        for i in inputs:
+            entry = FooBase2(name=i.name)
+            self.session().add(entry)
         time.sleep(1)
-        print("Ecriture de " + self.output_file("output1"))
-        os.system("touch " + self.output_file("output1"))
-        self.session().add(self.output_table("FooBase")(name="coucou"))
-        self.session().add(self.output_table("FooBase")(name="salut"))
-        self.session().add(self.output_table("FooBase")(name="bonjour"))
-        self.session().commit()

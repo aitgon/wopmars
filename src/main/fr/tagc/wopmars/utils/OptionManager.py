@@ -3,11 +3,10 @@ Module containing the OptionManager class.
 """
 import os
 
-from src.main.fr.tagc.wopmars.utils.Singleton import singleton
+from src.main.fr.tagc.wopmars.utils.Singleton import SingletonMixin
 
 
-@singleton
-class OptionManager(dict):
+class OptionManager(dict, SingletonMixin):
     """
     The OptionManager contains the command-line argument and can be retrieved from whereever in the software.
 
@@ -71,7 +70,8 @@ class OptionManager(dict):
 
     @staticmethod
     def initial_test_setup():
-        OptionManager()["-v"] = 4
-        OptionManager()["--dot"] = None
-        OptionManager()["--log"] = os.path.expanduser("~") + "/.wopmars/wopmars.log"
-        OptionManager()["--noisy"] = True
+        OptionManager.instance()["-v"] = 4
+        OptionManager.instance()["--dot"] = None
+        OptionManager.instance()["--log"] = os.path.expanduser("~") + "/.wopmars/wopmars.log"
+        OptionManager.instance()["--noisy"] = True
+        OptionManager.instance()["--from"] = None

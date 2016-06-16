@@ -2,28 +2,26 @@
 Module containing the FooWrapper1 class
 """
 import os
-
-from src.main.fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
 import time
 
-from src.main.fr.tagc.wopmars.utils.Logger import Logger
+from matplotlib.compat import subprocess
 
+from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
+from src.main.fr.tagc.wopmars.utils.Logger import Logger
 
 class FooWrapper8(ToolWrapper):
     """
     This class has been done for example/testing purpose.
     Modifications may lead to failure in tests.
     """
+    __mapper_args__ = {'polymorphic_identity': "FooWrapper8"}
+    def get_input_file(self):
+        return ["input1", "input2"]
+
     def get_output_file(self):
         return ["output1"]
 
-    def get_output_table(self):
-        return ["FooBase"]
-
     def run(self):
-        Logger.instance().info(self.__class__.__name__ + " en cours d'exécution.")
+        p = subprocess.Popen(["touch", self.output_file("output1")])
+        p.wait()
         time.sleep(1)
-        Logger.instance().info("Ecriture de " + self.output_file("output1"))
-        os.system("touch " + self.output_file("output1"))
-        Logger.instance().info("Remplissage de la table " + str(self.output_table("FooBase")))
-        self.session().add(self.output_table("FooBase")(name="check"))

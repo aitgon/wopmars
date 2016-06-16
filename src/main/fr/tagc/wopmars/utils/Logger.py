@@ -27,7 +27,7 @@ class Logger(SingletonMixin):
         self.__logger.setLevel(logging.DEBUG)
 
         self.__stream_handler = logging.StreamHandler()
-        s_path_log_file = OptionManager()["--log"].rsplit(".", 1)[0]
+        s_path_log_file = OptionManager.instance()["--log"].rsplit(".", 1)[0]
         # log file in append mode of size 1 Mo and 1 backup
         self.__file_handler = RotatingFileHandler(s_path_log_file + ".log", 'a', 1000000, 1)
         formatter_file = logging.Formatter('%(asctime)s :: %(levelname)s :: %(message)s')
@@ -38,7 +38,7 @@ class Logger(SingletonMixin):
         self.__err_handler.setFormatter(formatter_err)
         self.__err_handler.setLevel(logging.WARNING)
 
-        verbosity = OptionManager()["-v"]
+        verbosity = OptionManager.instance()["-v"]
 
         if verbosity == 1:
             self.__stream_handler.setLevel(logging.ERROR)
@@ -53,7 +53,7 @@ class Logger(SingletonMixin):
             self.__stream_handler.setLevel(logging.DEBUG)
             self.__file_handler.setLevel(logging.DEBUG)
 
-        if OptionManager()["--noisy"]:
+        if OptionManager.instance()["--noisy"]:
             self.__logger.addHandler(self.__stream_handler)
         self.__logger.addHandler(self.__file_handler)
         self.__logger.addHandler(self.__err_handler)

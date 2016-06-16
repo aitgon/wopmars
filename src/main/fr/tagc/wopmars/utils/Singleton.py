@@ -27,3 +27,11 @@ class SingletonMixin(object):
                 if not cls.__singleton_instance:
                     cls.__singleton_instance = cls()
         return cls.__singleton_instance
+
+    @classmethod
+    def _drop(cls):
+        """Drop the instance (for testing purposes)."""
+        if cls.__singleton_instance:
+            with cls.__singleton_lock:
+                if cls.__singleton_instance:
+                    cls.__singleton_instance = None

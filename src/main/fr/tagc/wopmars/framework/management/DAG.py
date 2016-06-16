@@ -1,15 +1,12 @@
 """
 Module containing the DAG class
 """
-import os
 import subprocess
 
 import networkx as nx
 from networkx.drawing.nx_pydot import write_dot
 
-
-from src.main.fr.tagc.wopmars.framework.rule.IOFilePut import IOFilePut
-from src.main.fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
+from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
 from src.main.fr.tagc.wopmars.utils.SetUtils import SetUtils
 
@@ -41,6 +38,7 @@ class DAG(nx.DiGraph):
                     # is there a dependency between tool1 and tool2?
                     if tool1.follows(tool2):
                         self.add_edge(tool2, tool1)
+
         Logger.instance().info("DAG built.")
 
     def write_dot(self, path):
@@ -60,7 +58,7 @@ class DAG(nx.DiGraph):
         p = subprocess.Popen(list_popen)
         p.wait()
 
-    def successors(self, node):
+    def successors(self, node=None):
         """
         Get the successors of a node.
 
@@ -75,6 +73,16 @@ class DAG(nx.DiGraph):
             return [n for n, d in self.in_degree().items() if d == 0]
         else:
             return super().successors(node)
+
+    # def push_to_base(self):
+    #     session = SQLManager.instance().get_session()
+    #     try:
+    #         for node in self.nodes():
+    #             session.add(node)
+    #         session.commit()
+    #     except Exception as e:
+    #         session.rollback()
+    #         raise e
 
     def __eq__(self, other):
         """

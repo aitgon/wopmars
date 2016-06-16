@@ -32,8 +32,9 @@ class ConcurrentRollBackingThread(threading.Thread):
 
 class TestSQLManager(TestCase):
     def setUp(self):
-        OptionManager().initial_test_setup()
-        self.__local_session = SQLManager().get_session()
+        OptionManager.initial_test_setup()
+        SQLManager.instance().create_all()
+        self.__local_session = SQLManager.instance().get_session()
 
         SQLManager()
         self.__t1 = ConcurrentCommitingThread()
@@ -56,19 +57,10 @@ class TestSQLManager(TestCase):
             print(e)
             raise AssertionError("Should not raise an exception")
 
-        self.assertTrue(len(self.__local_session.query(FooBase).filter(FooBase.name.like('string %')).all()) == 300000)
+        self.assertTrue(len(self.__local_session.query(FooBase).filter(FooBase.name.like('string %')).all()) == 3000)
 
     def tearDown(self):
-        try:
-            foo_objects = self.__local_session.query(FooBase).filter(FooBase.name.like('string %')).all()
-            for obj in foo_objects:
-                self.__local_session.delete(obj)
-            self.__local_session.commit()
-            self.__local_session.close()
-        except Exception as e:
-            self.__local_session.rollback()
-            self.__local_session.close()
-            raise e
+        SQLManager.instance().drop_all()
 
 if __name__ == '__main__':
     unittest.main()

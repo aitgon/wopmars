@@ -19,7 +19,7 @@ class WopMarsSession:
         self.__session = session
 
     def commit(self):
-        # Logger.instance().debug(str(self.__session) + " is about to commit.")
+        Logger.instance().debug(str(self.__session) + " is about to commit.")
         Logger.instance().debug("Operations to be commited in session" + str(self.__session) + ": \n\tUpdates:\n\t\t" +
                                 "\n\t\t".join([str(k) for k in self.__session.dirty]) +
                                 "\n\tInserts:\n\t\t" +
@@ -43,6 +43,9 @@ class WopMarsSession:
         :return:
         """
         self.__session.add(item)
+
+    def add_all(self, collection):
+        self.__session.add_all(collection)
 
     def delete(self, entry):
         self.__session.delete(entry)

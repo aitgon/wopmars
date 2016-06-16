@@ -7,7 +7,7 @@ from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
 from src.main.fr.tagc.wopmars.framework.management.Observable import Observable
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
 
-# todo tester
+
 class ToolThread(threading.Thread, Observable):
     """
     class ToolThread
@@ -41,7 +41,9 @@ class ToolThread(threading.Thread, Observable):
             session_tw.rollback()
             raise e
         finally:
-            session_tw.close()
+            # todo twthread , fermer session
+            # session_tw.close()
+            pass
         self.fire_success()
 
     def get_observers(self):

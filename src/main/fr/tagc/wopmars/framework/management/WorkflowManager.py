@@ -3,14 +3,14 @@ Module containing the WorkflowManager class
 """
 import sys
 
+from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
+from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
 from src.main.fr.tagc.wopmars.framework.management.ToolThread import ToolThread
-from src.main.fr.tagc.wopmars.utils.UniqueQueue import UniqueQueue
-from src.main.fr.tagc.wopmars.framework.parsing.Parser import Parser
 from src.main.fr.tagc.wopmars.framework.management.ToolWrapperObserver import ToolWrapperObserver
-from src.main.fr.tagc.wopmars.framework.rule.ToolWrapper import ToolWrapper
+from src.main.fr.tagc.wopmars.framework.parsing.Parser import Parser
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
-
 from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
+from src.main.fr.tagc.wopmars.utils.UniqueQueue import UniqueQueue
 from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
@@ -34,7 +34,7 @@ class WorkflowManager(ToolWrapperObserver):
 
         :return:
         """
-        self.__parser = Parser(OptionManager()["DEFINITION_FILE"])
+        self.__parser = Parser(OptionManager.instance()["DEFINITION_FILE"])
         self.__queue_exec = UniqueQueue()
         self.__list_queue_buffer = []
         self.__count_exec = 0
@@ -48,30 +48,28 @@ class WorkflowManager(ToolWrapperObserver):
         Then, execute_from is called with no argument to get the origin nodes.
         :return:
         """
-        # todo création des tables dans la base
-        # todo remplissage de la table type (input/output)
+        SQLManager.instance().create_all()
         self.__dag_tools = self.__parser.parse()
-        self.execute_from()
+        if OptionManager.instance()["--from"] is not None:
+            beginning = [t for t in self.__dag_tools.nodes() if t.name == OptionManager().instance()["--from"]]
+            Logger.instance().info("Running the workflow from tool " + str(beginning[0]))
+        else:
+            beginning = self.__dag_tools.successors()
+        self.execute_from(beginning)
 
-    def execute_from(self, node=None):
+    def execute_from(self, list_tw):
         """
-        Execute the dag from the given node.
+        Execute the dag from the toolwrappers in the list given.
 
         The next nodes are taken thanks to the "successors()" method of the DAG and are put into the queue.
         The "run_queue()" is then called.
 
-        If node is set to None, the behavior of the function is the same.
-
         :param node: ToolWrapper a node of the DAG or None, if it executes from the root.
         :return: void
         """
-
-        list_tw = self.__dag_tools.successors(node)
-        Logger.instance().debug("Next tools: " + str([t.__class__.__name__ for t in list_tw]))
         # The toolwrappers
         for tw in list_tw:
             self.__queue_exec.put(ToolThread(tw))
-
         self.run_queue()
 
     def run_queue(self):
@@ -103,10 +101,10 @@ class WorkflowManager(ToolWrapperObserver):
             Logger.instance().debug("Current ToolWrapper: " + str(tw.__class__.__name__))
             if tw.are_inputs_ready():
                 Logger.instance().debug("ToolWrapper ready: " + str(tw.__class__.__name__))
-                # todo verification des ressources
+                # todo twthread verification des ressources
                 thread_tw.subscribe(self)
                 self.__count_exec += 1
-                # todo multithreading
+                # todo twthread methode start
                 thread_tw.run()
             else:
                 Logger.instance().debug("ToolWrapper not ready: " + str(tw.__class__.__name__))
@@ -123,7 +121,7 @@ class WorkflowManager(ToolWrapperObserver):
             if len(self.__list_queue_buffer) == 0:
                 # If there is no tool waiting and no tool being executed, the workflow has finished.
                 Logger.instance().info("The workflow has completed.")
-                sys.exit()
+                sys.exit(0)
             # uniquement en environnement multiThread
             elif not self.check_buffer():
                 # If there is no tool being executed but there is that are waiting something, the workflow has an issue
@@ -155,14 +153,18 @@ class WorkflowManager(ToolWrapperObserver):
         self.__count_exec -= 1
 
         if len(self.__list_queue_buffer):
-            Logger.instance().debug("Fill the queue with the Buffer: " + str(self.__list_queue_buffer))
+            Logger.instance().debug("Fill the queue with the Buffer: " +
+                                    str([t.get_toolwrapper().__class__.__name__ for t in self.__list_queue_buffer]))
         i = 0
         for tw_thread in self.__list_queue_buffer:
             self.__queue_exec.put(tw_thread)
             del self.__list_queue_buffer[i]
             i += 1
 
-        self.execute_from(thread_toolwrapper.get_toolwrapper())
+        list_tw = self.__dag_tools.successors(thread_toolwrapper.get_toolwrapper())
+        Logger.instance().debug("Next tools: " + str([t.__class__.__name__ for t in list_tw]))
+
+        self.execute_from(list_tw)
 
     def notify_failure(self, thread_toolwrapper):
         """

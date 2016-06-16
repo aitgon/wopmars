@@ -1,23 +1,48 @@
 rule rule1:
-    tool: FooWrapper1
+    tool: FooWrapper4
     input:
-        input1: "aFile.txt"
-    params:
-        param1: 5
+        input1: "/home/giffon/Documents/wopmars/src/resources/input_File1.txt"
+    output:
+        output1: "/home/giffon/Documents/wopmars/src/resources/output_File1.txt"
 
 rule rule2:
-    tool: FooWrapper2
+    tool: FooWrapper5
+    input:
+        input1: "/home/giffon/Documents/wopmars/src/resources/output_File1.txt"
     output:
-        output1: "the second file.txt"
-    params:
-        param1: "an_option"
+        output1: "/home/giffon/Documents/wopmars/src/resources/output_File2.txt"
 
 rule rule3:
-    tool: FooWrapper3
+    tool: FooWrapper6
     input:
-        input1: "the_second_file.txt"
+        input1: "/home/giffon/Documents/wopmars/src/resources/output_File1.txt"
     output:
-        output1: "the final_file.txt"
-    params:
-        param1: 10.285
+        output1: "/home/giffon/Documents/wopmars/src/resources/output_File3.txt"
+        output2: "/home/giffon/Documents/wopmars/src/resources/output_File4.txt"
 
+rule rule4:
+    tool: FooWrapper7
+
+rule rule5:
+    tool: FooWrapper8
+    input:
+        input1: "/home/giffon/Documents/wopmars/src/resources/output_File3.txt"
+        input2: "/home/giffon/Documents/wopmars/src/resources/output_File2.txt"
+    output:
+        output1: "/home/giffon/Documents/wopmars/src/resources/output_File5.txt"
+
+rule rule6:
+    tool: FooWrapper9
+    input:
+        input1: "/home/giffon/Documents/wopmars/src/resources/output_File4.txt"
+    output:
+        output1: "/home/giffon/Documents/wopmars/src/resources/output_File6.txt"
+
+rule rule7:
+    tool: FooWrapper10
+    input:
+        input1: "/home/giffon/Documents/wopmars/src/resources/output_File1.txt"
+        input2: "/home/giffon/Documents/wopmars/src/resources/output_File5.txt"
+        input3: "/home/giffon/Documents/wopmars/src/resources/output_File6.txt"
+    output:
+        output1: "/home/giffon/Documents/wopmars/src/resources/output_File7.txt"
