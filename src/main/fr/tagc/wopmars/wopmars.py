@@ -41,9 +41,9 @@ class WopMars:
 
         # if the command line is malformed, docopt interrupt the software.
         try:
-            OptionManager.instance().update(docopt(__doc__, argv=argv))
+            OptionManager.instance().update(docopt(__doc__, argv=argv[1:]))
         except DocoptExit as SE:
-            sys.exit("Bad argument in the command line.\n" + str(SE))
+            sys.exit("Bad argument in the command line: \n\t" + " ".join(argv) + "\n" + str(SE))
 
         try:
             schema_option = Schema({
@@ -89,7 +89,7 @@ def main():
     sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/toolwrappers/")
     sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/base/")
 
-    WopMars().run(sys.argv[1:])
+    WopMars().run(sys.argv)
 
 if __name__ == "__main__":
     main()

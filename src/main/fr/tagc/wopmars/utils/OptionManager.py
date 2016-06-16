@@ -75,3 +75,4 @@ class OptionManager(dict, SingletonMixin):
         OptionManager.instance()["--log"] = os.path.expanduser("~") + "/.wopmars/wopmars.log"
         OptionManager.instance()["--noisy"] = True
         OptionManager.instance()["--from"] = None
+        OptionManager.instance()["--to"] = None
