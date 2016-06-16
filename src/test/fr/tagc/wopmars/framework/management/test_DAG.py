@@ -19,7 +19,7 @@ from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
 class TestDAG(TestCase):
 
     def setUp(self):
-        OptionManager().initial_test_setup()
+        OptionManager.initial_test_setup()
         SQLManager.instance().create_all()
         #        first
         #       /    \

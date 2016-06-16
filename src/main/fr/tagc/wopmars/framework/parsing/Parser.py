@@ -49,7 +49,7 @@ class Parser:
         if not is_directed_acyclic_graph(dag_tools):
             raise WopMarsException("Error while parsing the configuration file: \n\tThe workflow is malformed:",
                                    "The specified Workflow cannot be represented as a DAG.")
-        s_dot_option = OptionManager()["--dot"]
+        s_dot_option = OptionManager.instance()["--dot"]
         if s_dot_option:
             Logger.instance().info("Writing the dot and ps files representing the workflow at " + str(s_dot_option))
             dag_tools.write_dot(s_dot_option)

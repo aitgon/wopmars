@@ -14,7 +14,7 @@ from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsEx
 class TestWorkflowManager(TestCase):
 
     def setUp(self):
-        OptionManager().initial_test_setup()
+        OptionManager.initial_test_setup()
         SQLManager.instance().create_all()
         s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
 
@@ -23,10 +23,10 @@ class TestWorkflowManager(TestCase):
             s_root_path + \
             "resources/example_def_file_toolwrapper_never_ready.yml"
 
-        OptionManager()["DEFINITION_FILE"] = s_path_to_example_definition_file_finishing
+        OptionManager.instance()["DEFINITION_FILE"] = s_path_to_example_definition_file_finishing
         self.__finishing_wm = WorkflowManager()
 
-        OptionManager()["DEFINITION_FILE"] = s_path_to_example_definition_file_that_end_with_error
+        OptionManager.instance()["DEFINITION_FILE"] = s_path_to_example_definition_file_that_end_with_error
         self.__error_wm = WorkflowManager()
 
     def tearDown(self):
@@ -40,7 +40,7 @@ class TestWorkflowManager(TestCase):
         os.remove("/home/giffon/Documents/wopmars/src/resources/output_File7.txt")
 
     def test_run(self):
-        OptionManager()["--dot"] = None
+        OptionManager.instance()["--dot"] = None
 
         with self.assertRaises(SystemExit):
             self.__finishing_wm.run()

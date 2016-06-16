@@ -24,7 +24,7 @@ from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsEx
 
 class TestParser(TestCase):
     def setUp(self):
-        OptionManager().initial_test_setup()
+        OptionManager.initial_test_setup()
 
         SQLManager.instance().create_all()
         s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
@@ -43,11 +43,11 @@ class TestParser(TestCase):
         self.__dot_path = s_root_path + "test.dot"
 
     def tearDown(self):
-        OptionManager()["--dot"] = None
+        OptionManager.instance()["--dot"] = None
         SQLManager.instance().drop_all()
 
     def test_parse(self):
-        OptionManager().initial_test_setup()
+        OptionManager.initial_test_setup()
 
         # The good --------------------------:
         set_toolwrappers = set()
@@ -184,7 +184,7 @@ class TestParser(TestCase):
         tw7.files.extend([rf12, rf13, rf14, rf15])
         set_toolwrappers.add(tw7)
 
-        OptionManager()["--dot"] = None
+        OptionManager.instance()["--dot"] = None
 
         dag_expected = DAG(set_toolwrappers)
         dag_obtained = self.__parser_right.parse()
@@ -197,7 +197,7 @@ class TestParser(TestCase):
 
         # Verify the dot file ----------------:
 
-        OptionManager()["--dot"] = self.__dot_path
+        OptionManager.instance()["--dot"] = self.__dot_path
         self.__parser_right.parse()
         self.assertTrue(os.path.isfile(self.__dot_path))
         os.remove(self.__dot_path)

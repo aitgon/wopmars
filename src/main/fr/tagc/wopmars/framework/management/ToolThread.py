@@ -8,7 +8,6 @@ from src.main.fr.tagc.wopmars.framework.management.Observable import Observable
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
 
 
-# todo tester
 class ToolThread(threading.Thread, Observable):
     """
     class ToolThread

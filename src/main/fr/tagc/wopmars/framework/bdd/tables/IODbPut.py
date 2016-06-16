@@ -75,6 +75,7 @@ class IODbPut(IOPut, Base):
         try:
             results = session.query(self.__table).first()
             if results is None:
+                Logger.instance().info("The table " + self.name + " is empty.")
                 return False
         except Exception as e:
             session.rollback()

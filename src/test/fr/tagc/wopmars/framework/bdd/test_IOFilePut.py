@@ -13,7 +13,7 @@ from src.main.fr.tagc.wopmars.utils.PathFinder import PathFinder
 
 class TestIOFilePut(TestCase):
     def setUp(self):
-        OptionManager().initial_test_setup()
+        OptionManager.initial_test_setup()
 
         s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
         s_path_to_example_existing_file = s_root_path + "resources/example_existing_file.txt"

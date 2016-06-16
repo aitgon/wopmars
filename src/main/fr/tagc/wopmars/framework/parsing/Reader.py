@@ -17,6 +17,7 @@ from src.main.fr.tagc.wopmars.framework.bdd.tables.RuleTable import RuleTable
 from src.main.fr.tagc.wopmars.framework.bdd.tables.Type import Type
 from src.main.fr.tagc.wopmars.utils.DictUtils import DictUtils
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
+from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
 from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
@@ -45,7 +46,7 @@ class Reader:
             try:
                 # The workflow definition file is loaded as-it in memory by the pyyaml library
                 Logger.instance().info("Reading the definition file: " + str(s_definition_file) + "...")
-                Reader.check_duplicate_rules(s_def_file_content)
+                Reader.check_duplicate_rules_and_check_from_opt(s_def_file_content)
                 self.__dict_workflow_definition = yaml.load(s_def_file_content)
                 Logger.instance().debug("\n" + DictUtils.pretty_repr(self.__dict_workflow_definition))
                 Logger.instance().info("Read complete.")
@@ -63,7 +64,7 @@ class Reader:
                                    "The specified file at " + s_definition_file + " doesn't exist.")
 
     @staticmethod
-    def check_duplicate_rules(file):
+    def check_duplicate_rules_and_check_from_opt(file):
         Logger.instance().debug("Looking for duplicate rules...")
         rules = re.findall(r'rule (.+?):', str(file))
         seen = set()
@@ -74,6 +75,8 @@ class Reader:
                 raise WopMarsException("Error while parsing the configuration file:\n\t",
                                        "The rule " + r + " is duplicated.")
         Logger.instance().debug("No Duplicate.")
+        if OptionManager.instance()["--from"] is not None and OptionManager.instance()["--from"] not in seen:
+            raise WopMarsException("The given rule to start from: " + OptionManager.instance()["--from"] + " doesn't exist.")
 
     def read(self):
         """

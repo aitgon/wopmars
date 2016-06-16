@@ -58,7 +58,7 @@ class DAG(nx.DiGraph):
         p = subprocess.Popen(list_popen)
         p.wait()
 
-    def successors(self, node):
+    def successors(self, node=None):
         """
         Get the successors of a node.
 

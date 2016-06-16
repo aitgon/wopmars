@@ -23,7 +23,7 @@ from src.test.fr.tagc.wopmars.toolwrappers.FooWrapper3 import FooWrapper3
 
 class TestToolWrapper(TestCase):
     def setUp(self):
-        OptionManager().initial_test_setup()
+        OptionManager.initial_test_setup()
 
         set_tw_to_add = set()
         self.__session = SQLManager.instance().get_session()

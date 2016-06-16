@@ -34,3 +34,15 @@ class PathFinder:
             return path
         else:
             raise FileNotFoundError
+
+    @staticmethod
+    def silentremove(path):
+        """
+        Remove a file that may not exist.
+        :param path:
+        :return:
+        """
+        try:
+            os.remove(path)
+        except OSError:
+            pass

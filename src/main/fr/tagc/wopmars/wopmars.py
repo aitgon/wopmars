@@ -1,17 +1,18 @@
 """WopMars: Workflow Python Manager for Reproducible Science.
 
 Usage:
-  wopmars.py [-n] [-v...] [-d FILE] [-L FILE] [DEFINITION_FILE]
+  wopmars.py [-n] [-v...] [-d FILE] [-L FILE] [-f RULE] [DEFINITION_FILE]
 
 Arguments:
   DEFINITION_FILE  Path to the definition file of the workflow [default: wopfile.yml].
 
 Options:
-  -h --help           Show this help.
-  -v                  Set verbosity level.
-  -d FILE --dot=FILE  Write dot representing the workflow in the FILE file (with .dot extension).
-  -L FILE --log=FILE  Write logs in FILE file [default: $HOME/.wopmars/wopmars.log].
-  -n --noisy          Write logs in standard output.
+  -h --help            Show this help.
+  -v                   Set verbosity level.
+  -d FILE --dot=FILE   Write dot representing the workflow in the FILE file (with .dot extension).
+  -L FILE --log=FILE   Write logs in FILE file [default: $HOME/.wopmars/wopmars.log].
+  -n --noisy           Write logs in standard output.
+  -f RULE --from=RULE  Execute the workflow from the given RULE
 """
 import os
 import sys
@@ -39,22 +40,23 @@ class WopMars:
 
         # if the command line is malformed, docopt interrupt the software.
         try:
-            OptionManager(docopt(__doc__, argv=argv))
+            OptionManager.instance().update(docopt(__doc__, argv=argv))
         except DocoptExit as SE:
             sys.exit("Bad argument in the command line.\n" + str(SE))
 
         try:
             schema_option = Schema({
                 'DEFINITION_FILE': Or("wopfile.yml", Use(open)),
-                '-v': Or(0, And(Use(int), lambda n: 1 < n < 5)),
+                '-v': Or(0, And(int, lambda n: 1 < n < 5)),
                 '--dot': Use(PathFinder.check_valid_path),
                 "--log": Use(PathFinder.check_valid_path),
-                '--noisy': Use(bool)
+                '--noisy': Use(bool),
+                "--from": Or(None, str)
             })
 
-            OptionManager().validate(schema_option)
+            OptionManager.instance().validate(schema_option)
         except SchemaError as schema_msg:
-            Logger.instance().debug("\nCommand line Args:" + str(OptionManager()))
+            Logger.instance().debug("\nCommand line Args:" + str(OptionManager.instance()))
             # regex for the different possible error messages.
             match_open_def = re.match(r"^open\('(.[^\)]+)'\)", str(schema_msg))
             match_dot_def = re.match(r"^check_valid_path\(('.[^\)]+')\)", str(schema_msg))
@@ -69,9 +71,9 @@ class WopMars:
                 Logger.instance().error("The option key " + match_wrong_key.group(1) + " is not known.")
             else:
                 Logger.instance().error("An unknown error has occured. Message: " + str(schema_msg))
-            sys.exit()
+            sys.exit(1)
 
-        Logger.instance().debug("\nCommand line Args:" + str(OptionManager()))
+        Logger.instance().debug("\nCommand line Args:" + str(OptionManager.instance()))
 
         try:
             wm = WorkflowManager()
@@ -79,7 +81,7 @@ class WopMars:
         except WopMarsException as WE:
             Logger.instance().error(str(WE))
             SQLManager.instance().get_session().rollback()
-            sys.exit()
+            sys.exit(1)
 
 def main():
     sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/toolwrappers/")

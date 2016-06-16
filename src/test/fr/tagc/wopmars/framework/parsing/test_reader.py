@@ -31,7 +31,7 @@ from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsEx
 class TestReader(TestCase):
 
     def setUp(self):
-        OptionManager().initial_test_setup()
+        OptionManager.initial_test_setup()
         SQLManager.instance().create_all()
         self.__session = SQLManager.instance().get_session()
 
@@ -88,7 +88,7 @@ class TestReader(TestCase):
     def test_check_duplicate_rule(self):
         with open(self.__s_example_definition_file_duplicate_rule) as file_duplicate_rule:
             with self.assertRaises(WopMarsException):
-                Reader.check_duplicate_rules(file_duplicate_rule.read())
+                Reader.check_duplicate_rules_and_check_from_opt(file_duplicate_rule.read())
 
     def test_read(self):
 
