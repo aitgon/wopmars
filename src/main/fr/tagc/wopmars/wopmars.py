@@ -91,6 +91,7 @@ class WopMars:
             SQLManager.instance().get_session().rollback()
             sys.exit(1)
 
+
 def main():
     sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/toolwrappers/")
     sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/base/")

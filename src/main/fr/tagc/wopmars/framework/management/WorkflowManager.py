@@ -142,12 +142,19 @@ class WorkflowManager(ToolWrapperObserver):
             tw = thread_tw.get_toolwrapper()
             Logger.instance().debug("Current ToolWrapper: " + str(tw.__class__.__name__))
             if tw.are_inputs_ready():
+                # tw.set_inputs_date_and_size()
                 Logger.instance().debug("ToolWrapper ready: " + str(tw.__class__.__name__))
+                dry = False
+                if self.is_this_tool_already_done(thread_tw.get_toolwrapper()):
+                    Logger.instance().info("Toolwrapper " + thread_tw.get_toolwrapper().toolwrapper + " seemed to have already"
+                                                                                             "been runned with same"
+                                                                                             "parameters.")
+                    dry = True
                 # todo twthread verification des ressources
                 thread_tw.subscribe(self)
                 self.__count_exec += 1
                 # todo twthread methode start
-                thread_tw.run()
+                thread_tw.run(dry)
             else:
                 Logger.instance().debug("ToolWrapper not ready: " + str(tw.__class__.__name__))
                 # The buffer contains the ToolWrappers that have inputs which are not ready yet.
@@ -171,6 +178,42 @@ class WorkflowManager(ToolWrapperObserver):
                                        "The inputs are not ready for the remaining tools: " +
                                        ", ".join([t.get_toolwrapper().__class__.__name__ for t in self.__list_queue_buffer]) + ". ")
             # If there is one tool that is ready, it means that it is in queue because ressources weren't available.
+
+    @staticmethod
+    def is_this_tool_already_done(tw):
+        session = SQLManager.instance().get_session()
+        list_same_toolwrappers = session.query(ToolWrapper).filter(ToolWrapper.name == tw.name)\
+            .filter(ToolWrapper.execution_id != tw.execution_id).all()
+        i = 0
+        while i < len(list_same_toolwrappers):
+            if list_same_toolwrappers[i] != tw:
+                del list_same_toolwrappers[i]
+            else:
+                i += 1
+
+        i = 0
+        while i < len(list_same_toolwrappers):
+            # todo faire la méthode same_input_than
+            if not list_same_toolwrappers[i].same_input_than(tw):
+                del list_same_toolwrappers[i]
+            else:
+                i += 1
+
+        i = 0
+        while i < len(list_same_toolwrappers):
+            # todo faire la méthode is_ouput_ok
+            if not list_same_toolwrappers[i].is_output_ok():
+                del list_same_toolwrappers[i]
+            else:
+                i += 1
+
+        # todo faire une fonction pour ces boucles (param: predicat) si possible (à voir)
+        # todo ask lionel
+        # todo ask aitor au final, est-ce-que les outputs ont besoin d'avoir le même chemin? si les toolwrappers sont
+        # identiques avec les meme params, on peut considérer que els outputs le sont aussi même avec des chemins differents
+
+        return bool(list_same_toolwrappers)
+
 
     def check_buffer(self):
         """

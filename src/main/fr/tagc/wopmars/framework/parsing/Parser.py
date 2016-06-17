@@ -3,7 +3,10 @@ Module containing the Parser class
 """
 import sys
 
+from sqlalchemy.sql.functions import func
+
 from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
+from src.main.fr.tagc.wopmars.framework.bdd.tables.Execution import Execution
 from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
 from src.main.fr.tagc.wopmars.framework.management.DAG import DAG
 from src.main.fr.tagc.wopmars.framework.parsing.Reader import Reader
@@ -59,5 +62,11 @@ class Parser:
     @staticmethod
     def get_set_toolwrappers():
         session = SQLManager.instance().get_session()
-        set_toolwrappers = set(session.query(ToolWrapper).all())
+        set_toolwrappers = set([])
+        try:
+            execution_id = session.query(func.max(ToolWrapper.execution_id))
+            Logger.instance().debug("Getting toolwrappers of the current execution. id = " + str(execution_id.one()[0]))
+            set_toolwrappers = set(session.query(ToolWrapper).filter(ToolWrapper.execution_id == execution_id).all())
+        except IndexError:
+            Logger.instance().debug("No row found")
         return set_toolwrappers

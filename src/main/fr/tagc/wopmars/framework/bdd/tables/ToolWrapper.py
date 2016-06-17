@@ -1,10 +1,14 @@
 """
 This module contains the ToolWrapper class
 """
-from sqlalchemy import Column, Integer, String
+import datetime
+import os
+
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 
 from src.main.fr.tagc.wopmars.framework.bdd.Base import Base
+from src.main.fr.tagc.wopmars.framework.bdd.tables.Execution import Execution
 from src.main.fr.tagc.wopmars.framework.bdd.tables.IODbPut import IODbPut
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
 from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
@@ -21,6 +25,7 @@ class ToolWrapper(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
     toolwrapper = Column(String)
+    execution_id = Column(Integer, ForeignKey("execution.id"))
 
     # One rule has Many table
     tables = relationship("IODbPut", back_populates="rule")
@@ -28,6 +33,8 @@ class ToolWrapper(Base):
     files = relationship("IOFilePut", back_populates="rule")
     # One rule has Many option
     options = relationship("Option", back_populates="rule")
+    # One rule has one execution
+    execution = relationship("Execution", back_populates="rules")
 
     # parentrules = relationship etc...
     __mapper_args__ = {
@@ -186,6 +193,30 @@ class ToolWrapper(Base):
             Logger.instance().debug("Input: " + str(i.name) + " is ready.")
 
         self.__state = ToolWrapper.READY
+        return True
+
+    # def set_inputs_date_and_size(self):
+    #     for f in [f for f in self.files if f.type.name == "input"]:
+    #         f.last_modif = datetime.datetime.fromtimestamp(os.path.getmtime(f.path))
+    #         f.size = os.path.getsize(f.path)
+
+    def same_input_than(self, other):
+        for f in [f for f in self.files if f.type.name == "input"]:
+            is_same = False
+            for f2 in [f for f in other.files if f.type.name == "input"]:
+                if os.path.getmtime(f.path) == os.path.getmtime(f2.path) and \
+                        os.path.getsize(f.path) == os.path.getsize(f2.path):
+                    is_same = True
+                    break
+            if not is_same:
+                return False
+        return True
+
+    def is_output_ok(self):
+        for of in [f for f in self.files if f.type.name == "output"]:
+            if not os.path.exists(of.path) or \
+                    all(os.path.getmtime(of.path) > os.path.getmtime(in_f.path) for in_f in self.files if in_f.type.name == "input"):
+                return False
         return True
 
     def get_state(self):

@@ -10,6 +10,7 @@ from sqlalchemy.orm import relationship, reconstructor
 from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
 from src.main.fr.tagc.wopmars.framework.bdd.tables.IOPut import IOPut
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
+from src.main.fr.tagc.wopmars.framework.bdd.tables.Type import Type
 
 # todo retourner nom de la table
 class IODbPut(IOPut, Base):

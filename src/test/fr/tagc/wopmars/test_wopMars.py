@@ -51,14 +51,14 @@ class TestWopMars(TestCase):
         self.assertEqual(se.exception.code, 0)
 
     def tearDown(self):
-        SQLManager.drop_all()
-        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/output_File1.txt")
-        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/output_File2.txt")
-        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/output_File3.txt")
-        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/output_File4.txt")
-        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/output_File5.txt")
-        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/output_File6.txt")
-        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/output_File7.txt")
+        # SQLManager.drop_all()
+        # PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/output_File1.txt")
+        # PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/output_File2.txt")
+        # PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/output_File3.txt")
+        # PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/output_File4.txt")
+        # PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/output_File5.txt")
+        # PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/output_File6.txt")
+        # PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/output_File7.txt")
         OptionManager._drop()
         SQLManager._drop()
 

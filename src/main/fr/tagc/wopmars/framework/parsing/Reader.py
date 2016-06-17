@@ -8,6 +8,7 @@ import time
 import yaml
 
 from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
+from src.main.fr.tagc.wopmars.framework.bdd.tables.Execution import Execution
 from src.main.fr.tagc.wopmars.framework.bdd.tables.IODbPut import IODbPut
 from src.main.fr.tagc.wopmars.framework.bdd.tables.IOFilePut import IOFilePut
 
@@ -84,6 +85,7 @@ class Reader:
         :return: The set of builded ToolWrappers
         """
         session = SQLManager.instance().get_session()
+        execution = Execution()
         try:
             set_wrapper = set()
             # Encounter a rule block
@@ -115,7 +117,9 @@ class Reader:
                         # if the next step is not a dict, then it is supposed to be the "tool" line
                         str_wrapper_name = self.__dict_workflow_definition[rule][key_second_step]
                 # Instantiate the refered class and add it to the set of objects
-                set_wrapper.add(self.create_toolwrapper_entry(str_rule_name, str_wrapper_name, dict_dict_elm))
+                wrapper_entry = self.create_toolwrapper_entry(str_rule_name, str_wrapper_name, dict_dict_elm)
+                wrapper_entry.execution = execution
+                set_wrapper.add(wrapper_entry)
                 Logger.instance().debug("Object toolwrapper: " + str_wrapper_name + " created.")
             session.add_all(set_wrapper)
             session.commit()
@@ -123,8 +127,7 @@ class Reader:
             session.rollback()
             raise e
 
-    @staticmethod
-    def create_toolwrapper_entry(str_rule_name, str_wrapper_name, dict_dict_elm):
+    def create_toolwrapper_entry(self, str_rule_name, str_wrapper_name, dict_dict_elm):
         """
         Actual creating of the toolwrapper object.
 

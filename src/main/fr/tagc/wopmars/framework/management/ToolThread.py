@@ -26,7 +26,7 @@ class ToolThread(threading.Thread, Observable):
     def get_toolwrapper(self):
         return self.__toolwrapper
 
-    def run(self):
+    def run(self, dry=False):
         """
         Run the tool and fire events.
         :return:
@@ -35,7 +35,8 @@ class ToolThread(threading.Thread, Observable):
         session_tw = SQLManager.instance().get_session()
         try:
             self.__toolwrapper.set_session(session_tw)
-            self.__toolwrapper.run()
+            if not dry:
+                self.__toolwrapper.run()
             session_tw.commit()
         except Exception as e:
             session_tw.rollback()
