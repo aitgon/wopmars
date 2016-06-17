@@ -56,7 +56,8 @@ class Parser:
             Logger.instance().info("Dot and ps file wrote.")
         return dag_tools
 
-    def get_set_toolwrappers(self):
+    @staticmethod
+    def get_set_toolwrappers():
         session = SQLManager.instance().get_session()
         set_toolwrappers = set(session.query(ToolWrapper).all())
         return set_toolwrappers

@@ -29,7 +29,7 @@ class TestWopMars(TestCase):
         self.assertEqual(se.exception.code, 1)
 
     def test_run3(self):
-        SQLManager.instance().create_all()
+        SQLManager.create_all()
         subprocess.Popen(["touch", "/home/giffon/Documents/wopmars/src/resources/output_File1.txt"])
         subprocess.Popen(["touch", "/home/giffon/Documents/wopmars/src/resources/output_File4.txt"])
         subprocess.Popen(["touch", "/home/giffon/Documents/wopmars/src/resources/output_File5.txt"])
@@ -44,14 +44,14 @@ class TestWopMars(TestCase):
         self.assertEqual(se.exception.code, 0)
 
     def test_run4(self):
-        SQLManager.instance().create_all()
+        SQLManager.create_all()
         cmd_line = ["python", self.__right_def_file, "-vvvv", "-n", "--to", "rule3"]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 0)
 
     def tearDown(self):
-        SQLManager.instance().drop_all()
+        SQLManager.drop_all()
         PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/output_File1.txt")
         PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/output_File2.txt")
         PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/output_File3.txt")

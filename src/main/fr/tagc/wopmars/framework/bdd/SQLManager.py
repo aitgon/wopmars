@@ -54,9 +54,11 @@ class SQLManager(SingletonMixin):
         self.__lock.release()
         return result
 
-    def drop_all(self):
+    @staticmethod
+    def drop_all():
         Base.metadata.drop_all()
 
-    def create_all(self):
+    @staticmethod
+    def create_all():
         # This line will create all tables found in PYTHONPATH (I think, or something like that)
         Base.metadata.create_all()

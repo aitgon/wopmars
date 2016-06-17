@@ -29,6 +29,12 @@ from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
 from src.main.fr.tagc.wopmars.utils.PathFinder import PathFinder
 from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 # TODO faire en sorte que les imports commencent a fr
+# todo parcourir le code pour refaire la documentation -> compatible sphinx
+# todo faire plus de tests: notamment pour la partie "from" et "to"
+# todo parcourir l'exécution du code pour améliorer les messages de Log... bien réfléchir à ce qui est import, penser
+# aux garde - fou
+
+# todo execution partimonieuse
 
 
 class WopMars:
@@ -55,7 +61,7 @@ class WopMars:
                 "--from": Or(None, str),
                 "--to": Or(None, str)
             })
-
+            # The option values are validated using schema library
             OptionManager.instance().validate(schema_option)
         except SchemaError as schema_msg:
             Logger.instance().debug("\nCommand line Args:" + str(OptionManager.instance()))

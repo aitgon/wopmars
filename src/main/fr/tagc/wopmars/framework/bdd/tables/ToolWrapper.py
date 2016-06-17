@@ -231,41 +231,43 @@ class ToolWrapper(Base):
 
     def __eq__(self, other):
         """
-        Two ToolWrapper objects are equals if their attributes are equals
+        Two ToolWrapper objects are equals if all their attributes are equals
         :param other: ToolWrapper
         :return:
         """
-        if not isinstance(other, self.__class__):
-            return False
+        return (isinstance(other, self.__class__) and
+                self.same_files(other, "input") and
+                self.same_tables(other, "input") and
+                self.same_files(other, "output") and
+                self.same_tables(other, "output") and
+                self.same_options(other))
 
-        for input_f in [rf for rf in self.files if rf.type.name == "input"]:
+    # todo check size / date
+    def same_files(self, other, type_name):
+        for input_f in [rf for rf in self.files if rf.type.name == type_name]:
             is_in = bool([rf for rf in other.files if (input_f.path == rf.path and
                                                        input_f.name == rf.name and
-                                                       rf.type.name == "input")])
+                                                       rf.type.name == type_name)])
             if not is_in:
                 return False
+        return True
 
-        for output_f in [rf for rf in self.files if rf.type.name == "output"]:
-            is_in = bool([rf for rf in other.files if (output_f.path == rf.path and
-                                                       output_f.name == rf.name and
-                                                       rf.type.name == "output")])
+    # todo check_content?
+    def same_tables(self, other, type_name):
+        for input_t in [t for t in self.tables if t.type.name == type_name]:
+            is_in = bool([t for t in other.tables if (input_t.name == t.name and
+                                                      t.type.name == type_name)])
             if not is_in:
                 return False
+        return True
 
-        for output_f in [rf for rf in self.files if rf.type.name == "output"]:
-            is_in = bool([rf for rf in other.files if (output_f.path == rf.path and
-                                                       output_f.name == rf.name and
-                                                       rf.type.name == "output")])
-            if not is_in:
-                return False
-
+    def same_options(self, other):
         for opt in self.options:
             is_in = bool([o for o in other.options if (o.name == opt.name and
                                                        o.value == opt.value)])
 
             if not is_in:
                 return False
-
         return True
 
     def __hash__(self):

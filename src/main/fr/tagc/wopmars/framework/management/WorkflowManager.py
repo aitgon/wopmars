@@ -17,9 +17,25 @@ from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsEx
 
 class WorkflowManager(ToolWrapperObserver):
     """
-    The WorkflowManager class manage all the software execution.
+    The WorkflowManager class manage all the workflow execution.
 
-    He will ask the parser to build the DAG then execute it.
+    WorkflowManager will ask the parser to build the DAG then execute it. The execution of the DAG is done as following:
+      1- The workflow manager take the "tool_dag" with all the rules of the workflow and build the "dag_to_exec" which
+      will be actually executed.
+      2- The method "execute_from()" is call without argument, meaning that the execution begin at the top of the dag
+      (the root of the tree)
+      3- The nodes are gathered thanks to the "successors" method of the DAG
+      4- Each node is wrapped inside a ToolThread object which will be added to the queue
+      5- Each ToolThread is executed (ordered) as follows:
+        a- If the inputs are ready: they are executed
+        b- If not, they are put in the buffer
+      6- When the ToolThread has finished its execution, a notification of success is sent
+      7- The method "execute_from" is called again with the succeeded ToolWrapper in arguments
+      8- Loop to the 3rd step
+      9- When the DAG is finished, the software exits
+
+    Every exception or error are raised to the top level of the software (wopmars.py) through WopMarsException with
+    a String explaining the context and details about the exception.
     """    
     def __init__(self):
         """
@@ -27,20 +43,21 @@ class WorkflowManager(ToolWrapperObserver):
 
         It initialize the parser with the path of the definition file given by the OptionManager.
 
-        The parser will give the DAG which will be executed.
+        The parser will give the DAG which will be executed. The parser is instantiated with the "DEFINITION_FILE"
+        option given by the user.
         The queue_exec is the Thread pool. It will contains the tools that will wait for being executed.
         The list_queue_buffer will be filled with the tool that the WorkflowManager couldn't execute.
         The count_exec is a counter that keep trace of the tools that are currently executed.
-        The dag_tools will contian the dag representing the workflow.
-
-        :return:
+        The dag_tools will contain the dag representing the workflow.
+        The dag_to_exec is basically the same dag than dag_tools or a subgraph depending on the options --from or --to
+        given by the user.
         """
         self.__parser = Parser(OptionManager.instance()["DEFINITION_FILE"])
         self.__queue_exec = UniqueQueue()
         self.__list_queue_buffer = []
         self.__count_exec = 0
         self.__dag_tools = None
-        self.__dag_exec = None
+        self.__dag_to_exec = None
 
     def run(self):
         """
@@ -50,7 +67,7 @@ class WorkflowManager(ToolWrapperObserver):
         Then, execute_from is called with no argument to get the origin nodes.
         :return:
         """
-        SQLManager.instance().create_all()
+        SQLManager.create_all()
         self.__dag_tools = self.__parser.parse()
         self.get_dag_to_exec()
 

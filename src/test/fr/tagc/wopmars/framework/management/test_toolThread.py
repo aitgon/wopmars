@@ -17,7 +17,7 @@ class TestToolThread(TestCase):
 
     def setUp(self):
         OptionManager.initial_test_setup()
-        SQLManager.instance().create_all()
+        SQLManager.create_all()
 
     def test_run(self):
 
@@ -78,7 +78,7 @@ class TestToolThread(TestCase):
         self.assertEqual(len(SQLManager.instance().get_session().query(FooBase).filter(FooBase.name.like('Foowrapper5 - %')).all()), 30)
 
     def tearDown(self):
-        SQLManager.instance().drop_all()
+        SQLManager.drop_all()
         os.remove("/home/giffon/Documents/wopmars/src/resources/output_File1.txt")
 
 if __name__ == '__main__':

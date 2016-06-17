@@ -15,7 +15,7 @@ from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
 class TestIODbPut(TestCase):
     def setUp(self):
         OptionManager.initial_test_setup()
-        SQLManager.instance().create_all()
+        SQLManager.create_all()
         self.__local_session = SQLManager.instance().get_session()
         try:
             for i in range(10):
@@ -31,7 +31,7 @@ class TestIODbPut(TestCase):
         self.__io_base_existing3 = IODbPut(name="FooBase2")
 
     def tearDown(self):
-        SQLManager.instance().drop_all()
+        SQLManager.drop_all()
 
     def test_eq(self):
         self.assertEqual(self.__io_base_existing, self.__io_base_existing2)

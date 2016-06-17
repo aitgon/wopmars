@@ -72,7 +72,8 @@ class DAG(nx.DiGraph):
             # of the DAG.
             return [n for n, d in self.in_degree().items() if d == 0]
         else:
-            return super().successors(node)
+            s = super().successors(node)
+            return s
 
     def get_all_successors(self, node):
         """

@@ -15,7 +15,7 @@ class TestWorkflowManager(TestCase):
 
     def setUp(self):
         OptionManager.initial_test_setup()
-        SQLManager.instance().create_all()
+        SQLManager.create_all()
         s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
 
         s_path_to_example_definition_file_finishing = s_root_path + "resources/example_def_file.yml"
@@ -30,7 +30,7 @@ class TestWorkflowManager(TestCase):
         self.__error_wm = WorkflowManager()
 
     def tearDown(self):
-        SQLManager.instance().drop_all()
+        SQLManager.drop_all()
         os.remove("/home/giffon/Documents/wopmars/src/resources/output_File1.txt")
         os.remove("/home/giffon/Documents/wopmars/src/resources/output_File2.txt")
         os.remove("/home/giffon/Documents/wopmars/src/resources/output_File3.txt")

@@ -44,7 +44,7 @@ class Reader:
             try:
                 # The workflow definition file is loaded as-it in memory by the pyyaml library
                 Logger.instance().info("Reading the definition file: " + str(s_definition_file) + "...")
-                Reader.check_duplicate_rules_and_check_from_opt(s_def_file_content)
+                Reader.check_duplicate_rules(s_def_file_content)
                 self.__dict_workflow_definition = yaml.load(s_def_file_content)
                 Logger.instance().debug("\n" + DictUtils.pretty_repr(self.__dict_workflow_definition))
                 Logger.instance().info("Read complete.")
@@ -62,7 +62,7 @@ class Reader:
                                    "The specified file at " + s_definition_file + " doesn't exist.")
 
     @staticmethod
-    def check_duplicate_rules_and_check_from_opt(file):
+    def check_duplicate_rules(file):
         Logger.instance().debug("Looking for duplicate rules...")
         rules = re.findall(r'rule (.+?):', str(file))
         seen = set()
@@ -85,19 +85,20 @@ class Reader:
         """
         session = SQLManager.instance().get_session()
         try:
-            input_entry = Type(name="input")
-            output_entry = Type(name="output")
             set_wrapper = set()
-            Logger.instance().debug("Parsing rules: " + str(self.__dict_workflow_definition))
+            # Encounter a rule block
             for rule in self.__dict_workflow_definition:
                 str_wrapper_name = None
-                # the name of the wrapper is extracted after the "rule" keyword
+                # the name of the rule is extracted after the "rule" keyword
                 str_rule_name = rule.split()[-1].strip(":")
-                # The dict is re-initialized for each wrapper
+                Logger.instance().debug("Encounter rule " + str_rule_name + ": \n" +
+                                        str(DictUtils.pretty_repr(self.__dict_workflow_definition[rule])))
+                # The dict of "input"s, "output"s and "params" is re-initialized for each wrapper
                 dict_dict_elm = dict(dict_input={}, dict_params={}, dict_output={})
                 for key_second_step in self.__dict_workflow_definition[rule]:
                     # key_second_step is supposed to be "tool", "input", "output" or "params"
                     if type(self.__dict_workflow_definition[rule][key_second_step]) == dict:
+                        # if it is a dict, then inputs, outputs or params are coming
                         for elm in self.__dict_workflow_definition[rule][key_second_step]:
                             # The 2 possible objects can be created
                             if key_second_step == "params":
@@ -108,56 +109,78 @@ class Reader:
                                 obj_created = IOFilePut(name=elm,
                                                         path=self.__dict_workflow_definition[rule][key_second_step][elm])
                             dict_dict_elm["dict_" + key_second_step][elm] = obj_created
+                            Logger.instance().debug("Object " + key_second_step + ": " +
+                                                    elm + " created.")
                     else:
+                        # if the next step is not a dict, then it is supposed to be the "tool" line
                         str_wrapper_name = self.__dict_workflow_definition[rule][key_second_step]
-
-                Logger.instance().debug("Loading " + str_wrapper_name + ".")
-                try:
-                    # Importing the module in the mod variable
-                    mod = importlib.import_module(str_wrapper_name)
-                except ImportError:
-                    raise WopMarsException("Error while parsing the configuration file:",
-                                           str_wrapper_name + " module is not in the pythonpath.")
                 # Instantiate the refered class and add it to the set of objects
-
-                try:
-                    toolwrapper_class = eval("mod." + str_wrapper_name)
-                    toolwrapper_wrapper = toolwrapper_class(rule_name=str_rule_name)
-
-                    for input_f in dict_dict_elm["dict_input"]:
-                        dict_dict_elm["dict_input"][input_f].type = input_entry
-                        toolwrapper_wrapper.files.append(dict_dict_elm["dict_input"][input_f])
-
-                    for output_f in dict_dict_elm["dict_output"]:
-                        dict_dict_elm["dict_output"][output_f].type = output_entry
-                        toolwrapper_wrapper.files.append(dict_dict_elm["dict_output"][output_f])
-
-                    for opt in dict_dict_elm["dict_params"]:
-                        toolwrapper_wrapper.options.append(dict_dict_elm["dict_params"][opt])
-
-                    for input_t in toolwrapper_wrapper.get_input_table():
-                        table_entry = IODbPut(name=input_t)
-                        table_entry.type = input_entry
-                        toolwrapper_wrapper.tables.append(table_entry)
-
-                    for output_t in toolwrapper_wrapper.get_output_table():
-                        table_entry = IODbPut(name=output_t)
-                        table_entry.type = output_entry
-                        toolwrapper_wrapper.tables.append(table_entry)
-
-                    Logger.instance().debug(str_wrapper_name + " ToolWrapper loaded.")
-                except AttributeError as a:
-                    print(a)
-                    raise WopMarsException("Error while parsing the configuration file: \n\t",
-                                           "The class " + str_wrapper_name + " doesn't exist.")
-                toolwrapper_wrapper.is_content_respected()
-                set_wrapper.add(toolwrapper_wrapper)
+                set_wrapper.add(self.create_toolwrapper_entry(str_rule_name, str_wrapper_name, dict_dict_elm))
+                Logger.instance().debug("Object toolwrapper: " + str_wrapper_name + " created.")
             session.add_all(set_wrapper)
             session.commit()
         except Exception as e:
             session.rollback()
             raise e
 
+    @staticmethod
+    def create_toolwrapper_entry(str_rule_name, str_wrapper_name, dict_dict_elm):
+        """
+        Actual creating of the toolwrapper object.
+
+        Str_rule_name is the String containing the name of the rule in which the toolwrapper will be used.
+        Str_wrapper_name is the String containing the name of the toolwrapper. It will be used for importing the correct
+        module and then for creating the class.
+        Dict_dict_elm is the dict of dict of "input"s "output"s and "params" and will be used to make relations between
+        options / input / output and the toolwrapper.
+
+        The toolwrapper object is an entry of the table rule in the resulting database.
+
+        :param str_rule_name: String
+        :param str_wrapper_name: String
+        :param dict_dict_elm: Dict <String: Dict <String: String>>
+
+        :return: TooLWrapper instance
+        """
+        input_entry = Type(name="input")
+        output_entry = Type(name="output")
+        try:
+            # Importing the module in the mod variable
+            mod = importlib.import_module(str_wrapper_name)
+            # Building the class object
+            toolwrapper_class = eval("mod." + str_wrapper_name)
+            # Initialize the instance of ToolWrapper
+            toolwrapper_wrapper = toolwrapper_class(rule_name=str_rule_name)
+
+            for input_f in dict_dict_elm["dict_input"]:
+                dict_dict_elm["dict_input"][input_f].type = input_entry
+                toolwrapper_wrapper.files.append(dict_dict_elm["dict_input"][input_f])
+
+            for output_f in dict_dict_elm["dict_output"]:
+                dict_dict_elm["dict_output"][output_f].type = output_entry
+                toolwrapper_wrapper.files.append(dict_dict_elm["dict_output"][output_f])
+
+            for opt in dict_dict_elm["dict_params"]:
+                toolwrapper_wrapper.options.append(dict_dict_elm["dict_params"][opt])
+
+            for input_t in toolwrapper_wrapper.get_input_table():
+                table_entry = IODbPut(name=input_t)
+                table_entry.type = input_entry
+                toolwrapper_wrapper.tables.append(table_entry)
+
+            for output_t in toolwrapper_wrapper.get_output_table():
+                table_entry = IODbPut(name=output_t)
+                table_entry.type = output_entry
+                toolwrapper_wrapper.tables.append(table_entry)
+
+        except AttributeError:
+            raise WopMarsException("Error while parsing the configuration file: \n\t",
+                                   "The class " + str_wrapper_name + " doesn't exist.")
+        except ImportError:
+            raise WopMarsException("Error while parsing the configuration file:",
+                                   str_wrapper_name + " module is not in the pythonpath.")
+        toolwrapper_wrapper.is_content_respected()
+        return toolwrapper_wrapper
 
     def is_grammar_respected(self):
         """
@@ -225,7 +248,3 @@ class Reader:
                                        "The rule '" + str(s_key_step1) + "' doesn't contain any tool." +
                                        "\nexemple:" + exemple_file_def
                                        )
-
-if __name__ == '__main__':
-    s_path = "/home/giffon/Documents/wopmars/src/resources/example_def_file_duplicate_rule.yml"
-    f = open(s_path).read()

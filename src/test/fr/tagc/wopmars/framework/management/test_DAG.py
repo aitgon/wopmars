@@ -19,7 +19,7 @@ class TestDAG(TestCase):
 
     def setUp(self):
         OptionManager.initial_test_setup()
-        SQLManager.instance().create_all()
+        SQLManager.create_all()
         #        first
         #       /    \
         #   second   third
@@ -82,7 +82,7 @@ class TestDAG(TestCase):
         SQLManager.instance().get_session().commit()
 
     def tearDown(self):
-        SQLManager.instance().drop_all()
+        SQLManager.drop_all()
 
     def test_init(self):
         try:

@@ -33,7 +33,7 @@ class ConcurrentRollBackingThread(threading.Thread):
 class TestSQLManager(TestCase):
     def setUp(self):
         OptionManager.initial_test_setup()
-        SQLManager.instance().create_all()
+        SQLManager.create_all()
         self.__local_session = SQLManager.instance().get_session()
 
         SQLManager()
@@ -60,7 +60,7 @@ class TestSQLManager(TestCase):
         self.assertTrue(len(self.__local_session.query(FooBase).filter(FooBase.name.like('string %')).all()) == 3000)
 
     def tearDown(self):
-        SQLManager.instance().drop_all()
+        SQLManager.drop_all()
 
 if __name__ == '__main__':
     unittest.main()

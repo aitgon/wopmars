@@ -24,7 +24,7 @@ class TestParser(TestCase):
     def setUp(self):
         OptionManager.initial_test_setup()
 
-        SQLManager.instance().create_all()
+        SQLManager.create_all()
         s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
 
         # The good -------------------------------:
@@ -42,7 +42,7 @@ class TestParser(TestCase):
 
     def tearDown(self):
         OptionManager.instance()["--dot"] = None
-        SQLManager.instance().drop_all()
+        SQLManager.drop_all()
 
     def test_parse(self):
         OptionManager.initial_test_setup()

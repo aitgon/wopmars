@@ -30,7 +30,7 @@ class TestReader(TestCase):
 
     def setUp(self):
         OptionManager.initial_test_setup()
-        SQLManager.instance().create_all()
+        SQLManager.create_all()
         self.__session = SQLManager.instance().get_session()
 
         s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
@@ -81,12 +81,12 @@ class TestReader(TestCase):
             Reader(s_root_path + "Not existing file.")
 
     def tearDown(self):
-        SQLManager.instance().drop_all()
+        SQLManager.drop_all()
 
     def test_check_duplicate_rule(self):
         with open(self.__s_example_definition_file_duplicate_rule) as file_duplicate_rule:
             with self.assertRaises(WopMarsException):
-                Reader.check_duplicate_rules_and_check_from_opt(file_duplicate_rule.read())
+                Reader.check_duplicate_rules(file_duplicate_rule.read())
 
     def test_read(self):
 
