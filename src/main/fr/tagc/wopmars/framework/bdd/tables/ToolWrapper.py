@@ -8,6 +8,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 
 from src.main.fr.tagc.wopmars.framework.bdd.Base import Base
+from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
 from src.main.fr.tagc.wopmars.framework.bdd.tables.Execution import Execution
 from src.main.fr.tagc.wopmars.framework.bdd.tables.IODbPut import IODbPut
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
@@ -195,17 +196,40 @@ class ToolWrapper(Base):
         self.__state = ToolWrapper.READY
         return True
 
-    # def set_inputs_date_and_size(self):
-    #     for f in [f for f in self.files if f.type.name == "input"]:
-    #         f.last_modif = datetime.datetime.fromtimestamp(os.path.getmtime(f.path))
-    #         f.size = os.path.getsize(f.path)
+    def set_file_date_and_size(self, type):
+        Logger.instance().debug("Setting date and size of " + type + " files of rule " + self.name + " -> " + self.toolwrapper)
+        session = SQLManager.instance().get_session()
+        for f in [f for f in self.files if f.type.name == type]:
+            date = datetime.datetime.fromtimestamp(os.path.getmtime(f.path))
+            size = os.path.getsize(f.path)
+            f.modified_at = date
+            f.size = size
+            session.add(f)
+        session.commit()
 
     def same_input_than(self, other):
+        for t in [t for t in self.tables if t.type.name == "input"]:
+            # todo gerer le cas pour les tables? discuter avec Aitor/Lionel de comment faire?
+            # For the moment, if there is a table in the inputs, then the input are considered as "not the same"
+            return False
+
         for f in [f for f in self.files if f.type.name == "input"]:
             is_same = False
-            for f2 in [f for f in other.files if f.type.name == "input"]:
-                if os.path.getmtime(f.path) == os.path.getmtime(f2.path) and \
-                        os.path.getsize(f.path) == os.path.getsize(f2.path):
+            for f2 in [f2 for f2 in other.files if f2.type.name == "input"]:
+                # todo refactorer pour rassembler la boucle et la condition
+                # todo mettre les commentaires si dessous dans la docstring?
+                # Check if:
+                #   * name of 2 input files are the same
+                #   * path to the 2 inputs files are the same (?)
+                #   * the size of the 2 inputs files are the same
+                # todo ask aitor reflechir à si c'est nécessaire de vérifier les chemins vers les fichiers d'input
+                #   * the modified time of the files are the same
+                # todo ask aitor est-ce-que c'est nécessaire aussi? finalement, c'est le rapport au fichier d'output,
+                # qui est intéressant
+                if (f.name == f2.name and
+                        f.path == f2.path and
+                        f.modified_at == f2.modified_at and
+                        f.size == f2.size):
                     is_same = True
                     break
             if not is_same:
@@ -214,9 +238,17 @@ class ToolWrapper(Base):
 
     def is_output_ok(self):
         for of in [f for f in self.files if f.type.name == "output"]:
+            existence = os.path.exists(of.path)
+            modified = all(of.modified_at > in_f.modified_at for in_f in self.files if in_f.type.name == "input")
             if not os.path.exists(of.path) or \
-                    all(os.path.getmtime(of.path) > os.path.getmtime(in_f.path) for in_f in self.files if in_f.type.name == "input"):
+                    not all(of.modified_at > in_f.modified_at for in_f in self.files if in_f.type.name == "input"):
+                    # todo set la date d'écriture après lexecution du toolwrapper
                 return False
+
+        for ot in [t for t in self.tables if t.type.name == "output"]:
+            # For the moment, if there is a table in the outputs, then the output are considered as "not ok"
+            return False
+
         return True
 
     def get_state(self):

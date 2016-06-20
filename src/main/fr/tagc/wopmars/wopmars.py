@@ -96,7 +96,10 @@ def main():
     sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/toolwrappers/")
     sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/base/")
 
-    WopMars().run(sys.argv)
+    l = ["python",  "/home/giffon/Documents/wopmars/src/resources/example_def_file2.yml", "--dot", "/home/giffon/wopmars.dot", "-n", "-vvvv"]
+
+    # WopMars().run(sys.argv)
+    WopMars().run(l)
 
 if __name__ == "__main__":
     main()

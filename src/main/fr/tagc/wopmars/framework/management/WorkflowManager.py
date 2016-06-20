@@ -58,6 +58,7 @@ class WorkflowManager(ToolWrapperObserver):
         self.__count_exec = 0
         self.__dag_tools = None
         self.__dag_to_exec = None
+        self.__already_runned = set()
 
     def run(self):
         """
@@ -111,7 +112,12 @@ class WorkflowManager(ToolWrapperObserver):
         Logger.instance().debug("Next tools: " + str([t.__class__.__name__ for t in list_tw]))
 
         for tw in list_tw:
-            self.__queue_exec.put(ToolThread(tw))
+            if tw not in self.__already_runned:
+                self.__queue_exec.put(ToolThread(tw))
+            else:
+                Logger.instance().debug("Rule: " + tw.name +
+                                        " -> " + tw.toolwrapper +
+                                        " has already been executed. Pass.")
         self.run_queue()
 
     def run_queue(self):
@@ -142,13 +148,14 @@ class WorkflowManager(ToolWrapperObserver):
             tw = thread_tw.get_toolwrapper()
             Logger.instance().debug("Current ToolWrapper: " + str(tw.__class__.__name__))
             if tw.are_inputs_ready():
-                # tw.set_inputs_date_and_size()
+                tw.set_file_date_and_size("input")
                 Logger.instance().debug("ToolWrapper ready: " + str(tw.__class__.__name__))
                 dry = False
                 if self.is_this_tool_already_done(thread_tw.get_toolwrapper()):
-                    Logger.instance().info("Toolwrapper " + thread_tw.get_toolwrapper().toolwrapper + " seemed to have already"
-                                                                                             "been runned with same"
-                                                                                             "parameters.")
+                    Logger.instance().info("Toolwrapper " + thread_tw.get_toolwrapper().toolwrapper +
+                                           " seemed to have already" +
+                                           " been runned with same" +
+                                           " parameters.")
                     dry = True
                 # todo twthread verification des ressources
                 thread_tw.subscribe(self)
@@ -176,7 +183,9 @@ class WorkflowManager(ToolWrapperObserver):
                 # If there is no tool being executed but there is that are waiting something, the workflow has an issue
                 raise WopMarsException("The workflow has failed.",
                                        "The inputs are not ready for the remaining tools: " +
-                                       ", ".join([t.get_toolwrapper().__class__.__name__ for t in self.__list_queue_buffer]) + ". ")
+                                       ", \n".join([t.get_toolwrapper().toolwrapper +
+                                                  " -> rule: " +
+                                                  t.get_toolwrapper().name for t in self.__list_queue_buffer]) + ". ")
             # If there is one tool that is ready, it means that it is in queue because ressources weren't available.
 
     @staticmethod
@@ -186,34 +195,17 @@ class WorkflowManager(ToolWrapperObserver):
             .filter(ToolWrapper.execution_id != tw.execution_id).all()
         i = 0
         while i < len(list_same_toolwrappers):
-            if list_same_toolwrappers[i] != tw:
+            if list_same_toolwrappers[i] != tw or \
+                    not list_same_toolwrappers[i].same_input_than(tw) or \
+                    not list_same_toolwrappers[i].is_output_ok():
                 del list_same_toolwrappers[i]
             else:
                 i += 1
 
-        i = 0
-        while i < len(list_same_toolwrappers):
-            # todo faire la méthode same_input_than
-            if not list_same_toolwrappers[i].same_input_than(tw):
-                del list_same_toolwrappers[i]
-            else:
-                i += 1
-
-        i = 0
-        while i < len(list_same_toolwrappers):
-            # todo faire la méthode is_ouput_ok
-            if not list_same_toolwrappers[i].is_output_ok():
-                del list_same_toolwrappers[i]
-            else:
-                i += 1
-
-        # todo faire une fonction pour ces boucles (param: predicat) si possible (à voir)
         # todo ask lionel
         # todo ask aitor au final, est-ce-que les outputs ont besoin d'avoir le même chemin? si les toolwrappers sont
         # identiques avec les meme params, on peut considérer que els outputs le sont aussi même avec des chemins differents
-
         return bool(list_same_toolwrappers)
-
 
     def check_buffer(self):
         """
@@ -235,6 +227,7 @@ class WorkflowManager(ToolWrapperObserver):
         """
         Logger.instance().info(str(thread_toolwrapper.get_toolwrapper().__class__.__name__) + " has succeed.")
         # Continue the dag execution from the toolwrapper that just finished.
+        self.__already_runned.add(thread_toolwrapper.get_toolwrapper())
         self.__count_exec -= 1
 
         if len(self.__list_queue_buffer):

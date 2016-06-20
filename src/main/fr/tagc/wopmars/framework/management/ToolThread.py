@@ -38,6 +38,7 @@ class ToolThread(threading.Thread, Observable):
             if not dry:
                 self.__toolwrapper.run()
             session_tw.commit()
+            self.__toolwrapper.set_file_date_and_size("output")
         except Exception as e:
             session_tw.rollback()
             raise e
