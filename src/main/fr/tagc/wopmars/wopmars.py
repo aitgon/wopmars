@@ -1,7 +1,7 @@
 """WopMars: Workflow Python Manager for Reproducible Science.
 
 Usage:
-  wopmars.py [-n] [-v...] [-d FILE] [-L FILE] [-f RULE | -t RULE] [DEFINITION_FILE]
+  wopmars.py [-n] [-F] [-v...] [-d FILE] [-L FILE] [-f RULE | -t RULE] [DEFINITION_FILE]
 
 Arguments:
   DEFINITION_FILE  Path to the definition file of the workflow [default: wopfile.yml].
@@ -12,8 +12,9 @@ Options:
   -d FILE --dot=FILE   Write dot representing the workflow in the FILE file (with .dot extension).
   -L FILE --log=FILE   Write logs in FILE file [default: $HOME/.wopmars/wopmars.log].
   -n --noisy           Write logs in standard output.
-  -f RULE --from=RULE  Execute the workflow from the given RULE
-  -t RULE --to=RULE    Execute the workflow to the given RULE
+  -f RULE --from=RULE  Execute the workflow from the given RULE.
+  -t RULE --to=RULE    Execute the workflow to the given RULE.
+  -F --force           Force the execution of the workflow, without checking for previous executions.
 """
 import os
 import sys
@@ -59,7 +60,8 @@ class WopMars:
                 "--log": Use(PathFinder.check_valid_path),
                 '--noisy': Use(bool),
                 "--from": Or(None, str),
-                "--to": Or(None, str)
+                "--to": Or(None, str),
+                "--force": Use(bool)
             })
             # The option values are validated using schema library
             OptionManager.instance().validate(schema_option)

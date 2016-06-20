@@ -46,3 +46,10 @@ class PathFinder:
             os.remove(path)
         except OSError:
             pass
+
+    @staticmethod
+    def dir_content_remove(path):
+        for f in os.listdir(path):
+            if not f.startswith("."):
+                PathFinder.silentremove(os.path.join(path, f))
+

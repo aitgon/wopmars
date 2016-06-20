@@ -3,6 +3,8 @@ import subprocess
 import unittest
 from unittest import TestCase
 
+import time
+
 from FooBase2 import FooBase2
 from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
 from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
@@ -15,6 +17,7 @@ class TestWopMars(TestCase):
         s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
 
         self.__right_def_file = s_root_path + "resources/example_def_file.yml"
+        self.__right_def_file_only_files = s_root_path + "resources/example_def_file2.yml"
 
     def test_run(self):
         cmd_line = ["python", self.__right_def_file, "-vvvv", "-n"]
@@ -50,15 +53,37 @@ class TestWopMars(TestCase):
             WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 0)
 
+    def test_run5(self):
+        cmd_line = ["python", self.__right_def_file_only_files]
+        start = time.time()
+        with self.assertRaises(SystemExit):
+            WopMars().run(cmd_line)
+        end = time.time()
+        runtime1 = end - start
+
+        start = time.time()
+        with self.assertRaises(SystemExit):
+            WopMars().run(cmd_line)
+        end = time.time()
+        runtime2 = end - start
+
+        self.assertGreater(runtime1 * 1.5, runtime2)
+
+        SQLManager.drop_all()
+        OptionManager._drop()
+        SQLManager._drop()
+        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File1.txt")
+
+        start = time.time()
+        with self.assertRaises(SystemExit):
+            WopMars().run(cmd_line)
+        end = time.time()
+        runtime2 = end - start
+        self.assertTrue(runtime1 * 0.4 <= runtime2 <= runtime1 * 1.4)
+
     def tearDown(self):
         SQLManager.drop_all()
-        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File1.txt")
-        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File2.txt")
-        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File3.txt")
-        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File4.txt")
-        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File5.txt")
-        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File6.txt")
-        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File7.txt")
+        PathFinder.dir_content_remove("/home/giffon/Documents/wopmars/src/resources/outputs/")
         OptionManager._drop()
         SQLManager._drop()
 

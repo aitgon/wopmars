@@ -151,7 +151,8 @@ class WorkflowManager(ToolWrapperObserver):
                 tw.set_file_date_and_size("input")
                 Logger.instance().debug("ToolWrapper ready: " + str(tw.__class__.__name__))
                 dry = False
-                if self.is_this_tool_already_done(thread_tw.get_toolwrapper()):
+                if not OptionManager.instance()["--force"] and \
+                        self.is_this_tool_already_done(thread_tw.get_toolwrapper()):
                     Logger.instance().info("Toolwrapper " + thread_tw.get_toolwrapper().toolwrapper +
                                            " seemed to have already" +
                                            " been runned with same" +
