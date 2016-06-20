@@ -30,9 +30,9 @@ class TestWopMars(TestCase):
 
     def test_run3(self):
         SQLManager.create_all()
-        subprocess.Popen(["touch", "/home/giffon/Documents/wopmars/src/resources/output_File1.txt"])
-        subprocess.Popen(["touch", "/home/giffon/Documents/wopmars/src/resources/output_File4.txt"])
-        subprocess.Popen(["touch", "/home/giffon/Documents/wopmars/src/resources/output_File5.txt"])
+        subprocess.Popen(["touch", "/home/giffon/Documents/wopmars/src/resources/outputs/output_File1.txt"])
+        subprocess.Popen(["touch", "/home/giffon/Documents/wopmars/src/resources/outputs/output_File4.txt"])
+        subprocess.Popen(["touch", "/home/giffon/Documents/wopmars/src/resources/outputs/output_File5.txt"])
         for i in range(10):
             f = FooBase2(name="testwopmars " + str(i))
             SQLManager.instance().get_session().add(f)
@@ -52,13 +52,13 @@ class TestWopMars(TestCase):
 
     def tearDown(self):
         SQLManager.drop_all()
-        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/output_File1.txt")
-        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/output_File2.txt")
-        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/output_File3.txt")
-        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/output_File4.txt")
-        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/output_File5.txt")
-        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/output_File6.txt")
-        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/output_File7.txt")
+        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File1.txt")
+        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File2.txt")
+        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File3.txt")
+        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File4.txt")
+        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File5.txt")
+        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File6.txt")
+        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File7.txt")
         OptionManager._drop()
         SQLManager._drop()
 

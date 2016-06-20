@@ -31,13 +31,13 @@ class TestWorkflowManager(TestCase):
 
     def tearDown(self):
         SQLManager.drop_all()
-        os.remove("/home/giffon/Documents/wopmars/src/resources/output_File1.txt")
-        os.remove("/home/giffon/Documents/wopmars/src/resources/output_File2.txt")
-        os.remove("/home/giffon/Documents/wopmars/src/resources/output_File3.txt")
-        os.remove("/home/giffon/Documents/wopmars/src/resources/output_File4.txt")
-        os.remove("/home/giffon/Documents/wopmars/src/resources/output_File5.txt")
-        os.remove("/home/giffon/Documents/wopmars/src/resources/output_File6.txt")
-        os.remove("/home/giffon/Documents/wopmars/src/resources/output_File7.txt")
+        os.remove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File1.txt")
+        os.remove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File2.txt")
+        os.remove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File3.txt")
+        os.remove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File4.txt")
+        os.remove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File5.txt")
+        os.remove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File6.txt")
+        os.remove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File7.txt")
 
     def test_run(self):
         OptionManager.instance()["--dot"] = None

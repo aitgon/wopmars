@@ -27,7 +27,7 @@ class TestToolThread(TestCase):
         f1 = IOFilePut(name="input1", path="/home/giffon/Documents/wopmars/src/resources/input_File1.txt")
         f1.type = input_entry
 
-        f2 = IOFilePut(name="output1", path="/home/giffon/Documents/wopmars/src/resources/output_File1.txt")
+        f2 = IOFilePut(name="output1", path="/home/giffon/Documents/wopmars/src/resources/outputs/output_File1.txt")
         f2.type = output_entry
 
         t1 = IODbPut(name="FooBase")
@@ -40,7 +40,7 @@ class TestToolThread(TestCase):
         f1 = IOFilePut(name="input1", path="/home/giffon/Documents/wopmars/src/resources/input_File1.txt")
         f1.type = input_entry
 
-        f2 = IOFilePut(name="output1", path="/home/giffon/Documents/wopmars/src/resources/output_File1.txt")
+        f2 = IOFilePut(name="output1", path="/home/giffon/Documents/wopmars/src/resources/outputs/output_File1.txt")
         f2.type = output_entry
 
         t1 = IODbPut(name="FooBase")
@@ -53,7 +53,7 @@ class TestToolThread(TestCase):
         f1 = IOFilePut(name="input1", path="/home/giffon/Documents/wopmars/src/resources/input_File1.txt")
         f1.type = input_entry
 
-        f2 = IOFilePut(name="output1", path="/home/giffon/Documents/wopmars/src/resources/output_File1.txt")
+        f2 = IOFilePut(name="output1", path="/home/giffon/Documents/wopmars/src/resources/outputs/output_File1.txt")
         f2.type = output_entry
 
         t1 = IODbPut(name="FooBase")
@@ -79,7 +79,7 @@ class TestToolThread(TestCase):
 
     def tearDown(self):
         SQLManager.drop_all()
-        os.remove("/home/giffon/Documents/wopmars/src/resources/output_File1.txt")
+        os.remove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File1.txt")
 
 if __name__ == '__main__':
     unittest.main()

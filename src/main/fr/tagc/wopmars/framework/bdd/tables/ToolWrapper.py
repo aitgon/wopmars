@@ -238,8 +238,6 @@ class ToolWrapper(Base):
 
     def is_output_ok(self):
         for of in [f for f in self.files if f.type.name == "output"]:
-            existence = os.path.exists(of.path)
-            modified = all(of.modified_at > in_f.modified_at for in_f in self.files if in_f.type.name == "input")
             if not os.path.exists(of.path) or \
                     not all(of.modified_at > in_f.modified_at for in_f in self.files if in_f.type.name == "input"):
                     # todo set la date d'écriture après lexecution du toolwrapper
