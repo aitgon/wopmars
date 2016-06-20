@@ -303,7 +303,7 @@ class ToolWrapper(Base):
                 self.same_tables(other, "output") and
                 self.same_options(other))
 
-    # todo check size / date
+    # todo check size / date -> non! pour le moment on vérifie juste que les paramètres sont identiques
     def same_files(self, other, type_name):
         for input_f in [rf for rf in self.files if rf.type.name == type_name]:
             is_in = bool([rf for rf in other.files if (input_f.path == rf.path and
@@ -313,7 +313,7 @@ class ToolWrapper(Base):
                 return False
         return True
 
-    # todo check_content?
+    # todo check_content? -> dans le == des IODbPut
     def same_tables(self, other, type_name):
         for input_t in [t for t in self.tables if t.type.name == type_name]:
             is_in = bool([t for t in other.tables if (input_t.name == t.name and

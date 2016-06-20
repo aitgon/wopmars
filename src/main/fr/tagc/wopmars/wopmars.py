@@ -35,8 +35,6 @@ from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsEx
 # todo parcourir l'exécution du code pour améliorer les messages de Log... bien réfléchir à ce qui est import, penser
 # aux garde - fou
 
-# todo execution partimonieuse
-
 
 class WopMars:
 
