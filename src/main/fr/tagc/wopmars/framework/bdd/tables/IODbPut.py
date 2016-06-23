@@ -4,11 +4,12 @@ Module containing the IODbPut class.
 import importlib
 
 from src.main.fr.tagc.wopmars.framework.bdd.Base import Base, Engine
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship, reconstructor
 
 from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
 from src.main.fr.tagc.wopmars.framework.bdd.tables.IOPut import IOPut
+from src.main.fr.tagc.wopmars.framework.bdd.tables.ModificationTable import ModificationTable
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
 from src.main.fr.tagc.wopmars.framework.bdd.tables.Type import Type
 
@@ -20,14 +21,17 @@ class IODbPut(IOPut, Base):
     __tablename__ = "table"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String)
+    name = Column(String, ForeignKey("modification_table.table_name"))
     rule_id = Column(Integer, ForeignKey("rule.id"))
     type_id = Column(Integer, ForeignKey("type.id"))
+    used_at = Column(DateTime, nullable=True)
 
     # One table is in one rule
     rule = relationship("ToolWrapper", back_populates="tables", enable_typechecks=False)
     # One file has One type
     type = relationship("Type", back_populates="tables")
+
+    modification = relationship("ModificationTable", back_populates="tables")
 
     def __init__(self, name):
         """
@@ -39,7 +43,8 @@ class IODbPut(IOPut, Base):
         Base.__init__(self, name=name)
         mod = importlib.import_module(name)
         self.__table = eval("mod." + name)
-        Base.metadata.tables[self.__table.__tablename__].create(Engine, checkfirst=True)
+        SQLManager.instance().create(self.__table.__tablename__)
+        # Base.metadata.tables[self.__table.__tablename__].create(Engine, checkfirst=True)
         Logger.instance().debug(name + " table class loaded.")
 
     @reconstructor
@@ -94,5 +99,5 @@ class IODbPut(IOPut, Base):
         return id(self)
 
     def __repr__(self):
-        return "<Table:\"" + str(self.name) + "\">"
+        return "<Table (" + self.type.name + "  ):\"" + str(self.name) + "\"; used_at:" + str(self.used_at) + ">"
 

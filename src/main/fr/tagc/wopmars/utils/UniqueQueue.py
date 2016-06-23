@@ -18,3 +18,6 @@ class UniqueQueue(Queue):
         """
         if item not in self.queue:
             self.queue.append(item)
+
+    def get_queue_tuple(self):
+        return tuple(self.queue)

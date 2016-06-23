@@ -62,3 +62,8 @@ class SQLManager(SingletonMixin):
     def create_all():
         # This line will create all tables found in PYTHONPATH (I think, or something like that)
         Base.metadata.create_all()
+
+    def create(self, tablename):
+        self.__lock.acquire_write()
+        Base.metadata.tables[tablename].create(Engine, checkfirst=True)
+        self.__lock.release()

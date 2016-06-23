@@ -1,6 +1,7 @@
 """
 This module contains the Reader class
 """
+import datetime
 import importlib
 import re
 
@@ -11,6 +12,7 @@ from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
 from src.main.fr.tagc.wopmars.framework.bdd.tables.Execution import Execution
 from src.main.fr.tagc.wopmars.framework.bdd.tables.IODbPut import IODbPut
 from src.main.fr.tagc.wopmars.framework.bdd.tables.IOFilePut import IOFilePut
+from src.main.fr.tagc.wopmars.framework.bdd.tables.ModificationTable import ModificationTable
 
 from src.main.fr.tagc.wopmars.framework.bdd.tables.Option import Option
 from src.main.fr.tagc.wopmars.framework.bdd.tables.Type import Type
@@ -40,8 +42,8 @@ class Reader:
         """
         # Tests about grammar and syntax are performed here (file's existence is also tested here)
         try:
-            def_file = open(s_definition_file, 'r')
-            s_def_file_content = def_file.read()
+            with open(s_definition_file, 'r') as def_file:
+                s_def_file_content = def_file.read()
             try:
                 # The workflow definition file is loaded as-it in memory by the pyyaml library
                 Logger.instance().info("Reading the definition file: " + str(s_definition_file) + "...")
@@ -56,8 +58,6 @@ class Reader:
             except yaml.YAMLError as exc:
                 raise WopMarsException("Error while parsing the configuration file: \n\t"
                                        "The YAML specification is not respected:", str(exc))
-            finally:
-                def_file.close()
         except FileNotFoundError:
             raise WopMarsException("Error while parsing the configuration file: \n\tInput error:",
                                    "The specified file at " + s_definition_file + " doesn't exist.")
@@ -86,6 +86,9 @@ class Reader:
         """
         session = SQLManager.instance().get_session()
         execution = Execution()
+        input_entry = session.get_or_create(Type, defaults={"id": 1}, name="input")[0]
+        output_entry = session.get_or_create(Type, defaults={"id": 2}, name="output")[0]
+        session.commit()
         try:
             set_wrapper = set()
             # Encounter a rule block
@@ -117,9 +120,10 @@ class Reader:
                         # if the next step is not a dict, then it is supposed to be the "tool" line
                         str_wrapper_name = self.__dict_workflow_definition[rule][key_second_step]
                 # Instantiate the refered class and add it to the set of objects
-                wrapper_entry = self.create_toolwrapper_entry(str_rule_name, str_wrapper_name, dict_dict_elm)
+                wrapper_entry = self.create_toolwrapper_entry(str_rule_name, str_wrapper_name, dict_dict_elm, input_entry, output_entry)
                 wrapper_entry.execution = execution
                 set_wrapper.add(wrapper_entry)
+                # session.add(wrapper_entry)
                 Logger.instance().debug("Object toolwrapper: " + str_wrapper_name + " created.")
             session.add_all(set_wrapper)
             session.commit()
@@ -127,7 +131,7 @@ class Reader:
             session.rollback()
             raise e
 
-    def create_toolwrapper_entry(self, str_rule_name, str_wrapper_name, dict_dict_elm):
+    def create_toolwrapper_entry(self, str_rule_name, str_wrapper_name, dict_dict_elm, input_entry, output_entry):
         """
         Actual creating of the toolwrapper object.
 
@@ -145,43 +149,58 @@ class Reader:
 
         :return: TooLWrapper instance
         """
-        input_entry = Type(name="input")
-        output_entry = Type(name="output")
+        session = SQLManager.instance().get_session()
+        # Importing the module in the mod variable
         try:
-            # Importing the module in the mod variable
             mod = importlib.import_module(str_wrapper_name)
             # Building the class object
             toolwrapper_class = eval("mod." + str_wrapper_name)
-            # Initialize the instance of ToolWrapper
-            toolwrapper_wrapper = toolwrapper_class(rule_name=str_rule_name)
-
-            for input_f in dict_dict_elm["dict_input"]:
-                dict_dict_elm["dict_input"][input_f].type = input_entry
-                toolwrapper_wrapper.files.append(dict_dict_elm["dict_input"][input_f])
-
-            for output_f in dict_dict_elm["dict_output"]:
-                dict_dict_elm["dict_output"][output_f].type = output_entry
-                toolwrapper_wrapper.files.append(dict_dict_elm["dict_output"][output_f])
-
-            for opt in dict_dict_elm["dict_params"]:
-                toolwrapper_wrapper.options.append(dict_dict_elm["dict_params"][opt])
-
-            for input_t in toolwrapper_wrapper.get_input_table():
-                table_entry = IODbPut(name=input_t)
-                table_entry.type = input_entry
-                toolwrapper_wrapper.tables.append(table_entry)
-
-            for output_t in toolwrapper_wrapper.get_output_table():
-                table_entry = IODbPut(name=output_t)
-                table_entry.type = output_entry
-                toolwrapper_wrapper.tables.append(table_entry)
-
         except AttributeError:
             raise WopMarsException("Error while parsing the configuration file: \n\t",
                                    "The class " + str_wrapper_name + " doesn't exist.")
         except ImportError:
             raise WopMarsException("Error while parsing the configuration file:",
                                    str_wrapper_name + " module is not in the pythonpath.")
+        # Initialize the instance of ToolWrapper
+        toolwrapper_wrapper = toolwrapper_class(rule_name=str_rule_name)
+
+        for input_f in dict_dict_elm["dict_input"]:
+            dict_dict_elm["dict_input"][input_f].type = input_entry
+            toolwrapper_wrapper.files.append(dict_dict_elm["dict_input"][input_f])
+
+        for output_f in dict_dict_elm["dict_output"]:
+            dict_dict_elm["dict_output"][output_f].type = output_entry
+            toolwrapper_wrapper.files.append(dict_dict_elm["dict_output"][output_f])
+
+        for opt in dict_dict_elm["dict_params"]:
+            toolwrapper_wrapper.options.append(dict_dict_elm["dict_params"][opt])
+
+        for input_t in toolwrapper_wrapper.get_input_table():
+            session.commit()
+            table_entry = IODbPut(name=input_t)
+
+            modification_table_entry, created = session.get_or_create(ModificationTable,
+                                                                      defaults={
+                                                                          "date": datetime.datetime.fromtimestamp(
+                                                                              time.time())},
+                                                                      table_name=input_t)
+            table_entry.type = input_entry
+            table_entry.modification = modification_table_entry
+            toolwrapper_wrapper.tables.append(table_entry)
+
+        for output_t in toolwrapper_wrapper.get_output_table():
+            session.commit()
+            table_entry = IODbPut(name=output_t)
+            modification_table_entry, created = session.get_or_create(ModificationTable,
+                                                                      defaults={
+                                                                          "date": datetime.datetime.fromtimestamp(
+                                                                              time.time())},
+                                                                      table_name=output_t
+                                                                      )
+            table_entry.type = output_entry
+            table_entry.modification = modification_table_entry
+            toolwrapper_wrapper.tables.append(table_entry)
+
         toolwrapper_wrapper.is_content_respected()
         return toolwrapper_wrapper
 

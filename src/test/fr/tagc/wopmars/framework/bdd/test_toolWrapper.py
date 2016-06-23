@@ -249,5 +249,11 @@ class TestToolWrapper(TestCase):
         self.assertTrue(self.__toolwrapper_ready.are_inputs_ready())
         self.assertFalse(self.__toolwrapper_not_ready.are_inputs_ready())
 
+    def tearDown(self):
+        SQLManager.drop_all()
+        PathFinder.dir_content_remove("/home/giffon/Documents/wopmars/src/resources/outputs/")
+        OptionManager._drop()
+        SQLManager._drop()
+
 if __name__ == '__main__':
     unittest.main()

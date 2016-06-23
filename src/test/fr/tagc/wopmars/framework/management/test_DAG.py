@@ -83,6 +83,8 @@ class TestDAG(TestCase):
 
     def tearDown(self):
         SQLManager.drop_all()
+        OptionManager._drop()
+        SQLManager._drop()
 
     def test_init(self):
         try:

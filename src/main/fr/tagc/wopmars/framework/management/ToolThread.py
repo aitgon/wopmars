@@ -22,11 +22,15 @@ class ToolThread(threading.Thread, Observable):
         threading.Thread.__init__(self)
         self.__set_observer = set([])
         self.__toolwrapper = toolwrapper
+        self.__dry = False
 
     def get_toolwrapper(self):
         return self.__toolwrapper
 
-    def run(self, dry=False):
+    def set_dry(self, dry):
+        self.__dry = dry
+
+    def run(self):
         """
         Run the tool and fire events.
         :return:
@@ -35,10 +39,9 @@ class ToolThread(threading.Thread, Observable):
         session_tw = SQLManager.instance().get_session()
         try:
             self.__toolwrapper.set_session(session_tw)
-            if not dry:
+            if not self.__dry:
                 self.__toolwrapper.run()
             session_tw.commit()
-            self.__toolwrapper.set_file_date_and_size("output")
         except Exception as e:
             session_tw.rollback()
             raise e

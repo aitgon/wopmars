@@ -82,6 +82,9 @@ class TestReader(TestCase):
 
     def tearDown(self):
         SQLManager.drop_all()
+        PathFinder.dir_content_remove("/home/giffon/Documents/wopmars/src/resources/outputs/")
+        OptionManager._drop()
+        SQLManager._drop()
 
     def test_check_duplicate_rule(self):
         with open(self.__s_example_definition_file_duplicate_rule) as file_duplicate_rule:

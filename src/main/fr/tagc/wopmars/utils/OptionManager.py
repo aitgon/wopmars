@@ -3,6 +3,7 @@ Module containing the OptionManager class.
 """
 import os
 
+from src.main.fr.tagc.wopmars.utils.PathFinder import PathFinder
 from src.main.fr.tagc.wopmars.utils.Singleton import SingletonMixin
 
 
@@ -41,6 +42,10 @@ class OptionManager(dict, SingletonMixin):
         if self["DEFINITION_FILE"] is None:
             self["DEFINITION_FILE"] = "wopfile.yml"
 
+    def validate_database(self):
+        if self["DATABASE"] is None:
+            self["DATABASE"] = os.path.join(os.path.expanduser("~"), ".wopmars/wopmars.sqlite")
+
     def validate_dot(self):
         if self["--dot"]:
             if self["--dot"][-1] == "/":
@@ -72,7 +77,10 @@ class OptionManager(dict, SingletonMixin):
     def initial_test_setup():
         OptionManager.instance()["-v"] = 4
         OptionManager.instance()["--dot"] = None
-        OptionManager.instance()["--log"] = os.path.expanduser("~") + "/.wopmars/wopmars.log"
-        OptionManager.instance()["--noisy"] = True
-        OptionManager.instance()["--from"] = None
-        OptionManager.instance()["--to"] = None
+        OptionManager.instance()["--log"] = os.path.join(os.path.expanduser("~"), ".wopmars/wopmars.log")
+        OptionManager.instance()["--printtools"] = True
+        OptionManager.instance()["--sourcerule"] = None
+        OptionManager.instance()["--targetrule"] = None
+        OptionManager.instance()["--forceall"] = None
+        OptionManager.instance()["--dry"] = None
+        # OptionManager.instance()["DATABASE"] = os.path.join(PathFinder.find_src(os.path.dirname(os.path.realpath(__file__))), "resources/outputs/" + mod_name + ".sqlite")

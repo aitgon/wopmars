@@ -49,7 +49,7 @@ class WorkflowManager(ToolWrapperObserver):
         The list_queue_buffer will be filled with the tool that the WorkflowManager couldn't execute.
         The count_exec is a counter that keep trace of the tools that are currently executed.
         The dag_tools will contain the dag representing the workflow.
-        The dag_to_exec is basically the same dag than dag_tools or a subgraph depending on the options --from or --to
+        The dag_to_exec is basically the same dag than dag_tools or a subgraph depending on the options --sourcerule or --targetrule
         given by the user.
         """
         self.__parser = Parser(OptionManager.instance()["DEFINITION_FILE"])
@@ -75,24 +75,24 @@ class WorkflowManager(ToolWrapperObserver):
         self.execute_from()
 
     def get_dag_to_exec(self):
-        if OptionManager.instance()["--from"] is not None:
+        if OptionManager.instance()["--sourcerule"] is not None:
             try:
-                node_from_rule = [n for n in self.__dag_tools if n.name == OptionManager.instance()["--from"]][0]
+                node_from_rule = [n for n in self.__dag_tools if n.name == OptionManager.instance()["--sourcerule"]][0]
             except IndexError:
                 raise WopMarsException(
-                    "The given rule to start from: " + OptionManager.instance()["--from"] + " doesn't exist.")
+                    "The given rule to start from: " + OptionManager.instance()["--sourcerule"] + " doesn't exist.")
 
             self.__dag_to_exec = DAG(self.__dag_tools.get_all_successors(node_from_rule))
-            Logger.instance().info("Running the workflow from rule " + str(OptionManager.instance()["--from"]) +
+            Logger.instance().info("Running the workflow from rule " + str(OptionManager.instance()["--sourcerule"]) +
                                    " -> " + node_from_rule.toolwrapper)
-        elif OptionManager.instance()["--to"] is not None:
+        elif OptionManager.instance()["--targetrule"] is not None:
             try:
-                node_from_rule = [n for n in self.__dag_tools if n.name == OptionManager.instance()["--to"]][0]
+                node_from_rule = [n for n in self.__dag_tools if n.name == OptionManager.instance()["--targetrule"]][0]
             except IndexError:
                 raise WopMarsException(
-                    "The given rule to go to: " + OptionManager.instance()["--to"] + " doesn't exist.")
+                    "The given rule to go to: " + OptionManager.instance()["--targetrule"] + " doesn't exist.")
             self.__dag_to_exec = DAG(self.__dag_tools.get_all_predecessors(node_from_rule))
-            Logger.instance().info("Running the workflow to the rule " + str(OptionManager.instance()["--to"]) +
+            Logger.instance().info("Running the workflow to the rule " + str(OptionManager.instance()["--targetrule"]) +
                                    " -> " + node_from_rule.toolwrapper)
         else:
             self.__dag_to_exec = self.__dag_tools
@@ -144,16 +144,18 @@ class WorkflowManager(ToolWrapperObserver):
         #  - There were remaing tools in the queue but they weren't ready, so they are tested again
         while not self.__queue_exec.empty():
             Logger.instance().debug("Queue size: " + str(self.__queue_exec.qsize()))
+            Logger.instance().debug("Queue content: " + str(["rule: " + tt.get_toolwrapper().name + "->" +
+                                                             tt.get_toolwrapper().toolwrapper for tt in self.__queue_exec.get_queue_tuple()]))
             thread_tw = self.__queue_exec.get()
             tw = thread_tw.get_toolwrapper()
-            Logger.instance().debug("Current ToolWrapper: " + str(tw.__class__.__name__))
+            Logger.instance().debug("Current rule: " + tw.name + "->" + tw.toolwrapper)
             if tw.are_inputs_ready():
-                tw.set_file_date_and_size("input")
-                Logger.instance().debug("ToolWrapper ready: " + str(tw.__class__.__name__))
+                tw.set_args_date_and_size("input")
+                Logger.instance().debug("ToolWrapper ready: " + tw.toolwrapper)
                 dry = False
-                if not OptionManager.instance()["--force"] and \
+                if not OptionManager.instance()["--forceall"] and \
                         self.is_this_tool_already_done(thread_tw.get_toolwrapper()):
-                    Logger.instance().info("Toolwrapper " + thread_tw.get_toolwrapper().toolwrapper +
+                    Logger.instance().info("Rule: " + thread_tw.get_toolwrapper().name + " -> " + thread_tw.get_toolwrapper().toolwrapper +
                                            " seemed to have already" +
                                            " been runned with same" +
                                            " parameters.")
@@ -162,14 +164,16 @@ class WorkflowManager(ToolWrapperObserver):
                 thread_tw.subscribe(self)
                 self.__count_exec += 1
                 # todo twthread methode start
-                thread_tw.run(dry)
+                thread_tw.set_dry(dry)
+                thread_tw.run()
             else:
-                Logger.instance().debug("ToolWrapper not ready: " + str(tw.__class__.__name__))
+                Logger.instance().debug("ToolWrapper not ready: rule: " + tw.name + " -> " + str(tw.toolwrapper))
                 # The buffer contains the ToolWrappers that have inputs which are not ready yet.
                 self.__list_queue_buffer.append(thread_tw)
 
-        Logger.instance().debug("Buffer: " + str([t.get_toolwrapper().__class__.__name__ for t in self.__list_queue_buffer]))
-        Logger.instance().debug("Running ToolWrappers: " + str(self.__count_exec))
+        Logger.instance().debug("Buffer: " + str(["rule: " + t.get_toolwrapper().name + "->" +
+                                                  t.get_toolwrapper().toolwrapper for t in self.__list_queue_buffer]))
+        Logger.instance().debug("Running rules: " + str(self.__count_exec))
 
         # There is no more ToolWrapper that are waiting to be executed.
         # Is there some tools that are currently being executed?
@@ -227,6 +231,7 @@ class WorkflowManager(ToolWrapperObserver):
         :return:
         """
         Logger.instance().info(str(thread_toolwrapper.get_toolwrapper().__class__.__name__) + " has succeed.")
+        thread_toolwrapper.get_toolwrapper().set_args_date_and_size("output")
         # Continue the dag execution from the toolwrapper that just finished.
         self.__already_runned.add(thread_toolwrapper.get_toolwrapper())
         self.__count_exec -= 1

@@ -41,8 +41,10 @@ class TestParser(TestCase):
         self.__dot_path = s_root_path + "test.dot"
 
     def tearDown(self):
-        OptionManager.instance()["--dot"] = None
         SQLManager.drop_all()
+        PathFinder.dir_content_remove("/home/giffon/Documents/wopmars/src/resources/outputs/")
+        OptionManager._drop()
+        SQLManager._drop()
 
     def test_parse(self):
         OptionManager.initial_test_setup()

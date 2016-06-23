@@ -22,7 +22,7 @@ class IOFilePut(IOPut, Base):
     path = Column(String)
     rule_id = Column(Integer, ForeignKey("rule.id"))
     type_id = Column(Integer, ForeignKey("type.id"))
-    modified_at = Column(DateTime, nullable=True)
+    used_at = Column(DateTime, nullable=True)
     size = Column(Integer, nullable=True)
 
     # One file is in Many rule_file and is in Many rule
@@ -47,4 +47,8 @@ class IOFilePut(IOPut, Base):
         return id(self)
 
     def __repr__(self):
-        return "<File: %s: %s; size: %s; last modification: %s>" % (self.name, self.path, self.size, self.modified_at)
+        return "<File (%s): %s: %s; size: %s; used_at: %s>" % (self.type.name, self.name, self.path, self.size, self.used_at)
+
+    def __str__(self):
+        return "<File (%s): %s: %s; size: %s; used_at: %s>" % (
+        self.type.name, self.name, self.path, self.size, self.used_at)

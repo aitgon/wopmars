@@ -61,6 +61,8 @@ class TestSQLManager(TestCase):
 
     def tearDown(self):
         SQLManager.drop_all()
+        OptionManager._drop()
+        SQLManager._drop()
 
 if __name__ == '__main__':
     unittest.main()
