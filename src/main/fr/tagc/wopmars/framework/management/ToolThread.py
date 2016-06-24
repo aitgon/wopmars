@@ -22,9 +22,13 @@ class ToolThread(threading.Thread, Observable):
         threading.Thread.__init__(self)
         self.__set_observer = set([])
         self.__toolwrapper = toolwrapper
+        self.__dry = False
 
     def get_toolwrapper(self):
         return self.__toolwrapper
+
+    def set_dry(self, dry):
+        self.__dry = dry
 
     def run(self):
         """
@@ -35,7 +39,8 @@ class ToolThread(threading.Thread, Observable):
         session_tw = SQLManager.instance().get_session()
         try:
             self.__toolwrapper.set_session(session_tw)
-            self.__toolwrapper.run()
+            if not self.__dry:
+                self.__toolwrapper.run()
             session_tw.commit()
         except Exception as e:
             session_tw.rollback()

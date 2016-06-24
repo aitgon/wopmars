@@ -5,6 +5,7 @@ import sys
 
 from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
 from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
+from src.main.fr.tagc.wopmars.framework.bdd.tables.Type import Type
 from src.main.fr.tagc.wopmars.framework.management.DAG import DAG
 from src.main.fr.tagc.wopmars.framework.management.ToolThread import ToolThread
 from src.main.fr.tagc.wopmars.framework.management.ToolWrapperObserver import ToolWrapperObserver
@@ -45,11 +46,11 @@ class WorkflowManager(ToolWrapperObserver):
 
         The parser will give the DAG which will be executed. The parser is instantiated with the "DEFINITION_FILE"
         option given by the user.
-        The queue_exec is the Thread pool. It will contains the tools that will wait for being executed.
-        The list_queue_buffer will be filled with the tool that the WorkflowManager couldn't execute.
+        The queue_exec is the Thread pool. It will contains the tool threads that will wait for being executed.
+        The list_queue_buffer will be filled with the tool threads that the WorkflowManager couldn't execute.
         The count_exec is a counter that keep trace of the tools that are currently executed.
         The dag_tools will contain the dag representing the workflow.
-        The dag_to_exec is basically the same dag than dag_tools or a subgraph depending on the options --from or --to
+        The dag_to_exec is basically the same dag than dag_tools or a subgraph depending on the options --sourcerule or --targetrule
         given by the user.
         """
         self.__parser = Parser(OptionManager.instance()["DEFINITION_FILE"])
@@ -58,40 +59,59 @@ class WorkflowManager(ToolWrapperObserver):
         self.__count_exec = 0
         self.__dag_tools = None
         self.__dag_to_exec = None
+        self.__already_runned = set()
 
     def run(self):
         """
         Get the dag then execute it.
+
+        The database is setUp here if workflow tables have not been created yet.
 
         The dag is taken thanks to the "parse()" method of the parser.
         Then, execute_from is called with no argument to get the origin nodes.
         :return:
         """
         SQLManager.create_all()
+        session = SQLManager.instance().get_session()
+        session.get_or_create(Type, defaults={"id": 1}, name="input")
+        session.get_or_create(Type, defaults={"id": 2}, name="output")
+        session.commit()
         self.__dag_tools = self.__parser.parse()
         self.get_dag_to_exec()
 
         self.execute_from()
 
     def get_dag_to_exec(self):
-        if OptionManager.instance()["--from"] is not None:
+        """
+        Set the dag to exec in terms of --sourcerule option and --targetrule option.
+
+        The source rule is checked first (there should not be both set because of the checks at the begining of the software)
+
+        If sourcerule is set, then it is its successors that are searched in the whole dag.
+        Else, it is its predecessors.
+
+        The set of obtained rules are used to build the "dag_to_exec". The nodes returned by get_all_successors and
+        get_all_predecessors are implicitly all related.
+        :return:
+        """
+        if OptionManager.instance()["--sourcerule"] is not None:
             try:
-                node_from_rule = [n for n in self.__dag_tools if n.name == OptionManager.instance()["--from"]][0]
+                node_from_rule = [n for n in self.__dag_tools if n.name == OptionManager.instance()["--sourcerule"]][0]
             except IndexError:
                 raise WopMarsException(
-                    "The given rule to start from: " + OptionManager.instance()["--from"] + " doesn't exist.")
+                    "The given rule to start from: " + OptionManager.instance()["--sourcerule"] + " doesn't exist.")
 
             self.__dag_to_exec = DAG(self.__dag_tools.get_all_successors(node_from_rule))
-            Logger.instance().info("Running the workflow from rule " + str(OptionManager.instance()["--from"]) +
+            Logger.instance().info("Running the workflow from rule " + str(OptionManager.instance()["--sourcerule"]) +
                                    " -> " + node_from_rule.toolwrapper)
-        elif OptionManager.instance()["--to"] is not None:
+        elif OptionManager.instance()["--targetrule"] is not None:
             try:
-                node_from_rule = [n for n in self.__dag_tools if n.name == OptionManager.instance()["--to"]][0]
+                node_from_rule = [n for n in self.__dag_tools if n.name == OptionManager.instance()["--targetrule"]][0]
             except IndexError:
                 raise WopMarsException(
-                    "The given rule to go to: " + OptionManager.instance()["--to"] + " doesn't exist.")
+                    "The given rule to go to: " + OptionManager.instance()["--targetrule"] + " doesn't exist.")
             self.__dag_to_exec = DAG(self.__dag_tools.get_all_predecessors(node_from_rule))
-            Logger.instance().info("Running the workflow to the rule " + str(OptionManager.instance()["--to"]) +
+            Logger.instance().info("Running the workflow to the rule " + str(OptionManager.instance()["--targetrule"]) +
                                    " -> " + node_from_rule.toolwrapper)
         else:
             self.__dag_to_exec = self.__dag_tools
@@ -103,15 +123,28 @@ class WorkflowManager(ToolWrapperObserver):
         The next nodes are taken thanks to the "successors()" method of the DAG and are put into the queue.
         The "run_queue()" is then called.
 
+        A trace of the already_runned ToolWrapper objects is kept in order to avoid duplicate execution.
+
         :param node: ToolWrapper a node of the DAG or None, if it executes from the root.
         :return: void
         """
-        # The toolwrappers
         list_tw = self.__dag_to_exec.successors(tw)
         Logger.instance().debug("Next tools: " + str([t.__class__.__name__ for t in list_tw]))
 
         for tw in list_tw:
-            self.__queue_exec.put(ToolThread(tw))
+            #      T1
+            #    /   \
+            #   |    T2
+            #    \   /
+            #      T3
+            # In the case above, the T3 could be executed twice if the output of T2 is already available at the begining
+            # (re-execution without clean)
+            if tw not in self.__already_runned:
+                self.__queue_exec.put(ToolThread(tw))
+            else:
+                Logger.instance().debug("Rule: " + tw.name +
+                                        " -> " + tw.toolwrapper +
+                                        " has already been executed. Pass.")
         self.run_queue()
 
     def run_queue(self):
@@ -121,6 +154,10 @@ class WorkflowManager(ToolWrapperObserver):
         The tools inside the queue are taken then their inputs are checked. If they are ready, the tools are started.
         If not, they are put in a buffer list of "not ready tools" of "ready but has not necessary ressources available
         tools".
+
+        The start method is called with a dry argument, if it appears that the input of the ToolWrapper are the same
+        than in a previous execution, and that the output are already ready. The dry parameter is set to True and the
+        start method will only simulate the execution.
 
         After that, the code check for the state of the workflow and gather the informations to see if the workflow
         are finished, if it encounter an error or if it is currently running.
@@ -138,23 +175,36 @@ class WorkflowManager(ToolWrapperObserver):
         #  - There were remaing tools in the queue but they weren't ready, so they are tested again
         while not self.__queue_exec.empty():
             Logger.instance().debug("Queue size: " + str(self.__queue_exec.qsize()))
+            Logger.instance().debug("Queue content: " + str(["rule: " + tt.get_toolwrapper().name + "->" +
+                                                             tt.get_toolwrapper().toolwrapper for tt in self.__queue_exec.get_queue_tuple()]))
             thread_tw = self.__queue_exec.get()
             tw = thread_tw.get_toolwrapper()
-            Logger.instance().debug("Current ToolWrapper: " + str(tw.__class__.__name__))
+            Logger.instance().debug("Current rule: " + tw.name + "->" + tw.toolwrapper)
             if tw.are_inputs_ready():
-                Logger.instance().debug("ToolWrapper ready: " + str(tw.__class__.__name__))
+                tw.set_args_date_and_size("input")
+                Logger.instance().debug("ToolWrapper ready: " + tw.toolwrapper)
+                dry = False
+                if not OptionManager.instance()["--forceall"] and \
+                        self.is_this_tool_already_done(thread_tw.get_toolwrapper()):
+                    Logger.instance().info("Rule: " + thread_tw.get_toolwrapper().name + " -> " + thread_tw.get_toolwrapper().toolwrapper +
+                                           " seemed to have already" +
+                                           " been runned with same" +
+                                           " parameters.")
+                    dry = True
                 # todo twthread verification des ressources
                 thread_tw.subscribe(self)
                 self.__count_exec += 1
                 # todo twthread methode start
+                thread_tw.set_dry(dry)
                 thread_tw.run()
             else:
-                Logger.instance().debug("ToolWrapper not ready: " + str(tw.__class__.__name__))
+                Logger.instance().debug("ToolWrapper not ready: rule: " + tw.name + " -> " + str(tw.toolwrapper))
                 # The buffer contains the ToolWrappers that have inputs which are not ready yet.
                 self.__list_queue_buffer.append(thread_tw)
 
-        Logger.instance().debug("Buffer: " + str([t.get_toolwrapper().__class__.__name__ for t in self.__list_queue_buffer]))
-        Logger.instance().debug("Running ToolWrappers: " + str(self.__count_exec))
+        Logger.instance().debug("Buffer: " + str(["rule: " + t.get_toolwrapper().name + "->" +
+                                                  t.get_toolwrapper().toolwrapper for t in self.__list_queue_buffer]))
+        Logger.instance().debug("Running rules: " + str(self.__count_exec))
 
         # There is no more ToolWrapper that are waiting to be executed.
         # Is there some tools that are currently being executed?
@@ -169,8 +219,43 @@ class WorkflowManager(ToolWrapperObserver):
                 # If there is no tool being executed but there is that are waiting something, the workflow has an issue
                 raise WopMarsException("The workflow has failed.",
                                        "The inputs are not ready for the remaining tools: " +
-                                       ", ".join([t.get_toolwrapper().__class__.__name__ for t in self.__list_queue_buffer]) + ". ")
+                                       ", \n".join([t.get_toolwrapper().toolwrapper +
+                                                  " -> rule: " +
+                                                  t.get_toolwrapper().name for t in self.__list_queue_buffer]) + ". ")
             # If there is one tool that is ready, it means that it is in queue because ressources weren't available.
+
+    @staticmethod
+    def is_this_tool_already_done(tw):
+        """
+        Return True if conditions for saying "The output of this ToolWrapper are already available" are filled.
+
+        The conditions are:
+            - The ToolWrapper exist in bdd (named = tw_old)
+            - The tw_old param are the same than the same which is about to start
+            - the tw_old inputs are the same
+            - the tw_old outputs are ok and ready
+
+        :param tw:
+        :return:
+        """
+        session = SQLManager.instance().get_session()
+        list_same_toolwrappers = session.query(ToolWrapper).filter(ToolWrapper.name == tw.name)\
+            .filter(ToolWrapper.execution_id != tw.execution_id).all()
+        i = 0
+        while i < len(list_same_toolwrappers):
+            if list_same_toolwrappers[i] != tw or \
+                    not list_same_toolwrappers[i].same_input_than(tw) or \
+                    not list_same_toolwrappers[i].is_output_ok():
+                del list_same_toolwrappers[i]
+            else:
+                i += 1
+
+        # todo ask lionel
+        # todo ask aitor au final, est-ce-que les outputs ont besoin d'avoir le même chemin? si les toolwrappers sont
+        # identiques avec les meme params, on peut considérer que els outputs le sont aussi même avec des chemins differents
+
+        # The elements of the list have been removed if none fit the conditions
+        return bool(list_same_toolwrappers)
 
     def check_buffer(self):
         """
@@ -191,7 +276,9 @@ class WorkflowManager(ToolWrapperObserver):
         :return:
         """
         Logger.instance().info(str(thread_toolwrapper.get_toolwrapper().__class__.__name__) + " has succeed.")
+        thread_toolwrapper.get_toolwrapper().set_args_date_and_size("output")
         # Continue the dag execution from the toolwrapper that just finished.
+        self.__already_runned.add(thread_toolwrapper.get_toolwrapper())
         self.__count_exec -= 1
 
         if len(self.__list_queue_buffer):
@@ -202,8 +289,6 @@ class WorkflowManager(ToolWrapperObserver):
             self.__queue_exec.put(tw_thread)
             del self.__list_queue_buffer[i]
             i += 1
-
-
 
         self.execute_from(thread_toolwrapper.get_toolwrapper())
 

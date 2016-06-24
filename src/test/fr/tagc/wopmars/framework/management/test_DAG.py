@@ -13,6 +13,7 @@ from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrappe
 from src.main.fr.tagc.wopmars.framework.bdd.tables.Type import Type
 from src.main.fr.tagc.wopmars.framework.management.DAG import DAG
 from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
+from src.main.fr.tagc.wopmars.utils.PathFinder import PathFinder
 
 
 class TestDAG(TestCase):
@@ -81,8 +82,29 @@ class TestDAG(TestCase):
         SQLManager.instance().get_session().add_all(list_tool)
         SQLManager.instance().get_session().commit()
 
+    def test_get_all_successors(self):
+        my_dag = DAG(self.__set_tool)
+
+        self.assertEqual(set(my_dag.get_all_successors(self.__toolwrapper_first)), self.__set_tool)
+        self.assertNotEqual(set(my_dag.get_all_successors(self.__toolwrapper_first)),
+                            self.__set_tool.difference(set([self.__toolwrapper_second])))
+        self.assertNotEqual(set(my_dag.get_all_successors(self.__toolwrapper_first)),
+                            self.__set_tool.difference(set([self.__toolwrapper_first])))
+
+    def test_get_all_predecessors(self):
+        my_dag = DAG(self.__set_tool)
+
+        self.assertEqual(set(my_dag.get_all_predecessors(self.__toolwrapper_fourth)), self.__set_tool)
+        self.assertNotEqual(set(my_dag.get_all_predecessors(self.__toolwrapper_fourth)),
+                            self.__set_tool.difference(set([self.__toolwrapper_second])))
+        self.assertNotEqual(set(my_dag.get_all_predecessors(self.__toolwrapper_fourth)),
+                            self.__set_tool.difference(set([self.__toolwrapper_fourth])))
+
     def tearDown(self):
         SQLManager.drop_all()
+        OptionManager._drop()
+        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File1.txt")
+        SQLManager._drop()
 
     def test_init(self):
         try:

@@ -1,10 +1,16 @@
 """
 This module contains the ToolWrapper class
 """
-from sqlalchemy import Column, Integer, String
+import datetime
+import os
+
+import time
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 
 from src.main.fr.tagc.wopmars.framework.bdd.Base import Base
+from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
+from src.main.fr.tagc.wopmars.framework.bdd.tables.Execution import Execution
 from src.main.fr.tagc.wopmars.framework.bdd.tables.IODbPut import IODbPut
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
 from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
@@ -21,6 +27,7 @@ class ToolWrapper(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
     toolwrapper = Column(String)
+    execution_id = Column(Integer, ForeignKey("execution.id"))
 
     # One rule has Many table
     tables = relationship("IODbPut", back_populates="rule")
@@ -28,6 +35,8 @@ class ToolWrapper(Base):
     files = relationship("IOFilePut", back_populates="rule")
     # One rule has Many option
     options = relationship("Option", back_populates="rule")
+    # One rule has one execution
+    execution = relationship("Execution", back_populates="rules")
 
     # parentrules = relationship etc...
     __mapper_args__ = {
@@ -188,6 +197,118 @@ class ToolWrapper(Base):
         self.__state = ToolWrapper.READY
         return True
 
+    def set_args_date_and_size(self, type, dry=False):
+        """
+        The date and the size of IOPut elements are set (if needed).
+
+        The date and the size of the files are set according to the actual date of last modification and size of the system files
+
+        The date of the tables are set according to the date of last modification notified in the modification_table table
+        If the type of IOPut is "output" and the execution is "not dry", the date in modification_table is set to the
+        current time.time() datetime.
+
+        :param type: String "input" or "output"
+        :param dry: Bool (True or False)
+        :return:
+        """
+        session = SQLManager.instance().get_session()
+        for f in [f for f in self.files if f.type.name == type]:
+            date = datetime.datetime.fromtimestamp(os.path.getmtime(f.path))
+            size = os.path.getsize(f.path)
+            f.used_at = date
+            f.size = size
+            session.add(f)
+            if type == "input":
+                Logger.instance().debug("Input file " + str(f) + " used.")
+            elif type == "output" and dry:
+                Logger.instance().debug("Output file " + str(f) + " has been loaded from previous execution.")
+            elif type == "output" and not dry:
+                Logger.instance().debug("Output file " + str(f) + " has been created.")
+        # this commit is due to a bug that i couldn't figure out: the session empty itself between the two loops...
+        # this is not good at all since it may lead to inconsistence in the bdd
+        # todo fix
+        session.commit()
+
+        for t in [t for t in self.tables if t.type.name == type]:
+            if type == "output" and not dry:
+                Logger.instance().debug("Output table " + str(t) + " has been modified.")
+                t.modification.date = datetime.datetime.fromtimestamp(time.time())
+            elif type == "output" and dry:
+                Logger.instance().debug("Output table " + str(t) + " not modified because of dry run.")
+            elif type == "input":
+                Logger.instance().debug("Input table " + str(t) + " used.")
+            t.used_at = t.modification.date
+            session.add(t)
+        session.commit()
+
+    def same_input_than(self, other):
+        """
+        Check if the other ToolWrapper have the same input than self.
+
+        The input are say "the same" if:
+            - The tables have the same name and the same last modifcation datetime
+            - The file have the same name, the same lastm mdoficiation datetime and the same size
+        :param other:
+        :return:
+        """
+        for t in [t for t in self.tables if t.type.name == "input"]:
+            is_same = False
+            for t2 in [t2 for t2 in other.tables if t2.type.name == "input"]:
+                if (t.name == t2.name and
+                       t.used_at == t2.used_at):
+                    is_same = True
+                    break
+            if not is_same:
+                return False
+
+        for f in [f for f in self.files if f.type.name == "input"]:
+            is_same = False
+            for f2 in [f2 for f2 in other.files if f2.type.name == "input"]:
+                # todo refactorer pour rassembler la boucle et la condition
+                if (f.name == f2.name and
+                        f.path == f2.path and
+                        f.used_at == f2.used_at and
+                        f.size == f2.size):
+                    is_same = True
+                    break
+            if not is_same:
+                return False
+        return True
+
+    def is_output_ok(self):
+        """
+        Check if the output of self are ready to use.
+
+        What is checked:
+            -for files:
+                - They exists
+                - Their size and date are not None
+                - Their date are after all input dates
+                - Their size and date in bdd are the same than the real ones
+
+            - for tables:
+                - They exists
+                - Their date are after all input dates
+                - Their date are the same in table 'table' than in 'modification_table'
+        :return:
+        """
+        # todo tester ça, je ne pense pas que ca fonctionne, en fin de compte
+        for of in [f for f in self.files if f.type.name == "output"]:
+            if not os.path.exists(of.path) or \
+                    not all(of.used_at > in_ft.used_at for in_ft in self.files + self.tables if (in_ft.type.name == "input" and
+                                                                                                 of.used_at is not None and
+                                                                                                 in_ft.used_at is not None)) or \
+                    not (of.size == os.path.getsize(of.path) and of.used_at == datetime.datetime.fromtimestamp(os.path.getmtime(of.path))):
+                return False
+
+        for ot in [t for t in self.tables if t.type.name == "output"]:
+            if not all(ot.used_at > in_ft.used_at for in_ft in self.files + self.tables if (in_ft.type.name == "input" and
+                                                                                            ot.used_at is not None and
+                                                                                            in_ft.used_at is not None)) or \
+                    not (ot.used_at == ot.modification.date):
+                return False
+        return True
+
     def get_state(self):
         return self.__state
 
@@ -242,7 +363,7 @@ class ToolWrapper(Base):
                 self.same_tables(other, "output") and
                 self.same_options(other))
 
-    # todo check size / date
+    # todo check size / date -> non! pour le moment on vérifie juste que les paramètres sont identiques
     def same_files(self, other, type_name):
         for input_f in [rf for rf in self.files if rf.type.name == type_name]:
             is_in = bool([rf for rf in other.files if (input_f.path == rf.path and
@@ -252,7 +373,7 @@ class ToolWrapper(Base):
                 return False
         return True
 
-    # todo check_content?
+    # todo check_content? -> dans le == des IODbPut
     def same_tables(self, other, type_name):
         for input_t in [t for t in self.tables if t.type.name == type_name]:
             is_in = bool([t for t in other.tables if (input_t.name == t.name and

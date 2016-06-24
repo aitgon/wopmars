@@ -3,7 +3,7 @@ Module containing the IOFilePut class
 """
 import os
 
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 
 from src.main.fr.tagc.wopmars.framework.bdd.Base import Base
@@ -22,6 +22,8 @@ class IOFilePut(IOPut, Base):
     path = Column(String)
     rule_id = Column(Integer, ForeignKey("rule.id"))
     type_id = Column(Integer, ForeignKey("type.id"))
+    used_at = Column(DateTime, nullable=True)
+    size = Column(Integer, nullable=True)
 
     # One file is in Many rule_file and is in Many rule
     rule = relationship("ToolWrapper", back_populates="files", enable_typechecks=False)
@@ -45,4 +47,8 @@ class IOFilePut(IOPut, Base):
         return id(self)
 
     def __repr__(self):
-        return "<File: %s: %s>" % (self.name, self.path)
+        return "<File (%s): %s: %s; size: %s; used_at: %s>" % (self.type.name, self.name, self.path, self.size, self.used_at)
+
+    def __str__(self):
+        return "<File (%s): %s: %s; size: %s; used_at: %s>" % (
+        self.type.name, self.name, self.path, self.size, self.used_at)

@@ -10,11 +10,14 @@ from src.main.fr.tagc.wopmars.framework.bdd.tables.Option import Option
 from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
 from src.main.fr.tagc.wopmars.framework.bdd.tables.Type import Type
 from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
+from src.main.fr.tagc.wopmars.utils.PathFinder import PathFinder
 
 
 class TestIODbPut(TestCase):
     def setUp(self):
         OptionManager.initial_test_setup()
+        print(OptionManager.instance()["--log"])
+
         SQLManager.create_all()
         self.__local_session = SQLManager.instance().get_session()
         try:
@@ -32,6 +35,9 @@ class TestIODbPut(TestCase):
 
     def tearDown(self):
         SQLManager.drop_all()
+        PathFinder.dir_content_remove("/home/giffon/Documents/wopmars/src/resources/outputs/")
+        OptionManager._drop()
+        SQLManager._drop()
 
     def test_eq(self):
         self.assertEqual(self.__io_base_existing, self.__io_base_existing2)

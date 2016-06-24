@@ -53,7 +53,7 @@ class Logger(SingletonMixin):
             self.__stream_handler.setLevel(logging.DEBUG)
             self.__file_handler.setLevel(logging.DEBUG)
 
-        if OptionManager.instance()["--noisy"]:
+        if OptionManager.instance()["--printtools"]:
             self.__logger.addHandler(self.__stream_handler)
         self.__logger.addHandler(self.__file_handler)
         self.__logger.addHandler(self.__err_handler)

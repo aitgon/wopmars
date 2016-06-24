@@ -31,6 +31,10 @@ class TestReader(TestCase):
     def setUp(self):
         OptionManager.initial_test_setup()
         SQLManager.create_all()
+        session = SQLManager.instance().get_session()
+        session.get_or_create(Type, defaults={"id": 1}, name="input")
+        session.get_or_create(Type, defaults={"id": 2}, name="output")
+        session.commit()
         self.__session = SQLManager.instance().get_session()
 
         s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
@@ -82,11 +86,20 @@ class TestReader(TestCase):
 
     def tearDown(self):
         SQLManager.drop_all()
+        PathFinder.dir_content_remove("/home/giffon/Documents/wopmars/src/resources/outputs/")
+        OptionManager._drop()
+        SQLManager._drop()
 
     def test_check_duplicate_rule(self):
         with open(self.__s_example_definition_file_duplicate_rule) as file_duplicate_rule:
             with self.assertRaises(WopMarsException):
                 Reader.check_duplicate_rules(file_duplicate_rule.read())
+
+        with open(self.__s_example_definition_file) as file:
+            try:
+                Reader.check_duplicate_rules(file.read())
+            except Exception as e:
+                raise AssertionError("Should not raise an exception " + str(e))
 
     def test_read(self):
 
@@ -99,49 +112,49 @@ class TestReader(TestCase):
         f1 = IOFilePut(name="input1", path="/home/giffon/Documents/wopmars/src/resources/input_File1.txt")
         f1.type = input_entry
 
-        f2 = IOFilePut(name="output1", path="/home/giffon/Documents/wopmars/src/resources/output_File1.txt")
+        f2 = IOFilePut(name="output1", path="/home/giffon/Documents/wopmars/src/resources/outputs/output_File1.txt")
         f2.type = output_entry
 
-        f3 = IOFilePut(name="input1", path="/home/giffon/Documents/wopmars/src/resources/output_File1.txt")
+        f3 = IOFilePut(name="input1", path="/home/giffon/Documents/wopmars/src/resources/outputs/output_File1.txt")
         f3.type = input_entry
 
-        f3bis = IOFilePut(name="input1", path="/home/giffon/Documents/wopmars/src/resources/output_File1.txt")
+        f3bis = IOFilePut(name="input1", path="/home/giffon/Documents/wopmars/src/resources/outputs/output_File1.txt")
         f3bis.type = input_entry
 
-        f4 = IOFilePut(name="output1", path="/home/giffon/Documents/wopmars/src/resources/output_File2.txt")
+        f4 = IOFilePut(name="output1", path="/home/giffon/Documents/wopmars/src/resources/outputs/output_File2.txt")
         f4.type = output_entry
 
-        f5 = IOFilePut(name="output1", path="/home/giffon/Documents/wopmars/src/resources/output_File3.txt")
+        f5 = IOFilePut(name="output1", path="/home/giffon/Documents/wopmars/src/resources/outputs/output_File3.txt")
         f5.type = output_entry
 
-        f6 = IOFilePut(name="output2", path="/home/giffon/Documents/wopmars/src/resources/output_File4.txt")
+        f6 = IOFilePut(name="output2", path="/home/giffon/Documents/wopmars/src/resources/outputs/output_File4.txt")
         f6.type = output_entry
 
-        f7 = IOFilePut(name="input1", path="/home/giffon/Documents/wopmars/src/resources/output_File3.txt")
+        f7 = IOFilePut(name="input1", path="/home/giffon/Documents/wopmars/src/resources/outputs/output_File3.txt")
         f7.type = input_entry
 
-        f8 = IOFilePut(name="input2", path="/home/giffon/Documents/wopmars/src/resources/output_File2.txt")
+        f8 = IOFilePut(name="input2", path="/home/giffon/Documents/wopmars/src/resources/outputs/output_File2.txt")
         f8.type = input_entry
 
-        f9 = IOFilePut(name="output1", path="/home/giffon/Documents/wopmars/src/resources/output_File5.txt")
+        f9 = IOFilePut(name="output1", path="/home/giffon/Documents/wopmars/src/resources/outputs/output_File5.txt")
         f9.type = output_entry
 
-        f10 = IOFilePut(name="input1", path="/home/giffon/Documents/wopmars/src/resources/output_File4.txt")
+        f10 = IOFilePut(name="input1", path="/home/giffon/Documents/wopmars/src/resources/outputs/output_File4.txt")
         f10.type = input_entry
 
-        f11 = IOFilePut(name="output1", path="/home/giffon/Documents/wopmars/src/resources/output_File6.txt")
+        f11 = IOFilePut(name="output1", path="/home/giffon/Documents/wopmars/src/resources/outputs/output_File6.txt")
         f11.type = output_entry
 
-        f12 = IOFilePut(name="input1", path="/home/giffon/Documents/wopmars/src/resources/output_File1.txt")
+        f12 = IOFilePut(name="input1", path="/home/giffon/Documents/wopmars/src/resources/outputs/output_File1.txt")
         f12.type = input_entry
 
-        f13 = IOFilePut(name="input2", path="/home/giffon/Documents/wopmars/src/resources/output_File5.txt")
+        f13 = IOFilePut(name="input2", path="/home/giffon/Documents/wopmars/src/resources/outputs/output_File5.txt")
         f13.type = input_entry
 
-        f14 = IOFilePut(name="input3", path="/home/giffon/Documents/wopmars/src/resources/output_File6.txt")
+        f14 = IOFilePut(name="input3", path="/home/giffon/Documents/wopmars/src/resources/outputs/output_File6.txt")
         f14.type = input_entry
 
-        f15 = IOFilePut(name="output1", path="/home/giffon/Documents/wopmars/src/resources/output_File7.txt")
+        f15 = IOFilePut(name="output1", path="/home/giffon/Documents/wopmars/src/resources/outputs/output_File7.txt")
         f15.type = output_entry
 
         t1 = IODbPut(name="FooBase")
@@ -185,6 +198,8 @@ class TestReader(TestCase):
         # The bad -------------------------------------:
 
         [self.assertRaises(WopMarsException, reader.read) for reader in self.__list_reader_exception_read]
+
+        SQLManager.instance().get_session().rollback()
 
 
 if __name__ == "__main__":

@@ -2,10 +2,12 @@
 Module containing the SQLManager class.
 """
 from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy import create_engine
 
-from src.main.fr.tagc.wopmars.framework.bdd.Base import Base, Engine
+from src.main.fr.tagc.wopmars.framework.bdd.Base import Base
 from src.main.fr.tagc.wopmars.framework.bdd.WopMarsSession import WopMarsSession
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
+from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
 from src.main.fr.tagc.wopmars.utils.RWLock import RWLock
 from src.main.fr.tagc.wopmars.utils.Singleton import SingletonMixin
 
@@ -23,8 +25,11 @@ class SQLManager(SingletonMixin):
         """
         # todo optionmanager
         # s_database_name = "/home/giffon/db.sqlite"
-        # self.__engine = create_engine('sqlite:///' + s_database_name, echo=False)
-        self.__Session = scoped_session(sessionmaker(bind=Engine, autoflush=True, autocommit=False))
+        #  = create_engine('sqlite:///' + s_database_name, echo=False)
+        s_database_name = OptionManager.instance()["DATABASE"]
+
+        self.__engine = create_engine('sqlite:///' + s_database_name, echo=False)
+        self.__Session = scoped_session(sessionmaker(bind=self.__engine, autoflush=True, autocommit=False))
         self.__dict_thread_session = {}
         self.__dict_session_condition = {}
         self.__lock = RWLock()
@@ -33,11 +38,23 @@ class SQLManager(SingletonMixin):
 
         # Base.metadata.create_all(Engine)
 
+    def get_engine(self):
+        return self.__engine
+
     def get_session(self):
         session = WopMarsSession(self.__Session(), self)
         return session
 
     def commit(self, session):
+        """
+        The SQLManager wrap the sqlite queue for operations on database in order to do not trigger the execution due
+        to the time-out operations.
+
+        This is done thanks to a read_write_lock: sqlmanager is a synchronized singleton with a synchronized method
+
+        :param session: sqlalchemy session
+        :return:
+        """
         Logger.instance().debug(str(session) + " want the write lock on SQLManager.")
         self.__lock.acquire_write()
         Logger.instance().debug(str(session) + " has taken the write lock on SQLManager.")
@@ -47,6 +64,8 @@ class SQLManager(SingletonMixin):
 
     def query(self, session, call):
         # todo twthread gérer le lock pour les lectures
+        # -> recuperer l'objet query et faire le call ici (all, one, first... )
+        # todo ask lionel, comment tu ferais?
         Logger.instance().debug(str(session) + " want the read lock on SQLManager.")
         self.__lock.acquire_read()
         Logger.instance().debug(str(session) + " has taken the read lock on SQLManager.")
@@ -56,9 +75,30 @@ class SQLManager(SingletonMixin):
 
     @staticmethod
     def drop_all():
-        Base.metadata.drop_all()
+        """
+        Use the declarative Base to drop all tables found. Should only be used for testing purposes.
+        :return:
+        """
+        Base.metadata.drop_all(SQLManager.instance().get_engine())
+        # todo ask aitor option pour reset les resultats (supprimer le contenu de la bdd) / fresh run
+        # (suppression de la bdd avant run pour etre sur de repartir sur des bases saines)
 
     @staticmethod
     def create_all():
+        """
+        Use the declarative Base to create all tables found (especially whose which are related to the workflow management).
+
+        :return: void
+        """
         # This line will create all tables found in PYTHONPATH (I think, or something like that)
-        Base.metadata.create_all()
+        Base.metadata.create_all(SQLManager.instance().get_engine())
+
+    def create(self, tablename):
+        self.__lock.acquire_write()
+        Base.metadata.tables[tablename].create(self.__engine, checkfirst=True)
+        self.__lock.release()
+
+    def drop(self, tablename):
+        self.__lock.acquire_write()
+        Base.metadata.tables[tablename].drop(self.__engine, checkfirst=True)
+        self.__lock.release()
