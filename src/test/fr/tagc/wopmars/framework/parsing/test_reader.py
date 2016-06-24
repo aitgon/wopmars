@@ -31,6 +31,10 @@ class TestReader(TestCase):
     def setUp(self):
         OptionManager.initial_test_setup()
         SQLManager.create_all()
+        session = SQLManager.instance().get_session()
+        session.get_or_create(Type, defaults={"id": 1}, name="input")
+        session.get_or_create(Type, defaults={"id": 2}, name="output")
+        session.commit()
         self.__session = SQLManager.instance().get_session()
 
         s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
@@ -90,6 +94,12 @@ class TestReader(TestCase):
         with open(self.__s_example_definition_file_duplicate_rule) as file_duplicate_rule:
             with self.assertRaises(WopMarsException):
                 Reader.check_duplicate_rules(file_duplicate_rule.read())
+
+        with open(self.__s_example_definition_file) as file:
+            try:
+                Reader.check_duplicate_rules(file.read())
+            except Exception as e:
+                raise AssertionError("Should not raise an exception " + str(e))
 
     def test_read(self):
 
@@ -188,6 +198,8 @@ class TestReader(TestCase):
         # The bad -------------------------------------:
 
         [self.assertRaises(WopMarsException, reader.read) for reader in self.__list_reader_exception_read]
+
+        SQLManager.instance().get_session().rollback()
 
 
 if __name__ == "__main__":

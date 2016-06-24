@@ -56,7 +56,8 @@ class WopMars:
         try:
             OptionManager.instance().update(docopt(__doc__, argv=argv[1:]))
         except DocoptExit as SE:
-            sys.exit("Bad argument in the command line: \n\t" + " ".join(argv) + "\n" + str(SE))
+            print("Bad argument in the command line: \n\t" + " ".join(argv) + "\n" + str(SE))
+            sys.exit(2)
 
         try:
             schema_option = Schema({
@@ -86,10 +87,12 @@ class WopMars:
             elif match_dot_def:
                 Logger.instance().error("The path " + match_dot_def.group(1) + " is not valid.")
             elif match_wrong_key:
+                # Normally never reach
                 Logger.instance().error("The option key " + match_wrong_key.group(1) + " is not known.")
             else:
+                # Normally never reach
                 Logger.instance().error("An unknown error has occured. Message: " + str(schema_msg))
-            sys.exit(1)
+            sys.exit(2)
 
         Logger.instance().debug("\nCommand line Args:" + str(OptionManager.instance()))
 
@@ -106,10 +109,10 @@ def main():
     sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/toolwrappers/")
     sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/base/")
 
-    l = ["python",  "/home/giffon/Documents/wopmars/src/resources/example_def_file2.yml", "--dot", "/home/giffon/wopmars.dot", "-n", "-vvvv"]
+    l = ["python",  "/home/giffon/Documents/wopmars/src/resources/example_def_file.yml", "--dot", "/home/giffon/wopmars.dot", "-p", "-vvvv"]
 
-    WopMars().run(sys.argv)
-    # WopMars().run(l)
+    # WopMars().run(sys.argv)
+    WopMars().run(l)
 
 if __name__ == "__main__":
     main()

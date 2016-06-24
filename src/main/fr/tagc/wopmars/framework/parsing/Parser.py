@@ -3,6 +3,7 @@ Module containing the Parser class
 """
 import sys
 
+from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql.functions import func
 
 from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
@@ -41,7 +42,9 @@ class Parser:
         Call the "read()" method of the reader to extract the set of objects of the workflow.
         Call the dag to build itself from the set of tools.
 
-        If The "--dot" option is set, the dot file is wrote here.
+        The DAG is checked to actually being a Directed Acyclic Graph.
+
+        If The "--dot" option is set, the dot and ps file is wrote here.
 
         :raise: WopMarsParsingException if the workflow is not a DAG.
         :return: the DAG
@@ -61,12 +64,20 @@ class Parser:
 
     @staticmethod
     def get_set_toolwrappers():
+        """
+        Ask the bdd for toolwrappers of the current execution.
+
+        The current execution is defined as the one with the highest id (it is auto_incrementing)
+
+        :return: Set([ToolWrapper]) the set of toolwrappers of the current execution.
+        """
         session = SQLManager.instance().get_session()
         set_toolwrappers = set([])
         try:
             execution_id = session.query(func.max(ToolWrapper.execution_id))
             Logger.instance().debug("Getting toolwrappers of the current execution. id = " + str(execution_id.one()[0]))
             set_toolwrappers = set(session.query(ToolWrapper).filter(ToolWrapper.execution_id == execution_id).all())
-        except IndexError:
-            Logger.instance().debug("No row found")
+        except NoResultFound as e:
+            raise WopMarsException("Error while parsing the configuration file. No execution have been found.",
+                                   "It looks like the read has not returned any new execution")
         return set_toolwrappers

@@ -198,6 +198,19 @@ class ToolWrapper(Base):
         return True
 
     def set_args_date_and_size(self, type, dry=False):
+        """
+        The date and the size of IOPut elements are set (if needed).
+
+        The date and the size of the files are set according to the actual date of last modification and size of the system files
+
+        The date of the tables are set according to the date of last modification notified in the modification_table table
+        If the type of IOPut is "output" and the execution is "not dry", the date in modification_table is set to the
+        current time.time() datetime.
+
+        :param type: String "input" or "output"
+        :param dry: Bool (True or False)
+        :return:
+        """
         session = SQLManager.instance().get_session()
         for f in [f for f in self.files if f.type.name == type]:
             date = datetime.datetime.fromtimestamp(os.path.getmtime(f.path))
@@ -211,6 +224,9 @@ class ToolWrapper(Base):
                 Logger.instance().debug("Output file " + str(f) + " has been loaded from previous execution.")
             elif type == "output" and not dry:
                 Logger.instance().debug("Output file " + str(f) + " has been created.")
+        # this commit is due to a bug that i couldn't figure out: the session empty itself between the two loops...
+        # this is not good at all since it may lead to inconsistence in the bdd
+        # todo fix
         session.commit()
 
         for t in [t for t in self.tables if t.type.name == type]:
@@ -226,6 +242,15 @@ class ToolWrapper(Base):
         session.commit()
 
     def same_input_than(self, other):
+        """
+        Check if the other ToolWrapper have the same input than self.
+
+        The input are say "the same" if:
+            - The tables have the same name and the same last modifcation datetime
+            - The file have the same name, the same lastm mdoficiation datetime and the same size
+        :param other:
+        :return:
+        """
         for t in [t for t in self.tables if t.type.name == "input"]:
             is_same = False
             for t2 in [t2 for t2 in other.tables if t2.type.name == "input"]:
@@ -240,15 +265,6 @@ class ToolWrapper(Base):
             is_same = False
             for f2 in [f2 for f2 in other.files if f2.type.name == "input"]:
                 # todo refactorer pour rassembler la boucle et la condition
-                # todo mettre les commentaires si dessous dans la docstring?
-                # Check if:
-                #   * name of 2 input files are the same
-                #   * path to the 2 inputs files are the same (?)
-                #   * the size of the 2 inputs files are the same
-                # todo ask aitor reflechir à si c'est nécessaire de vérifier les chemins vers les fichiers d'input
-                #   * the modified time of the files are the same
-                # todo ask aitor est-ce-que c'est nécessaire aussi? finalement, c'est le rapport au fichier d'output,
-                # qui est intéressant
                 if (f.name == f2.name and
                         f.path == f2.path and
                         f.used_at == f2.used_at and
@@ -260,18 +276,36 @@ class ToolWrapper(Base):
         return True
 
     def is_output_ok(self):
+        """
+        Check if the output of self are ready to use.
+
+        What is checked:
+            -for files:
+                - They exists
+                - Their size and date are not None
+                - Their date are after all input dates
+                - Their size and date in bdd are the same than the real ones
+
+            - for tables:
+                - They exists
+                - Their date are after all input dates
+                - Their date are the same in table 'table' than in 'modification_table'
+        :return:
+        """
         # todo tester ça, je ne pense pas que ca fonctionne, en fin de compte
         for of in [f for f in self.files if f.type.name == "output"]:
             if not os.path.exists(of.path) or \
                     not all(of.used_at > in_ft.used_at for in_ft in self.files + self.tables if (in_ft.type.name == "input" and
                                                                                                  of.used_at is not None and
-                                                                                                 in_ft.used_at is not None)):
+                                                                                                 in_ft.used_at is not None)) or \
+                    not (of.size == os.path.getsize(of.path) and of.used_at == datetime.datetime.fromtimestamp(os.path.getmtime(of.path))):
                 return False
 
         for ot in [t for t in self.tables if t.type.name == "output"]:
             if not all(ot.used_at > in_ft.used_at for in_ft in self.files + self.tables if (in_ft.type.name == "input" and
                                                                                             ot.used_at is not None and
-                                                                                            in_ft.used_at is not None)):
+                                                                                            in_ft.used_at is not None)) or \
+                    not (ot.used_at == ot.modification.date):
                 return False
         return True
 

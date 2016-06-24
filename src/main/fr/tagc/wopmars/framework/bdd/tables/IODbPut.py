@@ -3,7 +3,9 @@ Module containing the IODbPut class.
 """
 import importlib
 
-from src.main.fr.tagc.wopmars.framework.bdd.Base import Base, Engine
+from sqlalchemy.exc import OperationalError
+
+from src.main.fr.tagc.wopmars.framework.bdd.Base import Base
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship, reconstructor
 
@@ -53,7 +55,7 @@ class IODbPut(IOPut, Base):
         self.__table = eval("mod." + self.name)
         # todo ask lionel les tables spécifiques des classes métiers ne sont pas crées au tout début....
         # je ne sais pas pourquoi mais c'est arrangeant
-        Base.metadata.tables[self.__table.__tablename__].create(Engine, checkfirst=True)
+        Base.metadata.tables[self.__table.__tablename__].create(SQLManager.instance().get_engine(), checkfirst=True)
 
     def get_table(self):
         return self.__table
@@ -87,6 +89,9 @@ class IODbPut(IOPut, Base):
             if results is None:
                 Logger.instance().info("The table " + self.name + " is empty.")
                 return False
+        except OperationalError as e:
+            Logger.instance().debug("The table " + self.__table.__tablename__ + " doesn't exist.")
+            return False
         except Exception as e:
             session.rollback()
             raise e

@@ -88,14 +88,12 @@ class TestWopMars(TestCase):
             WopMars().run(cmd_line)
         end = time.time()
         runtime1 = end - start
-        print(runtime1)
 
         start = time.time()
         with self.assertRaises(SystemExit):
             WopMars().run(cmd_line)
         end = time.time()
         runtime2 = end - start
-        print(runtime2)
 
         self.assertGreater(runtime1 * 1.5, runtime2)
 
@@ -103,23 +101,37 @@ class TestWopMars(TestCase):
         OptionManager._drop()
         SQLManager._drop()
         PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File1.txt")
-        print("================================================================================")
         start = time.time()
         with self.assertRaises(SystemExit):
             WopMars().run(cmd_line)
         end = time.time()
         runtime2 = end - start
-        print(runtime2)
         self.assertTrue(runtime1 * 0.4 <= runtime2 <= runtime1 * 1.4)
 
     def get_best_factor(self, full_exec_time, rule_count, maximum_ratio=1):
         average_rule_time = full_exec_time / rule_count
         return 1 + (maximum_ratio * average_rule_time / (1.5 + average_rule_time))
 
+    def test_run6(self):
+        cmd_line = ["python", "doesnt_exist"]
+        with self.assertRaises(SystemExit) as SE:
+            WopMars().run(cmd_line)
+        self.assertEqual(SE.exception.code, 2)
+
+        cmd_line = ["python", self.__right_def_file, "--dot", "/usr/"]
+        with self.assertRaises(SystemExit) as SE:
+            WopMars().run(cmd_line)
+        self.assertEqual(SE.exception.code, 2)
+
+        cmd_line = ["python", self.__right_def_file, "--not-known"]
+        with self.assertRaises(SystemExit) as SE:
+            WopMars().run(cmd_line)
+        self.assertEqual(SE.exception.code, 2)
+
     def tearDown(self):
         SQLManager.drop_all()
         PathFinder.dir_content_remove("/home/giffon/Documents/wopmars/src/resources/outputs/")
-        OptionManager._drop()
+        # OptionManager._drop()
         SQLManager._drop()
 
 if __name__ == "__main__":

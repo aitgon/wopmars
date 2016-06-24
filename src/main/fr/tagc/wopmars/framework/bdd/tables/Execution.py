@@ -9,6 +9,9 @@ from src.main.fr.tagc.wopmars.framework.bdd.Base import Base
 
 class Execution(Base):
     """
+    The execution table is a counter of the executions. It allows to discriminate one execution from one other.
+
+    If 2 executions are exactly the same, they will be both stocked in the database with different execution numbers.
     """
 
     __tablename__ = "execution"

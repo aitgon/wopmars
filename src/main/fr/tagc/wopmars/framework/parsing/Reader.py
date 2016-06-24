@@ -7,6 +7,7 @@ import re
 
 import time
 import yaml
+from sqlalchemy.orm.exc import NoResultFound
 
 from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
 from src.main.fr.tagc.wopmars.framework.bdd.tables.Execution import Execution
@@ -35,6 +36,7 @@ class Reader:
         Open the definition file and load it's content in a dictionnary thanks to the PyYaml library. If PyYaml raise
         an exception, a WopMarsParsingException is raised instead.
 
+        The definition file is parsed in order to find duplicates rules if there is.
         The method is_grammar_respected is called and can raise WopMarsParsingException too.
 
         :raise: WopMarsParsingException: if the Yaml Spec are not respected
@@ -52,6 +54,7 @@ class Reader:
                 Logger.instance().debug("\n" + DictUtils.pretty_repr(self.__dict_workflow_definition))
                 Logger.instance().info("Read complete.")
                 Logger.instance().info("Checking whether the file is well formed...")
+                # raise an exception if there is a problem
                 self.is_grammar_respected()
                 Logger.instance().info("File well formed.")
             # YAMLError is thrown if the YAML specifications are not respected by the definition file
@@ -64,7 +67,26 @@ class Reader:
 
     @staticmethod
     def check_duplicate_rules(file):
+        """
+        This method raises an exception if the workflow definition file contains multiple rules with same name.
+
+        The workflow definition file should contain rules with different name. It is therefore recommended to not
+        call rules with tool names but functionnality instead. Example:
+
+        rule get_snp:
+            tool: SNPGetter
+            input:
+                etc..
+            output:
+                etc..
+            params:
+                etc..
+
+        :param file: String this is the content of the definition file
+        :return:
+        """
         Logger.instance().debug("Looking for duplicate rules...")
+        # All rules are found using this regex.
         rules = re.findall(r'rule (.+?):', str(file))
         seen = set()
         for r in rules:
@@ -77,7 +99,9 @@ class Reader:
 
     def read(self):
         """
-        Reads the file and extract the set of ToolWrapper.
+        Reads the file and build the workflow in the database.
+
+        ToolWrappers are then gotten from the database.
 
         The definition file is supposed to be properly formed. The validation of the content of the definition is done
         during the instanciation of the tools.
@@ -85,11 +109,13 @@ class Reader:
         :return: The set of builded ToolWrappers
         """
         session = SQLManager.instance().get_session()
-        execution = Execution()
-        input_entry = session.get_or_create(Type, defaults={"id": 1}, name="input")[0]
-        output_entry = session.get_or_create(Type, defaults={"id": 2}, name="output")[0]
-        session.commit()
+
         try:
+            # The same execution entry for the whole workflow-related bdd entries.
+            execution = Execution()
+            # get the types that should have been created previously
+            input_entry = session.query(Type).filter(Type.name == "input").one()
+            output_entry = session.query(Type).filter(Type.name == "output").one()
             set_wrapper = set()
             # Encounter a rule block
             for rule in self.__dict_workflow_definition:
@@ -123,13 +149,17 @@ class Reader:
                 wrapper_entry = self.create_toolwrapper_entry(str_rule_name, str_wrapper_name, dict_dict_elm, input_entry, output_entry)
                 wrapper_entry.execution = execution
                 set_wrapper.add(wrapper_entry)
-                # session.add(wrapper_entry)
                 Logger.instance().debug("Object toolwrapper: " + str_wrapper_name + " created.")
             session.add_all(set_wrapper)
+            # save all operations done so far.
             session.commit()
-        except Exception as e:
+        except NoResultFound as e:
             session.rollback()
-            raise e
+            raise WopMarsException("Error while parsing the configuration file. The database has not been setUp Correctly.",
+                                   str(e))
+        # except Exception as e:
+        #     session.rollback()
+        #     raise WopMarsException("Error while parsing the configuration file.", str(e))
 
     def create_toolwrapper_entry(self, str_rule_name, str_wrapper_name, dict_dict_elm, input_entry, output_entry):
         """
@@ -142,6 +172,9 @@ class Reader:
         options / input / output and the toolwrapper.
 
         The toolwrapper object is an entry of the table rule in the resulting database.
+
+        If the scopêd_session has current modification, they probably will be commited during this method:
+        tables are created and this can only be done with clean session.
 
         :param str_rule_name: String
         :param str_wrapper_name: String
@@ -164,6 +197,7 @@ class Reader:
         # Initialize the instance of ToolWrapper
         toolwrapper_wrapper = toolwrapper_class(rule_name=str_rule_name)
 
+        # associating ToolWrapper instances with their files / tables
         for input_f in dict_dict_elm["dict_input"]:
             dict_dict_elm["dict_input"][input_f].type = input_entry
             toolwrapper_wrapper.files.append(dict_dict_elm["dict_input"][input_f])
@@ -176,9 +210,13 @@ class Reader:
             toolwrapper_wrapper.options.append(dict_dict_elm["dict_params"][opt])
 
         for input_t in toolwrapper_wrapper.get_input_table():
+            # this is a preventing commit because next statement will create a new table and the session has to be clean
             session.commit()
+            # the user-side tables are created during the reading of the definition file
             table_entry = IODbPut(name=input_t)
 
+            # The table modification_table track the modifications on the user-side tables
+            # todo ask lionel trigerring?
             modification_table_entry, created = session.get_or_create(ModificationTable,
                                                                       defaults={
                                                                           "date": datetime.datetime.fromtimestamp(
@@ -201,6 +239,7 @@ class Reader:
             table_entry.modification = modification_table_entry
             toolwrapper_wrapper.tables.append(table_entry)
 
+        # the toolwrapper returned by this method are valid according to the toolwrapper developper
         toolwrapper_wrapper.is_content_respected()
         return toolwrapper_wrapper
 
@@ -236,14 +275,18 @@ class Reader:
 
     rule ...etc...
         """
-
+        # recognize the rule blocks
         regex_step1 = re.compile(r"(^rule [^\s]+$)")
+
+        # recognize the elements of the rule
         regex_step2 = re.compile(r"(^params$)|(^tool$)|(^input$)|(^output$)")
 
-        # todo regex sur les "identifier : stringliteral"?
+        # todo regex sur les "identifier : stringliteral"? verifier qu'ils respectent bien toutes les specs
+        #  (-> utilisé en base de donnée)
         # The found words are tested against the regex to see if they match or not
         for s_key_step1 in self.__dict_workflow_definition:
             bool_toolwrapper = False
+            # The first level of indentation should only contain rules
             if not regex_step1.search(s_key_step1):
                 raise WopMarsException("Error while parsing the configuration file: \n\t"
                                        "The grammar of the WopMars's definition file is not respected:",
@@ -252,7 +295,9 @@ class Reader:
                                        "\' doesn't match the grammar: it should start with 'rule'" +
                                        "and contains only one word after the 'rule' keyword" +
                                        "\nexemple:" + exemple_file_def)
+
             for s_key_step2 in self.__dict_workflow_definition[s_key_step1]:
+                # the second level of indentation should only contain elements of rule
                 if not regex_step2.search(s_key_step2):
                     raise WopMarsException("Error while parsing the configuration file: \n\t"
                                            "The grammar of the WopMars's definition file is not respected:",
@@ -261,9 +306,13 @@ class Reader:
                                            " doesn't match the grammar: it should be " +
                                            "'tool', 'params', 'input' or 'output'" +
                                        "\nexemple:" + exemple_file_def)
-                if s_key_step2 == "tool":
+                # There can be only one tool in the dictionnary (if there is more written in the definition file, only
+                # the last will be taken into account
+                # todo ask aitor est-ce-que c'est grave?
+                if s_key_step2 == "tool" and bool_toolwrapper == False:
                     bool_toolwrapper = True
 
+            # All rules should contain a tool
             if not bool_toolwrapper:
                 raise WopMarsException("Error while parsing the configuration file: \n\t"
                                        "The grammar of the WopMars's definition file is not respected:",

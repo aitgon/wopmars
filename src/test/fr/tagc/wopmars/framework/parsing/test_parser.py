@@ -25,6 +25,10 @@ class TestParser(TestCase):
         OptionManager.initial_test_setup()
 
         SQLManager.create_all()
+        session = SQLManager.instance().get_session()
+        session.get_or_create(Type, defaults={"id": 1}, name="input")
+        session.get_or_create(Type, defaults={"id": 2}, name="output")
+        session.commit()
         s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
 
         # The good -------------------------------:

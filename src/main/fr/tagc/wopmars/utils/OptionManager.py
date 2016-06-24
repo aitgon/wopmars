@@ -23,6 +23,7 @@ class OptionManager(dict, SingletonMixin):
 
     def validate(self, schema):
         self.validate_definition_file()
+        self.validate_database()
         self.validate_dot()
         self.validate_log()
 
@@ -74,7 +75,7 @@ class OptionManager(dict, SingletonMixin):
         return s
 
     @staticmethod
-    def initial_test_setup():
+    def initial_test_setup(mod_name="db"):
         OptionManager.instance()["-v"] = 4
         OptionManager.instance()["--dot"] = None
         OptionManager.instance()["--log"] = os.path.join(os.path.expanduser("~"), ".wopmars/wopmars.log")
@@ -83,4 +84,4 @@ class OptionManager(dict, SingletonMixin):
         OptionManager.instance()["--targetrule"] = None
         OptionManager.instance()["--forceall"] = None
         OptionManager.instance()["--dry"] = None
-        # OptionManager.instance()["DATABASE"] = os.path.join(PathFinder.find_src(os.path.dirname(os.path.realpath(__file__))), "resources/outputs/" + mod_name + ".sqlite")
+        OptionManager.instance()["DATABASE"] = os.path.join(PathFinder.find_src(os.path.dirname(os.path.realpath(__file__))), "resources/outputs/" + mod_name + ".sqlite")
