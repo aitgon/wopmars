@@ -26,10 +26,15 @@ class OptionManager(dict, SingletonMixin):
         self.validate_database()
         self.validate_dot()
         self.validate_log()
+        self.validate_dir()
 
         schema.validate(self)
 
         self.make_absolute_paths()
+
+    def validate_dir(self):
+        if self["--directory"] == "$CWD":
+            self["--directory"] = os.getcwd()
 
     def make_absolute_paths(self):
         if self["DEFINITION_FILE"]:
@@ -38,6 +43,8 @@ class OptionManager(dict, SingletonMixin):
             self["--log"] = os.path.abspath(self["--log"])
         if self["--dot"]:
             self["--dot"] = os.path.abspath(self["--dot"])
+        if self["--directory"]:
+            self["--directory"] = os.path.abspath(self["--directory"])
 
     def validate_definition_file(self):
         if self["DEFINITION_FILE"] is None:
@@ -45,7 +52,7 @@ class OptionManager(dict, SingletonMixin):
 
     def validate_database(self):
         if self["DATABASE"] is None:
-            self["DATABASE"] = os.path.join(os.path.expanduser("~"), ".wopmars/wopmars.sqlite")
+            self["DATABASE"] = os.path.expanduser("~/.wopmars/wopmars.sqlite")
 
     def validate_dot(self):
         if self["--dot"]:
@@ -53,17 +60,18 @@ class OptionManager(dict, SingletonMixin):
                 self["--dot"] += "wopmars.dot"
             elif self["--dot"][-4:] != '.dot':
                 self["--dot"] += ".dot"
+            self["--dot"] = os.path.expanduser(self["--dot"])
 
     def validate_log(self):
         if self["--log"]:
             if self["--log"][0] == "$":
-                if not os.path.exists(os.path.expanduser("~") + "/.wopmars/"):
-                    os.makedirs(os.path.expanduser("~") + "/.wopmars/")
-                self["--log"] = os.path.expanduser("~") + "/.wopmars/wopmars.log"
+                self["--log"] = "~/.wopmars/wopmars.log"
             elif self["--log"][-1] == "/":
                 self["--log"] += "wopmars.log"
             elif self["--log"][-4:] != '.log':
                 self["--log"] += ".log"
+            self["--log"] = os.path.expanduser(self["--log"])
+
 
     def __str__(self):
         s = ""
@@ -85,3 +93,5 @@ class OptionManager(dict, SingletonMixin):
         OptionManager.instance()["--forceall"] = None
         OptionManager.instance()["--dry"] = None
         OptionManager.instance()["DATABASE"] = os.path.join(PathFinder.find_src(os.path.dirname(os.path.realpath(__file__))), "resources/outputs/" + mod_name + ".sqlite")
+        OptionManager.instance()["--directory"] = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
+        os.chdir(OptionManager.instance()["--directory"])

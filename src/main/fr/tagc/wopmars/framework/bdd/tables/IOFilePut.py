@@ -41,7 +41,7 @@ class IOFilePut(IOPut, Base):
         return os.path.isfile(self.path)
 
     def __eq__(self, other):
-        return self.path == other.path
+        return os.path.abspath(self.path) == os.path.abspath(other.path)
 
     def __hash__(self):
         return id(self)

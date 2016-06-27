@@ -29,10 +29,10 @@ class TestToolThread(TestCase):
         input_entry = Type(name="input")
         output_entry = Type(name="output")
 
-        f1 = IOFilePut(name="input1", path="/home/giffon/Documents/wopmars/src/resources/input_File1.txt")
+        f1 = IOFilePut(name="input1", path="resources/input_File1.txt")
         f1.type = input_entry
 
-        f2 = IOFilePut(name="output1", path="/home/giffon/Documents/wopmars/src/resources/outputs/output_File1.txt")
+        f2 = IOFilePut(name="output1", path="resources/outputs/output_File1.txt")
         f2.type = output_entry
 
         t1 = IODbPut(name="FooBase")
@@ -44,10 +44,10 @@ class TestToolThread(TestCase):
         tw1.files.extend([f1, f2])
         tw1.tables.append(t1)
 
-        f12 = IOFilePut(name="input1", path="/home/giffon/Documents/wopmars/src/resources/input_File1.txt")
+        f12 = IOFilePut(name="input1", path="resources/input_File1.txt")
         f12.type = input_entry
 
-        f22 = IOFilePut(name="output1", path="/home/giffon/Documents/wopmars/src/resources/outputs/output_File1.txt")
+        f22 = IOFilePut(name="output1", path="resources/outputs/output_File1.txt")
         f22.type = output_entry
 
         t12 = IODbPut(name="FooBase")
@@ -60,10 +60,10 @@ class TestToolThread(TestCase):
         tw2.files.extend([f12, f22])
         tw2.tables.append(t12)
 
-        f13 = IOFilePut(name="input1", path="/home/giffon/Documents/wopmars/src/resources/input_File1.txt")
+        f13 = IOFilePut(name="input1", path="resources/input_File1.txt")
         f13.type = input_entry
 
-        f23 = IOFilePut(name="output1", path="/home/giffon/Documents/wopmars/src/resources/outputs/output_File1.txt")
+        f23 = IOFilePut(name="output1", path="resources/outputs/output_File1.txt")
         f23.type = output_entry
 
         t13 = IODbPut(name="FooBase")
@@ -92,7 +92,7 @@ class TestToolThread(TestCase):
 
     def tearDown(self):
         SQLManager.drop_all()
-        os.remove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File1.txt")
+        os.remove("resources/outputs/output_File1.txt")
 
 if __name__ == '__main__':
     unittest.main()

@@ -31,7 +31,7 @@ class TestWorkflowManager(TestCase):
 
     def tearDown(self):
         SQLManager.drop_all()
-        PathFinder.dir_content_remove("/home/giffon/Documents/wopmars/src/resources/outputs/")
+        PathFinder.dir_content_remove("resources/outputs/")
         OptionManager._drop()
         SQLManager._drop()
 

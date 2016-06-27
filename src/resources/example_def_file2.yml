@@ -1,54 +1,54 @@
 rule rule1:
     tool: FooWrapper11
     input:
-        input1: "/home/giffon/Documents/wopmars/src/resources/input_File1.txt"
+        input1: "resources/input_File1.txt"
     output:
-        output1: "/home/giffon/Documents/wopmars/src/resources/outputs/output_File1.txt"
-        output2: "/home/giffon/Documents/wopmars/src/resources/outputs/output_File2.txt"
-        output3: "/home/giffon/Documents/wopmars/src/resources/outputs/output_File3.txt"
+        output1: "resources/outputs/output_File1.txt"
+        output2: "resources/outputs/output_File2.txt"
+        output3: "resources/outputs/output_File3.txt"
 
 rule rule2:
     tool: FooWrapper6
     input:
-        input1: "/home/giffon/Documents/wopmars/src/resources/outputs/output_File1.txt"
+        input1: "resources/outputs/output_File1.txt"
     output:
-        output1: "/home/giffon/Documents/wopmars/src/resources/outputs/output_File4.txt"
-        output2: "/home/giffon/Documents/wopmars/src/resources/outputs/output_File5.txt"
+        output1: "resources/outputs/output_File4.txt"
+        output2: "resources/outputs/output_File5.txt"
 
 rule rule3:
     tool: FooWrapper2
     input:
-        input1: "/home/giffon/Documents/wopmars/src/resources/outputs/output_File4.txt"
+        input1: "resources/outputs/output_File4.txt"
     output:
-        output1: "/home/giffon/Documents/wopmars/src/resources/outputs/output_File6.txt"
+        output1: "resources/outputs/output_File6.txt"
 
 rule rule4:
     tool: FooWrapper10
     input:
-        input1: "/home/giffon/Documents/wopmars/src/resources/outputs/output_File6.txt"
-        input2: "/home/giffon/Documents/wopmars/src/resources/outputs/output_File7.txt"
-        input3: "/home/giffon/Documents/wopmars/src/resources/outputs/output_File9.txt"
+        input1: "resources/outputs/output_File6.txt"
+        input2: "resources/outputs/output_File7.txt"
+        input3: "resources/outputs/output_File9.txt"
     output:
-        output1: "/home/giffon/Documents/wopmars/src/resources/outputs/output_File10.txt"
+        output1: "resources/outputs/output_File10.txt"
 
 rule rule5:
     tool: FooWrapper8
     input:
-        input1: "/home/giffon/Documents/wopmars/src/resources/outputs/output_File5.txt"
-        input2: "/home/giffon/Documents/wopmars/src/resources/outputs/output_File2.txt"
+        input1: "resources/outputs/output_File5.txt"
+        input2: "resources/outputs/output_File2.txt"
     output:
-        output1: "/home/giffon/Documents/wopmars/src/resources/outputs/output_File7.txt"
+        output1: "resources/outputs/output_File7.txt"
 
 rule rule6:
     tool: FooWrapper2
     input:
-        input1: "/home/giffon/Documents/wopmars/src/resources/outputs/output_File3.txt"
+        input1: "resources/outputs/output_File3.txt"
     output:
-        output1: "/home/giffon/Documents/wopmars/src/resources/outputs/output_File8.txt"
+        output1: "resources/outputs/output_File8.txt"
 
 rule rule7:
     tool: FooWrapper2
     input:
-        input1: "/home/giffon/Documents/wopmars/src/resources/outputs/output_File8.txt"
+        input1: "resources/outputs/output_File8.txt"
     output:
-        output1: "/home/giffon/Documents/wopmars/src/resources/outputs/output_File9.txt"
+        output1: "resources/outputs/output_File9.txt"

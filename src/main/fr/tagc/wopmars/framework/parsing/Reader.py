@@ -6,6 +6,8 @@ import importlib
 import re
 
 import time
+
+import os
 import yaml
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -138,7 +140,7 @@ class Reader:
                             else:
                                 # In theory, there cannot be a IODbPut specification in the definition file
                                 obj_created = IOFilePut(name=elm,
-                                                        path=self.__dict_workflow_definition[rule][key_second_step][elm])
+                                                        path=os.path.abspath(os.path.join(OptionManager.instance()["--directory"], self.__dict_workflow_definition[rule][key_second_step][elm])))
                             dict_dict_elm["dict_" + key_second_step][elm] = obj_created
                             Logger.instance().debug("Object " + key_second_step + ": " +
                                                     elm + " created.")

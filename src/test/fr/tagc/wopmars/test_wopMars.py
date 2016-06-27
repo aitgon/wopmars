@@ -15,12 +15,13 @@ from src.main.fr.tagc.wopmars.wopmars import WopMars
 class TestWopMars(TestCase):
     def setUp(self):
         s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
+        os.chdir(s_root_path)
 
         self.__right_def_file = s_root_path + "resources/example_def_file.yml"
         self.__right_def_file_only_files = s_root_path + "resources/example_def_file2.yml"
 
     def test_run(self):
-        cmd_line = ["python", self.__right_def_file, "-vvvv", "-p"]
+        cmd_line = ["python", self.__right_def_file, "-vvvv", "-p", "-d", PathFinder.find_src(os.path.realpath(__file__))]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 0)
@@ -33,9 +34,9 @@ class TestWopMars(TestCase):
 
     def test_run3(self):
         SQLManager.create_all()
-        subprocess.Popen(["touch", "/home/giffon/Documents/wopmars/src/resources/outputs/output_File1.txt"])
-        subprocess.Popen(["touch", "/home/giffon/Documents/wopmars/src/resources/outputs/output_File4.txt"])
-        subprocess.Popen(["touch", "/home/giffon/Documents/wopmars/src/resources/outputs/output_File5.txt"])
+        subprocess.Popen(["touch", "resources/outputs/output_File1.txt"])
+        subprocess.Popen(["touch", "resources/outputs/output_File4.txt"])
+        subprocess.Popen(["touch", "resources/outputs/output_File5.txt"])
         for i in range(10):
             f = FooBase2(name="testwopmars " + str(i))
             SQLManager.instance().get_session().add(f)
@@ -72,7 +73,7 @@ class TestWopMars(TestCase):
         SQLManager.drop_all()
         OptionManager._drop()
         SQLManager._drop()
-        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File1.txt")
+        PathFinder.silentremove("resources/outputs/output_File1.txt")
 
         start = time.time()
         with self.assertRaises(SystemExit):
@@ -100,7 +101,7 @@ class TestWopMars(TestCase):
         SQLManager.drop_all()
         OptionManager._drop()
         SQLManager._drop()
-        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File1.txt")
+        PathFinder.silentremove("resources/outputs/output_File1.txt")
         start = time.time()
         with self.assertRaises(SystemExit):
             WopMars().run(cmd_line)
@@ -130,7 +131,7 @@ class TestWopMars(TestCase):
 
     def tearDown(self):
         SQLManager.drop_all()
-        PathFinder.dir_content_remove("/home/giffon/Documents/wopmars/src/resources/outputs/")
+        PathFinder.dir_content_remove("resources/outputs/")
         # OptionManager._drop()
         SQLManager._drop()
 

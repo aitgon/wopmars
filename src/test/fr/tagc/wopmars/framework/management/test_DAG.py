@@ -103,7 +103,7 @@ class TestDAG(TestCase):
     def tearDown(self):
         SQLManager.drop_all()
         OptionManager._drop()
-        PathFinder.silentremove("/home/giffon/Documents/wopmars/src/resources/outputs/output_File1.txt")
+        PathFinder.silentremove("resources/outputs/output_File1.txt")
         SQLManager._drop()
 
     def test_init(self):

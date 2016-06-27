@@ -366,7 +366,7 @@ class ToolWrapper(Base):
     # todo check size / date -> non! pour le moment on vérifie juste que les paramètres sont identiques
     def same_files(self, other, type_name):
         for input_f in [rf for rf in self.files if rf.type.name == type_name]:
-            is_in = bool([rf for rf in other.files if (input_f.path == rf.path and
+            is_in = bool([rf for rf in other.files if (os.path.abspath(input_f.path) == os.path.abspath(rf.path) and
                                                        input_f.name == rf.name and
                                                        rf.type.name == type_name)])
             if not is_in:

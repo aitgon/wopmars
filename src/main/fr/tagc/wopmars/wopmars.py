@@ -1,22 +1,25 @@
 """WopMars: Workflow Python Manager for Reproducible Science.
 
 Usage:
-  wopmars.py [-n] [-p] [-F] [-v...] [-d FILE] [-L FILE] [-f RULE | -t RULE] [DEFINITION_FILE] [DATABASE]
+  wopmars.py [-n] [-p] [-F] [-v...] [-d DIR] [-g FILE] [-L FILE] [-f RULE | -t RULE] [DEFINITION_FILE] [DATABASE]
 
 Arguments:
   DEFINITION_FILE  Path to the definition file of the workflow [default: wopfile.yml].
   DATABASE         Path to the sqlite database file [default: $HOME/.wopmars/db.sqlite]
+  FILE             Path to a file.
+  RULE             Name of a rule in the workflow definition file.
 
 Options:
   -h --help                    Show this help.
   -v                           Set verbosity level.
-  -d FILE --dot=FILE           Write dot representing the workflow in the FILE file (with .dot extension).
+  -g FILE --dot=FILE           Write dot representing the workflow in the FILE file (with .dot extension).
   -L FILE --log=FILE           Write logs in FILE file [default: $HOME/.wopmars/wopmars.log].
   -p --printtools              Write logs in standard output.
   -f RULE --sourcerule=RULE    Execute the workflow from the given RULE.
   -t RULE --targetrule=RULE    Execute the workflow to the given RULE.
   -F --forceall                Force the execution of the workflow, without checking for previous executions.
   -n --dry                     Do not execute anything but simulate.
+  -d --directory=DIR           Set the current working directory. Usefull for working with relative poths [default: $CWD].
 """
 import os
 import sys
@@ -70,10 +73,12 @@ class WopMars:
                 "--sourcerule": Or(None, str),
                 "--targetrule": Or(None, str),
                 "--forceall": Use(bool),
-                "--dry": Use(bool)
+                "--dry": Use(bool),
+                "--directory": Use(os.path.isdir)
             })
             # The option values are validated using schema library
             OptionManager.instance().validate(schema_option)
+            os.chdir(OptionManager.instance()["--directory"])
         except SchemaError as schema_msg:
             Logger.instance().debug("\nCommand line Args:" + str(OptionManager.instance()))
             # regex for the different possible error messages.
@@ -109,8 +114,14 @@ def main():
     sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/toolwrappers/")
     sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/base/")
 
-    l = ["python",  "/home/giffon/Documents/wopmars/src/resources/example_def_file.yml", "--dot", "/home/giffon/wopmars.dot", "-p", "-vvvv"]
+    home_wopmars = os.path.join(os.path.expanduser("~"), ".wopmars/")
 
+    if not os.path.isdir(home_wopmars):
+        os.makedirs(home_wopmars)
+
+    l = ["python",  "/home/luc/Documents/WORK/wopmars/src/resources/example_def_file.yml", "--dot", "~/.wopmars/wopmars.dot",
+         "-p", "-vvvv", "-d", "/home/luc/Documents/WORK/wopmars/src"]
+    # todo il faut modifier le pythonpath pour que le programme fonctionne, c'est anormal? (pour mettre les toolwrappers dans le pythonpath)
     # WopMars().run(sys.argv)
     WopMars().run(l)
 
