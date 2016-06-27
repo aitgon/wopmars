@@ -112,7 +112,6 @@ class TestDAG(TestCase):
 
             dag_from_base = DAG(set(SQLManager.instance().get_session().query(ToolWrapper).all()))
             self.assertEqual(my_dag, dag_from_base)
-            # todo download un set a partir de la bdd
 
             # Verifying that the nodes are correctly sorted
             self.assertTrue(self.__toolwrapper_fourth in my_dag.successors(self.__toolwrapper_third))

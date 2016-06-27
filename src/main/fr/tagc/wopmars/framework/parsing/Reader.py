@@ -9,6 +9,12 @@ import time
 
 import os
 import yaml
+from yaml.constructor import ConstructorError
+try:
+    from yaml import CLoader as Loader
+except ImportError:
+    from yaml import Loader
+
 from sqlalchemy.orm.exc import NoResultFound
 
 from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
@@ -52,6 +58,7 @@ class Reader:
                 # The workflow definition file is loaded as-it in memory by the pyyaml library
                 Logger.instance().info("Reading the definition file: " + str(s_definition_file) + "...")
                 Reader.check_duplicate_rules(s_def_file_content)
+                yaml.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, self.no_duplicates_constructor)
                 self.__dict_workflow_definition = yaml.load(s_def_file_content)
                 Logger.instance().debug("\n" + DictUtils.pretty_repr(self.__dict_workflow_definition))
                 Logger.instance().info("Read complete.")
@@ -63,14 +70,32 @@ class Reader:
             except yaml.YAMLError as exc:
                 raise WopMarsException("Error while parsing the configuration file: \n\t"
                                        "The YAML specification is not respected:", str(exc))
+            except ConstructorError as CE:
+                raise WopMarsException("Error while parsing the configuration filer: \n\t",
+                                       str(CE))
         except FileNotFoundError:
             raise WopMarsException("Error while parsing the configuration file: \n\tInput error:",
                                    "The specified file at " + s_definition_file + " doesn't exist.")
 
     @staticmethod
+    def no_duplicates_constructor(loader, node, deep=False):
+        """Check for duplicate keys."""
+
+        mapping = {}
+        for key_node, value_node in node.value:
+            key = loader.construct_object(key_node, deep=deep)
+            value = loader.construct_object(value_node, deep=deep)
+            if key in mapping:
+                raise ConstructorError("while constructing a mapping", node.start_mark,
+                                       "found duplicate key (%s)" % key, key_node.start_mark)
+            mapping[key] = value
+
+        return loader.construct_mapping(node, deep)
+
+    @staticmethod
     def check_duplicate_rules(file):
         """
-        This method raises an exception if the workflow definition file contains multiple rules with same name.
+        This method raises an exception if the workflow definition file contains duplicate keys.
 
         The workflow definition file should contain rules with different name. It is therefore recommended to not
         call rules with tool names but functionnality instead. Example:
@@ -308,11 +333,20 @@ class Reader:
                                            " doesn't match the grammar: it should be " +
                                            "'tool', 'params', 'input' or 'output'" +
                                        "\nexemple:" + exemple_file_def)
-                # There can be only one tool in the dictionnary (if there is more written in the definition file, only
-                # the last will be taken into account
-                # todo ask aitor est-ce-que c'est grave?
-                if s_key_step2 == "tool" and bool_toolwrapper == False:
-                    bool_toolwrapper = True
+
+
+                # todo ask lionel -> pour les classes métier: le dev doit créer un package et doit l'installer avant de pouvoir s'en servir
+                # aitor aimerait regrouper des tw dans un package:
+                #        snp.BedIntersect
+                #        snp.MatrixScan
+                #        snp.etc.
+                if s_key_step2 == "tool":
+                    if bool_toolwrapper == False:
+                        bool_toolwrapper = True
+                    elif bool_toolwrapper == True:
+                        raise WopMarsException("Error while parsing the configuration file: \n\t",
+                                               "There is multiple tools specified for the " + str(s_key_step1))
+
 
             # All rules should contain a tool
             if not bool_toolwrapper:

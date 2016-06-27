@@ -58,6 +58,7 @@ class TestReader(TestCase):
                 "resources/example_def_file_wrong_grammar.yml",
                 "resources/example_def_file_wrong_grammar2.yml",
                 "resources/example_def_file_wrong_grammar3.yml",
+                "resources/example_def_file_wrong_grammar4.yml"
                 ]
         ]
 

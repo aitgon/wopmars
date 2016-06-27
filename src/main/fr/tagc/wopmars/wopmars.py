@@ -36,15 +36,9 @@ from src.main.fr.tagc.wopmars.utils.PathFinder import PathFinder
 from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 # TODO faire en sorte que les imports commencent a fr
 # todo parcourir le code pour refaire la documentation -> compatible sphinx
-# todo faire plus de tests: notamment pour la partie "from" et "to"
-# todo parcourir l'exécution du code pour améliorer les messages de Log... bien réfléchir à ce qui est import, penser
-# aux garde - fou
-# todo verifier attentivement la trace par rapport a la base de données, je pense qu'il peut y avoir un bug sachant que
-# le test d'existence des resultats repose sur le fait que la table soit vide ou pas: deux cas de figure qui posent probleme:
-#    - si un outil a une table comme input et la meme table comme output, alors sa date d'utilisation comme input sera 1,
-#      comme output sera 2, nouvel input = 2 donc on s'en sert pas -> c'est ok
-#    - si un outil a une table comme input et la meme table comme output et qu'un autre outil arrive après lui avec la meme table comme input,
-#      dans ce cas, le workflow ne peut pas savoir quel outil doit arriver en premier !!! todo ask aitor todo ask lionel
+# todo parcourir l'exécution du code pour améliorer les messages de Log... bien réfléchir à ce qui est import, penser aux garde - fou
+# todo faire en sorte que plusieurs outils puissent écrire dans une même table
+# todo proposer un systeme de packaging des toolwrappers
 
 
 class WopMars:
@@ -111,6 +105,8 @@ class WopMars:
 
 
 def main():
+    # todo ask lionel: du coup, ça, c'est pas censé y être? vu que les toolwrappers ne devront pas être dans
+    # l'arborescence du projet? même les toolwrappers de base
     sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/toolwrappers/")
     sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/base/")
 
@@ -121,7 +117,6 @@ def main():
 
     l = ["python",  "/home/luc/Documents/WORK/wopmars/src/resources/example_def_file.yml", "--dot", "~/.wopmars/wopmars.dot",
          "-p", "-vvvv", "-d", "/home/luc/Documents/WORK/wopmars/src"]
-    # todo il faut modifier le pythonpath pour que le programme fonctionne, c'est anormal? (pour mettre les toolwrappers dans le pythonpath)
     # WopMars().run(sys.argv)
     WopMars().run(l)
 
