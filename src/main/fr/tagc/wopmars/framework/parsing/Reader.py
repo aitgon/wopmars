@@ -243,7 +243,10 @@ class Reader:
             table_entry = IODbPut(name=input_t)
 
             # The table modification_table track the modifications on the user-side tables
-            # todo ask lionel trigerring?
+            # todo ask lionel trigerring? Actuellement je modifie a la main les dates de modification quand un outil a
+            #  terminé son fonctionnement. Faire un trigger serait mieux, mais c'est compliqué à faire en sqlalchemy
+            # est-ce-que ça vaut le coup? J'ai pas l'impression. -> cependant, ca peut éviter des problèmes, en cas de
+            # modification de la table a la main par l'utilisateur
             modification_table_entry, created = session.get_or_create(ModificationTable,
                                                                       defaults={
                                                                           "date": datetime.datetime.fromtimestamp(
@@ -308,8 +311,6 @@ class Reader:
         # recognize the elements of the rule
         regex_step2 = re.compile(r"(^params$)|(^tool$)|(^input$)|(^output$)")
 
-        # todo regex sur les "identifier : stringliteral"? verifier qu'ils respectent bien toutes les specs
-        #  (-> utilisé en base de donnée)
         # The found words are tested against the regex to see if they match or not
         for s_key_step1 in self.__dict_workflow_definition:
             bool_toolwrapper = False
@@ -335,8 +336,8 @@ class Reader:
                                        "\nexemple:" + exemple_file_def)
 
 
-                # todo ask lionel -> pour les classes métier: le dev doit créer un package et doit l'installer avant de pouvoir s'en servir
-                # aitor aimerait regrouper des tw dans un package:
+                # todo ask lionel -> pour les classes métier: le dev doit créer un package et doit l'installer avant
+                # de pouvoir s'en servir aitor aimerait regrouper des tw dans un package:
                 #        snp.BedIntersect
                 #        snp.MatrixScan
                 #        snp.etc.
