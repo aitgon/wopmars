@@ -65,8 +65,7 @@ class WorkflowManager(ToolWrapperObserver):
         self.__dag_tools = None
         self.__dag_to_exec = None
         self.__already_runned = set()
-# for f in
-        pass
+
     def run(self):
         """
         Get the dag then execute it.
@@ -204,7 +203,9 @@ class WorkflowManager(ToolWrapperObserver):
             thread_tw = self.__queue_exec.get()
             tw = thread_tw.get_toolwrapper()
             Logger.instance().debug("Current rule: " + tw.name + "->" + tw.toolwrapper)
-            if tw.are_inputs_ready():
+            if not self.all_predecessors_have_run(tw):
+                Logger.instance().debug("Predecessors of rule: " + tw.name + " have not been executed yet.")
+            elif tw.are_inputs_ready():
                 tw.set_args_date_and_size("input")
                 Logger.instance().debug("ToolWrapper ready: " + tw.toolwrapper)
                 dry = False
@@ -238,7 +239,7 @@ class WorkflowManager(ToolWrapperObserver):
                 # If there is no tool waiting and no tool being executed, the workflow has finished.
                 Logger.instance().info("The workflow has completed.")
                 sys.exit(0)
-            # uniquement en environnement multiThread
+            # uniquement en environnement multiThreadpredece
             elif not self.check_buffer():
                 # If there is no tool being executed but there is that are waiting something, the workflow has an issue
                 raise WopMarsException("The workflow has failed.",
@@ -247,6 +248,9 @@ class WorkflowManager(ToolWrapperObserver):
                                                   " -> rule: " +
                                                   t.get_toolwrapper().name for t in self.__list_queue_buffer]) + ". ")
             # If there is one tool that is ready, it means that it is in queue because ressources weren't available.
+
+    def all_predecessors_have_run(self, tw):
+        return self.__dag_to_exec.get_all_predecessors(tw).difference(set([tw])).issubset(set(self.__already_runned))
 
     @staticmethod
     def is_this_tool_already_done(tw):

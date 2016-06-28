@@ -1,5 +1,9 @@
-python3 wopmars.py ~/test/wopmars/db.sqlite echec
+rm ~/test/wopmars/resources/outputs/*
 
-python3 wopmars.py -p -vvv -d ~/test/wopmars ~/test/wopmars/db.sqlite ~/test/wopmars/wopfile.yml
+python3 wopmars.py ~/test/wopmars/resources/outputs/db.sqlite echec
 
+python3 wopmars.py -p -vvv -d ~/test/wopmars ~/test/wopmars/resources/outputs/db.sqlite ~/test/wopmars/wopfile.yml --dot ~/test/wopmars/resources/outputs/wopdot.dot
 
+rm ~/test/wopmars/resources/outputs/output_File4.txt
+
+python3 wopmars.py -p -vvv -d ~/test/wopmars ~/test/wopmars/db.sqlite ~/test/wopmars/wopfile.yml --dot ~/test/wopmars/wopdot.dot

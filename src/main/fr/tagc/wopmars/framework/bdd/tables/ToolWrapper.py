@@ -411,9 +411,13 @@ class ToolWrapper(Base):
         s += "\\n"
         for input_f in [f for f in self.files if f.type.name == "input"]:
             s += "\\n\t\t" + input_f.name + ": " + str(input_f.path)
+        for input_t in [t for t in self.tables if t.type.name == "input"]:
+            s += "\\n\t\tinput_table: " + input_t.name
         s += "\\n"
         for output_f in [f for f in self.files if f.type.name == "output"]:
             s += "\\n\t\t" + output_f.name + ": " + str(output_f.path)
+        for output_t in [t for t in self.tables if t.type.name == "output"]:
+            s += "\\n\t\toutput_table: " + output_t.name
         s += "\""
         return s
 
