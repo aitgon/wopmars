@@ -30,7 +30,6 @@ class IOFilePut(IOPut, Base):
     # One file has One type
     type = relationship("Type", back_populates="files")
 
-
     def is_ready(self):
         """
         Check if the file exists on the hard drive

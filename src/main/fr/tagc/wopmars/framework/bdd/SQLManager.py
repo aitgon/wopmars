@@ -57,6 +57,7 @@ class SQLManager(SingletonMixin):
         """
         Logger.instance().debug(str(session) + " want the write lock on SQLManager.")
         self.__lock.acquire_write()
+        # todo faire peut etre try catch de la session ici
         Logger.instance().debug(str(session) + " has taken the write lock on SQLManager.")
         session.commit()
         Logger.instance().debug(str(session) + " has been commited.")
@@ -65,7 +66,7 @@ class SQLManager(SingletonMixin):
     def query(self, session, call):
         # todo twthread gérer le lock pour les lectures
         # -> recuperer l'objet query et faire le call ici (all, one, first... )
-        # todo ask lionel, comment tu ferais?
+        # todo ask lionel, comment tu ferais? faire le eval
         Logger.instance().debug(str(session) + " want the read lock on SQLManager.")
         self.__lock.acquire_read()
         Logger.instance().debug(str(session) + " has taken the read lock on SQLManager.")

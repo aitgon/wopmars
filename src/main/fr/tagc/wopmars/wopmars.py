@@ -1,7 +1,7 @@
 """WopMars: Workflow Python Manager for Reproducible Science.
 
 Usage:
-  wopmars.py [-n] [-p] [-F] [-v...] [-d DIR] [-g FILE] [-L FILE] [-f RULE | -t RULE] [DEFINITION_FILE] [DATABASE]
+  wopmars.py [-n] [-p] [-F] [-v...] [-d DIR] [-g FILE] [-L FILE] [-f RULE | -t RULE] [DATABASE] [DEFINITION_FILE]
 
 Arguments:
   DEFINITION_FILE  Path to the definition file of the workflow [default: wopfile.yml].
@@ -39,7 +39,7 @@ from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsEx
 # todo parcourir l'exécution du code pour améliorer les messages de Log... bien réfléchir à ce qui est import, penser aux garde - fou
 # todo faire en sorte que plusieurs outils puissent écrire dans une même table
 # todo proposer un systeme de packaging des toolwrappers
-# todo
+# todo option dry -> va de pair avec l'exécution d'un seul toolwrapper affichera les commandes à lancer pour lancer le-dit toolwrapper
 
 
 class WopMars:
@@ -59,7 +59,7 @@ class WopMars:
 
         try:
             schema_option = Schema({
-                'DEFINITION_FILE': Or("wopfile.yml", Use(lambda k: open(k).close())),
+                'DEFINITION_FILE': Or("wopfile.yml", str),
                 'DATABASE': Use(PathFinder.check_valid_path),
                 '-v': Or(0, And(int, lambda n: 1 < n < 5)),
                 '--dot': Use(PathFinder.check_valid_path),
@@ -118,8 +118,8 @@ def main():
 
     l = ["python",  "/home/luc/Documents/WORK/wopmars/src/resources/example_def_file.yml", "--dot", "~/.wopmars/wopmars.dot",
          "-p", "-vvvv", "-d", "/home/luc/Documents/WORK/wopmars/src"]
-    # WopMars().run(sys.argv)
-    WopMars().run(l)
+    WopMars().run(sys.argv)
+    # WopMars().run(l)
 
 if __name__ == "__main__":
     main()

@@ -53,6 +53,8 @@ class OptionManager(dict, SingletonMixin):
     def validate_database(self):
         if self["DATABASE"] is None:
             self["DATABASE"] = os.path.expanduser("~/.wopmars/wopmars.sqlite")
+        else:
+            self["DATABASE"] = os.path.expanduser(self["DATABASE"])
 
     def validate_dot(self):
         if self["--dot"]:

@@ -27,11 +27,16 @@ class Logger(SingletonMixin):
         self.__logger.setLevel(logging.DEBUG)
 
         self.__stream_handler = logging.StreamHandler()
+
+        self.__stream_handler_err = logging.StreamHandler()
+        self.__stream_handler_err.setLevel(logging.WARNING)
+
         s_path_log_file = OptionManager.instance()["--log"].rsplit(".", 1)[0]
         # log file in append mode of size 1 Mo and 1 backup
         self.__file_handler = RotatingFileHandler(s_path_log_file + ".log", 'a', 1000000, 1)
         formatter_file = logging.Formatter('%(asctime)s :: %(levelname)s :: %(message)s')
         self.__file_handler.setFormatter(formatter_file)
+
         # err file in append mode of size 1 Mo and 1 backup
         self.__err_handler = RotatingFileHandler(s_path_log_file + ".err", 'a', 1000000, 1)
         formatter_err = logging.Formatter('%(asctime)s :: %(message)s')
@@ -55,30 +60,36 @@ class Logger(SingletonMixin):
 
         if OptionManager.instance()["--printtools"]:
             self.__logger.addHandler(self.__stream_handler)
+        else:
+            self.__logger.addHandler(self.__stream_handler_err)
         self.__logger.addHandler(self.__file_handler)
         self.__logger.addHandler(self.__err_handler)
 
     def info(self, msg):
         formatter_stream = logging.Formatter(ColorPrint.blue('%(levelname)s :: %(message)s'))
         self.__stream_handler.setFormatter(formatter_stream)
+        self.__stream_handler_err.setFormatter(formatter_stream)
 
         self.__logger.info(msg)
 
     def debug(self, msg):
         formatter_stream = logging.Formatter(ColorPrint.yellow('%(levelname)s :: %(message)s'))
         self.__stream_handler.setFormatter(formatter_stream)
+        self.__stream_handler_err.setFormatter(formatter_stream)
 
         self.__logger.debug(msg)
 
     def error(self, msg):
         formatter_stream = logging.Formatter(ColorPrint.red('%(levelname)s :: %(message)s'))
         self.__stream_handler.setFormatter(formatter_stream)
+        self.__stream_handler_err.setFormatter(formatter_stream)
 
         self.__logger.error(msg)
 
     def warning(self, msg):
         formatter_stream = logging.Formatter(ColorPrint.red('%(levelname)s :: %(message)s'))
         self.__stream_handler.setFormatter(formatter_stream)
+        self.__stream_handler_err.setFormatter(formatter_stream)
 
         self.__logger.warning(msg)
 

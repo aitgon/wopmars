@@ -30,17 +30,23 @@ class ToolThread(threading.Thread, Observable):
     def set_dry(self, dry):
         self.__dry = dry
 
+    def get_dry(self):
+        return self.__dry
+
     def run(self):
         """
         Run the tool and fire events.
         :return:
         """
-        Logger.instance().info(self.__toolwrapper.__class__.__name__ + " started.")
+
         session_tw = SQLManager.instance().get_session()
         try:
             self.__toolwrapper.set_session(session_tw)
             if not self.__dry:
+                Logger.instance().info(self.__toolwrapper.__class__.__name__ + " started.")
                 self.__toolwrapper.run()
+            else:
+                Logger.instance().info(self.__toolwrapper.__class__.__name__ + " skiped.")
             session_tw.commit()
         except Exception as e:
             session_tw.rollback()

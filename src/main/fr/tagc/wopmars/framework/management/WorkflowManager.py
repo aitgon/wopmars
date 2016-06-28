@@ -3,13 +3,18 @@ Module containing the WorkflowManager class
 """
 import sys
 
+from sqlalchemy import and_
+from sqlalchemy.sql.functions import func
+
 from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
+from src.main.fr.tagc.wopmars.framework.bdd.tables.IOFilePut import IOFilePut
 from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
 from src.main.fr.tagc.wopmars.framework.bdd.tables.Type import Type
 from src.main.fr.tagc.wopmars.framework.management.DAG import DAG
 from src.main.fr.tagc.wopmars.framework.management.ToolThread import ToolThread
 from src.main.fr.tagc.wopmars.framework.management.ToolWrapperObserver import ToolWrapperObserver
 from src.main.fr.tagc.wopmars.framework.parsing.Parser import Parser
+from src.main.fr.tagc.wopmars.utils.PathFinder import PathFinder
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
 from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
 from src.main.fr.tagc.wopmars.utils.UniqueQueue import UniqueQueue
@@ -60,7 +65,8 @@ class WorkflowManager(ToolWrapperObserver):
         self.__dag_tools = None
         self.__dag_to_exec = None
         self.__already_runned = set()
-
+# for f in
+        pass
     def run(self):
         """
         Get the dag then execute it.
@@ -78,8 +84,26 @@ class WorkflowManager(ToolWrapperObserver):
         session.commit()
         self.__dag_tools = self.__parser.parse()
         self.get_dag_to_exec()
-
+        if OptionManager.instance()["--forceall"]:
+            self.erase_output()
         self.execute_from()
+
+    def erase_output(self):
+        session = SQLManager.instance().get_session()
+        id_exec = session.query(func.max(ToolWrapper.execution_id))
+        id_input = session.query(Type.id).filter(Type.name == "output")
+        list_outputs_path = session.query(IOFilePut.path).filter(and_(ToolWrapper.execution_id == id_exec,
+                                                                      ToolWrapper.id == IOFilePut.rule_id,
+                                                                      IOFilePut.type_id == id_input)).all()
+        Logger.instance().info("Forced execution implies overwrite existing output. Erasing files and tables.")
+        s = ""
+        for f_path in list_outputs_path:
+            s += "\n" + f_path[0]
+            PathFinder.silentremove(f_path[0])
+        Logger.instance().debug("Removed files:" + s)
+
+        Logger.instance().info("Output files and tables from previous execution have been erased.")
+
 
     def get_dag_to_exec(self):
         """
@@ -275,8 +299,10 @@ class WorkflowManager(ToolWrapperObserver):
         :param thread_toolwrapper: ToolWrapper thread that just succeed
         :return:
         """
-        Logger.instance().info(str(thread_toolwrapper.get_toolwrapper().__class__.__name__) + " has succeed.")
-        thread_toolwrapper.get_toolwrapper().set_args_date_and_size("output")
+        dry_status = thread_toolwrapper.get_dry()
+        if dry_status == False:
+            Logger.instance().info(str(thread_toolwrapper.get_toolwrapper().__class__.__name__) + " has succeed.")
+        thread_toolwrapper.get_toolwrapper().set_args_date_and_size("output", dry_status)
         # Continue the dag execution from the toolwrapper that just finished.
         self.__already_runned.add(thread_toolwrapper.get_toolwrapper())
         self.__count_exec -= 1

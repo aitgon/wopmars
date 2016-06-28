@@ -1,0 +1,5 @@
+python3 wopmars.py ~/test/wopmars/db.sqlite echec
+
+python3 wopmars.py -p -vvv -d ~/test/wopmars ~/test/wopmars/db.sqlite ~/test/wopmars/wopfile.yml
+
+

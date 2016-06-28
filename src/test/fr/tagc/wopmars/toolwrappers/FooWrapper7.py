@@ -17,7 +17,7 @@ class FooWrapper7(ToolWrapper):
         return ["FooBase"]
 
     def get_output_table(self):
-        return ["FooBase2"]
+        return {"FooBase2": "append"}
 
     def run(self):
         inputs = self.session().query(self.input_table("FooBase")).all()
