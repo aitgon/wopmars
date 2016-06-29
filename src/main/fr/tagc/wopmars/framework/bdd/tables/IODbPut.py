@@ -20,12 +20,12 @@ class IODbPut(IOPut, Base):
     """
     This class extends IOPut and is specific to table input or output
     """
-    __tablename__ = "table"
+    __tablename__ = "wom_table"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, ForeignKey("modification_table.table_name"))
-    rule_id = Column(Integer, ForeignKey("rule.id"))
-    type_id = Column(Integer, ForeignKey("type.id"))
+    name = Column(String, ForeignKey("wom_modification_table.table_name"))
+    rule_id = Column(Integer, ForeignKey("wom_rule.id"))
+    type_id = Column(Integer, ForeignKey("wom_type.id"))
     used_at = Column(DateTime, nullable=True)
 
     # One table is in one rule

@@ -36,12 +36,7 @@ from src.main.fr.tagc.wopmars.utils.PathFinder import PathFinder
 from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 # TODO faire en sorte que les imports commencent a fr
 # todo parcourir le code pour refaire la documentation -> compatible sphinx
-# todo parcourir l'exécution du code pour améliorer les messages de Log... bien réfléchir à ce qui est import, penser aux garde - fou
-# todo faire en sorte que plusieurs outils puissent écrire dans une même table
-# todo proposer un systeme de packaging des toolwrappers
-# todo option dry -> va de pair avec l'exécution d'un seul toolwrapper affichera les commandes à lancer pour lancer le-dit toolwrapper
-# todo ask aitor -> exemple du fichier de définition avec foowrapper10 qui n'est pas réexécuté -> comment empecher ce
-# comportement? -> nouvelle condition pour is_ready() ? verifier que tous les noeuds parents ont bien été exécutés...
+
 
 class WopMars:
 

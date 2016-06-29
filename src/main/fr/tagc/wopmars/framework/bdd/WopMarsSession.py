@@ -53,6 +53,10 @@ class WopMarsSession:
     def delete(self, entry):
         self.__session.delete(entry)
 
+    def delete_content(self, table):
+        for e in self.__session.query(table).all():
+            self.__session.delete(e)
+
     def close(self):
         self.__session.close()
 

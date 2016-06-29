@@ -15,12 +15,12 @@ class Option(Base):
     it is properly formated
     """
 
-    __tablename__ = "option"
+    __tablename__ = "wom_option"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
     value = Column(String)
-    rule_id = Column(Integer, ForeignKey("rule.id"))
+    rule_id = Column(Integer, ForeignKey("wom_rule.id"))
 
     rule = relationship("ToolWrapper", back_populates="options", enable_typechecks=False)
 

@@ -11,7 +11,7 @@ class ModificationTable(Base):
     class ModificationTable
     """
 
-    __tablename__ = "modification_table"
+    __tablename__ = "wom_modification_table"
 
     table_name = Column(String, primary_key=True)
     date = Column(DateTime, nullable=False)

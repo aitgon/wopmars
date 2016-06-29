@@ -15,6 +15,7 @@ class FooWrapper10(ToolWrapper):
     Modifications may lead to failure in tests.
     """
     __mapper_args__ = {'polymorphic_identity': "FooWrapper10"}
+
     def get_input_file(self):
         return ["input1", "input2", "input3"]
 
@@ -22,6 +23,7 @@ class FooWrapper10(ToolWrapper):
         return ["output1"]
 
     def run(self):
+        print(self.__class__.__name__ + " en cours d'exécution.")
         p = subprocess.Popen(["touch", self.output_file("output1")])
         p.wait()
         time.sleep(1)

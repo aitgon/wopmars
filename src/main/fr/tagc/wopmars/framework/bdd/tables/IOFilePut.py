@@ -15,13 +15,13 @@ class IOFilePut(IOPut, Base):
     """
     This class extends IOPut and is specific to file input or output
     """
-    __tablename__ = "file"
+    __tablename__ = "wom_file"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
     path = Column(String)
-    rule_id = Column(Integer, ForeignKey("rule.id"))
-    type_id = Column(Integer, ForeignKey("type.id"))
+    rule_id = Column(Integer, ForeignKey("wom_rule.id"))
+    type_id = Column(Integer, ForeignKey("wom_type.id"))
     used_at = Column(DateTime, nullable=True)
     size = Column(Integer, nullable=True)
 

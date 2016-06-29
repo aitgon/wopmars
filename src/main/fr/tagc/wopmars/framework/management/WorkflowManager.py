@@ -278,10 +278,6 @@ class WorkflowManager(ToolWrapperObserver):
             else:
                 i += 1
 
-        # todo ask lionel
-        # todo ask aitor au final, est-ce-que les outputs ont besoin d'avoir le même chemin? si les toolwrappers sont
-        # identiques avec les meme params, on peut considérer que els outputs le sont aussi même avec des chemins differents
-
         # The elements of the list have been removed if none fit the conditions
         return bool(list_same_toolwrappers)
 

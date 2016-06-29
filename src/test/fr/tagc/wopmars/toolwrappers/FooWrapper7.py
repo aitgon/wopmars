@@ -20,8 +20,10 @@ class FooWrapper7(ToolWrapper):
         return {"FooBase2": "append"}
 
     def run(self):
+        print(self.__class__.__name__ + " en cours d'exécution.")
         inputs = self.session().query(self.input_table("FooBase")).all()
+        # self.session().delete_content(self.output_table("FooBase2"))
         for i in inputs:
-            entry = FooBase2(name=i.name)
+            entry = self.output_table("FooBase2")(name=i.name)
             self.session().add(entry)
         time.sleep(1)

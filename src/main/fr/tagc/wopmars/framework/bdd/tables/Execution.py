@@ -14,7 +14,7 @@ class Execution(Base):
     If 2 executions are exactly the same, they will be both stocked in the database with different execution numbers.
     """
 
-    __tablename__ = "execution"
+    __tablename__ = "wom_execution"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
 

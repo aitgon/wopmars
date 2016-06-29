@@ -8,7 +8,7 @@ from src.main.fr.tagc.wopmars.framework.bdd.Base import Base
 
 
 class Type(Base):
-    __tablename__ = "type"
+    __tablename__ = "wom_type"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)

@@ -82,7 +82,7 @@ class TestWopMars(TestCase):
         runtime2 = end - start
         self.assertTrue(runtime1 * 0.4 <= runtime2 <= runtime1 * 1.4)
 
-    def test_run5(self):
+    def test_run6(self):
         cmd_line = ["python", self.__db_path, self.__right_def_file, "-p", "-vvvv"]
         start = time.time()
         with self.assertRaises(SystemExit):
@@ -113,7 +113,7 @@ class TestWopMars(TestCase):
         average_rule_time = full_exec_time / rule_count
         return 1 + (maximum_ratio * average_rule_time / (1.5 + average_rule_time))
 
-    def test_run6(self):
+    def test_run7(self):
         cmd_line = ["python", self.__db_path, self.__right_def_file, "--dot", "/usr/"]
         with self.assertRaises(SystemExit) as SE:
             WopMars().run(cmd_line)

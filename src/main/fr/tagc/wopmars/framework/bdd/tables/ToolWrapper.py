@@ -22,12 +22,12 @@ class ToolWrapper(Base):
     will be designed by the wrapper developers.
     """
 
-    __tablename__ = "rule"
+    __tablename__ = "wom_rule"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
     toolwrapper = Column(String)
-    execution_id = Column(Integer, ForeignKey("execution.id"))
+    execution_id = Column(Integer, ForeignKey("wom_execution.id"))
 
     # One rule has Many table
     tables = relationship("IODbPut", back_populates="rule")
