@@ -23,10 +23,7 @@ class SQLManager(SingletonMixin):
 
         :return:
         """
-        # todo optionmanager
-        # s_database_name = "/home/giffon/db.sqlite"
-        #  = create_engine('sqlite:///' + s_database_name, echo=False)
-        s_database_name = OptionManager.instance()["DATABASE"]
+        s_database_name = OptionManager.instance()["--database"]
 
         self.__engine = create_engine('sqlite:///' + s_database_name, echo=False)
         self.__Session = scoped_session(sessionmaker(bind=self.__engine, autoflush=True, autocommit=False))
@@ -35,13 +32,14 @@ class SQLManager(SingletonMixin):
         self.__lock = RWLock()
         self.__available = True
 
-
-        # Base.metadata.create_all(Engine)
-
     def get_engine(self):
         return self.__engine
 
     def get_session(self):
+        """
+        Return a WopmarsSession associated with this SQLmanager.
+        :return:
+        """
         session = WopMarsSession(self.__Session(), self)
         return session
 
@@ -66,16 +64,29 @@ class SQLManager(SingletonMixin):
             self.__lock.release()
             Logger.instance().debug(str(session) + " has released the write lock on SQLManager.")
 
-    # def query(self, session, call):
-    #     # todo twthread gérer le lock pour les lectures
-    #     # -> recuperer l'objet query et faire le call ici (all, one, first... )
-    #     # todo ask lionel, comment tu ferais? faire le eval
-    #     Logger.instance().debug(str(session) + " want the read lock on SQLManager.")
-    #     self.__lock.acquire_read()
-    #     Logger.instance().debug(str(session) + " has taken the read lock on SQLManager.")
-    #     result = eval("session." + call)
-    #     self.__lock.release()
-    #     return result
+    def result_factory(self, query, method):
+        result = None
+        try:
+            Logger.instance().debug("Executing query: \n" + str(query))
+            Logger.instance().debug("WopMarsQuery " + str(query.session) + " want the read-lock on SQLManager")
+            self.__lock.acquire_read()
+            Logger.instance().debug("\"" + str(query.session) + "\" has taken the read lock on SQLManager.")
+            if method == "all":
+                result = super(query.__class__, query).all()
+            elif method == "one":
+                result = super(query.__class__, query).one()
+            elif method == "first":
+                result = super(query.__class__, query).first()
+            elif method == "count":
+                result = super(query.__class__, query).count()
+            elif method == "one_or_none":
+                result = super(query.__class__, query).one_or_none()
+            elif method == "scalar":
+                result = super(query.__class__, query).scalar()
+        finally:
+            self.__lock.release()
+            Logger.instance().debug("\"" + str(query) + "\" has released the read lock on SQLManager.")
+        return result
 
     def execute(self, session, statement):
         try:

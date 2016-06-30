@@ -3,6 +3,7 @@ Module containing the WopMarsSession class.
 """
 from sqlalchemy.sql.elements import ClauseElement
 
+from src.main.fr.tagc.wopmars.framework.bdd.WopMarsQuery import WopMarsQuery
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
 
 
@@ -43,7 +44,10 @@ class WopMarsSession:
         self.__manager.rollback(self.__session)
 
     def query(self, table):
-        return self.__session.query(table)
+        return WopMarsQuery(table, session=self.__session)
+
+    # def all(self, query):
+    #     return self.__manager.all(query)
 
     def add(self, item):
         """

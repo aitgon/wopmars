@@ -50,7 +50,7 @@ class WorkflowManager(ToolWrapperObserver):
 
         It initialize the parser with the path of the definition file given by the OptionManager.
 
-        The parser will give the DAG which will be executed. The parser is instantiated with the "DEFINITION_FILE"
+        The parser will give the DAG which will be executed. The parser is instantiated with the "--wopfile"
         option given by the user.
         The queue_exec is the Thread pool. It will contains the tool threads that will wait for being executed.
         The list_queue_buffer will be filled with the tool threads that the WorkflowManager couldn't execute.
@@ -59,7 +59,7 @@ class WorkflowManager(ToolWrapperObserver):
         The dag_to_exec is basically the same dag than dag_tools or a subgraph depending on the options --sourcerule or --targetrule
         given by the user.
         """
-        self.__parser = Parser(OptionManager.instance()["DEFINITION_FILE"])
+        self.__parser = Parser(OptionManager.instance()["--wopfile"])
         self.__queue_exec = UniqueQueue()
         self.__list_queue_buffer = []
         self.__count_exec = 0

@@ -26,4 +26,5 @@ class FooWrapper7(ToolWrapper):
         for i in inputs:
             entry = self.output_table("FooBase2")(name=i.name)
             self.session().add(entry)
+        print(self.session().query(FooBase2).all())
         time.sleep(1)

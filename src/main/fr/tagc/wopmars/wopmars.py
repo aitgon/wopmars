@@ -1,7 +1,7 @@
 """WopMars: Workflow Python Manager for Reproducible Science.
 
 Usage:
-  wopmars.py [-n] [-p] [-F] [-v...] [-d DIR] [-g FILE] [-L FILE] [-f RULE | -t RULE] [DATABASE] [DEFINITION_FILE]
+  wopmars.py [-n] [-p] [-F] [-v...] [-d DIR] [-g FILE] [-L FILE] [-f RULE | -t RULE] [-D DATABASE] [-w DEFINITION_FILE]
 
 Arguments:
   DEFINITION_FILE  Path to the definition file of the workflow [default: wopfile.yml].
@@ -20,6 +20,8 @@ Options:
   -F --forceall                Force the execution of the workflow, without checking for previous executions.
   -n --dry                     Do not execute anything but simulate.
   -d --directory=DIR           Set the current working directory. Usefull for working with relative poths [default: $CWD].
+  -D --database=DATABASE       Set the path to the database.
+  -w --wopfile=DEFINITION_FILE Set the path to the database
 """
 import os
 import sys
@@ -36,6 +38,7 @@ from src.main.fr.tagc.wopmars.utils.PathFinder import PathFinder
 from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 # TODO faire en sorte que les imports commencent a fr
 # todo parcourir le code pour refaire la documentation -> compatible sphinx
+# todo specifier l'exception de "non dag" pour dire entre quels outils apparait le cycle
 
 
 class WopMars:
@@ -55,8 +58,8 @@ class WopMars:
 
         try:
             schema_option = Schema({
-                'DEFINITION_FILE': Or("wopfile.yml", str),
-                'DATABASE': Use(PathFinder.check_valid_path),
+                '--wopfile': Or("wopfile.yml", str),
+                '--database': Use(PathFinder.check_valid_path),
                 '-v': Or(0, And(int, lambda n: 1 < n < 5)),
                 '--dot': Use(PathFinder.check_valid_path),
                 "--log": Use(PathFinder.check_valid_path),

@@ -22,11 +22,11 @@ class OptionManager(dict, SingletonMixin):
         super().__init__(*args, **kwargs)
 
     def validate(self, schema):
+        self.validate_dir()
         self.validate_definition_file()
         self.validate_database()
         self.validate_dot()
         self.validate_log()
-        self.validate_dir()
 
         schema.validate(self)
 
@@ -37,8 +37,8 @@ class OptionManager(dict, SingletonMixin):
             self["--directory"] = os.getcwd()
 
     def make_absolute_paths(self):
-        if self["DEFINITION_FILE"]:
-            self["DEFINITION_FILE"] = os.path.abspath(os.path.expanduser(self["DEFINITION_FILE"]))
+        if self["--wopfile"]:
+            self["--wopfile"] = os.path.abspath(os.path.expanduser(self["--wopfile"]))
         if self["--log"]:
             self["--log"] = os.path.abspath(os.path.expanduser(self["--log"]))
         if self["--dot"]:
@@ -47,14 +47,14 @@ class OptionManager(dict, SingletonMixin):
             self["--directory"] = os.path.abspath(os.path.expanduser(self["--directory"]))
 
     def validate_definition_file(self):
-        if self["DEFINITION_FILE"] is None:
-            self["DEFINITION_FILE"] = "wopfile.yml"
+        if self["--wopfile"] is None:
+            self["--wopfile"] = "wopfile.yml"
 
     def validate_database(self):
-        if self["DATABASE"] is None:
-            self["DATABASE"] = os.path.expanduser("~/.wopmars/wopmars.sqlite")
+        if self["--database"]:
+            self["--database"] = os.path.expanduser(self["--database"])
         else:
-            self["DATABASE"] = os.path.expanduser(self["DATABASE"])
+            self["--database"] = os.path.join(self["--directory"], "wopdb.sqlite")
 
     def validate_dot(self):
         if self["--dot"]:
@@ -63,6 +63,8 @@ class OptionManager(dict, SingletonMixin):
             elif self["--dot"][-4:] != '.dot':
                 self["--dot"] += ".dot"
             self["--dot"] = os.path.expanduser(self["--dot"])
+        else:
+            self["--dot"] = os.path.join(self["--directory"], "wopdot.dot")
 
     def validate_log(self):
         if self["--log"]:
@@ -94,6 +96,6 @@ class OptionManager(dict, SingletonMixin):
         OptionManager.instance()["--targetrule"] = None
         OptionManager.instance()["--forceall"] = None
         OptionManager.instance()["--dry"] = None
-        OptionManager.instance()["DATABASE"] = os.path.join(PathFinder.find_src(os.path.dirname(os.path.realpath(__file__))), "resources/outputs/" + mod_name + ".sqlite")
+        OptionManager.instance()["--database"] = os.path.join(PathFinder.find_src(os.path.dirname(os.path.realpath(__file__))), "resources/outputs/" + mod_name + ".sqlite")
         OptionManager.instance()["--directory"] = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
         os.chdir(OptionManager.instance()["--directory"])

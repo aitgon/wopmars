@@ -30,10 +30,10 @@ class TestWorkflowManager(TestCase):
             s_root_path + \
             "resources/example_def_file_toolwrapper_never_ready.yml"
 
-        OptionManager.instance()["DEFINITION_FILE"] = s_path_to_example_definition_file_finishing
+        OptionManager.instance()["--wopfile"] = s_path_to_example_definition_file_finishing
         self.__finishing_wm = WorkflowManager()
 
-        OptionManager.instance()["DEFINITION_FILE"] = s_path_to_example_definition_file_that_end_with_error
+        OptionManager.instance()["--wopfile"] = s_path_to_example_definition_file_that_end_with_error
         self.__error_wm = WorkflowManager()
 
     def test_erase_output(self):
