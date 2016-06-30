@@ -21,20 +21,26 @@ class WopMarsSession:
         self.__session = session
 
     def commit(self):
+        """
+        Validate changes on the database.
+        :return:
+        """
         if self.something():
             Logger.instance().debug(str(self.__session) + " is about to commit.")
             Logger.instance().debug("Operations to be commited in session" + str(self.__session) + ": \n\tUpdates:\n\t\t" +
                                     "\n\t\t".join([str(k) for k in self.__session.dirty]) +
                                     "\n\tInserts:\n\t\t" +
                                     "\n\t\t".join([str(k) for k in self.__session.new]))
+            # call on SQLManager commit method to use the lock
             self.__manager.commit(self.__session)
 
     def rollback(self):
-        Logger.instance().debug("Operations to be commited in session" + str(self.__session) + ": \n\tUpdates:\n\t\t" +
+        Logger.instance().debug("Operations to be rollbacked in session" + str(self.__session) + ": \n\tUpdates:\n\t\t" +
                                 "\n\t\t".join([str(k) for k in self.__session.dirty]) +
                                 "\n\tInserts:\n\t\t" +
                                 "\n\t\t".join([str(k) for k in self.__session.new]))
-        self.__session.rollback()
+        # call on SQLManager commit method to use the lock
+        self.__manager.rollback(self.__session)
 
     def query(self, table):
         return self.__session.query(table)
@@ -54,8 +60,9 @@ class WopMarsSession:
         self.__session.delete(entry)
 
     def delete_content(self, table):
-        for e in self.__session.query(table).all():
-            self.__session.delete(e)
+        Logger.instance().debug("Deleting content of table " + table.__tablename__ + "...")
+        self.__manager.execute(self.__session, table.__table__.delete())
+        Logger.instance().debug("Content of table " + table.__tablename__ + " deleted.")
 
     def close(self):
         self.__session.close()

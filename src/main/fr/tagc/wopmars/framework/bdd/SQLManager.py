@@ -55,24 +55,49 @@ class SQLManager(SingletonMixin):
         :param session: sqlalchemy session
         :return:
         """
-        Logger.instance().debug(str(session) + " want the write lock on SQLManager.")
-        self.__lock.acquire_write()
-        # todo faire peut etre try catch de la session ici
-        Logger.instance().debug(str(session) + " has taken the write lock on SQLManager.")
-        session.commit()
-        Logger.instance().debug(str(session) + " has been commited.")
-        self.__lock.release()
+        try:
+            Logger.instance().debug(str(session) + " want the write lock on SQLManager.")
+            self.__lock.acquire_write()
+            # todo faire peut etre try catch de la session ici
+            Logger.instance().debug(str(session) + " has taken the write lock on SQLManager.")
+            session.commit()
+            Logger.instance().debug(str(session) + " has been commited.")
+        finally:
+            self.__lock.release()
+            Logger.instance().debug(str(session) + " has released the write lock on SQLManager.")
 
-    def query(self, session, call):
-        # todo twthread gérer le lock pour les lectures
-        # -> recuperer l'objet query et faire le call ici (all, one, first... )
-        # todo ask lionel, comment tu ferais? faire le eval
-        Logger.instance().debug(str(session) + " want the read lock on SQLManager.")
-        self.__lock.acquire_read()
-        Logger.instance().debug(str(session) + " has taken the read lock on SQLManager.")
-        result = eval("session." + call)
-        self.__lock.release()
-        return result
+    # def query(self, session, call):
+    #     # todo twthread gérer le lock pour les lectures
+    #     # -> recuperer l'objet query et faire le call ici (all, one, first... )
+    #     # todo ask lionel, comment tu ferais? faire le eval
+    #     Logger.instance().debug(str(session) + " want the read lock on SQLManager.")
+    #     self.__lock.acquire_read()
+    #     Logger.instance().debug(str(session) + " has taken the read lock on SQLManager.")
+    #     result = eval("session." + call)
+    #     self.__lock.release()
+    #     return result
+
+    def execute(self, session, statement):
+        try:
+            Logger.instance().debug(str(session) + " want the write lock on SQLManager for statement \"" + str(statement) + "\"")
+            self.__lock.acquire_write()
+            Logger.instance().debug(str(session) + " has taken the write lock on SQLManager.")
+            session.execute(statement)
+        finally:
+            self.__lock.release()
+            Logger.instance().debug(str(session) + " has released the write lock on SQLManager.")
+
+    def rollback(self, session):
+        try:
+            Logger.instance().debug(str(session) + " want the write lock on SQLManager.")
+            self.__lock.acquire_write()
+            # todo faire peut etre try catch de la session ici
+            Logger.instance().debug(str(session) + " has taken the write lock on SQLManager.")
+            session.rollback()
+            Logger.instance().debug(str(session) + " has been rollbacked.")
+        finally:
+            self.__lock.release()
+            Logger.instance().debug(str(session) + " has released the write lock on SQLManager.")
 
     @staticmethod
     def drop_all():
@@ -95,11 +120,15 @@ class SQLManager(SingletonMixin):
         Base.metadata.create_all(SQLManager.instance().get_engine())
 
     def create(self, tablename):
-        self.__lock.acquire_write()
-        Base.metadata.tables[tablename].create(self.__engine, checkfirst=True)
-        self.__lock.release()
+        try:
+            self.__lock.acquire_write()
+            Base.metadata.tables[tablename].create(self.__engine, checkfirst=True)
+        finally:
+            self.__lock.release()
 
     def drop(self, tablename):
-        self.__lock.acquire_write()
-        Base.metadata.tables[tablename].drop(self.__engine, checkfirst=True)
-        self.__lock.release()
+        try:
+            self.__lock.acquire_write()
+            Base.metadata.tables[tablename].drop(self.__engine, checkfirst=True)
+        finally:
+            self.__lock.release()

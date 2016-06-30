@@ -485,3 +485,10 @@ class ToolWrapper(Base):
 
     def session(self):
         return self.__session
+
+    # def exec(self, cmd):
+    #     if type(cmd) == str:
+    #         cmd = str.split()
+
+
+

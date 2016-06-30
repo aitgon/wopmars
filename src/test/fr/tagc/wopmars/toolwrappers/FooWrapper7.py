@@ -22,7 +22,7 @@ class FooWrapper7(ToolWrapper):
     def run(self):
         print(self.__class__.__name__ + " en cours d'exécution.")
         inputs = self.session().query(self.input_table("FooBase")).all()
-        # self.session().delete_content(self.output_table("FooBase2"))
+        self.session().delete_content(self.output_table("FooBase2"))
         for i in inputs:
             entry = self.output_table("FooBase2")(name=i.name)
             self.session().add(entry)

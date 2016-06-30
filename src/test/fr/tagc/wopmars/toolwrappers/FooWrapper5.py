@@ -28,7 +28,7 @@ class FooWrapper5(ToolWrapper):
         print(self.__class__.__name__ + " en cours d'exécution.")
         p = subprocess.Popen(["touch", self.output_file("output1")])
         p.wait()
-        self.session().delete_content(self.output_table("FooBase"))
+        # self.session().delete_content(self.output_table("FooBase"))
         for i in range(10):
             f = self.output_table("FooBase")(name="Foowrapper5 - " + str(i))
             self.session().add(f)

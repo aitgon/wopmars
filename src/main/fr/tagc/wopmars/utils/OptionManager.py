@@ -38,13 +38,13 @@ class OptionManager(dict, SingletonMixin):
 
     def make_absolute_paths(self):
         if self["DEFINITION_FILE"]:
-            self["DEFINITION_FILE"] = os.path.abspath(self["DEFINITION_FILE"])
+            self["DEFINITION_FILE"] = os.path.abspath(os.path.expanduser(self["DEFINITION_FILE"]))
         if self["--log"]:
-            self["--log"] = os.path.abspath(self["--log"])
+            self["--log"] = os.path.abspath(os.path.expanduser(self["--log"]))
         if self["--dot"]:
-            self["--dot"] = os.path.abspath(self["--dot"])
+            self["--dot"] = os.path.abspath(os.path.expanduser(self["--dot"]))
         if self["--directory"]:
-            self["--directory"] = os.path.abspath(self["--directory"])
+            self["--directory"] = os.path.abspath(os.path.expanduser(self["--directory"]))
 
     def validate_definition_file(self):
         if self["DEFINITION_FILE"] is None:
