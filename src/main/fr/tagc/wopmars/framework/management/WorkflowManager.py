@@ -7,6 +7,7 @@ from sqlalchemy import and_
 from sqlalchemy.sql.functions import func
 
 from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
+from src.main.fr.tagc.wopmars.framework.bdd.tables.IODbPut import IODbPut
 from src.main.fr.tagc.wopmars.framework.bdd.tables.IOFilePut import IOFilePut
 from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
 from src.main.fr.tagc.wopmars.framework.bdd.tables.Type import Type
@@ -83,26 +84,26 @@ class WorkflowManager(ToolWrapperObserver):
         session.commit()
         self.__dag_tools = self.__parser.parse()
         self.get_dag_to_exec()
-        if OptionManager.instance()["--forceall"]:
-            self.erase_output()
         self.execute_from()
 
-    def erase_output(self):
-        session = SQLManager.instance().get_session()
-        id_exec = session.query(func.max(ToolWrapper.execution_id))
-        id_input = session.query(Type.id).filter(Type.name == "output")
-        list_outputs_path = session.query(IOFilePut.path).filter(and_(ToolWrapper.execution_id == id_exec,
-                                                                      ToolWrapper.id == IOFilePut.rule_id,
-                                                                      IOFilePut.type_id == id_input)).all()
+    def erase_output(self, tw):
+        list_outputs_path = [f.path for f in tw.files if f.type.name == "output"]
         Logger.instance().info("Forced execution implies overwrite existing output. Erasing files and tables.")
         s = ""
         for f_path in list_outputs_path:
-            s += "\n" + f_path[0]
-            PathFinder.silentremove(f_path[0])
+            s += "\n" + f_path
+            PathFinder.silentremove(f_path)
         Logger.instance().debug("Removed files:" + s)
 
-        Logger.instance().info("Output files and tables from previous execution have been erased.")
+        list_output_tables = [t.name for t in tw.tables if t.type.name == "output"]
+        s = ""
+        for t_name in list_output_tables:
+            s += "\n" + t_name
+            SQLManager.instance().drop(t_name)
+            SQLManager.instance().create(t_name)
+        Logger.instance().debug("Removed tables content:" + s)
 
+        Logger.instance().info("Output files and tables from previous execution have been erased.")
 
     def get_dag_to_exec(self):
         """
@@ -210,12 +211,14 @@ class WorkflowManager(ToolWrapperObserver):
                 Logger.instance().debug("ToolWrapper ready: " + tw.toolwrapper)
                 dry = False
                 if not OptionManager.instance()["--forceall"] and \
-                        self.is_this_tool_already_done(thread_tw.get_toolwrapper()):
-                    Logger.instance().info("Rule: " + thread_tw.get_toolwrapper().name + " -> " + thread_tw.get_toolwrapper().toolwrapper +
+                        self.is_this_tool_already_done(tw):
+                    Logger.instance().info("Rule: " + tw.name + " -> " + tw.toolwrapper +
                                            " seemed to have already" +
                                            " been runned with same" +
                                            " parameters.")
                     dry = True
+                elif OptionManager.instance()["--forceall"]:
+                    self.erase_output(tw)
                 # todo twthread verification des ressources
                 thread_tw.subscribe(self)
                 self.__count_exec += 1
