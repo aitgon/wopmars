@@ -9,6 +9,7 @@ from FooWrapper6 import FooWrapper6
 from FooWrapper7 import FooWrapper7
 from FooWrapper8 import FooWrapper8
 from FooWrapper9 import FooWrapper9
+from fooPackage.FooWrapperPackaged import FooWrapperPackaged
 from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
 from src.main.fr.tagc.wopmars.framework.bdd.tables.IODbPut import IODbPut
 from src.main.fr.tagc.wopmars.framework.bdd.tables.IOFilePut import IOFilePut
@@ -42,8 +43,10 @@ class TestReader(TestCase):
         # The good -------------------------------:
 
         self.__s_example_definition_file = s_root_path + "resources/example_def_file.yml"
+        self.__s_example_definition_file2 = s_root_path + "resources/example_def_file3.yml"
         try:
             self.__reader_right = Reader(self.__s_example_definition_file)
+            self.__reader_right2 = Reader(self.__s_example_definition_file2)
         except:
             raise AssertionError('Should not raise exception')
 
@@ -101,6 +104,31 @@ class TestReader(TestCase):
                 Reader.check_duplicate_rules(file.read())
             except Exception as e:
                 raise AssertionError("Should not raise an exception " + str(e))
+
+    def test_read2(self):
+        try:
+            self.__reader_right2.read()
+            result = self.__session.query(ToolWrapper).one()
+        except:
+            raise AssertionError("Packaged wrappers should not raise an exception")
+
+        input_entry = Type(name="input")
+        output_entry = Type(name="output")
+
+        f1 = IOFilePut(name="input1", path="resources/input_File1.txt")
+        f1.type = input_entry
+
+        f2 = IOFilePut(name="output1", path="resources/outputs/output_File1.txt")
+        f2.type = output_entry
+
+        t1 = IODbPut(name="fooPackage.FooBasePackaged")
+        t1.type = input_entry
+
+        tw1 = FooWrapperPackaged(rule_name="rule1")
+        tw1.files.extend([f1, f2])
+        tw1.tables.append(t1)
+
+        self.assertEqual(result, tw1)
 
     def test_read(self):
 

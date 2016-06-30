@@ -214,7 +214,7 @@ class Reader:
         try:
             mod = importlib.import_module(str_wrapper_name)
             # Building the class object
-            toolwrapper_class = eval("mod." + str_wrapper_name)
+            toolwrapper_class = eval("mod." + str_wrapper_name.split('.')[-1])
         except AttributeError:
             raise WopMarsException("Error while parsing the configuration file: \n\t",
                                    "The class " + str_wrapper_name + " doesn't exist.")

@@ -44,7 +44,7 @@ class IODbPut(IOPut, Base):
         # The file containing the table should be in PYTHONPATH
         Base.__init__(self, name=name)
         mod = importlib.import_module(name)
-        self.__table = eval("mod." + name)
+        self.__table = eval("mod." + name.split(".")[-1])
         SQLManager.instance().create(self.__table.__tablename__)
         # Base.metadata.tables[self.__table.__tablename__].create(Engine, checkfirst=True)
         Logger.instance().debug(name + " table class loaded.")
@@ -52,9 +52,7 @@ class IODbPut(IOPut, Base):
     @reconstructor
     def init_on_load(self):
         mod = importlib.import_module(self.name)
-        self.__table = eval("mod." + self.name)
-        # todo ask lionel les tables spécifiques des classes métiers ne sont pas crées au tout début....
-        # je ne sais pas pourquoi mais c'est arrangeant
+        self.__table = eval("mod." + self.name.split('.')[-1])
         Base.metadata.tables[self.__table.__tablename__].create(SQLManager.instance().get_engine(), checkfirst=True)
 
     def get_table(self):
