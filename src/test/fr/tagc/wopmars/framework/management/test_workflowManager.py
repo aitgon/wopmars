@@ -25,16 +25,13 @@ class TestWorkflowManager(TestCase):
         SQLManager.create_all()
         s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
 
-        s_path_to_example_definition_file_finishing = s_root_path + "resources/example_def_file.yml"
-        s_path_to_example_definition_file_that_end_with_error = \
+        self.__s_path_to_example_definition_file_finishing = s_root_path + "resources/example_def_file.yml"
+        self.__s_path_to_example_definition_file_that_end_with_error = \
             s_root_path + \
             "resources/example_def_file_toolwrapper_never_ready.yml"
 
-        OptionManager.instance()["--wopfile"] = s_path_to_example_definition_file_finishing
-        self.__finishing_wm = WorkflowManager()
+        self.__wm = WorkflowManager()
 
-        OptionManager.instance()["--wopfile"] = s_path_to_example_definition_file_that_end_with_error
-        self.__error_wm = WorkflowManager()
 
     def test_erase_output(self):
         s_root_path = PathFinder.find_src(os.path.realpath(__file__))
@@ -59,7 +56,7 @@ class TestWorkflowManager(TestCase):
         tw.files.extend([f1])
         tw.tables.extend([t1])
 
-        self.__finishing_wm.erase_output(tw)
+        self.__wm.erase_output(tw)
 
         self.assertEqual(len(session.query(FooBase).all()), 0)
         self.assertFalse(os.path.exists(test_out_file_path))
@@ -75,13 +72,13 @@ class TestWorkflowManager(TestCase):
     def test_run(self):
         OptionManager.instance()["--dot"] = None
 
+        OptionManager.instance()["--wopfile"] = self.__s_path_to_example_definition_file_finishing
         with self.assertRaises(SystemExit):
-            self.__finishing_wm.run()
+            self.__wm.run()
 
+        OptionManager.instance()["--wopfile"] = self.__s_path_to_example_definition_file_that_end_with_error
         with self.assertRaises(WopMarsException):
-            self.__error_wm.run()
-
+            self.__wm.run()
 
 if __name__ == '__main__':
     unittest.main()
-

@@ -213,8 +213,13 @@ class ToolWrapper(Base):
         """
         session = SQLManager.instance().get_session()
         for f in [f for f in self.files if f.type.name == type]:
-            date = datetime.datetime.fromtimestamp(os.path.getmtime(f.path))
-            size = os.path.getsize(f.path)
+            try:
+                date = datetime.datetime.fromtimestamp(os.path.getmtime(f.path))
+                size = os.path.getsize(f.path)
+            except FileNotFoundError as FE:
+                raise WopMarsException("Error during the execution of the workflow",
+                                       "The " + type + " file " + str(f.path) + " of rule " + str(self.name) +
+                                       " doesn't exist")
             f.used_at = date
             f.size = size
             session.add(f)

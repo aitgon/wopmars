@@ -59,7 +59,7 @@ class WorkflowManager(ToolWrapperObserver):
         The dag_to_exec is basically the same dag than dag_tools or a subgraph depending on the options --sourcerule or --targetrule
         given by the user.
         """
-        self.__parser = Parser(OptionManager.instance()["--wopfile"])
+        self.__parser = Parser()
         self.__queue_exec = UniqueQueue()
         self.__list_queue_buffer = []
         self.__count_exec = 0

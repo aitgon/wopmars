@@ -27,10 +27,19 @@ class OptionManager(dict, SingletonMixin):
         self.validate_database()
         self.validate_dot()
         self.validate_log()
+        self.validate_input_output_params()
 
         schema.validate(self)
 
         self.make_absolute_paths()
+
+    def validate_input_output_params(self):
+        if self["--input"] is None:
+            self["--input"] = "{}"
+        if self["--output"] is None:
+            self["--output"] = "{}"
+        if self["--params"] is None:
+            self["--params"] = "{}"
 
     def validate_dir(self):
         if self["--directory"] == "$CWD":
@@ -96,6 +105,7 @@ class OptionManager(dict, SingletonMixin):
         OptionManager.instance()["--targetrule"] = None
         OptionManager.instance()["--forceall"] = None
         OptionManager.instance()["--dry"] = None
+        OptionManager.instance()["tool"] = None
         OptionManager.instance()["--database"] = os.path.join(PathFinder.find_src(os.path.dirname(os.path.realpath(__file__))), "resources/outputs/" + mod_name + ".sqlite")
         OptionManager.instance()["--directory"] = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
         os.chdir(OptionManager.instance()["--directory"])

@@ -29,20 +29,8 @@ class TestParser(TestCase):
         session.get_or_create(Type, defaults={"id": 1}, name="input")
         session.get_or_create(Type, defaults={"id": 2}, name="output")
         session.commit()
-        s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
-
-        # The good -------------------------------:
-
-        s_example_definition_file = s_root_path + "resources/example_def_file.yml"
-        self.__parser_right = Parser(s_example_definition_file)
-
-        # The bad (not a dag) -----------------------------------:
-        s_wrong_example_definition_file_invalid = s_root_path + "resources/example_def_file_not_a_dag.yml"
-        self.__parser_wrong = Parser(s_wrong_example_definition_file_invalid)
-
-        # Dot path --------------:
-
-        self.__dot_path = s_root_path + "test.dot"
+        self.__s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
+        self.__parser = Parser()
 
     def tearDown(self):
         SQLManager.drop_all()
@@ -139,21 +127,23 @@ class TestParser(TestCase):
         OptionManager.instance()["--dot"] = None
 
         dag_expected = DAG(set_toolwrappers)
-        dag_obtained = self.__parser_right.parse()
+        OptionManager.instance()["--wopfile"] = self.__s_root_path + "resources/example_def_file.yml"
+        dag_obtained = self.__parser.parse()
 
         self.assertEqual(dag_expected, dag_obtained)
 
-        # The bad --------------------------:
+        OptionManager.instance()["--wopfile"] = self.__s_root_path + "resources/example_def_file_not_a_dag.yml"
         with self.assertRaises(WopMarsException):
-            self.__parser_wrong.parse()
+            self.__parser.parse()
 
         # Verify the dot file ----------------:
-
-        OptionManager.instance()["--dot"] = self.__dot_path
-        self.__parser_right.parse()
-        self.assertTrue(os.path.isfile(self.__dot_path))
-        os.remove(self.__dot_path)
-        os.remove(self.__dot_path[:-4] + ".ps")
+        OptionManager.instance()["--wopfile"] = self.__s_root_path + "resources/example_def_file.yml"
+        dot_path = self.__s_root_path + "test.dot"
+        OptionManager.instance()["--dot"] = dot_path
+        self.__parser.parse()
+        self.assertTrue(os.path.isfile(dot_path))
+        os.remove(dot_path)
+        os.remove(dot_path[:-4] + ".ps")
 
 if __name__ == '__main__':
     unittest.main()

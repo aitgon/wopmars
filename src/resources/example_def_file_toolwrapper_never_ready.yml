@@ -18,4 +18,3 @@ rule rule6:
         input1: "resources/never_done.txt"
     output:
         output1: "resources/outputs/output_File2.txt"
-

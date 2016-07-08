@@ -2,12 +2,15 @@
 
 Usage:
   wopmars.py [-n] [-p] [-F] [-v...] [-d DIR] [-g FILE] [-L FILE] [-f RULE | -t RULE] [-D DATABASE] [-w DEFINITION_FILE]
+  wopmars.py tool TOOLWRAPPER [-i DICT] [-o DICT] [-P DICT] [-p] [-v...]
 
 Arguments:
   DEFINITION_FILE  Path to the definition file of the workflow [default: wopfile.yml].
   DATABASE         Path to the sqlite database file [default: $HOME/.wopmars/db.sqlite]
   FILE             Path to a file.
   RULE             Name of a rule in the workflow definition file.
+  TOOLWRAPPER      Path the the toolwrapper
+  DICT             String formated like a dictionnary. Ex: "{'input1': 'path/to/input1', 'input2': 'path/to/input2'}"
 
 Options:
   -h --help                    Show this help.
@@ -21,7 +24,10 @@ Options:
   -n --dry                     Do not execute anything but simulate.
   -d --directory=DIR           Set the current working directory. Usefull for working with relative poths [default: $CWD].
   -D --database=DATABASE       Set the path to the database.
-  -w --wopfile=DEFINITION_FILE Set the path to the database
+  -w --wopfile=DEFINITION_FILE Set the path to the definition file.
+  -i --input=DICT              Set the input of the toolwrapper you want to use in the dictionnary format.
+  -o --output=DICT             Set the output of the toolwrapper you want to use in the dictionnary format.
+  -P --params=DICT             Set the parameters of the toolwrapper you want to use in the dictionnary format.
 """
 import os
 import sys
@@ -32,6 +38,7 @@ from schema import Schema, And, Or, Use, SchemaError
 
 from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
 from src.main.fr.tagc.wopmars.framework.management.WorkflowManager import WorkflowManager
+from src.main.fr.tagc.wopmars.utils.DictUtils import DictUtils
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
 from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
 from src.main.fr.tagc.wopmars.utils.PathFinder import PathFinder
@@ -68,7 +75,12 @@ class WopMars:
                 "--targetrule": Or(None, str),
                 "--forceall": Use(bool),
                 "--dry": Use(bool),
-                "--directory": Use(os.path.isdir)
+                "--directory": Use(os.path.isdir),
+                "--input": Use(DictUtils.str_to_dict),
+                "--output": Use(DictUtils.str_to_dict),
+                "--params": Use(DictUtils.str_to_dict),
+                "TOOLWRAPPER": Or(None, Use(PathFinder.is_in_python_path)),
+                "tool": Use(bool)
             })
             # The option values are validated using schema library
             OptionManager.instance().validate(schema_option)

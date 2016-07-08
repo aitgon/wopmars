@@ -41,3 +41,9 @@ class DictUtils:
             else:
                 s += '\t' * (indent + 1) + str(value) + "\n"
         return s
+
+    @staticmethod
+    def str_to_dict(dictable_string):
+        if dictable_string:
+            d = dict(eval(dictable_string))
+            return d

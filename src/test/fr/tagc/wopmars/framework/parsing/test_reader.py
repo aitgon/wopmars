@@ -37,6 +37,7 @@ class TestReader(TestCase):
         session.get_or_create(Type, defaults={"id": 2}, name="output")
         session.commit()
         self.__session = SQLManager.instance().get_session()
+        self.__reader = Reader()
 
         s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
 
@@ -44,11 +45,6 @@ class TestReader(TestCase):
 
         self.__s_example_definition_file = s_root_path + "resources/example_def_file.yml"
         self.__s_example_definition_file2 = s_root_path + "resources/example_def_file3.yml"
-        try:
-            self.__reader_right = Reader(self.__s_example_definition_file)
-            self.__reader_right2 = Reader(self.__s_example_definition_file2)
-        except:
-            raise AssertionError('Should not raise exception')
 
         # The ugly (malformed file) --------------------:
 
@@ -65,8 +61,6 @@ class TestReader(TestCase):
                 ]
         ]
 
-        [self.assertRaises(WopMarsException, Reader, file) for file in self.__list_f_to_exception_init]
-
         # The bad (invalid file) ----------------------:
 
         self.__list_s_to_exception_read = [
@@ -81,12 +75,12 @@ class TestReader(TestCase):
             ]
         ]
 
-        self.__list_reader_exception_read = [Reader(file) for file in self.__list_s_to_exception_read]
+    def test_load_definition_file(self):
+        [self.assertRaises(WopMarsException, self.__reader.load_definition_file, file) for file in self.__list_f_to_exception_init]
 
         # Not existing file
-
         with self.assertRaises(WopMarsException):
-            Reader(s_root_path + "Not existing file.")
+            self.__reader.load_definition_file("Not existing file.")
 
     def tearDown(self):
         SQLManager.drop_all()
@@ -107,7 +101,7 @@ class TestReader(TestCase):
 
     def test_read2(self):
         try:
-            self.__reader_right2.read()
+            self.__reader.read(self.__s_example_definition_file2)
             result = self.__session.query(ToolWrapper).one()
         except:
             raise AssertionError("Packaged wrappers should not raise an exception")
@@ -132,7 +126,7 @@ class TestReader(TestCase):
 
     def test_read(self):
 
-        self.__reader_right.read()
+        self.__reader.read(self.__s_example_definition_file)
         result = set(self.__session.query(ToolWrapper).all())
 
         input_entry = Type(name="input")
@@ -215,9 +209,7 @@ class TestReader(TestCase):
         tw7 = FooWrapper10(rule_name="rule7")
         tw7.files.extend([f12, f13, f14, f15])
 
-
         expected = set([tw1, tw2, tw3, tw4, tw5, tw6, tw7])
-
 
         # The good ------------------------------------:
 
@@ -226,7 +218,7 @@ class TestReader(TestCase):
 
         # The bad -------------------------------------:
 
-        [self.assertRaises(WopMarsException, reader.read) for reader in self.__list_reader_exception_read]
+        [self.assertRaises(WopMarsException, self.__reader.read, file) for file in self.__list_s_to_exception_read]
 
         SQLManager.instance().get_session().rollback()
 

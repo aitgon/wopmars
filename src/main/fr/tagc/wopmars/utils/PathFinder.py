@@ -2,6 +2,7 @@
 Example of module documentation which can be
 multiple-lined
 """
+import importlib
 import os
 
 
@@ -53,3 +54,6 @@ class PathFinder:
             if not f.startswith("."):
                 PathFinder.silentremove(os.path.join(path, f))
 
+    @staticmethod
+    def is_in_python_path(name):
+        importlib.import_module(name)

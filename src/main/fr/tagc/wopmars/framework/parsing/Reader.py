@@ -37,7 +37,7 @@ class Reader:
     build the ToolWrapper objects and perform tests on the quality
     of the definition file.
     """
-    def __init__(self, s_definition_file):
+    def __init__(self):
         """
         Constructor of the reader.
 
@@ -50,6 +50,35 @@ class Reader:
         :raise: WopMarsParsingException: if the Yaml Spec are not respected
         :param: s_definition_file: String: the definition file open in read mode
         """
+        self.__dict_workflow_definition = None
+        # # Tests about grammar and syntax are performed here (file's existence is also tested here)
+        # try:
+        #     with open(s_definition_file, 'r') as def_file:
+        #         s_def_file_content = def_file.read()
+        #     try:
+        #         # The workflow definition file is loaded as-it in memory by the pyyaml library
+        #         Logger.instance().info("Reading the definition file: " + str(s_definition_file) + "...")
+        #         Reader.check_duplicate_rules(s_def_file_content)
+        #         yaml.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, self.no_duplicates_constructor)
+        #         self.__dict_workflow_definition = yaml.load(s_def_file_content)
+        #         Logger.instance().debug("\n" + DictUtils.pretty_repr(self.__dict_workflow_definition))
+        #         Logger.instance().info("Read complete.")
+        #         Logger.instance().info("Checking whether the file is well formed...")
+        #         # raise an exception if there is a problem
+        #         self.is_grammar_respected()
+        #         Logger.instance().info("File well formed.")
+        #     # YAMLError is thrown if the YAML specifications are not respected by the definition file
+        #     except yaml.YAMLError as exc:
+        #         raise WopMarsException("Error while parsing the configuration file: \n\t"
+        #                                "The YAML specification is not respected:", str(exc))
+        #     except ConstructorError as CE:
+        #         raise WopMarsException("Error while parsing the configuration filer: \n\t",
+        #                                str(CE))
+        # except FileNotFoundError:
+        #     raise WopMarsException("Error while parsing the configuration file: \n\tInput error:",
+        #                            "The specified file at " + s_definition_file + " doesn't exist.")
+
+    def load_definition_file(self, s_definition_file):
         # Tests about grammar and syntax are performed here (file's existence is also tested here)
         try:
             with open(s_definition_file, 'r') as def_file:
@@ -124,7 +153,51 @@ class Reader:
                                        "The rule " + r + " is duplicated.")
         Logger.instance().debug("No Duplicate.")
 
-    def read(self):
+    def load_one_toolwrapper(self, s_toolwrapper, s_dict_inputs, s_dict_outputs, s_dict_params):
+        session = SQLManager.instance().get_session()
+        dict_inputs = dict(eval(s_dict_inputs))
+        dict_outputs = dict(eval(s_dict_outputs))
+        dict_params = dict(eval(s_dict_params))
+        try:
+            # The same execution entry for the whole workflow-related bdd entries.
+            execution = Execution()
+            # get the types that should have been created previously
+            input_entry = session.query(Type).filter(Type.name == "input").one()
+            output_entry = session.query(Type).filter(Type.name == "output").one()
+
+            Logger.instance().debug("Loading unique toolwrapper " + s_toolwrapper)
+            dict_dict_elm = dict(dict_input={}, dict_params={}, dict_output={})
+            for s_input in dict_inputs:
+                obj_created = IOFilePut(name=s_input,
+                                        path=os.path.abspath(os.path.join(OptionManager.instance()["--directory"],
+                                                                          dict_inputs[s_input])))
+                dict_dict_elm ["dict_input"][s_input] = obj_created
+                Logger.instance().debug("Object input: " + s_input + " created.")
+            for s_output in dict_outputs:
+                obj_created = IOFilePut(name=s_output,
+                                        path=os.path.abspath(os.path.join(OptionManager.instance()["--directory"],
+                                                                          dict_outputs[s_output])))
+                dict_dict_elm["dict_output"][s_output] = obj_created
+                Logger.instance().debug("Object input: " + s_output + " created.")
+            for s_param in dict_params:
+                obj_created = Option(name=s_param,
+                                     value=dict_params[s_param])
+                dict_dict_elm["dict_params"][s_param] = obj_created
+                Logger.instance().debug("Object input: " + s_param + " created.")
+
+            # Instantiate the refered class
+            wrapper_entry = self.create_toolwrapper_entry("rule" + s_toolwrapper, s_toolwrapper,
+                                                          dict_dict_elm, input_entry, output_entry)
+            wrapper_entry.execution = execution
+            Logger.instance().debug("Object toolwrapper: " + s_toolwrapper + " created.")
+            session.add(wrapper_entry)
+            session.commit()
+        except NoResultFound as e:
+            session.rollback()
+            raise WopMarsException("Error while parsing the configuration file. The database has not been setUp Correctly.",
+                                   str(e))
+
+    def read(self, s_definition_file):
         """
         Reads the file and build the workflow in the database.
 
@@ -135,6 +208,8 @@ class Reader:
 
         :return: The set of builded ToolWrappers
         """
+        self.load_definition_file(s_definition_file)
+
         session = SQLManager.instance().get_session()
 
         try:
@@ -184,9 +259,6 @@ class Reader:
             session.rollback()
             raise WopMarsException("Error while parsing the configuration file. The database has not been setUp Correctly.",
                                    str(e))
-        # except Exception as e:
-        #     session.rollback()
-        #     raise WopMarsException("Error while parsing the configuration file.", str(e))
 
     def create_toolwrapper_entry(self, str_rule_name, str_wrapper_name, dict_dict_elm, input_entry, output_entry):
         """

@@ -24,7 +24,7 @@ class Parser:
 
     The aim of the Parser is to send the DAG representing the execution graph
     """
-    def __init__(self, s_file_path):
+    def __init__(self):
         """
         The constructor of Parser.
 
@@ -33,7 +33,7 @@ class Parser:
         :return:
         """
 
-        self.__reader = Reader(s_file_path)
+        self.__reader = Reader()
 
     def parse(self):
         """
@@ -49,7 +49,14 @@ class Parser:
         :raise: WopMarsParsingException if the workflow is not a DAG.
         :return: the DAG
         """
-        self.__reader.read()
+        if not OptionManager.instance()["tool"]:
+            self.__reader.read(OptionManager.instance()["--wopfile"])
+
+        else:
+            self.__reader.load_one_toolwrapper(OptionManager.instance()["TOOLWRAPPER"],
+                                               OptionManager.instance()["--input"],
+                                               OptionManager.instance()["--output"],
+                                               OptionManager.instance()["--params"])
         set_toolwrappers = self.get_set_toolwrappers()
         dag_tools = DAG(set_toolwrappers)
         if not is_directed_acyclic_graph(dag_tools):
