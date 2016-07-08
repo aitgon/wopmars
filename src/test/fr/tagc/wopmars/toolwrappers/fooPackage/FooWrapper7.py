@@ -12,7 +12,7 @@ class FooWrapper7(ToolWrapper):
     This class has been done for example/testing purpose.
     Modifications may lead to failure in tests.
     """
-    __mapper_args__ = {'polymorphic_identity': "FooWrapper7"}
+    __mapper_args__ = {'polymorphic_identity': "fooPackage.FooWrapper7"}
     def get_input_table(self):
         return ["fooPackage.FooBaseP"]
 

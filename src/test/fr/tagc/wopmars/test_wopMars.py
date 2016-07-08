@@ -132,7 +132,6 @@ class TestWopMars(TestCase):
             WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 0)
 
-
     def tearDown(self):
         SQLManager.drop_all()
         PathFinder.dir_content_remove("resources/outputs/")

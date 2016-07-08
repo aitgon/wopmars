@@ -14,7 +14,7 @@ class FooWrapper9(ToolWrapper):
     This class has been done for example/testing purpose.
     Modifications may lead to failure in tests.
     """
-    __mapper_args__ = {'polymorphic_identity': "FooWrapper9"}
+    __mapper_args__ = {'polymorphic_identity': "fooPackage.FooWrapper9"}
     def get_input_file(self):
         return ["input1"]
 
