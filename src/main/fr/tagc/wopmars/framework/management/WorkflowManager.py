@@ -1,12 +1,15 @@
 """
 Module containing the WorkflowManager class
 """
+import datetime
 import sys
 
+import time
 from sqlalchemy import and_
 from sqlalchemy.sql.functions import func
 
 from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
+from src.main.fr.tagc.wopmars.framework.bdd.tables.Execution import Execution
 from src.main.fr.tagc.wopmars.framework.bdd.tables.IODbPut import IODbPut
 from src.main.fr.tagc.wopmars.framework.bdd.tables.IOFilePut import IOFilePut
 from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
@@ -240,7 +243,9 @@ class WorkflowManager(ToolWrapperObserver):
             # Is there some tools that weren't ready?
             if len(self.__list_queue_buffer) == 0:
                 # If there is no tool waiting and no tool being executed, the workflow has finished.
-                Logger.instance().info("The workflow has completed.")
+                finished_at = datetime.datetime.fromtimestamp(time.time())
+                Logger.instance().info("The workflow has completed. Finished at: " + str(finished_at))
+                self.set_finishing_informations(finished_at, "FINISHED")
                 sys.exit(0)
             # uniquement en environnement multiThreadpredece
             elif not self.check_buffer():
@@ -251,6 +256,15 @@ class WorkflowManager(ToolWrapperObserver):
                                                   " -> rule: " +
                                                   t.get_toolwrapper().name for t in self.__list_queue_buffer]) + ". ")
             # If there is one tool that is ready, it means that it is in queue because ressources weren't available.
+
+    def set_finishing_informations(self, finished_at, status):
+        session = SQLManager.instance().get_session()
+        modify_exec = session.query(Execution).order_by(Execution.id.desc()).first()
+        modify_exec.finished_at = finished_at
+        modify_exec.time = (modify_exec.finished_at - modify_exec.started_at).total_seconds()
+        modify_exec.status = status
+        session.add(modify_exec)
+        session.commit()
 
     def all_predecessors_have_run(self, tw):
         return self.__dag_to_exec.get_all_predecessors(tw).difference(set([tw])).issubset(set(self.__already_runned))

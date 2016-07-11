@@ -214,7 +214,7 @@ class Reader:
 
         try:
             # The same execution entry for the whole workflow-related bdd entries.
-            execution = Execution()
+            execution = Execution(started_at=datetime.datetime.fromtimestamp(time.time()))
             # get the types that should have been created previously
             input_entry = session.query(Type).filter(Type.name == "input").one()
             output_entry = session.query(Type).filter(Type.name == "output").one()

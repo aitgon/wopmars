@@ -64,6 +64,7 @@ class ToolWrapper(Base):
         :return: void
         """
         # todo ask lionel peut-être autoriser super().__init__
+        # todo ajouter un flag de vérification du passage dans cette méthode
         super().__init__(name=rule_name)
         # int
         self.__state = ToolWrapper.NEW
@@ -491,10 +492,6 @@ class ToolWrapper(Base):
 
     def session(self):
         return self.__session
-
-    # def exec(self, cmd):
-    #     if type(cmd) == str:
-    #         cmd = str.split()
 
 
 

@@ -29,14 +29,17 @@ Options:
   -o --output=DICT             Set the output of the toolwrapper you want to use in the dictionnary format.
   -P --params=DICT             Set the parameters of the toolwrapper you want to use in the dictionnary format.
 """
+import datetime
 import os
 import sys
 import re
 
+import time
 from docopt import docopt, DocoptExit
 from schema import Schema, And, Or, Use, SchemaError
 
 from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
+from src.main.fr.tagc.wopmars.framework.bdd.tables.Execution import Execution
 from src.main.fr.tagc.wopmars.framework.management.WorkflowManager import WorkflowManager
 from src.main.fr.tagc.wopmars.utils.DictUtils import DictUtils
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
@@ -46,6 +49,7 @@ from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsEx
 # TODO faire en sorte que les imports commencent a fr
 # todo parcourir le code pour refaire la documentation -> compatible sphinx
 # todo specifier l'exception de "non dag" pour dire entre quels outils apparait le cycle
+# todo option pour reseter l'historique sans supprimer les données
 
 
 class WopMars:
@@ -107,12 +111,22 @@ class WopMars:
 
         Logger.instance().debug("\nCommand line Args:" + str(OptionManager.instance()))
 
+        wm = WorkflowManager()
         try:
-            wm = WorkflowManager()
             wm.run()
         except WopMarsException as WE:
             Logger.instance().error(str(WE))
-            SQLManager.instance().get_session().rollback()
+            session = SQLManager.instance().get_session()
+            try:
+                finished_at = datetime.datetime.fromtimestamp(time.time())
+                Logger.instance().error("The workflow has encountered an error at: " + str(finished_at))
+                wm.set_finishing_informations(finished_at, "ERROR")
+            except AttributeError:
+                session.rollback()
+                Logger.instance().error("The execution has not even begun. No informations will be stored in the database.")
+            except Exception as e:
+                Logger.instance().error("An error occured during the rollback of the changement of the database which can be now unstable:" +
+                                        str(e))
             sys.exit(1)
 
 
