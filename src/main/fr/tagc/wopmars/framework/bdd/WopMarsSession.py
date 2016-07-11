@@ -46,9 +46,6 @@ class WopMarsSession:
     def query(self, table):
         return WopMarsQuery(table, session=self.__session)
 
-    # def all(self, query):
-    #     return self.__manager.all(query)
-
     def add(self, item):
         """
         Add

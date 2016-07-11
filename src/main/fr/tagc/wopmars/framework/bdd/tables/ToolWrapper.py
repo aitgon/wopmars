@@ -63,6 +63,7 @@ class ToolWrapper(Base):
         :param option_dict: dict(String: Option)
         :return: void
         """
+        # todo ask lionel peut-être autoriser super().__init__
         super().__init__(name=rule_name)
         # int
         self.__state = ToolWrapper.NEW

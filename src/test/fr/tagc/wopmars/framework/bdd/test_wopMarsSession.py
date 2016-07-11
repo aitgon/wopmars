@@ -1,6 +1,8 @@
 import unittest
 from unittest import TestCase
 
+from sqlalchemy.orm.exc import MultipleResultsFound
+
 from FooBase import FooBase
 from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
 from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
@@ -87,6 +89,31 @@ class TestWopMarsSession(TestCase):
         self.assertEqual(self.__session.get_or_create(FooBase, name="testSession 0")[0], fs[0])
         self.__session.delete(fs[0])
         self.assertNotEqual(self.__session.get_or_create(FooBase, name="testSession 0")[0], fs[0])
+
+    def test_query(self):
+        fs = []
+        for i in range(10):
+            fs.append(FooBase(name="testSession " + str(i)))
+        self.__session.add_all(fs)
+        self.__session.commit()
+
+        self.assertEqual(len(self.__session.query(FooBase).all()), 10)
+
+        with self.assertRaises(MultipleResultsFound):
+            self.assertEqual(self.__session.query(FooBase).one().name, "testSession 0")
+
+        self.assertEqual(self.__session.query(FooBase).filter(FooBase.name == "testSession 0").one().name, "testSession 0")
+
+        self.assertEqual(self.__session.query(FooBase).count(), 10)
+
+        self.assertEqual(self.__session.query(FooBase).first().name, "testSession 0")
+
+        self.assertIsNone(self.__session.query(FooBase).filter(FooBase.name == "existepas").one_or_none())
+
+        self.assertIsNone(self.__session.query(FooBase).filter(FooBase.name == "existepas").scalar())
+        self.assertEqual(self.__session.query(FooBase.name).filter(FooBase.name == "testSession 0").scalar(), "testSession 0")
+        with self.assertRaises(MultipleResultsFound):
+            self.assertEqual(self.__session.query(FooBase.name).scalar(), "testSession 0")
 
 if __name__ == '__main__':
     unittest.main()
