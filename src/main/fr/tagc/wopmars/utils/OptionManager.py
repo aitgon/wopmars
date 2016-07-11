@@ -54,6 +54,8 @@ class OptionManager(dict, SingletonMixin):
             self["--dot"] = os.path.abspath(os.path.expanduser(self["--dot"]))
         if self["--directory"]:
             self["--directory"] = os.path.abspath(os.path.expanduser(self["--directory"]))
+        if self["--database"]:
+            self["--database"] = os.path.abspath(os.path.expanduser(self["--database"]))
 
     def validate_definition_file(self):
         if self["--wopfile"] is None:
