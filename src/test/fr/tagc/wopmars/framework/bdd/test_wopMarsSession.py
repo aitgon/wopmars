@@ -17,7 +17,7 @@ class TestWopMarsSession(TestCase):
 
     def tearDown(self):
         self.__session.rollback()
-        SQLManager.drop_all()
+        SQLManager.instance().drop_all()
         PathFinder.dir_content_remove("resources/outputs/")
         OptionManager._drop()
         SQLManager._drop()

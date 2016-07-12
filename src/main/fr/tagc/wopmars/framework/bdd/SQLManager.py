@@ -110,25 +110,31 @@ class SQLManager(SingletonMixin):
             self.__lock.release()
             Logger.instance().debug(str(session) + " has released the write lock on SQLManager.")
 
-    @staticmethod
-    def drop_all():
+    def drop_all(self):
         """
         Use the declarative Base to drop all tables found. Should only be used for testing purposes.
         :return:
         """
-        Base.metadata.drop_all(SQLManager.instance().get_engine())
+        try:
+            self.__lock.acquire_write()
+            Base.metadata.drop_all(self.__engine)
+        finally:
+            self.__lock.release()
         # todo ask aitor option pour reset les resultats (supprimer le contenu de la bdd) / fresh run
         # (suppression de la bdd avant run pour etre sur de repartir sur des bases saines)
 
-    @staticmethod
-    def create_all():
+    def create_all(self):
         """
         Use the declarative Base to create all tables found (especially whose which are related to the workflow management).
 
         :return: void
         """
         # This line will create all tables found in PYTHONPATH (I think, or something like that)
-        Base.metadata.create_all(SQLManager.instance().get_engine())
+        try:
+            self.__lock.acquire_write()
+            Base.metadata.create_all(self.__engine)
+        finally:
+            self.__lock.release()
 
     def create(self, tablename):
         try:

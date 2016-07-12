@@ -24,7 +24,7 @@ class TestParser(TestCase):
     def setUp(self):
         OptionManager.initial_test_setup()
 
-        SQLManager.create_all()
+        SQLManager.instance().create_all()
         session = SQLManager.instance().get_session()
         session.get_or_create(Type, defaults={"id": 1}, name="input")
         session.get_or_create(Type, defaults={"id": 2}, name="output")
@@ -33,7 +33,7 @@ class TestParser(TestCase):
         self.__parser = Parser()
 
     def tearDown(self):
-        SQLManager.drop_all()
+        SQLManager.instance().drop_all()
         PathFinder.dir_content_remove("resources/outputs/")
         OptionManager._drop()
         SQLManager._drop()

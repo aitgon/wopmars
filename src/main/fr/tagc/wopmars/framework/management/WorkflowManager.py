@@ -69,6 +69,7 @@ class WorkflowManager(ToolWrapperObserver):
         self.__dag_tools = None
         self.__dag_to_exec = None
         self.__already_runned = set()
+        self.__session = SQLManager.instance().get_session()
 
     def run(self):
         """
@@ -80,11 +81,10 @@ class WorkflowManager(ToolWrapperObserver):
         Then, execute_from is called with no argument to get the origin nodes.
         :return:
         """
-        SQLManager.create_all()
-        session = SQLManager.instance().get_session()
-        session.get_or_create(Type, defaults={"id": 1}, name="input")
-        session.get_or_create(Type, defaults={"id": 2}, name="output")
-        session.commit()
+        SQLManager.instance().create_all()
+        self.__session.get_or_create(Type, defaults={"id": 1}, name="input")
+        self.__session.get_or_create(Type, defaults={"id": 2}, name="output")
+        self.__session.commit()
         self.__dag_tools = self.__parser.parse()
         self.get_dag_to_exec()
         self.execute_from()
@@ -142,6 +142,11 @@ class WorkflowManager(ToolWrapperObserver):
                                    " -> " + node_from_rule.toolwrapper)
         else:
             self.__dag_to_exec = self.__dag_tools
+
+        for tw in set(self.__dag_tools.nodes()).difference(set(self.__dag_to_exec.nodes()   )):
+            tw.set_execution_infos(status="NOT_PLANNED")
+            self.__session.add(tw)
+        self.__session.commit()
 
     def execute_from(self, tw=None):
         """
@@ -227,7 +232,15 @@ class WorkflowManager(ToolWrapperObserver):
                 self.__count_exec += 1
                 # todo twthread methode start
                 thread_tw.set_dry(dry)
-                thread_tw.run()
+                try:
+                    thread_tw.run()
+                except Exception as e:
+                    if not hasattr(e, "teb_already_seen"):
+                        setattr(e, "teb_already_seen", True)
+                        tw.set_execution_infos(status="EXECUTION_ERROR")
+                        self.__session.add(tw)
+                        self.__session.commit()
+                    raise e
             else:
                 Logger.instance().debug("ToolWrapper not ready: rule: " + tw.name + " -> " + str(tw.toolwrapper))
                 # The buffer contains the ToolWrappers that have inputs which are not ready yet.
@@ -258,13 +271,12 @@ class WorkflowManager(ToolWrapperObserver):
             # If there is one tool that is ready, it means that it is in queue because ressources weren't available.
 
     def set_finishing_informations(self, finished_at, status):
-        session = SQLManager.instance().get_session()
-        modify_exec = session.query(Execution).order_by(Execution.id.desc()).first()
+        modify_exec = self.__session.query(Execution).order_by(Execution.id.desc()).first()
         modify_exec.finished_at = finished_at
         modify_exec.time = (modify_exec.finished_at - modify_exec.started_at).total_seconds()
         modify_exec.status = status
-        session.add(modify_exec)
-        session.commit()
+        self.__session.add(modify_exec)
+        self.__session.commit()
 
     def all_predecessors_have_run(self, tw):
         return self.__dag_to_exec.get_all_predecessors(tw).difference(set([tw])).issubset(set(self.__already_runned))
@@ -284,7 +296,7 @@ class WorkflowManager(ToolWrapperObserver):
         :return:
         """
         session = SQLManager.instance().get_session()
-        list_same_toolwrappers = session.query(ToolWrapper).filter(ToolWrapper.name == tw.name)\
+        list_same_toolwrappers = session.query(ToolWrapper).filter(ToolWrapper.toolwrapper == tw.toolwrapper)\
             .filter(ToolWrapper.execution_id != tw.execution_id).all()
         i = 0
         while i < len(list_same_toolwrappers):
@@ -316,10 +328,13 @@ class WorkflowManager(ToolWrapperObserver):
         :param thread_toolwrapper: ToolWrapper thread that just succeed
         :return:
         """
+        self.__session.add(thread_toolwrapper.get_toolwrapper())
+        self.__session.commit()
+
         dry_status = thread_toolwrapper.get_dry()
+        thread_toolwrapper.get_toolwrapper().set_args_date_and_size("output", dry_status)
         if dry_status == False:
             Logger.instance().info(str(thread_toolwrapper.get_toolwrapper().__class__.__name__) + " has succeed.")
-        thread_toolwrapper.get_toolwrapper().set_args_date_and_size("output", dry_status)
         # Continue the dag execution from the toolwrapper that just finished.
         self.__already_runned.add(thread_toolwrapper.get_toolwrapper())
         self.__count_exec -= 1

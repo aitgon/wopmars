@@ -51,32 +51,6 @@ class Reader:
         :param: s_definition_file: String: the definition file open in read mode
         """
         self.__dict_workflow_definition = None
-        # # Tests about grammar and syntax are performed here (file's existence is also tested here)
-        # try:
-        #     with open(s_definition_file, 'r') as def_file:
-        #         s_def_file_content = def_file.read()
-        #     try:
-        #         # The workflow definition file is loaded as-it in memory by the pyyaml library
-        #         Logger.instance().info("Reading the definition file: " + str(s_definition_file) + "...")
-        #         Reader.check_duplicate_rules(s_def_file_content)
-        #         yaml.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, self.no_duplicates_constructor)
-        #         self.__dict_workflow_definition = yaml.load(s_def_file_content)
-        #         Logger.instance().debug("\n" + DictUtils.pretty_repr(self.__dict_workflow_definition))
-        #         Logger.instance().info("Read complete.")
-        #         Logger.instance().info("Checking whether the file is well formed...")
-        #         # raise an exception if there is a problem
-        #         self.is_grammar_respected()
-        #         Logger.instance().info("File well formed.")
-        #     # YAMLError is thrown if the YAML specifications are not respected by the definition file
-        #     except yaml.YAMLError as exc:
-        #         raise WopMarsException("Error while parsing the configuration file: \n\t"
-        #                                "The YAML specification is not respected:", str(exc))
-        #     except ConstructorError as CE:
-        #         raise WopMarsException("Error while parsing the configuration filer: \n\t",
-        #                                str(CE))
-        # except FileNotFoundError:
-        #     raise WopMarsException("Error while parsing the configuration file: \n\tInput error:",
-        #                            "The specified file at " + s_definition_file + " doesn't exist.")
 
     def load_definition_file(self, s_definition_file):
         # Tests about grammar and syntax are performed here (file's existence is also tested here)
@@ -160,7 +134,7 @@ class Reader:
         dict_params = dict(eval(s_dict_params))
         try:
             # The same execution entry for the whole workflow-related bdd entries.
-            execution = Execution()
+            execution = Execution(started_at=datetime.datetime.fromtimestamp(time.time()))
             # get the types that should have been created previously
             input_entry = session.query(Type).filter(Type.name == "input").one()
             output_entry = session.query(Type).filter(Type.name == "output").one()

@@ -357,7 +357,7 @@ class TestToolWrapper(TestCase):
         self.assertFalse(toolwrapper2.is_output_ok())
 
     def tearDown(self):
-        SQLManager.drop_all()
+        SQLManager.instance().drop_all()
         PathFinder.dir_content_remove("resources/outputs/")
         OptionManager._drop()
         SQLManager._drop()

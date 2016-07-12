@@ -20,7 +20,7 @@ class TestDAG(TestCase):
 
     def setUp(self):
         OptionManager.initial_test_setup()
-        SQLManager.create_all()
+        SQLManager.instance().create_all()
         #        first
         #       /    \
         #   second   third
@@ -101,7 +101,7 @@ class TestDAG(TestCase):
                             self.__set_tool.difference(set([self.__toolwrapper_fourth])))
 
     def tearDown(self):
-        SQLManager.drop_all()
+        SQLManager.instance().drop_all()
         OptionManager._drop()
         PathFinder.silentremove("resources/outputs/output_File1.txt")
         SQLManager._drop()

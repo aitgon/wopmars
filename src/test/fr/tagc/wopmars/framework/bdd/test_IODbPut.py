@@ -18,7 +18,7 @@ class TestIODbPut(TestCase):
         OptionManager.initial_test_setup()
         print(OptionManager.instance()["--log"])
 
-        SQLManager.create_all()
+        SQLManager.instance().create_all()
         self.__local_session = SQLManager.instance().get_session()
         try:
             for i in range(10):
@@ -34,7 +34,7 @@ class TestIODbPut(TestCase):
         self.__io_base_existing3 = IODbPut(name="FooBase2")
 
     def tearDown(self):
-        SQLManager.drop_all()
+        SQLManager.instance().drop_all()
         PathFinder.dir_content_remove("resources/outputs/")
         OptionManager._drop()
         SQLManager._drop()

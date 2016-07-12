@@ -1,7 +1,10 @@
 """
 Module containing the ToolThread class.
 """
+import datetime
 import threading
+
+import time
 
 from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
 from src.main.fr.tagc.wopmars.framework.management.Observable import Observable
@@ -40,16 +43,21 @@ class ToolThread(threading.Thread, Observable):
         """
 
         session_tw = SQLManager.instance().get_session()
+        start = datetime.datetime.fromtimestamp(time.time())
         try:
             self.__toolwrapper.set_session(session_tw)
             if not self.__dry:
                 Logger.instance().info(self.__toolwrapper.__class__.__name__ + " started.")
                 self.__toolwrapper.run()
+                session_tw.commit()
+                self.__toolwrapper.set_execution_infos(start, datetime.datetime.fromtimestamp(time.time()), "EXECUTED")
             else:
                 Logger.instance().info(self.__toolwrapper.__class__.__name__ + " skiped.")
-            session_tw.commit()
+                self.__toolwrapper.set_execution_infos(start, datetime.datetime.fromtimestamp(time.time()), "ALREADY_EXECUTED")
         except Exception as e:
             session_tw.rollback()
+            self.__toolwrapper.set_execution_infos(start, datetime.datetime.fromtimestamp(time.time()), "EXECUTION_ERROR")
+            # todo ask lionel InitiationError n'est pas implémenté en fin de compte
             raise e
         finally:
             # todo twthread , fermer session

@@ -42,7 +42,7 @@ class TestWopMars(TestCase):
         self.assertEqual(se.exception.code, 1)
 
     def test_run3(self):
-        SQLManager.create_all()
+        SQLManager.instance().create_all()
         subprocess.Popen(["touch", "resources/outputs/output_File1.txt"])
         subprocess.Popen(["touch", "resources/outputs/output_File4.txt"])
         subprocess.Popen(["touch", "resources/outputs/output_File5.txt"])
@@ -57,7 +57,7 @@ class TestWopMars(TestCase):
         self.assertEqual(se.exception.code, 0)
 
     def test_run4(self):
-        SQLManager.create_all()
+        SQLManager.instance().create_all()
         cmd_line = ["python", "-D", self.__db_path, "-w", self.__right_def_file, "-vvvv", "-p", "--targetrule", "rule3"]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
@@ -79,7 +79,7 @@ class TestWopMars(TestCase):
 
         self.assertGreater(runtime1 * 1.5, runtime2)
 
-        SQLManager.drop_all()
+        SQLManager.instance().drop_all()
         OptionManager._drop()
         SQLManager._drop()
         PathFinder.silentremove("resources/outputs/output_File1.txt")
@@ -107,7 +107,7 @@ class TestWopMars(TestCase):
 
         self.assertGreater(runtime1 * 1.5, runtime2)
 
-        SQLManager.drop_all()
+        SQLManager.instance().drop_all()
         OptionManager._drop()
         SQLManager._drop()
         PathFinder.silentremove("resources/outputs/output_File1.txt")
@@ -148,7 +148,7 @@ class TestWopMars(TestCase):
         self.assertEqual(se.exception.code, 0)
 
     def tearDown(self):
-        SQLManager.drop_all()
+        SQLManager.instance().drop_all()
         PathFinder.dir_content_remove("resources/outputs/")
         # OptionManager._drop()
         SQLManager._drop()

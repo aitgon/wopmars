@@ -16,13 +16,14 @@ from src.main.fr.tagc.wopmars.framework.bdd.tables.Option import Option
 from src.main.fr.tagc.wopmars.framework.bdd.tables.Type import Type
 from src.main.fr.tagc.wopmars.framework.management.ToolThread import ToolThread
 from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
+from src.main.fr.tagc.wopmars.utils.PathFinder import PathFinder
 
 
 class TestToolThread(TestCase):
 
     def setUp(self):
         OptionManager.initial_test_setup()
-        SQLManager.create_all()
+        SQLManager.instance().create_all()
 
     def test_run(self):
 
@@ -88,11 +89,11 @@ class TestToolThread(TestCase):
         tt2.join()
         tt3.join()
 
-        self.assertEqual(len(SQLManager.instance().get_session().query(FooBase).filter(FooBase.name.like('Foowrapper5 - %')).all()), 30)
+        self.assertEqual(len(SQLManager.instance().get_session().query(FooBase).filter(FooBase.name.like('Foowrapper5 - %')).all()), 3000)
 
     def tearDown(self):
-        SQLManager.drop_all()
-        os.remove("resources/outputs/output_File1.txt")
+        SQLManager.instance().drop_all()
+        PathFinder.silentremove("resources/outputs/output_File1.txt")
 
 if __name__ == '__main__':
     unittest.main()

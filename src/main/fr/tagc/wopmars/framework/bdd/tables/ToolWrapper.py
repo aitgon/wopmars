@@ -5,7 +5,7 @@ import datetime
 import os
 
 import time
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Float
 from sqlalchemy.orm import relationship
 
 from src.main.fr.tagc.wopmars.framework.bdd.Base import Base
@@ -28,6 +28,10 @@ class ToolWrapper(Base):
     name = Column(String)
     toolwrapper = Column(String)
     execution_id = Column(Integer, ForeignKey("wom_execution.id"))
+    started_at = Column(DateTime, nullable=True)
+    finished_at = Column(DateTime, nullable=True)
+    time = Column(Float, nullable=True)
+    status = Column(String, nullable=True, default="NOT_EXECUTED")
 
     # One rule has Many table
     tables = relationship("IODbPut", back_populates="rule")
@@ -71,6 +75,15 @@ class ToolWrapper(Base):
         # <WopMarsSession>
         self.__session = None
 
+    def set_execution_infos(self, start=None, stop=None, status=None):
+        if start is not None:
+            self.started_at = start
+        if stop is not None:
+            self.finished_at = stop
+        if self.started_at is not None and self.finished_at is not None:
+            self.time = (self.finished_at - self.started_at).total_seconds()
+        if status is not None:
+            self.status = status
 
     ### PARSING METHODS
 
@@ -219,6 +232,8 @@ class ToolWrapper(Base):
                 date = datetime.datetime.fromtimestamp(os.path.getmtime(f.path))
                 size = os.path.getsize(f.path)
             except FileNotFoundError as FE:
+                # todo ask lionel sans ce rollback, ca bug, pourquoi? la session est vide... comme si la query etait bloquante
+                session.rollback()
                 raise WopMarsException("Error during the execution of the workflow",
                                        "The " + type + " file " + str(f.path) + " of rule " + str(self.name) +
                                        " doesn't exist")

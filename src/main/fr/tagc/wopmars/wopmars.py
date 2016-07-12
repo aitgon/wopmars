@@ -2,7 +2,7 @@
 
 Usage:
   wopmars.py [-n] [-p] [-F] [-v...] [-d DIR] [-g FILE] [-L FILE] [-f RULE | -t RULE] [-D DATABASE] [-w DEFINITION_FILE]
-  wopmars.py tool TOOLWRAPPER [-i DICT] [-o DICT] [-P DICT] [-p] [-F] [-D DATABASE] [-v...] [-d DIR]
+  wopmars.py tool TOOLWRAPPER [-i DICT] [-o DICT] [-P DICT] [-p] [-F] [-D DATABASE] [-v...] [-d DIR] [-L FILE]
 
 Arguments:
   DEFINITION_FILE  Path to the definition file of the workflow [default: wopfile.yml].
@@ -50,7 +50,13 @@ from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsEx
 # todo parcourir le code pour refaire la documentation -> compatible sphinx
 # todo specifier l'exception de "non dag" pour dire entre quels outils apparait le cycle
 # todo option pour reseter l'historique sans supprimer les données
-
+# todo ask lionel methode des classes métiers pour définir des tables associées au fonctionnement d'un outil mais qui
+# ne peuvent pas être logiquement considérées comme input ou output
+# todo ask lionel autoriser les boucles avec les tables (mais pas avec les fichiers) -> système de flag visité / pas visité
+# pour vérifier que les rules ne soient exécutées qu'une seule fois
+# todo ask lionel numerotation de l'état des tables pour permettre aux rules d'écrire dans la même table (alternatives proposées: numerotation absolue des rules / ordonnancement explicite des rules)
+# todo import error dans la classe métier qui est catch par le except ImportError de reader
+# todo combinatoire pour les rules
 
 class WopMars:
 
