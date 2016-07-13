@@ -214,7 +214,7 @@ class WorkflowManager(ToolWrapperObserver):
             Logger.instance().debug("Current rule: " + tw.name + "->" + tw.toolwrapper)
             if not self.all_predecessors_have_run(tw):
                 Logger.instance().debug("Predecessors of rule: " + tw.name + " have not been executed yet.")
-            elif tw.are_inputs_ready():
+            elif tw.are_inputs_ready() or OptionManager.instance()["--dry-run"]:
                 tw.set_args_date_and_size("input")
                 Logger.instance().debug("ToolWrapper ready: " + tw.toolwrapper)
                 dry = False
@@ -225,7 +225,7 @@ class WorkflowManager(ToolWrapperObserver):
                                            " been runned with same" +
                                            " parameters.")
                     dry = True
-                elif OptionManager.instance()["--forceall"]:
+                elif OptionManager.instance()["--forceall"] and not OptionManager.instance()["--dry-run"]:
                     self.erase_output(tw)
                 # todo twthread verification des ressources
                 thread_tw.subscribe(self)
@@ -332,8 +332,9 @@ class WorkflowManager(ToolWrapperObserver):
         self.__session.commit()
 
         dry_status = thread_toolwrapper.get_dry()
-        thread_toolwrapper.get_toolwrapper().set_args_date_and_size("output", dry_status)
-        if dry_status == False:
+        if not OptionManager.instance()["--dry-run"]:
+            thread_toolwrapper.get_toolwrapper().set_args_date_and_size("output", dry_status)
+        if dry_status == False and not OptionManager.instance()["--dry-run"]:
             Logger.instance().info(str(thread_toolwrapper.get_toolwrapper().__class__.__name__) + " has succeed.")
         # Continue the dag execution from the toolwrapper that just finished.
         self.__already_runned.add(thread_toolwrapper.get_toolwrapper())

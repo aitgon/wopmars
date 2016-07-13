@@ -85,7 +85,7 @@ class IODbPut(IOPut, Base):
         try:
             results = session.query(self.__table).first()
             if results is None:
-                Logger.instance().info("The table " + self.name + " is empty.")
+                Logger.instance().debug("The table " + self.name + " is empty.")
                 return False
         except OperationalError as e:
             Logger.instance().debug("The table " + self.__table.__tablename__ + " doesn't exist.")
@@ -104,3 +104,5 @@ class IODbPut(IOPut, Base):
     def __repr__(self):
         return "<Table (" + self.type.name + "  ):\"" + str(self.name) + "\"; used_at:" + str(self.used_at) + ">"
 
+    def __str__(self):
+        return "table: " + self.name

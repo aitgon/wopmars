@@ -13,6 +13,7 @@ from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
 from src.main.fr.tagc.wopmars.framework.bdd.tables.Execution import Execution
 from src.main.fr.tagc.wopmars.framework.bdd.tables.IODbPut import IODbPut
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
+from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
 from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
@@ -233,10 +234,14 @@ class ToolWrapper(Base):
                 size = os.path.getsize(f.path)
             except FileNotFoundError as FE:
                 # todo ask lionel sans ce rollback, ca bug, pourquoi? la session est vide... comme si la query etait bloquante
-                session.rollback()
-                raise WopMarsException("Error during the execution of the workflow",
-                                       "The " + type + " file " + str(f.path) + " of rule " + str(self.name) +
-                                       " doesn't exist")
+                if not OptionManager.instance()["--dry-run"]:
+                    session.rollback()
+                    raise WopMarsException("Error during the execution of the workflow",
+                                           "The " + type + " file " + str(f.path) + " of rule " + str(self.name) +
+                                           " doesn't exist")
+                else:
+                    date = None
+                    size = None
             f.used_at = date
             f.size = size
             session.add(f)
@@ -443,6 +448,25 @@ class ToolWrapper(Base):
         s += "\""
         return s
 
+    def __str__(self):
+        inputs_list_str = [str(i) for i in self.files + self.tables if i.type.name == "input"]
+        outputs_list_str = [str(o) for o in self.files + self.tables if o.type.name == "output"]
+        params_list_str = [str(p) for p in self.options]
+        s = ""
+        s += "rule " + self.name + ":" + "\n"
+        s += "\ttool: " + self.toolwrapper + "\n"
+        if len(inputs_list_str) > 0:
+            s += "\tinput:" + "\n"
+            s += "\t\t" + "\n\t\t".join(inputs_list_str)
+            s += "\n"
+        if len(outputs_list_str) > 0:
+            s += "\toutput:" + "\n"
+            s += "\t\t" + "\n\t\t".join(outputs_list_str)
+            s += "\n"
+        if len(params_list_str) > 0:
+            s += "\tparams:" + "\n"
+            s += "\t\t" + "\n\t\t".join(params_list_str)
+        return s
     # ###### Method that worker developper should implement#######
 
     def get_input_file(self):

@@ -21,7 +21,7 @@ Options:
   -f RULE --sourcerule=RULE    Execute the workflow from the given RULE.
   -t RULE --targetrule=RULE    Execute the workflow to the given RULE.
   -F --forceall                Force the execution of the workflow, without checking for previous executions.
-  -n --dry                     Do not execute anything but simulate.
+  -n --dry-run                 Do not execute anything but simulate.
   -d --directory=DIR           Set the current working directory. Usefull for working with relative poths [default: $CWD].
   -D --database=DATABASE       Set the path to the database.
   -w --wopfile=DEFINITION_FILE Set the path to the definition file.
@@ -57,6 +57,7 @@ from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsEx
 # todo ask lionel numerotation de l'état des tables pour permettre aux rules d'écrire dans la même table (alternatives proposées: numerotation absolue des rules / ordonnancement explicite des rules)
 # todo import error dans la classe métier qui est catch par le except ImportError de reader
 # todo combinatoire pour les rules
+# todo créer les repertoires innexistents
 
 class WopMars:
 
@@ -84,7 +85,7 @@ class WopMars:
                 "--sourcerule": Or(None, str),
                 "--targetrule": Or(None, str),
                 "--forceall": Use(bool),
-                "--dry": Use(bool),
+                "--dry-run": Use(bool),
                 "--directory": Use(os.path.isdir),
                 "--input": Use(DictUtils.str_to_dict),
                 "--output": Use(DictUtils.str_to_dict),

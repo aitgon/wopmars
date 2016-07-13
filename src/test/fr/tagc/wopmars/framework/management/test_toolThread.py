@@ -89,7 +89,7 @@ class TestToolThread(TestCase):
         tt2.join()
         tt3.join()
 
-        self.assertEqual(len(SQLManager.instance().get_session().query(FooBase).filter(FooBase.name.like('Foowrapper5 - %')).all()), 3000)
+        self.assertEqual(len(SQLManager.instance().get_session().query(FooBase).filter(FooBase.name.like('Foowrapper5 - %')).all()), 30000)
 
     def tearDown(self):
         SQLManager.instance().drop_all()

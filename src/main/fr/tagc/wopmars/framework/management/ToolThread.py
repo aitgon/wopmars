@@ -9,6 +9,7 @@ import time
 from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
 from src.main.fr.tagc.wopmars.framework.management.Observable import Observable
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
+from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
 
 
 class ToolThread(threading.Thread, Observable):
@@ -47,10 +48,16 @@ class ToolThread(threading.Thread, Observable):
         try:
             self.__toolwrapper.set_session(session_tw)
             if not self.__dry:
-                Logger.instance().info(self.__toolwrapper.__class__.__name__ + " started.")
-                self.__toolwrapper.run()
-                session_tw.commit()
-                self.__toolwrapper.set_execution_infos(start, datetime.datetime.fromtimestamp(time.time()), "EXECUTED")
+                Logger.instance().info(
+                    "\n" + str(self.__toolwrapper) + "\n" + "command line: \n\t" + self.get_command_line())
+                if not OptionManager.instance()["--dry-run"]:
+                    Logger.instance().info(self.__toolwrapper.__class__.__name__ + " started.")
+                    self.__toolwrapper.run()
+                    session_tw.commit()
+                    self.__toolwrapper.set_execution_infos(start, datetime.datetime.fromtimestamp(time.time()), "EXECUTED")
+                else:
+                    Logger.instance().debug("Dry-run mode enabled. Execution skiped.")
+                    self.__toolwrapper.set_execution_infos(status="DRY")
             else:
                 Logger.instance().info(self.__toolwrapper.__class__.__name__ + " skiped.")
                 self.__toolwrapper.set_execution_infos(start, datetime.datetime.fromtimestamp(time.time()), "ALREADY_EXECUTED")
@@ -64,6 +71,28 @@ class ToolThread(threading.Thread, Observable):
             # session_tw.close()
             pass
         self.fire_success()
+
+    def get_command_line(self):
+        list_str_inputs = [f.name + "': '" + f.path for f in self.__toolwrapper.files if f.type.name == "input"]
+        list_str_outputs = [f.name + "': '" + f.path for f in self.__toolwrapper.files if f.type.name == "output"]
+        list_str_params = []
+        str_input_dict = ""
+        str_output_dict = ""
+        str_params_dict = ""
+        if list_str_inputs:
+            str_input_dict = " -i {'" + "', '".join(list_str_inputs) + "'}"
+        if list_str_outputs:
+            str_output_dict = " -o {'" + "', '".join(list_str_outputs) + "'}"
+        if list_str_params:
+            str_params_dict = " -P {'" + "', '".join(list_str_params) + "'}"
+
+        consistent_keys = ["--forceall", "--dot", "--log", ]
+        s = ""
+        s += "wopmars tool " + self.__toolwrapper.toolwrapper + str_input_dict + str_output_dict + str_params_dict + " " + \
+             " ".join(str(key) + " " + str(OptionManager.instance()[key]) for key in OptionManager.instance().keys() if key in consistent_keys and OptionManager.instance()[key] is not None and type(OptionManager.instance()[key]) != bool) + \
+             " " + " ".join(str(key) for key in OptionManager.instance().keys() if key in consistent_keys and OptionManager.instance()[key] is True and type(OptionManager.instance()[key]) == bool)
+
+        return s
 
     def get_observers(self):
         """
