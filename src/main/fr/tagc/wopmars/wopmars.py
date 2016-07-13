@@ -21,7 +21,7 @@ Options:
   -f RULE --sourcerule=RULE    Execute the workflow from the given RULE.
   -t RULE --targetrule=RULE    Execute the workflow to the given RULE.
   -F --forceall                Force the execution of the workflow, without checking for previous executions.
-  -n --dry-run                 Do not execute anything but simulate.
+  -n --dry-run                 Only display what would have been done.
   -d --directory=DIR           Set the current working directory. Usefull for working with relative poths [default: $CWD].
   -D --database=DATABASE       Set the path to the database.
   -w --wopfile=DEFINITION_FILE Set the path to the definition file.
