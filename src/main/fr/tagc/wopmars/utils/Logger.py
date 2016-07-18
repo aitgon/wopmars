@@ -87,7 +87,7 @@ class Logger(SingletonMixin):
         self.__logger.error(msg)
 
     def warning(self, msg):
-        formatter_stream = logging.Formatter(ColorPrint.red('%(levelname)s :: %(message)s'))
+        formatter_stream = logging.Formatter(ColorPrint.magenta('%(levelname)s :: %(message)s'))
         self.__stream_handler.setFormatter(formatter_stream)
         self.__stream_handler_err.setFormatter(formatter_stream)
 

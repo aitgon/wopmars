@@ -14,6 +14,7 @@ from src.main.fr.tagc.wopmars.framework.bdd.tables.Execution import Execution
 from src.main.fr.tagc.wopmars.framework.bdd.tables.IODbPut import IODbPut
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
 from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
+from src.main.fr.tagc.wopmars.utils.OptionUtils import OptionUtils
 from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
@@ -150,7 +151,7 @@ class ToolWrapper(Base):
         # check if the given options are authorized
         if not set([opt.name for opt in self.options]).issubset(dict_wrapper_opt_carac):
             raise WopMarsException("The content of the definition file is not valid.",
-                                   "The given option variable for " + self.__class__.__name__ +
+                                   "The given option variable for the rule " + str(self.name) + " -> " + self.__class__.__name__ +
                                    " are not correct, they should be in: " +
                                    "\n\t'{0}'".format("'\n\t'".join(dict_wrapper_opt_carac)) +
                                    "\n" + "They are:" +
@@ -165,7 +166,7 @@ class ToolWrapper(Base):
         for opt in dict_wrapper_opt_carac:
             if "required" in dict_wrapper_opt_carac[opt].lower() and opt not in [opt2.name for opt2 in self.options]:
                 raise WopMarsException("The content of the definition file is not valid.",
-                                       "The option " + opt + " has not been provided but it is required.")
+                                       "The option '" + opt + "' has not been provided but it is required.")
 
     def follows(self, other):
         """
@@ -453,8 +454,8 @@ class ToolWrapper(Base):
         outputs_list_str = [str(o) for o in self.files + self.tables if o.type.name == "output"]
         params_list_str = [str(p) for p in self.options]
         s = ""
-        s += "rule " + self.name + ":" + "\n"
-        s += "\ttool: " + self.toolwrapper + "\n"
+        s += "rule " + str(self.name) + ":" + "\n"
+        s += "\ttool: " + str(self.toolwrapper) + "\n"
         if len(inputs_list_str) > 0:
             s += "\tinput:" + "\n"
             s += "\t\t" + "\n\t\t".join(inputs_list_str)
@@ -527,7 +528,20 @@ class ToolWrapper(Base):
         return [t for t in self.tables if t.name == key and t.type.name == "output"][0].get_table()
 
     def option(self, key):
-        return [o.value for o in self.options if o.name == key][0]
+        try:
+            value = [o.value for o in self.options if o.name == key][0]
+            list_splitted_carac = self.get_params()[key].split("|")
+            for s_type in list_splitted_carac:
+                s_formated_type = s_type.strip().lower()
+                # check if the carac is a castable type
+                if s_formated_type in OptionUtils.static_option_castable:
+                    value = eval(s_formated_type)(value)
+                    break
+            return value
+        except IndexError as e:
+            Logger.instance().warning("The option '" + str(key) + "' has been called but have not been set in rule " +
+                                                               str(self.name) + " -> " + str(self.toolwrapper) + ".")
+            return None
 
     def session(self):
         return self.__session

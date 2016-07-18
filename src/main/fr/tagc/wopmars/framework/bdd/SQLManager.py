@@ -25,7 +25,8 @@ class SQLManager(SingletonMixin):
         """
         s_database_name = OptionManager.instance()["--database"]
 
-        self.__engine = create_engine('sqlite:///' + s_database_name, echo=False)
+        self.__engine = create_engine('sqlite:///' + s_database_name, echo=False,
+                                      connect_args={'check_same_thread': False})
         self.__Session = scoped_session(sessionmaker(bind=self.__engine, autoflush=True, autocommit=False))
         self.__dict_thread_session = {}
         self.__dict_session_condition = {}
@@ -67,7 +68,7 @@ class SQLManager(SingletonMixin):
     def result_factory(self, query, method):
         result = None
         try:
-            Logger.instance().debug("Executing query: \n" + str(query))
+            Logger.instance().debug("Executing query on session " + str(query.session) + ": \n" + str(query) + ";")
             Logger.instance().debug("WopMarsQuery " + str(query.session) + " want the read-lock on SQLManager")
             self.__lock.acquire_read()
             Logger.instance().debug("\"" + str(query.session) + "\" has taken the read lock on SQLManager.")
@@ -85,7 +86,7 @@ class SQLManager(SingletonMixin):
                 result = super(query.__class__, query).scalar()
         finally:
             self.__lock.release()
-            Logger.instance().debug("\"" + str(query) + "\" has released the read lock on SQLManager.")
+            Logger.instance().debug("\"" + str(query.session) + "\" has released the read lock on SQLManager.")
         return result
 
     def execute(self, session, statement):

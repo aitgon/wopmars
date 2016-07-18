@@ -15,7 +15,7 @@ try:
 except ImportError:
     from yaml import Loader
 
-from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.orm.exc import NoResultFound, ObjectDeletedError
 
 from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
 from src.main.fr.tagc.wopmars.framework.bdd.tables.Execution import Execution
@@ -160,7 +160,7 @@ class Reader:
                 Logger.instance().debug("Object input: " + s_param + " created.")
 
             # Instantiate the refered class
-            wrapper_entry = self.create_toolwrapper_entry("rule" + s_toolwrapper, s_toolwrapper,
+            wrapper_entry = self.create_toolwrapper_entry("rule_" + s_toolwrapper, s_toolwrapper,
                                                           dict_dict_elm, input_entry, output_entry)
             wrapper_entry.execution = execution
             Logger.instance().debug("Object toolwrapper: " + s_toolwrapper + " created.")
@@ -273,11 +273,19 @@ class Reader:
         # associating ToolWrapper instances with their files / tables
         for input_f in dict_dict_elm["dict_input"]:
             dict_dict_elm["dict_input"][input_f].type = input_entry
-            toolwrapper_wrapper.files.append(dict_dict_elm["dict_input"][input_f])
+            try:
+                toolwrapper_wrapper.files.append(dict_dict_elm["dict_input"][input_f])
+            except ObjectDeletedError as e:
+                raise WopMarsException("Error in the toolwrapper class declaration. Please, notice the developer",
+                                       "The error is probably caused by the lack of the 'polymorphic_identity' attribute in the toolwrapper. Error message: \n" + str(e))
 
         for output_f in dict_dict_elm["dict_output"]:
             dict_dict_elm["dict_output"][output_f].type = output_entry
-            toolwrapper_wrapper.files.append(dict_dict_elm["dict_output"][output_f])
+            try:
+                toolwrapper_wrapper.files.append(dict_dict_elm["dict_output"][output_f])
+            except ObjectDeletedError as e:
+                raise WopMarsException("Error in the toolwrapper class declaration. Please, notice the developer",
+                                       "The error is probably caused by the lack of the 'polymorphic_identity' attribute in the toolwrapper. Error message: \n" + str(e))
 
         for opt in dict_dict_elm["dict_params"]:
             toolwrapper_wrapper.options.append(dict_dict_elm["dict_params"][opt])
@@ -300,7 +308,11 @@ class Reader:
                                                                       table_name=input_t)
             table_entry.type = input_entry
             table_entry.modification = modification_table_entry
-            toolwrapper_wrapper.tables.append(table_entry)
+            try:
+                toolwrapper_wrapper.tables.append(table_entry)
+            except ObjectDeletedError as e:
+                raise WopMarsException("Error in the toolwrapper class declaration. Please, notice the developer",
+                                       "The error is probably caused by the lack of the 'polymorphic_identity' attribute in the toolwrapper. Error message: \n" + str(e))
 
         for output_t in toolwrapper_wrapper.get_output_table():
             session.commit()
@@ -313,7 +325,12 @@ class Reader:
                                                                       )
             table_entry.type = output_entry
             table_entry.modification = modification_table_entry
-            toolwrapper_wrapper.tables.append(table_entry)
+            try:
+                toolwrapper_wrapper.tables.append(table_entry)
+            except ObjectDeletedError as e:
+                raise WopMarsException("Error in the toolwrapper class declaration. Please, notice the developer",
+                                       "The error is probably caused by the lack of the 'polymorphic_identity' attribute in the toolwrapper. Error message: \n" + str(
+                                           e))
 
         # the toolwrapper returned by this method are valid according to the toolwrapper developper
         toolwrapper_wrapper.is_content_respected()

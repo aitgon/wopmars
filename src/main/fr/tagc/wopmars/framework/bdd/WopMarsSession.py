@@ -48,7 +48,7 @@ class WopMarsSession:
 
     def add(self, item):
         """
-        Add
+        Add.py
         :param item:
         :return:
         """

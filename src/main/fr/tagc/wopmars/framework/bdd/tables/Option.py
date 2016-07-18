@@ -56,4 +56,4 @@ class Option(Base):
         return id(self)
 
     def __str__(self):
-        return self.name + ": " + self.value
+        return str(self.name) + ": " + str(self.value)

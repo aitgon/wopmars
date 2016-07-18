@@ -98,7 +98,7 @@ class WorkflowManager(ToolWrapperObserver):
             PathFinder.silentremove(f_path)
         Logger.instance().debug("Removed files:" + s)
 
-        list_output_tables = [t.name for t in tw.tables if t.type.name == "output"]
+        list_output_tables = [t.name.split(".")[-1] for t in tw.tables if t.type.name == "output"]
         s = ""
         for t_name in list_output_tables:
             s += "\n" + t_name

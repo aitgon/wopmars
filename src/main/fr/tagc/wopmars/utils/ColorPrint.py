@@ -26,3 +26,6 @@ class ColorPrint:
     def blue(text):
         return colored(text, 'blue', attrs=['bold'])
 
+    @staticmethod
+    def magenta(text):
+        return colored(text, 'magenta', attrs=['bold'])
