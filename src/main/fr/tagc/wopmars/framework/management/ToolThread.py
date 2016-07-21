@@ -64,7 +64,6 @@ class ToolThread(threading.Thread, Observable):
         except Exception as e:
             session_tw.rollback()
             self.__toolwrapper.set_execution_infos(start, datetime.datetime.fromtimestamp(time.time()), "EXECUTION_ERROR")
-            # todo ask lionel InitiationError n'est pas implémenté en fin de compte
             raise e
         finally:
             # todo twthread , fermer session
@@ -80,11 +79,11 @@ class ToolThread(threading.Thread, Observable):
         str_output_dict = ""
         str_params_dict = ""
         if list_str_inputs:
-            str_input_dict = " -i {'" + "', '".join(list_str_inputs) + "'}"
+            str_input_dict = " -i \"{'" + "', '".join(list_str_inputs) + "'}\""
         if list_str_outputs:
-            str_output_dict = " -o {'" + "', '".join(list_str_outputs) + "'}"
+            str_output_dict = " -o \"{'" + "', '".join(list_str_outputs) + "'}\""
         if list_str_params:
-            str_params_dict = " -P {'" + "', '".join(list_str_params) + "'}"
+            str_params_dict = " -P \"{'" + "', '".join(list_str_params) + "'}\""
 
         consistent_keys = ["--forceall", "--dot", "--log", ]
         s = ""
