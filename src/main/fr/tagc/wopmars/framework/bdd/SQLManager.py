@@ -147,6 +147,6 @@ class SQLManager(SingletonMixin):
     def drop(self, tablename):
         try:
             self.__lock.acquire_write()
-            Base.metadata.tables[tablename].drop(self.__engine, checkfirst=True)
+            Base.metadata.tables[tablename.split(".")[-1]].drop(self.__engine, checkfirst=True)
         finally:
             self.__lock.release()

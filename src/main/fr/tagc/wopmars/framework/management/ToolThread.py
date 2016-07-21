@@ -51,7 +51,7 @@ class ToolThread(threading.Thread, Observable):
                 Logger.instance().info(
                     "\n" + str(self.__toolwrapper) + "\n" + "command line: \n\t" + self.get_command_line())
                 if not OptionManager.instance()["--dry-run"]:
-                    Logger.instance().info(self.__toolwrapper.__class__.__name__ + " started.")
+                    Logger.instance().info("Rule: " + str(self.__toolwrapper.name) + " -> " + self.__toolwrapper.__class__.__name__ + " started.")
                     self.__toolwrapper.run()
                     session_tw.commit()
                     self.__toolwrapper.set_execution_infos(start, datetime.datetime.fromtimestamp(time.time()), "EXECUTED")
@@ -59,7 +59,7 @@ class ToolThread(threading.Thread, Observable):
                     Logger.instance().debug("Dry-run mode enabled. Execution skiped.")
                     self.__toolwrapper.set_execution_infos(status="DRY")
             else:
-                Logger.instance().info(self.__toolwrapper.__class__.__name__ + " skiped.")
+                Logger.instance().info("Rule: " + str(self.__toolwrapper.name) + " -> " + self.__toolwrapper.__class__.__name__ + " skiped.")
                 self.__toolwrapper.set_execution_infos(start, datetime.datetime.fromtimestamp(time.time()), "ALREADY_EXECUTED")
         except Exception as e:
             session_tw.rollback()

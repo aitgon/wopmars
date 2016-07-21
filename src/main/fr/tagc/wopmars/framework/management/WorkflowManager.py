@@ -219,7 +219,7 @@ class WorkflowManager(ToolWrapperObserver):
                 Logger.instance().debug("ToolWrapper ready: " + tw.toolwrapper)
                 dry = False
                 if not OptionManager.instance()["--forceall"] and \
-                        self.is_this_tool_already_done(tw):
+                        self.is_this_tool_already_done(tw) and not bool([node for node in self.__dag_to_exec.predecessors(tw) if node.status != "EXECUTED" and node.status != "ALREADY_EXECUTED"]):
                     Logger.instance().info("Rule: " + tw.name + " -> " + tw.toolwrapper +
                                            " seemed to have already" +
                                            " been runned with same" +
@@ -335,7 +335,7 @@ class WorkflowManager(ToolWrapperObserver):
         if not OptionManager.instance()["--dry-run"]:
             thread_toolwrapper.get_toolwrapper().set_args_date_and_size("output", dry_status)
         if dry_status == False and not OptionManager.instance()["--dry-run"]:
-            Logger.instance().info(str(thread_toolwrapper.get_toolwrapper().__class__.__name__) + " has succeed.")
+            Logger.instance().info("Rule " + str(thread_toolwrapper.get_toolwrapper().name) + " -> " + str(thread_toolwrapper.get_toolwrapper().__class__.__name__) + " has succeed.")
         # Continue the dag execution from the toolwrapper that just finished.
         self.__already_runned.add(thread_toolwrapper.get_toolwrapper())
         self.__count_exec -= 1

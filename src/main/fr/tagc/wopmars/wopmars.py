@@ -46,18 +46,7 @@ from src.main.fr.tagc.wopmars.utils.Logger import Logger
 from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
 from src.main.fr.tagc.wopmars.utils.PathFinder import PathFinder
 from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
-# TODO faire en sorte que les imports commencent a fr
-# todo parcourir le code pour refaire la documentation -> compatible sphinx
-# todo specifier l'exception de "non dag" pour dire entre quels outils apparait le cycle
-# todo option pour reseter l'historique sans supprimer les données
-# todo ask lionel methode des classes métiers pour définir des tables associées au fonctionnement d'un outil mais qui
-# ne peuvent pas être logiquement considérées comme input ou output
-# todo ask lionel autoriser les boucles avec les tables (mais pas avec les fichiers) -> système de flag visité / pas visité
-# pour vérifier que les rules ne soient exécutées qu'une seule fois
-# todo ask lionel numerotation de l'état des tables pour permettre aux rules d'écrire dans la même table (alternatives proposées: numerotation absolue des rules / ordonnancement explicite des rules)
-# todo import error dans la classe métier qui est catch par le except ImportError de reader
 # todo combinatoire pour les rules
-# todo créer les repertoires innexistents
 
 class WopMars:
 
