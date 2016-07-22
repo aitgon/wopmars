@@ -30,8 +30,11 @@ class TestIODbPut(TestCase):
             raise e
 
         self.__io_base_existing = IODbPut(name="FooBase")
+        self.__io_base_existing.set_table(FooBase)
         self.__io_base_existing2 = IODbPut(name="FooBase")
+        self.__io_base_existing2.set_table(FooBase)
         self.__io_base_existing3 = IODbPut(name="FooBase2")
+        self.__io_base_existing3.set_table(FooBase2)
 
     def tearDown(self):
         SQLManager.instance().drop_all()

@@ -100,9 +100,9 @@ class WorkflowManager(ToolWrapperObserver):
 
         list_output_tables = [t.name.split(".")[-1] for t in tw.tables if t.type.name == "output"]
         s = ""
+        SQLManager.instance().drop_table_list(list_output_tables)
         for t_name in list_output_tables:
             s += "\n" + t_name
-            SQLManager.instance().drop(t_name)
             SQLManager.instance().create(t_name)
         Logger.instance().debug("Removed tables content:" + s)
 
@@ -143,9 +143,14 @@ class WorkflowManager(ToolWrapperObserver):
         else:
             self.__dag_to_exec = self.__dag_tools
 
+        tables = []
+        [tables.extend(tw.tables) for tw in self.__dag_to_exec.nodes()]
+        IODbPut.set_tables_properties(tables)
+
         for tw in set(self.__dag_tools.nodes()).difference(set(self.__dag_to_exec.nodes()   )):
             tw.set_execution_infos(status="NOT_PLANNED")
             self.__session.add(tw)
+
         self.__session.commit()
 
     def execute_from(self, tw=None):

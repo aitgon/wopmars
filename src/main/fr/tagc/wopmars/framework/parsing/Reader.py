@@ -8,8 +8,13 @@ import re
 import time
 
 import os
+
+import sys
 import yaml
 from yaml.constructor import ConstructorError
+
+from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
+
 try:
     from yaml import CLoader as Loader
 except ImportError:
@@ -166,10 +171,16 @@ class Reader:
             Logger.instance().debug("Object toolwrapper: " + s_toolwrapper + " created.")
             session.add(wrapper_entry)
             session.commit()
+            session.rollback()
+            IODbPut.set_tables_properties(IODbPut.get_execution_tables())
+            session.commit()
+            session.rollback()
+            SQLManager.instance().create_all()
         except NoResultFound as e:
             session.rollback()
             raise WopMarsException("Error while parsing the configuration file. The database has not been setUp Correctly.",
                                    str(e))
+
 
     def read(self, s_definition_file):
         """
@@ -226,6 +237,12 @@ class Reader:
                 wrapper_entry.execution = execution
                 set_wrapper.add(wrapper_entry)
                 Logger.instance().debug("Object toolwrapper: " + str_wrapper_name + " created.")
+                session.commit()
+                session.rollback()
+                IODbPut.set_tables_properties(IODbPut.get_execution_tables())
+                session.commit()
+                session.rollback()
+                SQLManager.instance().create_all()
             session.add_all(set_wrapper)
             # save all operations done so far.
             session.commit()
@@ -295,19 +312,13 @@ class Reader:
             session.commit()
             # the user-side tables are created during the reading of the definition file
             table_entry = IODbPut(name=input_t)
-
-            # The table modification_table track the modifications on the user-side tables
-            # todo ask lionel trigerring? Actuellement je modifie a la main les dates de modification quand un outil a
-            #  terminé son fonctionnement. Faire un trigger serait mieux, mais c'est compliqué à faire en sqlalchemy
-            # est-ce-que ça vaut le coup? J'ai pas l'impression. -> cependant, ca peut éviter des problèmes, en cas de
-            # modification de la table a la main par l'utilisateur
             modification_table_entry, created = session.get_or_create(ModificationTable,
                                                                       defaults={
                                                                           "date": datetime.datetime.fromtimestamp(
                                                                               time.time())},
                                                                       table_name=input_t)
-            table_entry.type = input_entry
             table_entry.modification = modification_table_entry
+            table_entry.type = input_entry
             try:
                 toolwrapper_wrapper.tables.append(table_entry)
             except ObjectDeletedError as e:
@@ -321,10 +332,11 @@ class Reader:
                                                                       defaults={
                                                                           "date": datetime.datetime.fromtimestamp(
                                                                               time.time())},
-                                                                      table_name=output_t
-                                                                      )
-            table_entry.type = output_entry
+                                                                      table_name=output_t)
             table_entry.modification = modification_table_entry
+
+            table_entry.type = output_entry
+        #     # table_entry.modification = modification_table_entry
             try:
                 toolwrapper_wrapper.tables.append(table_entry)
             except ObjectDeletedError as e:

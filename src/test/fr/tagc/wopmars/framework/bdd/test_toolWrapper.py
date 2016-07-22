@@ -29,6 +29,7 @@ from src.test.fr.tagc.wopmars.toolwrappers.FooWrapper3 import FooWrapper3
 class TestToolWrapper(TestCase):
     def setUp(self):
         OptionManager.initial_test_setup()
+        SQLManager.instance().create_all()
 
         set_tw_to_add = set()
         self.__session = SQLManager.instance().get_session()
@@ -83,9 +84,11 @@ class TestToolWrapper(TestCase):
         f2.type = self.output_entry
 
         t1 = IODbPut(name="FooBase")
+        t1.set_table(FooBase)
         t1.table = t1
 
         t2 = IODbPut(name="FooBase")
+        t2.set_table(FooBase)
         t2.table = t2
 
         self.__foowrapper_right_content = FooWrapper3(rule_name="rule1")
@@ -102,9 +105,11 @@ class TestToolWrapper(TestCase):
         f2.type = self.output_entry
 
         t1 = IODbPut(name="FooBase")
+        t1.set_table(FooBase)
         t1.table = t1
 
         t2 = IODbPut(name="FooBase")
+        t2.set_table(FooBase)
         t2.table = t2
 
         self.__foowrapper_wrong_content1 = FooWrapper3(rule_name="rule2")
@@ -124,9 +129,11 @@ class TestToolWrapper(TestCase):
         f3.type = self.input_entry
 
         t1 = IODbPut(name="FooBase")
+        t1.set_table(FooBase)
         t1.table = t1
 
         t2 = IODbPut(name="FooBase")
+        t2.set_table(FooBase)
         t2.table = t2
 
         self.__foowrapper_wrong_content2 = FooWrapper3(rule_name="rule3")
@@ -143,9 +150,11 @@ class TestToolWrapper(TestCase):
         f2.type = self.output_entry
 
         t1 = IODbPut(name="FooBase")
+        t1.set_table(FooBase)
         t1.table = t1
 
         t2 = IODbPut(name="FooBase")
+        t2.set_table(FooBase)
         t2.table = t2
 
         self.__foowrapper_wrong_content3 = FooWrapper3(rule_name="rule3")
@@ -162,9 +171,11 @@ class TestToolWrapper(TestCase):
         f2.type = self.output_entry
 
         t1 = IODbPut(name="FooBase")
+        t1.set_table(FooBase)
         t1.table = t1
 
         t2 = IODbPut(name="FooBase")
+        t2.set_table(FooBase)
         t2.table = t2
 
         self.__foowrapper_wrong_content4 = FooWrapper3(rule_name="rule3")
@@ -179,9 +190,11 @@ class TestToolWrapper(TestCase):
         f2.type = self.output_entry
 
         t1 = IODbPut(name="FooBase")
+        t1.set_table(FooBase)
         t1.table = t1
 
         t2 = IODbPut(name="FooBase")
+        t2.set_table(FooBase)
         t2.table = t2
 
         self.__foowrapper_wrong_content5 = FooWrapper3(rule_name="rule3")
@@ -260,6 +273,8 @@ class TestToolWrapper(TestCase):
         SQLManager.instance().get_session().commit()
 
         t1 = IODbPut(name="FooBase")
+        t1.set_table(FooBase)
+
         t1.type = self.input_entry
 
         toolwrapper_ready2 = FooWrapper2(rule_name="rule2")
@@ -275,11 +290,13 @@ class TestToolWrapper(TestCase):
         moment = datetime.datetime.fromtimestamp(time.time())
 
         t1 = IODbPut(name="FooBase")
+        t1.set_table(FooBase)
         t1.type = self.input_entry
         modif = ModificationTable(table_name="FooBase", date=moment)
         modif.tables.append(t1)
 
         t2 = IODbPut(name="FooBase")
+        t2.set_table(FooBase)
         t2.type = self.input_entry
         modif = ModificationTable(table_name="FooBase", date=moment)
         modif.tables.append(t2)
@@ -299,6 +316,7 @@ class TestToolWrapper(TestCase):
         toolwrapper2.tables.append(t2)
 
         t3 = IODbPut(name="FooBase")
+        t3.set_table(FooBase)
         t3.type = self.input_entry
         modif = ModificationTable(table_name="FooBase", date=moment)
         modif.tables.append(t3)
@@ -317,6 +335,7 @@ class TestToolWrapper(TestCase):
 
         moment = datetime.datetime.fromtimestamp(time.time())
         t1 = IODbPut(name="FooBase")
+        t1.set_table(FooBase)
         t1.type = self.input_entry
         t1.used_at = moment
         modif = ModificationTable(table_name="FooBase", date=moment)
@@ -344,6 +363,7 @@ class TestToolWrapper(TestCase):
 
         moment = datetime.datetime.fromtimestamp(time.time())
         t1 = IODbPut(name="FooBase")
+        t1.set_table(FooBase)
         t1.type = self.input_entry
         t1.used_at = moment
         modif = ModificationTable(table_name="FooBase", date=moment)

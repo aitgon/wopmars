@@ -2,6 +2,8 @@
 Module containing the IODbPut class.
 """
 import importlib
+import datetime
+import time
 
 from sqlalchemy.exc import OperationalError
 
@@ -35,6 +37,8 @@ class IODbPut(IOPut, Base):
 
     modification = relationship("ModificationTable", back_populates="tables")
 
+    tables = set()
+
     def __init__(self, name):
         """
         :param table: Base: an object extending the Base type from SQLAlchemy
@@ -43,17 +47,44 @@ class IODbPut(IOPut, Base):
         """
         # The file containing the table should be in PYTHONPATH
         Base.__init__(self, name=name)
-        mod = importlib.import_module(name)
-        self.__table = eval("mod." + name.split(".")[-1])
-        SQLManager.instance().create(self.__table.__tablename__)
-        # Base.metadata.tables[self.__table.__tablename__].create(Engine, checkfirst=True)
         Logger.instance().debug(name + " table class loaded.")
+        self.__table = None
 
     @reconstructor
     def init_on_load(self):
-        mod = importlib.import_module(self.name)
-        self.__table = eval("mod." + self.name.split('.')[-1])
-        Base.metadata.tables[self.__table.__tablename__].create(SQLManager.instance().get_engine(), checkfirst=True)
+        for table in IODbPut.tables:
+            mod = importlib.import_module(table)
+            try:
+                if table == self.name:
+                    self.__table = eval("mod." + self.name.split(".")[-1])
+            except AttributeError as e:
+                raise e
+        Logger.instance().debug(self.name + " table class reloaded.")
+
+
+    @staticmethod
+    def set_tables_properties(tables):
+        session = SQLManager.instance().get_session()
+        IODbPut.import_models([t.name for t in tables])
+
+        for table in tables:
+            IODbPut.tables.add(table.name)
+            mod = importlib.import_module(table.name)
+            table.set_table(eval("mod." + table.name.split(".")[-1]))
+            SQLManager.instance().get_session().add(table)
+
+    @staticmethod
+    def get_execution_tables():
+        session = SQLManager.instance().get_session()
+        return session.query(IODbPut).all()
+
+    @staticmethod
+    def import_models(table_names):
+        for t in table_names:
+            importlib.import_module(t)
+
+    def set_table(self, model):
+        self.__table = model
 
     def get_table(self):
         return self.__table

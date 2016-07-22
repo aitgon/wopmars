@@ -1,8 +1,11 @@
 """
 Module containing the SQLManager class.
 """
+import importlib
+
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import create_engine
+from sqlalchemy.schema import sort_tables
 
 from src.main.fr.tagc.wopmars.framework.bdd.Base import Base
 from src.main.fr.tagc.wopmars.framework.bdd.WopMarsSession import WopMarsSession
@@ -27,6 +30,14 @@ class SQLManager(SingletonMixin):
 
         self.__engine = create_engine('sqlite:///' + s_database_name, echo=False,
                                       connect_args={'check_same_thread': False})
+
+        def _fk_pragma_on_connect(dbapi_con, con_record):
+            dbapi_con.execute('pragma foreign_keys=ON')
+
+        from sqlalchemy import event
+        event.listen(self.__engine, 'connect', _fk_pragma_on_connect)
+
+
         self.__Session = scoped_session(sessionmaker(bind=self.__engine, autoflush=True, autocommit=False))
         self.__dict_thread_session = {}
         self.__dict_session_condition = {}
@@ -140,7 +151,7 @@ class SQLManager(SingletonMixin):
     def create(self, tablename):
         try:
             self.__lock.acquire_write()
-            Base.metadata.tables[tablename].create(self.__engine, checkfirst=True)
+            Base.metadata.tables[tablename.split(".")[-1]].create(self.__engine, checkfirst=True)
         finally:
             self.__lock.release()
 
@@ -150,3 +161,12 @@ class SQLManager(SingletonMixin):
             Base.metadata.tables[tablename.split(".")[-1]].drop(self.__engine, checkfirst=True)
         finally:
             self.__lock.release()
+
+    def drop_table_list(self, list_str_table):
+        list_obj_table = reversed(sort_tables([Base.metadata.tables[tablename.split(".")[-1]] for tablename in list_str_table]))
+        for t in list_obj_table:
+            try:
+                self.__lock.acquire_write()
+                t.drop(self.__engine, checkfirst=True)
+            finally:
+                self.__lock.release()
