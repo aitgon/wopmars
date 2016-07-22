@@ -98,10 +98,10 @@ class WorkflowManager(ToolWrapperObserver):
             PathFinder.silentremove(f_path)
         Logger.instance().debug("Removed files:" + s)
 
-        list_output_tables = [t.name.split(".")[-1] for t in tw.tables if t.type.name == "output"]
+
         s = ""
-        SQLManager.instance().drop_table_list(list_output_tables)
-        for t_name in list_output_tables:
+        SQLManager.instance().drop_table_list(IODbPut.tables)
+        for t_name in IODbPut.tables:
             s += "\n" + t_name
             SQLManager.instance().create(t_name)
         Logger.instance().debug("Removed tables content:" + s)
@@ -306,8 +306,7 @@ class WorkflowManager(ToolWrapperObserver):
         i = 0
         while i < len(list_same_toolwrappers):
             if list_same_toolwrappers[i] != tw or \
-                    not list_same_toolwrappers[i].same_input_than(tw) or \
-                    not list_same_toolwrappers[i].is_output_ok():
+                    not list_same_toolwrappers[i].same_input_than(tw):
                 del list_same_toolwrappers[i]
             else:
                 i += 1

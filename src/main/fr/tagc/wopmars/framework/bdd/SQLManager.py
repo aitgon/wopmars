@@ -167,6 +167,7 @@ class SQLManager(SingletonMixin):
         for t in list_obj_table:
             try:
                 self.__lock.acquire_write()
+                Logger.instance().debug("Removing " + str(t.name))
                 t.drop(self.__engine, checkfirst=True)
             finally:
                 self.__lock.release()

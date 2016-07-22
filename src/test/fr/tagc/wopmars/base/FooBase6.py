@@ -9,15 +9,12 @@ from sqlalchemy.sql.schema import ForeignKey
 from src.main.fr.tagc.wopmars.framework.bdd.Base import Base
 
 
-class FooBase4(Base):
+class FooBase6(Base):
     """
     Documentation for the class
     """
-    __tablename__ = "FooBase4"
+    __tablename__ = "FooBase6"
 
     id = Column(Integer, primary_key=True)
-    id_foobase3 = Column(Integer, ForeignKey("FooBase3.id"))
-    id_foobase5 = Column(Integer, ForeignKey("FooBase5.id"))
 
-    foobase3 = relationship("FooBase3", back_populates="foobase4")
-    foobase5 = relationship("FooBase5", back_populates="foobase4")
+    foobase3 = relationship("FooBase3", back_populates="foobase6")
