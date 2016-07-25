@@ -1,4 +1,5 @@
 rule rule3:
     tool: FooWrapper3
     failure:
-        input1: "myfile.txt"
+        files:
+            input1: "myfile.txt"

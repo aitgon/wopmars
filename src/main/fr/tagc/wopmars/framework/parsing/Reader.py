@@ -239,7 +239,7 @@ class Reader:
                 Logger.instance().debug("Encounter rule " + str_rule_name + ": \n" +
                                         str(DictUtils.pretty_repr(self.__dict_workflow_definition[rule])))
                 # The dict of "input"s, "output"s and "params" is re-initialized for each wrapper
-                dict_dict_elm = dict(dict_input={}, dict_params={}, dict_output={})
+                dict_dict_dict_elm = dict(dict_input={"files":{}, "tables":{}}, dict_params={}, dict_output={"files":{}, "tables":{}})
                 for key_second_step in self.__dict_workflow_definition[rule]:
                     # key_second_step is supposed to be "tool", "input", "output" or "params"
                     if type(self.__dict_workflow_definition[rule][key_second_step]) == dict:
@@ -249,20 +249,23 @@ class Reader:
                             if key_second_step == "params":
                                 obj_created = Option(name=elm,
                                                      value=self.__dict_workflow_definition[rule][key_second_step][elm])
-                            else:
-                                str_path_to_file = os.path.join(OptionManager.instance()["--directory"],
-                                                                self.__dict_workflow_definition[rule][key_second_step][elm])
-                                obj_created = IOFilePut(name=elm,
-                                                        path=os.path.abspath(str_path_to_file))
+                            elif elm == "files":
+                                for elm2 in self.__dict_workflow_definition[rule][key_second_step][elm]:
+                                    str_path_to_file = os.path.join(OptionManager.instance()["--directory"],
+                                                                    self.__dict_workflow_definition[rule][key_second_step][elm][elm2])
+                                    obj_created = IOFilePut(name=elm2,
+                                                            path=os.path.abspath(str_path_to_file))
                             # all elements of the current rule block are stored in there
-                            dict_dict_elm["dict_" + key_second_step][elm] = obj_created
-                            Logger.instance().debug("Object " + key_second_step + ": " +
-                                                    elm + " created.")
+                                    dict_dict_dict_elm["dict_" + key_second_step][elm][elm2] = obj_created
+                                    Logger.instance().debug("Object " + key_second_step + ": " +
+                                                            elm2 + " created.")
+                            elif elm == "tables":
+                                dict_dict_dict_elm["dict_" + key_second_step][elm] = self.__dict_workflow_definition[rule][key_second_step]
                     else:
                         # if the step is not a dict, then it is supposed to be the "tool" line
                         str_wrapper_name = self.__dict_workflow_definition[rule][key_second_step]
                 # Instantiate the refered class and add it to the set of objects
-                wrapper_entry = self.create_toolwrapper_entry(str_rule_name, str_wrapper_name, dict_dict_elm, input_entry, output_entry)
+                wrapper_entry = self.create_toolwrapper_entry(str_rule_name, str_wrapper_name, dict_dict_dict_elm, input_entry, output_entry)
                 # Associating a toolwrapper to an execution
                 wrapper_entry.execution = execution
                 set_wrapper.add(wrapper_entry)
@@ -280,12 +283,15 @@ class Reader:
             session.add_all(set_wrapper)
             # save all operations done so far.
             session.commit()
+            for tw in set_wrapper:
+                tw.is_content_respected()
+
         except NoResultFound as e:
             session.rollback()
             raise WopMarsException("Error while parsing the configuration file. The database has not been setUp Correctly.",
                                    str(e))
 
-    def create_toolwrapper_entry(self, str_rule_name, str_wrapper_name, dict_dict_elm, input_entry, output_entry):
+    def create_toolwrapper_entry(self, str_rule_name, str_wrapper_name, dict_dict_dict_elm, input_entry, output_entry):
         """
         Actual creating of the toolwrapper object.
 
@@ -299,7 +305,7 @@ class Reader:
         :param str_rule_name: String containing the name of the rule in which the toolwrapper will be used.
         :param str_wrapper_name: String containing the name of the toolwrapper. It will be used for importing the
         correct module and then for creating the class.
-        :param dict_dict_elm: Dict <String: Dict <String: String>>  of "input"s "output"s and "params" and will be used
+        :param dict_dict_dict_elm: Dict <String: Dict <String: String>>  of "input"s "output"s and "params" and will be used
         to make relations between options / input / output and the toolwrapper.
 
         :return: TooLWrapper instance
@@ -321,71 +327,114 @@ class Reader:
         toolwrapper_wrapper = toolwrapper_class(rule_name=str_rule_name)
 
         # associating ToolWrapper instances with their files / tables
-        for input_f in dict_dict_elm["dict_input"]:
-            # set the type of IOFilePut object
-            dict_dict_elm["dict_input"][input_f].type = input_entry
-            try:
-                # associating file and toolwrapper
-                toolwrapper_wrapper.files.append(dict_dict_elm["dict_input"][input_f])
-            except ObjectDeletedError as e:
-                raise WopMarsException("Error in the toolwrapper class declaration. Please, notice the developer",
-                                       "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
-                                       " in the toolwrapper. Error message: \n" + str(e))
+        for elm in dict_dict_dict_elm["dict_input"]:
+            if elm == "files":
+                for input_f in dict_dict_dict_elm["dict_input"][elm]:
+                    # set the type of IOFilePut object
+                    dict_dict_dict_elm["dict_input"][elm][input_f].type = input_entry
+                    try:
+                        # associating file and toolwrapper
+                        toolwrapper_wrapper.files.append(dict_dict_dict_elm["dict_input"][elm][input_f])
+                    except ObjectDeletedError as e:
+                        raise WopMarsException("Error in the toolwrapper class declaration. Please, notice the developer",
+                                               "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
+                                               " in the toolwrapper. Error message: \n" + str(e))
+            elif elm == "tables":
+                for input_t in dict_dict_dict_elm["dict_input"][elm]:
+                    # this is a preventing commit because next statement will create a new table and the session has to be clean
+                    # I think it is a bug in SQLAlchemy which not allows queries then insert statements in the same session
+                    session.commit()
+                    # the user-side tables are created during the reading of the definition file
+                    table_entry = IODbPut(name=input_t)
+                    # insert in the database the date of last modification of a developper-side table (if it doesn't exist)
+                    modification_table_entry, created = session.get_or_create(ModificationTable,
+                                                                              defaults={
+                                                                                  "date": datetime.datetime.fromtimestamp(
+                                                                                      time.time())},
+                                                                              table_name=input_t)
+                    table_entry.modification = modification_table_entry
+                    table_entry.type = input_entry
+                    try:
+                        toolwrapper_wrapper.tables.append(table_entry)
+                    except ObjectDeletedError as e:
+                        raise WopMarsException("Error in the toolwrapper class declaration. Please, notice the developer",
+                                               "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
+                                               " in the toolwrapper. Error message: \n" + str(e))
 
-        for output_f in dict_dict_elm["dict_output"]:
-            dict_dict_elm["dict_output"][output_f].type = output_entry
-            try:
-                toolwrapper_wrapper.files.append(dict_dict_elm["dict_output"][output_f])
-            except ObjectDeletedError as e:
-                raise WopMarsException("Error in the toolwrapper class declaration. Please, notice the developer",
-                                       "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
-                                       " in the toolwrapper. Error message: \n" + str(e))
+        for elm in dict_dict_dict_elm["dict_output"]:
+            if elm == "files":
+                for output_f in dict_dict_dict_elm["dict_output"][elm]:
+                    dict_dict_dict_elm["dict_output"][elm][output_f].type = output_entry
+                    try:
+                        toolwrapper_wrapper.files.append(dict_dict_dict_elm["dict_output"][elm][output_f])
+                    except ObjectDeletedError as e:
+                        raise WopMarsException("Error in the toolwrapper class declaration. Please, notice the developer",
+                                               "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
+                                               " in the toolwrapper. Error message: \n" + str(e))
+            elif elm == "tables":
+                for output_t in dict_dict_dict_elm["dict_input"][elm]:
+                    session.commit()
+                    table_entry = IODbPut(name=output_t)
+                    modification_table_entry, created = session.get_or_create(ModificationTable,
+                                                                              defaults={
+                                                                                  "date": datetime.datetime.fromtimestamp(
+                                                                                      time.time())},
+                                                                              table_name=output_t)
+                    table_entry.modification = modification_table_entry
+                    table_entry.type = output_entry
+                    try:
+                        toolwrapper_wrapper.tables.append(table_entry)
+                    except ObjectDeletedError as e:
+                        raise WopMarsException(
+                            "Error in the toolwrapper class declaration. Please, notice the developer",
+                            "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
+                            " in the toolwrapper. Error message: \n" + str(
+                                e))
 
-        for opt in dict_dict_elm["dict_params"]:
+        for opt in dict_dict_dict_elm["dict_params"]:
             # associating option and toolwrapper
-            toolwrapper_wrapper.options.append(dict_dict_elm["dict_params"][opt])
+            toolwrapper_wrapper.options.append(dict_dict_dict_elm["dict_params"][opt])
 
-        for input_t in toolwrapper_wrapper.get_input_table():
-            # this is a preventing commit because next statement will create a new table and the session has to be clean
-            # I think it is a bug in SQLAlchemy which not allows queries then insert statements in the same session
-            session.commit()
-            # the user-side tables are created during the reading of the definition file
-            table_entry = IODbPut(name=input_t)
-            # insert in the database the date of last modification of a developper-side table (if it doesn't exist)
-            modification_table_entry, created = session.get_or_create(ModificationTable,
-                                                                      defaults={
-                                                                          "date": datetime.datetime.fromtimestamp(
-                                                                              time.time())},
-                                                                      table_name=input_t)
-            table_entry.modification = modification_table_entry
-            table_entry.type = input_entry
-            try:
-                toolwrapper_wrapper.tables.append(table_entry)
-            except ObjectDeletedError as e:
-                raise WopMarsException("Error in the toolwrapper class declaration. Please, notice the developer",
-                                       "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
-                                       " in the toolwrapper. Error message: \n" + str(e))
+        # for input_t in toolwrapper_wrapper.get_input_table():
+        #     # this is a preventing commit because next statement will create a new table and the session has to be clean
+        #     # I think it is a bug in SQLAlchemy which not allows queries then insert statements in the same session
+        #     session.commit()
+        #     # the user-side tables are created during the reading of the definition file
+        #     table_entry = IODbPut(name=input_t)
+        #     # insert in the database the date of last modification of a developper-side table (if it doesn't exist)
+        #     modification_table_entry, created = session.get_or_create(ModificationTable,
+        #                                                               defaults={
+        #                                                                   "date": datetime.datetime.fromtimestamp(
+        #                                                                       time.time())},
+        #                                                               table_name=input_t)
+        #     table_entry.modification = modification_table_entry
+        #     table_entry.type = input_entry
+        #     try:
+        #         toolwrapper_wrapper.tables.append(table_entry)
+        #     except ObjectDeletedError as e:
+        #         raise WopMarsException("Error in the toolwrapper class declaration. Please, notice the developer",
+        #                                "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
+        #                                " in the toolwrapper. Error message: \n" + str(e))
 
-        for output_t in toolwrapper_wrapper.get_output_table():
-            session.commit()
-            table_entry = IODbPut(name=output_t)
-            modification_table_entry, created = session.get_or_create(ModificationTable,
-                                                                      defaults={
-                                                                          "date": datetime.datetime.fromtimestamp(
-                                                                              time.time())},
-                                                                      table_name=output_t)
-            table_entry.modification = modification_table_entry
-            table_entry.type = output_entry
-            try:
-                toolwrapper_wrapper.tables.append(table_entry)
-            except ObjectDeletedError as e:
-                raise WopMarsException("Error in the toolwrapper class declaration. Please, notice the developer",
-                                       "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
-                                       " in the toolwrapper. Error message: \n" + str(
-                                           e))
+        # for output_t in toolwrapper_wrapper.get_output_table():
+        #     session.commit()
+        #     table_entry = IODbPut(name=output_t)
+        #     modification_table_entry, created = session.get_or_create(ModificationTable,
+        #                                                               defaults={
+        #                                                                   "date": datetime.datetime.fromtimestamp(
+        #                                                                       time.time())},
+        #                                                               table_name=output_t)
+        #     table_entry.modification = modification_table_entry
+        #     table_entry.type = output_entry
+        #     try:
+        #         toolwrapper_wrapper.tables.append(table_entry)
+        #     except ObjectDeletedError as e:
+        #         raise WopMarsException("Error in the toolwrapper class declaration. Please, notice the developer",
+        #                                "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
+        #                                " in the toolwrapper. Error message: \n" + str(
+        #                                    e))
 
-        # the toolwrapper returned by this method are valid according to the toolwrapper developper
-        toolwrapper_wrapper.is_content_respected()
+        # toolwrapper_wrapper.is_content_respected()
         return toolwrapper_wrapper
 
     # todo tabling
@@ -400,10 +449,13 @@ class Reader:
         rule       = "rule" (identifier | "") ":" ruleparams
         ni         = NEWLINE INDENT
         ruleparams = [ni tool] [ni input] [ni output] [ni params]
+        filesortables = (ni files|ni tables){0-2}
+        files = "files"  ":" (ni identifier ”:” stringliteral)+
+        tables = "tables"  ":" (ni identifier ”:” stringliteral)+
         NEWLINE WoPMaRS
         tool       = "tool"   ":"  identifier ”:” stringliteral
-        input      = "input"  ":" (identifier ”:” stringliteral ni?)+
-        output     = "output" ":" (identifier ”:” stringliteral ni?)+
+        input      = "input"  ":" ni filesortables
+        output     = "output" ":" ni filesortables
         params     = "params" ":" (identifier ”:” stringliteral ni?)+
 
         :raise: WopMarsParsingException
@@ -412,9 +464,15 @@ class Reader:
     rule RULENAME:
         tool: TOOLNAME
         input:
-            INPUTNAME: INPUTVALUE
+            files:
+                INPUTNAME: INPUTVALUE
+            tables:
+                - path.to.table
         output:
-            OUTPUTNAME: OUTPUTVALUE
+            files:
+                OUTPUTNAME: OUTPUTVALUE
+            tables:
+                - path.to.table
         params:
             OPTIONNAME: OPTIONVALUE
 
@@ -425,6 +483,8 @@ class Reader:
 
         # recognize the elements of the rule
         regex_step2 = re.compile(r"(^params$)|(^tool$)|(^input$)|(^output$)")
+
+        regex_step3 = re.compile(r"(^files$)|(^tables$)")
 
         # The found words are tested against the regex to see if they match or not
         for s_key_step1 in self.__dict_workflow_definition:
@@ -450,9 +510,38 @@ class Reader:
                                            " doesn't match the grammar: it should be " +
                                            "'tool', 'params', 'input' or 'output'" +
                                        "\nexemple:" + exemple_file_def)
+                elif s_key_step2 == "input" or s_key_step2 == "output":
+                    for s_key_step3 in self.__dict_workflow_definition[s_key_step1][s_key_step2]:
+                        if not regex_step3.search(s_key_step3):
+                            raise WopMarsException("Error while parsing the configuration file: \n\t"
+                                                   "The grammar of the WopMars's definition file is not respected:",
+                                                   "The line containing:'" + str(s_key_step3) + "'" +
+                                                   " for rule '" + str(s_key_step1) + "'" +
+                                                   " doesn't match the grammar: it should be " +
+                                                   "'files' or 'tables'" +
+                                                   "\nexemple:" + exemple_file_def)
+                        elif s_key_step3 == "files":
+                            for s_variable_name in self.__dict_workflow_definition[s_key_step1][s_key_step2][s_key_step3]:
+                                if type(self.__dict_workflow_definition[s_key_step1][s_key_step2][s_key_step3][s_variable_name]) != str:
+                                    raise WopMarsException("Error while parsing the configuration file: \n\t"
+                                                           "The grammar of the WopMars's definition file is not respected:",
+                                                           "The line containing:'" + str(s_variable_name) + "'" +
+                                                           " for rule '" + str(s_key_step1) + "'" +
+                                                           " doesn't match the grammar: it should be the string containing the path to the file."
+                                                           "\nexemple:" + exemple_file_def)
+                        elif s_key_step3 == "tables":
+                            for s_tablename in self.__dict_workflow_definition[s_key_step1][s_key_step2][s_key_step3]:
+                                if type(s_tablename) != str:
+                                    raise WopMarsException("Error while parsing the configuration file: \n\t"
+                                                           "The grammar of the WopMars's definition file is not respected:",
+                                                           "The line containing:'" + str(s_variable_name) + "'" +
+                                                           " for rule '" + str(s_key_step1) + "'" +
+                                                           " doesn't match the grammar: it should be the string containing the name of the Model."
+                                                           "\nexemple:" + exemple_file_def)
+
 
                 # There should be one tool at max in each rule
-                if s_key_step2 == "tool":
+                elif s_key_step2 == "tool":
                     if bool_toolwrapper == False:
                         bool_toolwrapper = True
                     elif bool_toolwrapper == True:

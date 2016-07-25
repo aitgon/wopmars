@@ -129,6 +129,9 @@ class ToolWrapper(Base):
                                    "\n\t'{0}'".format("'\n\t'".join(set_input_file_names))
                                    )
 
+        set_input_table_names = set([t_input.name for t_input in self.tables if t_input.type.name == "input"])
+        
+
     def is_output_respected(self):
         """
         Check if the output dictionary given in the constructor is properly formed for the tool.

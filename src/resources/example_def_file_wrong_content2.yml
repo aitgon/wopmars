@@ -1,7 +1,9 @@
 rule rule3:
     tool: FooWrapper4
     input:
-        input1: "the_second_file.txt"
+        files:
+            input1: "the_second_file.txt"
     output:
-        failure: "the final_file.txt"
+        files:
+            failure: "the final_file.txt"
 
