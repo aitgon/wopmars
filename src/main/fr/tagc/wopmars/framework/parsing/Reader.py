@@ -169,28 +169,46 @@ class Reader:
             output_entry = session.query(Type).filter(Type.name == "output").one()
 
             Logger.instance().debug("Loading unique toolwrapper " + s_toolwrapper)
-            dict_dict_elm = dict(dict_input={}, dict_params={}, dict_output={})
-            for s_input in dict_inputs:
-                obj_created = IOFilePut(name=s_input,
-                                        path=os.path.abspath(os.path.join(OptionManager.instance()["--directory"],
-                                                                          dict_inputs[s_input])))
-                dict_dict_elm["dict_input"][s_input] = obj_created
-                Logger.instance().debug("Object input file: " + s_input + " created.")
-            for s_output in dict_outputs:
-                obj_created = IOFilePut(name=s_output,
-                                        path=os.path.abspath(os.path.join(OptionManager.instance()["--directory"],
-                                                                          dict_outputs[s_output])))
-                dict_dict_elm["dict_output"][s_output] = obj_created
-                Logger.instance().debug("Object output file: " + s_output + " created.")
+            dict_dict_dict_elm = dict(dict_input={"files": {}, "tables": {}},
+                                 dict_params={},
+                                 dict_output={"files": {}, "tables": {}})
+            for type in dict_inputs:
+                if type == "files":
+                    for s_input in dict_inputs[type]:
+                        obj_created = IOFilePut(name=s_input,
+                                                path=os.path.abspath(os.path.join(OptionManager.instance()["--directory"],
+                                                                                  dict_inputs[type][s_input])))
+                        dict_dict_dict_elm["dict_input"][type][s_input] = obj_created
+                        Logger.instance().debug("Object input file: " + s_input + " created.")
+                elif type == "tables":
+                    for s_input in dict_inputs[type]:
+                        obj_created = IODbPut(model=dict_inputs[type][s_input],
+                                              tablename=s_input)
+                        dict_dict_dict_elm["dict_input"][type][s_input] = obj_created
+                        Logger.instance().debug("Object input table: " + s_input + " created.")
+            for type in dict_outputs:
+                if type == "files":
+                    for s_output in dict_outputs[type]:
+                        obj_created = IOFilePut(name=s_output,
+                                                path=os.path.abspath(os.path.join(OptionManager.instance()["--directory"],
+                                                                                  dict_outputs[type][s_output])))
+                        dict_dict_dict_elm["dict_output"][type][s_output] = obj_created
+                        Logger.instance().debug("Object output file: " + s_output + " created.")
+                elif type == "tables":
+                    for s_output in dict_outputs[type]:
+                        obj_created = IODbPut(model=dict_outputs[type][s_output],
+                                              tablename=s_output)
+                        dict_dict_dict_elm["dict_output"][type][s_output] = obj_created
+                        Logger.instance().debug("Object output table: " + s_output + " created.")
             for s_param in dict_params:
                 obj_created = Option(name=s_param,
                                      value=dict_params[s_param])
-                dict_dict_elm["dict_params"][s_param] = obj_created
+                dict_dict_dict_elm["dict_params"][s_param] = obj_created
                 Logger.instance().debug("Object option: " + s_param + " created.")
 
             # Instantiate the refered class
             wrapper_entry = self.create_toolwrapper_entry("rule_" + s_toolwrapper, s_toolwrapper,
-                                                          dict_dict_elm, input_entry, output_entry)
+                                                          dict_dict_dict_elm, input_entry, output_entry)
             wrapper_entry.execution = execution
             Logger.instance().debug("Object toolwrapper: " + s_toolwrapper + " created.")
             session.add(wrapper_entry)
@@ -204,6 +222,7 @@ class Reader:
             session.rollback()
             # This create_all will create all tables that have been found in the toolwrapper
             SQLManager.instance().create_all()
+            wrapper_entry.is_content_respected()
         except NoResultFound as e:
             session.rollback()
             raise WopMarsException("Error while parsing the configuration file. The database has not been setUp Correctly.",

@@ -72,16 +72,35 @@ class ToolThread(threading.Thread, Observable):
         self.fire_success()
 
     def get_command_line(self):
-        list_str_inputs = [f.name + "': '" + f.path for f in self.__toolwrapper.files if f.type.name == "input"]
-        list_str_outputs = [f.name + "': '" + f.path for f in self.__toolwrapper.files if f.type.name == "output"]
-        list_str_params = []
+        list_str_inputs_files = [f.name + "': '" + f.path for f in self.__toolwrapper.files if f.type.name == "input"]
+        list_str_inputs_tables = [t.tablename + "': '" + t.model for t in self.__toolwrapper.tables if t.type.name == "input"]
         str_input_dict = ""
+        str_input_dict_files = ""
+        str_input_dict_tables = ""
+
+        if list_str_inputs_files:
+            str_input_dict_files = "'files':{'" + "', '".join(list_str_inputs_files) + "'}"
+        if list_str_inputs_tables:
+            str_input_dict_tables = "'tables':{'" + "', '".join(list_str_inputs_tables) + "'}"
+        if list_str_inputs_files or list_str_inputs_tables:
+            str_input_dict = " -i \"{%s}\"" % (", ".join([s for s in [str_input_dict_files, str_input_dict_tables] if s != ""]))
+
+        list_str_outputs_files = [f.name + "': '" + f.path for f in self.__toolwrapper.files if f.type.name == "output"]
+        list_str_outputs_tables = [t.tablename + "': '" + t.model for t in self.__toolwrapper.tables if t.type.name == "output"]
         str_output_dict = ""
+        str_output_dict_files = ""
+        str_output_dict_tables = ""
+
+        if list_str_outputs_files:
+            str_output_dict_files = "'files':{'" + "', '".join(list_str_outputs_files) + "'}"
+        if list_str_outputs_tables:
+            str_output_dict_tables = "'tables':{'" + "', '".join(list_str_outputs_tables) + "'}"
+        if list_str_outputs_files or list_str_outputs_tables:
+            str_output_dict = " -o \"{%s}\"" % (", ".join([s for s in [str_output_dict_files, str_output_dict_tables] if s != ""]))
+
+        list_str_params = []
         str_params_dict = ""
-        if list_str_inputs:
-            str_input_dict = " -i \"{'" + "', '".join(list_str_inputs) + "'}\""
-        if list_str_outputs:
-            str_output_dict = " -o \"{'" + "', '".join(list_str_outputs) + "'}\""
+
         if list_str_params:
             str_params_dict = " -P \"{'" + "', '".join(list_str_params) + "'}\""
 
