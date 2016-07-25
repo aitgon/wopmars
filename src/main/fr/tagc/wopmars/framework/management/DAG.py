@@ -18,14 +18,12 @@ class DAG(nx.DiGraph):
     """    
     def __init__(self, set_tools=None):
         """
-        The DAG can be build from a set of tools, analyzing the successors
-        of each.
+        The DAG can be build from a set of tools, analyzing the successors of each of them.
 
         ToolWrappers has a method "follows()" wich allow to know if one tool has a dependency for one other. The tools
         of the set_tools are compared each other to extract the dependencies.
         
         :param set_tools: A set of tools
-        :return: None
         """
         super().__init__()
         Logger.instance().info("Building the execution DAG...")
@@ -39,7 +37,7 @@ class DAG(nx.DiGraph):
                     if tool1.follows(tool2):
                         self.add_edge(tool2, tool1)
 
-        Logger.instance().info("DAG built.")
+        Logger.instance().debug("DAG built.")
 
     def write_dot(self, path):
         """
@@ -62,7 +60,7 @@ class DAG(nx.DiGraph):
         """
         Get the successors of a node.
 
-        The method is overwhelmed because if a node is None, then, the root nodes are returned
+        The method is overwhelmed because if a node is None, then, the root nodes are returned.
 
         :param node: an object that is used as Node in the DAG or None.
         :return: [node]:  the successors of the given node or the node at the root of the DAG.

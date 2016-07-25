@@ -18,6 +18,13 @@ class UniqueQueue(Queue):
         """
         if item not in self.queue:
             self.queue.append(item)
+            return True
+        return False
 
     def get_queue_tuple(self):
+        """
+        Return the ordered content of the queue in a tuple.
+
+        :return: tuple of the elements in the Queue.
+        """
         return tuple(self.queue)

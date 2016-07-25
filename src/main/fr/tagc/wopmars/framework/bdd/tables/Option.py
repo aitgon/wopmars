@@ -3,7 +3,6 @@ Module contianing the Option class
 """
 from src.main.fr.tagc.wopmars.framework.bdd.Base import Base
 
-from src.main.fr.tagc.wopmars.utils.OptionUtils import OptionUtils
 from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
@@ -14,6 +13,17 @@ class Option(Base):
     The Option class handle a key and a value and is able to say if
     it is properly formated
     """
+
+    # static value necessary to perform tests on Options
+    static_option_castable = (
+        "bool",
+        "str",
+        "int",
+        "float"
+       )
+    static_option_req = "required"
+    static_option_default = "default"
+
 
     __tablename__ = "wom_option"
 
@@ -29,25 +39,32 @@ class Option(Base):
         Check if the option value correspond to the type given by the tool wrapper. Throws a WopMarsParsingException if
         not.
 
+        :raise: WopMarsException
         :param carac: String containing the carac of the option in the format: "carac1|carac2|carc3"
         :return:
         """
-        # get a list of caracs
+        # get a list of caracteristics
         list_splitted_carac = carac.split("|")
         for s_type in list_splitted_carac:
             s_formated_type = s_type.strip().lower()
-            # check if the carac is a castable type
-            if s_formated_type in OptionUtils.static_option_castable:
+            # check if the carac is a autorized castable type
+            if s_formated_type in Option.static_option_castable:
                 try:
                     # try the cast
                     eval(s_formated_type)(self.value)
                 except ValueError:
                     # if it fails, raise an exception: the type has not been respected
-                    raise WopMarsException(4, "The given option value of " + str(self.name) +
-                                              " should be of type " + s_formated_type)
+                    raise WopMarsException("The content of the definition file is not valid.",
+                                           "The given option value of " + str(self.name) +
+                                           " should be of type " + s_formated_type)
             else:
-                # TODO exception de développeur métier qui a mal fait les choses
-                pass
+                if s_formated_type != Option.static_option_default and s_formated_type != Option.static_option_req:
+                    raise WopMarsException("Malformed toolwrapper class.",
+                                           "The toolwrapper " + str(self.rule.toolwrapper) + " of the rule " +
+                                           str(self.rule.name) + " has an incorrect \"get_params\" method wich is " +
+                                           "associating the " + self.name + " option with an unknown type. " +
+                                           "Found: " + s_type + " - Allowed: " +
+                                           str(",".join(Option.static_option_castable)))
 
     def __eq__(self, other):
         return self.value == other.value and self.name == other.name

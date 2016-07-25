@@ -5,13 +5,10 @@ import datetime
 import sys
 
 import time
-from sqlalchemy import and_
-from sqlalchemy.sql.functions import func
 
 from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
 from src.main.fr.tagc.wopmars.framework.bdd.tables.Execution import Execution
 from src.main.fr.tagc.wopmars.framework.bdd.tables.IODbPut import IODbPut
-from src.main.fr.tagc.wopmars.framework.bdd.tables.IOFilePut import IOFilePut
 from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
 from src.main.fr.tagc.wopmars.framework.bdd.tables.Type import Type
 from src.main.fr.tagc.wopmars.framework.management.DAG import DAG
@@ -31,16 +28,16 @@ class WorkflowManager(ToolWrapperObserver):
 
     WorkflowManager will ask the parser to build the DAG then execute it. The execution of the DAG is done as following:
       1- The workflow manager take the "tool_dag" with all the rules of the workflow and build the "dag_to_exec" which
-      will be actually executed.
+      will be actually executed according to the "target rule" and "source rule" options.
       2- The method "execute_from()" is call without argument, meaning that the execution begin at the top of the dag
-      (the root of the tree)
-      3- The nodes are gathered thanks to the "successors" method of the DAG
-      4- Each node is wrapped inside a ToolThread object which will be added to the queue
+      (the root of the tree).
+      3- The nodes are gathered thanks to the "successors" method of the DAG.
+      4- Each node is wrapped inside a ToolThread object which will be added to the queue.
       5- Each ToolThread is executed (ordered) as follows:
-        a- If the inputs are ready: they are executed
-        b- If not, they are put in the buffer
-      6- When the ToolThread has finished its execution, a notification of success is sent
-      7- The method "execute_from" is called again with the succeeded ToolWrapper in arguments
+        a- If the inputs are ready: they are executed.
+        b- If not, they are put in the buffer.
+      6- When the ToolThread has finished its execution, a notification of success is sent.
+      7- The method "execute_from" is called again with the succeeded ToolWrapper as argument.
       8- Loop to the 3rd step
       9- When the DAG is finished, the software exits
 
@@ -51,16 +48,15 @@ class WorkflowManager(ToolWrapperObserver):
         """
         Constructor of WorkflowManager.
 
-        It initialize the parser with the path of the definition file given by the OptionManager.
-
-        The parser will give the DAG which will be executed. The parser is instantiated with the "--wopfile"
-        option given by the user.
-        The queue_exec is the Thread pool. It will contains the tool threads that will wait for being executed.
+        The parser will give the DAG which will be executed.
+        The queue_exec is the Thread pool. It will contains the tool threads that will wait for being executed. Each tool
+        should appear only once in the queue.
         The list_queue_buffer will be filled with the tool threads that the WorkflowManager couldn't execute.
-        The count_exec is a counter that keep trace of the tools that are currently executed.
+        The count_exec is a counter that keep trace of the number of tools that are currently executed.
         The dag_tools will contain the dag representing the workflow.
         The dag_to_exec is basically the same dag than dag_tools or a subgraph depending on the options --sourcerule or --targetrule
         given by the user.
+        The session is used to get back the session without calling again SQLManager.
         """
         self.__parser = Parser()
         self.__queue_exec = UniqueQueue()
@@ -75,18 +71,24 @@ class WorkflowManager(ToolWrapperObserver):
         """
         Get the dag then execute it.
 
-        The database is setUp here if workflow tables have not been created yet.
+        The database is setUp here if workflow side tables have not been created yet.
 
-        The dag is taken thanks to the "parse()" method of the parser.
+        The dag is taken thanks to the "parse()" method of the parser. And then pruned by the get_dag_to_exec method
+        which will set the right DAG to be executed.
         Then, execute_from is called with no argument to get the origin nodes.
         :return:
         """
+        # This create_all is supposed to only create workflow-management side tables (called "wom_*")
         SQLManager.instance().create_all()
+        # The following lines allow to create types 'input' and 'output' in the db if they don't exist.
         self.__session.get_or_create(Type, defaults={"id": 1}, name="input")
         self.__session.get_or_create(Type, defaults={"id": 2}, name="output")
         self.__session.commit()
+        # Get the DAG representing the whole workflow
         self.__dag_tools = self.__parser.parse()
+        # Build the DAG which is willing to be executed according
         self.get_dag_to_exec()
+        # Start the execution at the root nodes
         self.execute_from()
 
     def erase_output(self, tw):
@@ -123,6 +125,7 @@ class WorkflowManager(ToolWrapperObserver):
         """
         if OptionManager.instance()["--sourcerule"] is not None:
             try:
+                # Get the rule asked by the user as 'sourcerule'
                 node_from_rule = [n for n in self.__dag_tools if n.name == OptionManager.instance()["--sourcerule"]][0]
             except IndexError:
                 raise WopMarsException(
@@ -133,6 +136,7 @@ class WorkflowManager(ToolWrapperObserver):
                                    " -> " + node_from_rule.toolwrapper)
         elif OptionManager.instance()["--targetrule"] is not None:
             try:
+                # Get the rule asked by the user as 'targetrule'
                 node_from_rule = [n for n in self.__dag_tools if n.name == OptionManager.instance()["--targetrule"]][0]
             except IndexError:
                 raise WopMarsException(
@@ -143,11 +147,15 @@ class WorkflowManager(ToolWrapperObserver):
         else:
             self.__dag_to_exec = self.__dag_tools
 
+        # ???
+        # todo checkout what is going on here
         tables = []
         [tables.extend(tw.tables) for tw in self.__dag_to_exec.nodes()]
         IODbPut.set_tables_properties(tables)
 
-        for tw in set(self.__dag_tools.nodes()).difference(set(self.__dag_to_exec.nodes()   )):
+        # For the tools that are in the workflow definition file but not in the executed dag, their status is set to
+        # "NOT_PLANNED"
+        for tw in set(self.__dag_tools.nodes()).difference(set(self.__dag_to_exec.nodes())):
             tw.set_execution_infos(status="NOT_PLANNED")
             self.__session.add(tw)
 
@@ -165,18 +173,14 @@ class WorkflowManager(ToolWrapperObserver):
         :param node: ToolWrapper a node of the DAG or None, if it executes from the root.
         :return: void
         """
+        # the first list will be the root nodes
         list_tw = self.__dag_to_exec.successors(tw)
         Logger.instance().debug("Next tools: " + str([t.__class__.__name__ for t in list_tw]))
 
         for tw in list_tw:
-            #      T1
-            #    /   \
-            #   |    T2
-            #    \   /
-            #      T3
-            # In the case above, the T3 could be executed twice if the output of T2 is already available at the begining
-            # (re-execution without clean)
+            # every rule should be executed once and only once
             if tw not in self.__already_runned:
+                # ToolThread object is a thread ready to start
                 self.__queue_exec.put(ToolThread(tw))
             else:
                 Logger.instance().debug("Rule: " + tw.name +
@@ -189,7 +193,7 @@ class WorkflowManager(ToolWrapperObserver):
         Call start() method of all elements of the queue.
 
         The tools inside the queue are taken then their inputs are checked. If they are ready, the tools are started.
-        If not, they are put in a buffer list of "not ready tools" of "ready but has not necessary ressources available
+        If not, they are put in a buffer list of "not ready tools" or "ready but has not necessary ressources available
         tools".
 
         The start method is called with a dry argument, if it appears that the input of the ToolWrapper are the same
@@ -197,7 +201,7 @@ class WorkflowManager(ToolWrapperObserver):
         start method will only simulate the execution.
 
         After that, the code check for the state of the workflow and gather the informations to see if the workflow
-        are finished, if it encounter an error or if it is currently running.
+        is finished, if it encounter an error or if it is currently running.
 
         :raise WopMarsException: The workflow encounter a problem and must stop.
         :return: void
@@ -214,17 +218,27 @@ class WorkflowManager(ToolWrapperObserver):
             Logger.instance().debug("Queue size: " + str(self.__queue_exec.qsize()))
             Logger.instance().debug("Queue content: " + str(["rule: " + tt.get_toolwrapper().name + "->" +
                                                              tt.get_toolwrapper().toolwrapper for tt in self.__queue_exec.get_queue_tuple()]))
+            # get the first element of the queue to execute
             thread_tw = self.__queue_exec.get()
             tw = thread_tw.get_toolwrapper()
             Logger.instance().debug("Current rule: " + tw.name + "->" + tw.toolwrapper)
+            # check if the predecessors of a rule have been already executed: a rule shouldn't be executed if
+            # its predecessors have not been executed yet
             if not self.all_predecessors_have_run(tw):
                 Logger.instance().debug("Predecessors of rule: " + tw.name + " have not been executed yet.")
+            # for running, either the inputs have to be ready or the dry-run mode is enabled
             elif tw.are_inputs_ready() or OptionManager.instance()["--dry-run"]:
+                # the state of inputs (table and file) are set in the db here.
                 tw.set_args_date_and_size("input")
                 Logger.instance().debug("ToolWrapper ready: " + tw.toolwrapper)
                 dry = False
+                # if forceall option, then the tool is reexecuted anyway
+                # check if the actual execution of the toolwrapper is necessary
+                # every predecessors of the toolwrapper have to be executed (or simulated)
                 if not OptionManager.instance()["--forceall"] and \
-                        self.is_this_tool_already_done(tw) and not bool([node for node in self.__dag_to_exec.predecessors(tw) if node.status != "EXECUTED" and node.status != "ALREADY_EXECUTED"]):
+                        self.is_this_tool_already_done(tw) and \
+                        not bool([node for node in self.__dag_to_exec.predecessors(tw) if node.status != "EXECUTED" and
+                                        node.status != "ALREADY_EXECUTED"]):
                     Logger.instance().info("Rule: " + tw.name + " -> " + tw.toolwrapper +
                                            " seemed to have already" +
                                            " been runned with same" +
@@ -238,8 +252,14 @@ class WorkflowManager(ToolWrapperObserver):
                 # todo twthread methode start
                 thread_tw.set_dry(dry)
                 try:
+                    # be carefull here: the execution of the toolthreads is recursive meaning that calls to function may
+                    # be stacked (run -> notify success -> run(next tool) -> notify success(next tool) -> etc....
+                    # todo twthread methode start
                     thread_tw.run()
                 except Exception as e:
+                    # as mentionned above, there may be recursive calls to this function, so every exception can
+                    # pass here multiple times: this attribute is used for recognizing exception that have already been
+                    # caught
                     if not hasattr(e, "teb_already_seen"):
                         setattr(e, "teb_already_seen", True)
                         tw.set_execution_infos(status="EXECUTION_ERROR")
@@ -268,6 +288,8 @@ class WorkflowManager(ToolWrapperObserver):
             # uniquement en environnement multiThreadpredece
             elif not self.check_buffer():
                 # If there is no tool being executed but there is that are waiting something, the workflow has an issue
+                finished_at = datetime.datetime.fromtimestamp(time.time())
+                self.set_finishing_informations(finished_at, "ERROR")
                 raise WopMarsException("The workflow has failed.",
                                        "The inputs are not ready for the remaining tools: " +
                                        ", \n".join([t.get_toolwrapper().toolwrapper +
@@ -276,6 +298,12 @@ class WorkflowManager(ToolWrapperObserver):
             # If there is one tool that is ready, it means that it is in queue because ressources weren't available.
 
     def set_finishing_informations(self, finished_at, status):
+        """
+        Set the finsihing information of the whole workflow.
+
+        :param finished_at: datetime.datetime object representing the finishing date of the workflow
+        :param status: the final status of the workflow
+        """
         modify_exec = self.__session.query(Execution).order_by(Execution.id.desc()).first()
         modify_exec.finished_at = finished_at
         modify_exec.time = (modify_exec.finished_at - modify_exec.started_at).total_seconds()
@@ -284,7 +312,13 @@ class WorkflowManager(ToolWrapperObserver):
         self.__session.commit()
 
     def all_predecessors_have_run(self, tw):
-        return self.__dag_to_exec.get_all_predecessors(tw).difference(set([tw])).issubset(set(self.__already_runned))
+        """
+        Check if all the predecessors of the given toolwrapper have yet been executed in this workflow.
+
+        :param tw: ToolWrapper
+        :return: Bool
+        """
+        return bool(self.__dag_to_exec.get_all_predecessors(tw).difference(set([tw])).issubset(set(self.__already_runned)))
 
     @staticmethod
     def is_this_tool_already_done(tw):

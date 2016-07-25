@@ -64,7 +64,6 @@ class IODbPut(IOPut, Base):
 
     @staticmethod
     def set_tables_properties(tables):
-        session = SQLManager.instance().get_session()
         IODbPut.import_models([t.name for t in tables])
 
         for table in tables:

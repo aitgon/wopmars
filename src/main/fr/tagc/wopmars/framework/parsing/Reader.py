@@ -58,28 +58,40 @@ class Reader:
         self.__dict_workflow_definition = None
 
     def load_definition_file(self, s_definition_file):
+        """
+        Load the definition file from the given path.
+
+        The integrity (form) of the definition is done during this step but no tests are performed regarding to the
+        actual content of the definition file.
+
+        :param s_definition_file: String path to the definition file
+        """
         # Tests about grammar and syntax are performed here (file's existence is also tested here)
         try:
             with open(s_definition_file, 'r') as def_file:
                 s_def_file_content = def_file.read()
             try:
                 # The workflow definition file is loaded as-it in memory by the pyyaml library
-                Logger.instance().info("Reading the definition file: " + str(s_definition_file) + "...")
+                Logger.instance().info("Reading the definition file: " + str(s_definition_file))
+                # Parse the file to find duplicates rule names
                 Reader.check_duplicate_rules(s_def_file_content)
-                yaml.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, self.no_duplicates_constructor)
+                # Code found on the github: https://gist.github.com/pypt/94d747fe5180851196eb
+                # Allows to raise an exception if duplicate keys are found on the same document hirearchy level.
+                yaml.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, Reader.no_duplicates_constructor)
+                # The whole content of the definition file is loaded in this dict.
                 self.__dict_workflow_definition = yaml.load(s_def_file_content)
                 Logger.instance().debug("\n" + DictUtils.pretty_repr(self.__dict_workflow_definition))
-                Logger.instance().info("Read complete.")
+                Logger.instance().debug("Read complete.")
                 Logger.instance().info("Checking whether the file is well formed...")
-                # raise an exception if there is a problem
+                # raise an exception if there is a problem with the grammar
                 self.is_grammar_respected()
-                Logger.instance().info("File well formed.")
+                Logger.instance().debug("File well formed.")
             # YAMLError is thrown if the YAML specifications are not respected by the definition file
             except yaml.YAMLError as exc:
                 raise WopMarsException("Error while parsing the configuration file: \n\t"
                                        "The YAML specification is not respected:", str(exc))
             except ConstructorError as CE:
-                raise WopMarsException("Error while parsing the configuration filer: \n\t",
+                raise WopMarsException("Error while parsing the configuration file: \n\t",
                                        str(CE))
         except FileNotFoundError:
             raise WopMarsException("Error while parsing the configuration file: \n\tInput error:",
@@ -87,8 +99,10 @@ class Reader:
 
     @staticmethod
     def no_duplicates_constructor(loader, node, deep=False):
-        """Check for duplicate keys."""
-
+        """
+        Check for duplicate keys.
+        """
+        # Code found on the github: https://gist.github.com/pypt/94d747fe5180851196eb
         mapping = {}
         for key_node, value_node in node.value:
             key = loader.construct_object(key_node, deep=deep)
@@ -106,7 +120,7 @@ class Reader:
         This method raises an exception if the workflow definition file contains duplicate keys.
 
         The workflow definition file should contain rules with different name. It is therefore recommended to not
-        call rules with tool names but functionnality instead. Example:
+        call rules with tool names but functionality instead. Example:
 
         rule get_snp:
             tool: SNPGetter
@@ -118,7 +132,6 @@ class Reader:
                 etc..
 
         :param file: String this is the content of the definition file
-        :return:
         """
         Logger.instance().debug("Looking for duplicate rules...")
         # All rules are found using this regex.
@@ -133,6 +146,17 @@ class Reader:
         Logger.instance().debug("No Duplicate.")
 
     def load_one_toolwrapper(self, s_toolwrapper, s_dict_inputs, s_dict_outputs, s_dict_params):
+        """
+        Method called when the 'tool' command is used. It is equivalent to the "red" method but create a workflow with
+        only one toolwrapper
+
+        :param s_toolwrapper: The name of the toolwrapper (will be imported)
+        :param s_dict_inputs: A string containing the dict of input files
+        :param s_dict_outputs: A string containing the dict of output files
+        :param s_dict_params: A string containing the dict of params
+
+        :raise: WopmarsException
+        """
         session = SQLManager.instance().get_session()
         dict_inputs = dict(eval(s_dict_inputs))
         dict_outputs = dict(eval(s_dict_outputs))
@@ -150,19 +174,19 @@ class Reader:
                 obj_created = IOFilePut(name=s_input,
                                         path=os.path.abspath(os.path.join(OptionManager.instance()["--directory"],
                                                                           dict_inputs[s_input])))
-                dict_dict_elm ["dict_input"][s_input] = obj_created
-                Logger.instance().debug("Object input: " + s_input + " created.")
+                dict_dict_elm["dict_input"][s_input] = obj_created
+                Logger.instance().debug("Object input file: " + s_input + " created.")
             for s_output in dict_outputs:
                 obj_created = IOFilePut(name=s_output,
                                         path=os.path.abspath(os.path.join(OptionManager.instance()["--directory"],
                                                                           dict_outputs[s_output])))
                 dict_dict_elm["dict_output"][s_output] = obj_created
-                Logger.instance().debug("Object input: " + s_output + " created.")
+                Logger.instance().debug("Object output file: " + s_output + " created.")
             for s_param in dict_params:
                 obj_created = Option(name=s_param,
                                      value=dict_params[s_param])
                 dict_dict_elm["dict_params"][s_param] = obj_created
-                Logger.instance().debug("Object input: " + s_param + " created.")
+                Logger.instance().debug("Object option: " + s_param + " created.")
 
             # Instantiate the refered class
             wrapper_entry = self.create_toolwrapper_entry("rule_" + s_toolwrapper, s_toolwrapper,
@@ -173,41 +197,44 @@ class Reader:
             session.commit()
             session.rollback()
             IODbPut.set_tables_properties(IODbPut.get_execution_tables())
+            # commit /rollback trick to clean the session
+            # todo ask lionel est-ce-que tu as deja eu ce problème à ne pas pouvoir faire des queries et des ajouts
+            # dans la meme session?
             session.commit()
             session.rollback()
+            # This create_all will create all tables that have been found in the toolwrapper
             SQLManager.instance().create_all()
         except NoResultFound as e:
             session.rollback()
             raise WopMarsException("Error while parsing the configuration file. The database has not been setUp Correctly.",
                                    str(e))
 
-
     def read(self, s_definition_file):
         """
-        Reads the file and build the workflow in the database.
-
-        ToolWrappers are then gotten from the database.
+        Reads the file given and build the workflow in the database.
 
         The definition file is supposed to be properly formed. The validation of the content of the definition is done
         during the instanciation of the tools.
 
-        :return: The set of builded ToolWrappers
+        :param: s_definition_file: String containing the path to the definition file.
+        :raise: WopmarsException
         """
         self.load_definition_file(s_definition_file)
 
         session = SQLManager.instance().get_session()
 
+        # The dict_workflow_definition is assumed to be well formed
         try:
             # The same execution entry for the whole workflow-related bdd entries.
             execution = Execution(started_at=datetime.datetime.fromtimestamp(time.time()))
-            # get the types that should have been created previously
+            # get the types database entries that should have been created previously
             input_entry = session.query(Type).filter(Type.name == "input").one()
             output_entry = session.query(Type).filter(Type.name == "output").one()
             set_wrapper = set()
             # Encounter a rule block
             for rule in self.__dict_workflow_definition:
                 str_wrapper_name = None
-                # the name of the rule is extracted after the "rule" keyword
+                # the name of the rule is extracted after the "rule" keyword. There shouldn't be a ":" but it costs nothing.
                 str_rule_name = rule.split()[-1].strip(":")
                 Logger.instance().debug("Encounter rule " + str_rule_name + ": \n" +
                                         str(DictUtils.pretty_repr(self.__dict_workflow_definition[rule])))
@@ -218,30 +245,37 @@ class Reader:
                     if type(self.__dict_workflow_definition[rule][key_second_step]) == dict:
                         # if it is a dict, then inputs, outputs or params are coming
                         for elm in self.__dict_workflow_definition[rule][key_second_step]:
-                            # The 2 possible objects can be created
+                            # todo tabling modification of the indentation levels + appearance of tables in file
                             if key_second_step == "params":
                                 obj_created = Option(name=elm,
                                                      value=self.__dict_workflow_definition[rule][key_second_step][elm])
                             else:
-                                # In theory, there cannot be a IODbPut specification in the definition file
+                                str_path_to_file = os.path.join(OptionManager.instance()["--directory"],
+                                                                self.__dict_workflow_definition[rule][key_second_step][elm])
                                 obj_created = IOFilePut(name=elm,
-                                                        path=os.path.abspath(os.path.join(OptionManager.instance()["--directory"], self.__dict_workflow_definition[rule][key_second_step][elm])))
+                                                        path=os.path.abspath(str_path_to_file))
+                            # all elements of the current rule block are stored in there
                             dict_dict_elm["dict_" + key_second_step][elm] = obj_created
                             Logger.instance().debug("Object " + key_second_step + ": " +
                                                     elm + " created.")
                     else:
-                        # if the next step is not a dict, then it is supposed to be the "tool" line
+                        # if the step is not a dict, then it is supposed to be the "tool" line
                         str_wrapper_name = self.__dict_workflow_definition[rule][key_second_step]
                 # Instantiate the refered class and add it to the set of objects
                 wrapper_entry = self.create_toolwrapper_entry(str_rule_name, str_wrapper_name, dict_dict_elm, input_entry, output_entry)
+                # Associating a toolwrapper to an execution
                 wrapper_entry.execution = execution
                 set_wrapper.add(wrapper_entry)
                 Logger.instance().debug("Object toolwrapper: " + str_wrapper_name + " created.")
+                # commit/rollback trick to clean the session - SQLAchemy bug suspected
                 session.commit()
                 session.rollback()
+                # todo set_table_properties outside the rules loop to take into account all the tables at once
+                # (error if one tool has a foreign key refering to a table that is not in its I/O put
                 IODbPut.set_tables_properties(IODbPut.get_execution_tables())
                 session.commit()
                 session.rollback()
+                # This create_all will create all tables that have been found in the toolwrapper
                 SQLManager.instance().create_all()
             session.add_all(set_wrapper)
             # save all operations done so far.
@@ -255,20 +289,18 @@ class Reader:
         """
         Actual creating of the toolwrapper object.
 
-        Str_rule_name is the String containing the name of the rule in which the toolwrapper will be used.
-        Str_wrapper_name is the String containing the name of the toolwrapper. It will be used for importing the correct
-        module and then for creating the class.
-        Dict_dict_elm is the dict of dict of "input"s "output"s and "params" and will be used to make relations between
-        options / input / output and the toolwrapper.
+
 
         The toolwrapper object is an entry of the table rule in the resulting database.
 
-        If the scopêd_session has current modification, they probably will be commited during this method:
+        If the scoped_session has current modification, they probably will be commited during this method:
         tables are created and this can only be done with clean session.
 
-        :param str_rule_name: String
-        :param str_wrapper_name: String
-        :param dict_dict_elm: Dict <String: Dict <String: String>>
+        :param str_rule_name: String containing the name of the rule in which the toolwrapper will be used.
+        :param str_wrapper_name: String containing the name of the toolwrapper. It will be used for importing the
+        correct module and then for creating the class.
+        :param dict_dict_elm: Dict <String: Dict <String: String>>  of "input"s "output"s and "params" and will be used
+        to make relations between options / input / output and the toolwrapper.
 
         :return: TooLWrapper instance
         """
@@ -282,6 +314,7 @@ class Reader:
             raise WopMarsException("Error while parsing the configuration file: \n\t",
                                    "The class " + str_wrapper_name + " doesn't exist.")
         except ImportError:
+            # todo fix the ambiguous import error -> check in sys.path / sys.modules
             raise WopMarsException("Error while parsing the configuration file:",
                                    str_wrapper_name + " module is not in the pythonpath.")
         # Initialize the instance of ToolWrapper
@@ -289,12 +322,15 @@ class Reader:
 
         # associating ToolWrapper instances with their files / tables
         for input_f in dict_dict_elm["dict_input"]:
+            # set the type of IOFilePut object
             dict_dict_elm["dict_input"][input_f].type = input_entry
             try:
+                # associating file and toolwrapper
                 toolwrapper_wrapper.files.append(dict_dict_elm["dict_input"][input_f])
             except ObjectDeletedError as e:
                 raise WopMarsException("Error in the toolwrapper class declaration. Please, notice the developer",
-                                       "The error is probably caused by the lack of the 'polymorphic_identity' attribute in the toolwrapper. Error message: \n" + str(e))
+                                       "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
+                                       " in the toolwrapper. Error message: \n" + str(e))
 
         for output_f in dict_dict_elm["dict_output"]:
             dict_dict_elm["dict_output"][output_f].type = output_entry
@@ -302,16 +338,20 @@ class Reader:
                 toolwrapper_wrapper.files.append(dict_dict_elm["dict_output"][output_f])
             except ObjectDeletedError as e:
                 raise WopMarsException("Error in the toolwrapper class declaration. Please, notice the developer",
-                                       "The error is probably caused by the lack of the 'polymorphic_identity' attribute in the toolwrapper. Error message: \n" + str(e))
+                                       "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
+                                       " in the toolwrapper. Error message: \n" + str(e))
 
         for opt in dict_dict_elm["dict_params"]:
+            # associating option and toolwrapper
             toolwrapper_wrapper.options.append(dict_dict_elm["dict_params"][opt])
 
         for input_t in toolwrapper_wrapper.get_input_table():
             # this is a preventing commit because next statement will create a new table and the session has to be clean
+            # I think it is a bug in SQLAlchemy which not allows queries then insert statements in the same session
             session.commit()
             # the user-side tables are created during the reading of the definition file
             table_entry = IODbPut(name=input_t)
+            # insert in the database the date of last modification of a developper-side table (if it doesn't exist)
             modification_table_entry, created = session.get_or_create(ModificationTable,
                                                                       defaults={
                                                                           "date": datetime.datetime.fromtimestamp(
@@ -323,7 +363,8 @@ class Reader:
                 toolwrapper_wrapper.tables.append(table_entry)
             except ObjectDeletedError as e:
                 raise WopMarsException("Error in the toolwrapper class declaration. Please, notice the developer",
-                                       "The error is probably caused by the lack of the 'polymorphic_identity' attribute in the toolwrapper. Error message: \n" + str(e))
+                                       "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
+                                       " in the toolwrapper. Error message: \n" + str(e))
 
         for output_t in toolwrapper_wrapper.get_output_table():
             session.commit()
@@ -334,20 +375,20 @@ class Reader:
                                                                               time.time())},
                                                                       table_name=output_t)
             table_entry.modification = modification_table_entry
-
             table_entry.type = output_entry
-        #     # table_entry.modification = modification_table_entry
             try:
                 toolwrapper_wrapper.tables.append(table_entry)
             except ObjectDeletedError as e:
                 raise WopMarsException("Error in the toolwrapper class declaration. Please, notice the developer",
-                                       "The error is probably caused by the lack of the 'polymorphic_identity' attribute in the toolwrapper. Error message: \n" + str(
+                                       "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
+                                       " in the toolwrapper. Error message: \n" + str(
                                            e))
 
         # the toolwrapper returned by this method are valid according to the toolwrapper developper
         toolwrapper_wrapper.is_content_respected()
         return toolwrapper_wrapper
 
+    # todo tabling
     def is_grammar_respected(self):
         """
         Check if the definition file respects the grammar. Throw an exception if not.
@@ -366,7 +407,6 @@ class Reader:
         params     = "params" ":" (identifier ”:” stringliteral ni?)+
 
         :raise: WopMarsParsingException
-        :return: void
         """
         exemple_file_def = """
     rule RULENAME:
@@ -401,6 +441,7 @@ class Reader:
 
             for s_key_step2 in self.__dict_workflow_definition[s_key_step1]:
                 # the second level of indentation should only contain elements of rule
+                # todo tabling there will be other indentation levels for file / tables
                 if not regex_step2.search(s_key_step2):
                     raise WopMarsException("Error while parsing the configuration file: \n\t"
                                            "The grammar of the WopMars's definition file is not respected:",
@@ -410,19 +451,13 @@ class Reader:
                                            "'tool', 'params', 'input' or 'output'" +
                                        "\nexemple:" + exemple_file_def)
 
-
-                # todo ask lionel -> pour les classes métier: le dev doit créer un package et doit l'installer avant
-                # de pouvoir s'en servir aitor aimerait regrouper des tw dans un package:
-                #        snp.BedIntersect
-                #        snp.MatrixScan
-                #        snp.etc.
+                # There should be one tool at max in each rule
                 if s_key_step2 == "tool":
                     if bool_toolwrapper == False:
                         bool_toolwrapper = True
                     elif bool_toolwrapper == True:
                         raise WopMarsException("Error while parsing the configuration file: \n\t",
                                                "There is multiple tools specified for the " + str(s_key_step1))
-
 
             # All rules should contain a tool
             if not bool_toolwrapper:

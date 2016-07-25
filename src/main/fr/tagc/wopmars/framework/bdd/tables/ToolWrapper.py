@@ -12,9 +12,9 @@ from src.main.fr.tagc.wopmars.framework.bdd.Base import Base
 from src.main.fr.tagc.wopmars.framework.bdd.SQLManager import SQLManager
 from src.main.fr.tagc.wopmars.framework.bdd.tables.Execution import Execution
 from src.main.fr.tagc.wopmars.framework.bdd.tables.IODbPut import IODbPut
+from src.main.fr.tagc.wopmars.framework.bdd.tables.Option import Option
 from src.main.fr.tagc.wopmars.utils.Logger import Logger
 from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
-from src.main.fr.tagc.wopmars.utils.OptionUtils import OptionUtils
 from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
@@ -94,9 +94,10 @@ class ToolWrapper(Base):
         This method checks if the parameters dictionary are properly formed, according to the specifications of the
         wrapper developer.
 
+        Call of the methods "is_options_respected", "is_input_respected" and "is_output_respected"
+
         :return:
         """
-
         # the options have to be checked first because they can alter the behavior of the is_input_respected and
         # is_output_respected methods
         self.is_options_respected()
@@ -106,14 +107,20 @@ class ToolWrapper(Base):
 
     def is_input_respected(self):
         """
-        Check if the input dictionary given in the constructor is properly formed for the tool.
+        Check if the input files associated with the toolwrapper are ok according to the toolwrapper developer.
 
         It checks if the output variable names exists or not.
-        If not, throws a WopMarsParsingException(3)
+        If not, throws a WopMarsParsingException.
+
+        This method calls the "get_input_file" method which have been written by the toolwrapper developer. Since the
+        options are checked first, the developer can write a conditional behavior depending on the options given for
+        the toolwrapper.
+
+        :raise: WopMarsException
         :return:void
         """
         set_input_file_names = set([f_input.name for f_input in self.files if f_input.type.name == "input"])
-        if  set_input_file_names != set(self.get_input_file()):
+        if set_input_file_names != set(self.get_input_file()):
             raise WopMarsException("The content of the definition file is not valid.",
                                    "The given input variable's names for " + self.__class__.__name__ +
                                    " are not correct, they should be: " +
@@ -126,7 +133,14 @@ class ToolWrapper(Base):
         """
         Check if the output dictionary given in the constructor is properly formed for the tool.
 
-        It checks if the output variable names exists or not. Throws WopMarsParsingException if not
+        It checks if the output variable names exists or not.
+        If not, throws a WopMarsParsingException.
+
+        This method calls the "get_output_file" method which have been written by the toolwrapper developer. Since the
+        options are checked first, the developer can write a conditional behavior depending on the options given for
+        the toolwrapper.
+
+        :raise: WopMarsException
         :return:void
         """
         if set([f_output.name for f_output in self.files if f_output.type.name == "output"]) != set(self.get_output_file()):
@@ -143,8 +157,20 @@ class ToolWrapper(Base):
         This method check if the params given in the constructor are properly formed for the tool.
 
         It checks if the params names given by the user exists or not, if the type correspond and if the required
-        options are given
-        :return:
+        options are given.
+        If not, throws a WopMarsParsingException.
+
+        This method calls the "get_params" method of the toolwrapper. This method should return a dictionnary
+        associating the name of the option with a String containing the types allowed with it. A "|" is used between
+        each types allowed for one option.
+
+        examples:
+
+        {
+            'option1': "int",
+            'option2': "required|str",
+        }
+        :raise: WopMarsException
         """
         dict_wrapper_opt_carac = self.get_params()
 
@@ -170,14 +196,14 @@ class ToolWrapper(Base):
 
     def follows(self, other):
         """
-        Check whether the "other" follows "self" in the execution DAG.
+        Check whether the "self" follows directly "other" in the execution DAG.
 
         Check whether "other" has one output value in "self" possible input values.
         The output value are given from the Relationnal mapping between toolwrappers and related objects:
         * IODbPut
         * IOFilePut
 
-        :param other: ToolWrapper that is a predecessor of "self"
+        :param other: ToolWrapper that is possibly a predecessor of "self"
         :return: bool True if "self" follows "other"
         """
         for rule_f_path in [f.path for f in self.files if f.type.name == "input"]:
@@ -241,6 +267,7 @@ class ToolWrapper(Base):
                                            "The " + type + " file " + str(f.path) + " of rule " + str(self.name) +
                                            " doesn't exist")
                 else:
+                    # in dry-run mode, input/output files might not exist
                     date = None
                     size = None
             f.used_at = date
@@ -254,7 +281,6 @@ class ToolWrapper(Base):
                 Logger.instance().debug("Output file " + str(f) + " has been created.")
         # this commit is due to a bug that i couldn't figure out: the session empty itself between the two loops...
         # this is not good at all since it may lead to inconsistence in the bdd
-        # todo fix
         session.commit()
 
         for t in [t for t in self.tables if t.type.name == type]:
@@ -534,7 +560,7 @@ class ToolWrapper(Base):
             for s_type in list_splitted_carac:
                 s_formated_type = s_type.strip().lower()
                 # check if the carac is a castable type
-                if s_formated_type in OptionUtils.static_option_castable:
+                if s_formated_type in Option.static_option_castable:
                     value = eval(s_formated_type)(value)
                     break
             return value

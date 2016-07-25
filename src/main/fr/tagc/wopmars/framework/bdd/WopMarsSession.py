@@ -75,6 +75,16 @@ class WopMarsSession:
         return bool(self.__session.new) or bool(self.__session.dirty)
 
     def get_or_create(self, model, defaults=None, **kwargs):
+        """
+        This method allows to check if an entry exist in database and if not, create it. It also return a boolean
+        which says if the entry has been created (True) or not (False)
+
+        :param model: A SQLAlchemy model
+        :param defaults: Dict containing the default parameter to use in fields if the entry doesn't exist.
+        :param kwargs: Specify the values of the fields which are looked for. Create them if not.
+
+        :return: tuple: (instance of the created entry, boolean)
+        """
         instance = self.__session.query(model).filter_by(**kwargs).first()
         if instance:
             return instance, False

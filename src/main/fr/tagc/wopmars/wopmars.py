@@ -47,6 +47,8 @@ from src.main.fr.tagc.wopmars.utils.OptionManager import OptionManager
 from src.main.fr.tagc.wopmars.utils.PathFinder import PathFinder
 from src.main.fr.tagc.wopmars.utils.exceptions.WopMarsException import WopMarsException
 # todo combinatoire pour les rules
+# todo option pour reset les resultats (supprimer le contenu de la bdd) / fresh run
+# todo ajouter un flag NOT_FINISHED aux executions
 
 class WopMars:
 
@@ -123,6 +125,9 @@ class WopMars:
             except Exception as e:
                 Logger.instance().error("An error occured during the rollback of the changement of the database which can be now unstable:" +
                                         str(e))
+            sys.exit(1)
+        except Exception as e:
+            Logger.instance().error("An unknown error has occured:\n" + str(e))
             sys.exit(1)
 
 
