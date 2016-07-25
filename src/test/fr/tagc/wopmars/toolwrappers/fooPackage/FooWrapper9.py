@@ -19,7 +19,7 @@ class FooWrapper9(ToolWrapper):
         return ["input1"]
 
     def get_input_table(self):
-        return ["fooPackage.FooBase2P"]
+        return ["FooBase2P"]
 
     def get_output_file(self):
         return ["output1"]

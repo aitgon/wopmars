@@ -13,11 +13,12 @@ class FooWrapper7(ToolWrapper):
     Modifications may lead to failure in tests.
     """
     __mapper_args__ = {'polymorphic_identity': "FooWrapper7"}
+
     def get_input_table(self):
         return ["FooBase"]
 
     def get_output_table(self):
-        return {"FooBase2": "append"}
+        return ["FooBase2"]
 
     def run(self):
         print(self.__class__.__name__ + " en cours d'exécution.")

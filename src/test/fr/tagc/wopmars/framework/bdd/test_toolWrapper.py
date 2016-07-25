@@ -83,13 +83,15 @@ class TestToolWrapper(TestCase):
         f2 = IOFilePut(name="output1", path="file2.txt")
         f2.type = self.output_entry
 
-        t1 = IODbPut(name="FooBase")
+        t1 = IODbPut(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
         t1.table = t1
+        t1.type = self.input_entry
 
-        t2 = IODbPut(name="FooBase")
+        t2 = IODbPut(model="FooBase", tablename="FooBase")
         t2.set_table(FooBase)
         t2.table = t2
+        t2.type = self.output_entry
 
         self.__foowrapper_right_content = FooWrapper3(rule_name="rule1")
         self.__foowrapper_right_content.files.extend([f1, f2])
@@ -104,11 +106,11 @@ class TestToolWrapper(TestCase):
         f2 = IOFilePut(name="output1", path="file2.txt")
         f2.type = self.output_entry
 
-        t1 = IODbPut(name="FooBase")
+        t1 = IODbPut(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
         t1.table = t1
 
-        t2 = IODbPut(name="FooBase")
+        t2 = IODbPut(model="FooBase", tablename="FooBase")
         t2.set_table(FooBase)
         t2.table = t2
 
@@ -128,11 +130,11 @@ class TestToolWrapper(TestCase):
         f3 = IOFilePut(name="input2", path="file2.txt")
         f3.type = self.input_entry
 
-        t1 = IODbPut(name="FooBase")
+        t1 = IODbPut(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
         t1.table = t1
 
-        t2 = IODbPut(name="FooBase")
+        t2 = IODbPut(model="FooBase", tablename="FooBase")
         t2.set_table(FooBase)
         t2.table = t2
 
@@ -149,11 +151,11 @@ class TestToolWrapper(TestCase):
         f2 = IOFilePut(name="output1", path="file2.txt")
         f2.type = self.output_entry
 
-        t1 = IODbPut(name="FooBase")
+        t1 = IODbPut(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
         t1.table = t1
 
-        t2 = IODbPut(name="FooBase")
+        t2 = IODbPut(model="FooBase", tablename="FooBase")
         t2.set_table(FooBase)
         t2.table = t2
 
@@ -170,11 +172,11 @@ class TestToolWrapper(TestCase):
         f2 = IOFilePut(name="output1", path="file2.txt")
         f2.type = self.output_entry
 
-        t1 = IODbPut(name="FooBase")
+        t1 = IODbPut(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
         t1.table = t1
 
-        t2 = IODbPut(name="FooBase")
+        t2 = IODbPut(model="FooBase", tablename="FooBase")
         t2.set_table(FooBase)
         t2.table = t2
 
@@ -189,11 +191,11 @@ class TestToolWrapper(TestCase):
         f2 = IOFilePut(name="output1", path="file2.txt")
         f2.type = self.output_entry
 
-        t1 = IODbPut(name="FooBase")
+        t1 = IODbPut(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
         t1.table = t1
 
-        t2 = IODbPut(name="FooBase")
+        t2 = IODbPut(model="FooBase", tablename="FooBase")
         t2.set_table(FooBase)
         t2.table = t2
 
@@ -272,7 +274,7 @@ class TestToolWrapper(TestCase):
         SQLManager.instance().get_session().add_all([FooBase(name="test " + str(i)) for i in range(5)])
         SQLManager.instance().get_session().commit()
 
-        t1 = IODbPut(name="FooBase")
+        t1 = IODbPut(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
 
         t1.type = self.input_entry
@@ -289,13 +291,13 @@ class TestToolWrapper(TestCase):
 
         moment = datetime.datetime.fromtimestamp(time.time())
 
-        t1 = IODbPut(name="FooBase")
+        t1 = IODbPut(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
         t1.type = self.input_entry
         modif = ModificationTable(table_name="FooBase", date=moment)
         modif.tables.append(t1)
 
-        t2 = IODbPut(name="FooBase")
+        t2 = IODbPut(model="FooBase", tablename="FooBase")
         t2.set_table(FooBase)
         t2.type = self.input_entry
         modif = ModificationTable(table_name="FooBase", date=moment)
@@ -315,7 +317,7 @@ class TestToolWrapper(TestCase):
         toolwrapper2.files.append(f2)
         toolwrapper2.tables.append(t2)
 
-        t3 = IODbPut(name="FooBase")
+        t3 = IODbPut(model="FooBase", tablename="FooBase")
         t3.set_table(FooBase)
         t3.type = self.input_entry
         modif = ModificationTable(table_name="FooBase", date=moment)
@@ -334,7 +336,7 @@ class TestToolWrapper(TestCase):
     def test_is_output_ok(self):
 
         moment = datetime.datetime.fromtimestamp(time.time())
-        t1 = IODbPut(name="FooBase")
+        t1 = IODbPut(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
         t1.type = self.input_entry
         t1.used_at = moment
@@ -362,7 +364,7 @@ class TestToolWrapper(TestCase):
         f1.type = self.output_entry
 
         moment = datetime.datetime.fromtimestamp(time.time())
-        t1 = IODbPut(name="FooBase")
+        t1 = IODbPut(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
         t1.type = self.input_entry
         t1.used_at = moment

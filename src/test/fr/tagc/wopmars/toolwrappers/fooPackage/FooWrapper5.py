@@ -22,7 +22,7 @@ class FooWrapper5(ToolWrapper):
         return ["output1"]
 
     def get_output_table(self):
-        return ["fooPackage.FooBaseP"]
+        return ["FooBaseP"]
 
     def run(self):
         print(self.__class__.__name__ + " en cours d'exécution.")
@@ -30,7 +30,7 @@ class FooWrapper5(ToolWrapper):
         p.wait()
         # self.session().delete_content(self.output_table("FooBase"))
         for i in range(10):
-            f = self.output_table("fooPackage.FooBaseP")(name="Foowrapper5 - " + str(i))
+            f = self.output_table("FooBaseP")(name="Foowrapper5 - " + str(i))
             self.session().add(f)
         self.session().commit()
         time.sleep(1)

@@ -93,16 +93,16 @@ class TestParser(TestCase):
         f15 = IOFilePut(name="output1", path="resources/outputs/output_File7.txt")
         f15.type = output_entry
 
-        t1 = IODbPut(name="FooBase")
+        t1 = IODbPut(model="FooBase", tablename="FooBase")
         t1.type = output_entry
 
-        t1bis = IODbPut(name="FooBase")
+        t1bis = IODbPut(model="FooBase", tablename="FooBase")
         t1bis.type = input_entry
 
-        t2 = IODbPut(name="FooBase2")
+        t2 = IODbPut(model="FooBase2", tablename="FooBase2")
         t2.type = output_entry
 
-        t2bis = IODbPut(name="FooBase2")
+        t2bis = IODbPut(model="FooBase2", tablename="FooBase2")
         t2bis.type = input_entry
 
         tw1 = FooWrapper4(rule_name="rule1")

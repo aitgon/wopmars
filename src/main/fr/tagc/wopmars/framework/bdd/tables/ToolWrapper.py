@@ -129,8 +129,27 @@ class ToolWrapper(Base):
                                    "\n\t'{0}'".format("'\n\t'".join(set_input_file_names))
                                    )
 
-        set_input_table_names = set([t_input.name for t_input in self.tables if t_input.type.name == "input"])
-        
+        set_input_table = set([t_input for t_input in self.tables if t_input.type.name == "input"])
+        for t_input in set_input_table:
+            s_tablename = t_input.tablename
+            if s_tablename not in self.get_input_table():
+                raise WopMarsException("The content of the definition file is not valid.",
+                                       "The given input tablenames for " + 
+                                       self.__class__.__name__ + " is not correct. it should be in: " +
+                                       "\n\t'{0}'".format("'\n\t'".join(self.get_input_table())) +
+                                       "\n" + "It is:" +
+                                       "\n\t'" + s_tablename
+                                       )
+            s_tablename_of_model = t_input.get_table().__tablename__
+            if s_tablename_of_model not in self.get_input_table():
+                raise WopMarsException("The content of the definition file is not valid.",
+                                       "The given tablename of model for " +
+                                       self.__class__.__name__ + " is not correct. it should be in: " +
+                                       "\n\t'{0}'".format("'\n\t'".join(self.get_input_table())) +
+                                       "\n" + "It is:" +
+                                       "\n\t'" + s_tablename_of_model
+                                       )
+            # todo ask aitor le dictionnaire pour le get_io_table permet plus de précision au niveau des tests, je pense que ca vaut le coup
 
     def is_output_respected(self):
         """
@@ -154,6 +173,19 @@ class ToolWrapper(Base):
                                    "\n" + "They are:" +
                                    "\n\t'{0}'".format("'\n\t'".join([f.name for f in self.files if f.type.name == "output"]))
                                    )
+
+        set_output_table = set([t_output for t_output in self.tables if t_output.type.name == "output"])
+        for t_output in set_output_table:
+            s_tablename = t_output.tablename
+            if s_tablename not in self.get_output_table():
+                raise WopMarsException("The content of the definition file is not valid.",
+                                       "The given output tablenames for " + 
+                                       self.__class__.__name__ + " is not correct. it should be in: " +
+                                       "\n\t'{0}'".format("'\n\t'".join(self.get_output_table())) +
+                                       "\n" + "It is:" +
+                                       "\n\t'" + s_tablename
+                                       )   
+
 
     def is_options_respected(self):
         """
@@ -214,8 +246,8 @@ class ToolWrapper(Base):
                 if rule_f_path == rule_f2_path:
                     return True
 
-        for rule_t_name in [t.name for t in self.tables if t.type.name == "input"]:
-            for rule_t2_name in [t.name for t in other.tables if t.type.name == "output"]:
+        for rule_t_name in [t.model for t in self.tables if t.type.name == "input"]:
+            for rule_t2_name in [t.model for t in other.tables if t.type.name == "output"]:
                 if rule_t_name == rule_t2_name:
                     return True
 
@@ -230,15 +262,22 @@ class ToolWrapper(Base):
         :return: bool - True if inputs are ready.
         """
         input_files = [f for f in self.files if f.type.name == "input"]
-        input_tables = [t for t in self.tables if t.type.name == "input"]
-        inputs = input_files + input_tables
-        Logger.instance().debug("Inputs of " + str(self.__class__.__name__) + ": " + str([i.name for i in inputs]))
-        for i in inputs:
+        Logger.instance().debug("Inputs files of " + str(self.__class__.__name__) + ": " + str([i.name for i in input_files]))
+        for i in input_files:
             if not i.is_ready():
                 Logger.instance().debug("Input: " + str(i.name) + " is not ready.")
                 self.__state = ToolWrapper.NOT_READY
                 return False
             Logger.instance().debug("Input: " + str(i.name) + " is ready.")
+
+        input_tables = [t for t in self.tables if t.type.name == "input"]
+        Logger.instance().debug("Inputs tables of " + str(self.__class__.__name__) + ": " + str([i.tablename for i in input_tables]))
+        for i in input_tables:
+            if not i.is_ready():
+                Logger.instance().debug("Input: " + str(i.tablename) + " is not ready.")
+                self.__state = ToolWrapper.NOT_READY
+                return False
+            Logger.instance().debug("Input: " + str(i.tablename) + " is ready.")
 
         self.__state = ToolWrapper.READY
         return True
@@ -311,7 +350,8 @@ class ToolWrapper(Base):
         for t in [t for t in self.tables if t.type.name == "input"]:
             is_same = False
             for t2 in [t2 for t2 in other.tables if t2.type.name == "input"]:
-                if (t.name == t2.name and
+                if (t.model == t2.model and
+                    t.tablename == t2.tablename and
                        t.used_at == t2.used_at):
                     is_same = True
                     break
@@ -433,8 +473,9 @@ class ToolWrapper(Base):
     # todo check_content? -> dans le == des IODbPut
     def same_tables(self, other, type_name):
         for input_t in [t for t in self.tables if t.type.name == type_name]:
-            is_in = bool([t for t in other.tables if (input_t.name == t.name and
-                                                      t.type.name == type_name)])
+            is_in = bool([t for t in other.tables if (input_t.model == t.model and
+                                                      t.type.name == type_name and
+                                                      input_t.tablename == t.tablename)])
             if not is_in:
                 return False
         return True
@@ -535,7 +576,7 @@ class ToolWrapper(Base):
         :param key: String: the name of the Table object.
         :return:
         """
-        return [t for t in self.tables if t.name == key and t.type.name == "input"][0].get_table()
+        return [t for t in self.tables if t.tablename == key and t.type.name == "input"][0].get_table()
 
     # todo exception erreur speciale developpeur métier (aide au debogage)
     def output_file(self, key):
@@ -554,7 +595,7 @@ class ToolWrapper(Base):
         :param key: String: the name of the Table object.
         :return:
         """
-        return [t for t in self.tables if t.name == key and t.type.name == "output"][0].get_table()
+        return [t for t in self.tables if t.tablename == key and t.type.name == "output"][0].get_table()
 
     def option(self, key):
         try:

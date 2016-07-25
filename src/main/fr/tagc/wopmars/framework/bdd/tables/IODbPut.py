@@ -25,7 +25,8 @@ class IODbPut(IOPut, Base):
     __tablename__ = "wom_table"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, ForeignKey("wom_modification_table.table_name"))
+    tablename = Column(String, ForeignKey("wom_modification_table.table_name"))
+    model = Column(String)
     rule_id = Column(Integer, ForeignKey("wom_rule.id"))
     type_id = Column(Integer, ForeignKey("wom_type.id"))
     used_at = Column(DateTime, nullable=True)
@@ -37,48 +38,70 @@ class IODbPut(IOPut, Base):
 
     modification = relationship("ModificationTable", back_populates="tables")
 
-    tables = set()
+    tablemodelnames = set()
+    tablenames = set()
 
-    def __init__(self, name):
+    def __init__(self, model, tablename):
         """
         :param table: Base: an object extending the Base type from SQLAlchemy
         which has been created by a tool developper
         :return:
         """
         # The file containing the table should be in PYTHONPATH
-        Base.__init__(self, name=name)
-        Logger.instance().debug(name + " table class loaded.")
+        Base.__init__(self, model=model, tablename=tablename)
+        Logger.instance().debug(str(model) + " model loaded. Tablename: " + str(tablename))
         self.__table = None
 
     @reconstructor
     def init_on_load(self):
-        for table in IODbPut.tables:
+        for table in IODbPut.tablemodelnames:
             mod = importlib.import_module(table)
             try:
-                if table == self.name:
-                    self.__table = eval("mod." + self.name.split(".")[-1])
+                if table == self.model:
+                    # todo tabling
+                    self.__table = eval("mod." + self.model.split(".")[-1])
             except AttributeError as e:
                 raise e
-        Logger.instance().debug(self.name + " table class reloaded.")
-
+        Logger.instance().debug(self.tablename + " table class reloaded. Model: " + self.model)
 
     @staticmethod
     def set_tables_properties(tables):
-        IODbPut.import_models([t.name for t in tables])
+        """
+        Import the models of the current execution and then associate models with IODbPut objects.
+
+        :param tables: Resulset IODbPut objects
+        """
+        # import models for avoid references errors between models when dealing with them
+        IODbPut.import_models([t.model for t in tables])
 
         for table in tables:
-            IODbPut.tables.add(table.name)
-            mod = importlib.import_module(table.name)
-            table.set_table(eval("mod." + table.name.split(".")[-1]))
+            # keep track of the models used in static variable of IODbPut
+            IODbPut.tablemodelnames.add(table.model)
+            # Associate model with the IODbPut object
+            mod = importlib.import_module(table.model)
+            table_model = eval("mod." + table.model.split(".")[-1])
+            table.set_table(table_model)
+            # keep track of table names used in static variable of IODbPut
+            IODbPut.tablenames.add(table_model.__tablename__)
             SQLManager.instance().get_session().add(table)
 
     @staticmethod
     def get_execution_tables():
+        """
+        Return all the IODbPut objects found in model IODbPut.
+
+        :return: ResultSet IODbPut objects
+        """
         session = SQLManager.instance().get_session()
         return session.query(IODbPut).all()
 
     @staticmethod
     def import_models(table_names):
+        """
+        Import all the given models
+
+        :param table_names: Iterable containing strings of path to the models
+        """
         for t in table_names:
             importlib.import_module(t)
 
@@ -97,7 +120,7 @@ class IODbPut(IOPut, Base):
         :return: boolean: True if the table attributes are the same, False if not
         """
         session = SQLManager.instance().get_session()
-        if self.name != other.name:
+        if self.model != other.model or self.tablename != other.tablename:
             return False
         try:
             self_results = set(session.query(self.__table).all())
@@ -115,7 +138,7 @@ class IODbPut(IOPut, Base):
         try:
             results = session.query(self.__table).first()
             if results is None:
-                Logger.instance().debug("The table " + self.name + " is empty.")
+                Logger.instance().debug("The table " + self.tablename + " is empty.")
                 return False
         except OperationalError as e:
             Logger.instance().debug("The table " + self.__table.__tablename__ + " doesn't exist.")
@@ -132,7 +155,7 @@ class IODbPut(IOPut, Base):
         return id(self)
 
     def __repr__(self):
-        return "<Table (" + self.type.name + "  ):\"" + str(self.name) + "\"; used_at:" + str(self.used_at) + ">"
+        return "<Table (" + self.type.name + "  ):\"" + str(self.tablename) + "\"; used_at:" + str(self.used_at) + ">"
 
     def __str__(self):
-        return "table: " + self.name
+        return "table: " + self.tablename + "; model: " + self.model

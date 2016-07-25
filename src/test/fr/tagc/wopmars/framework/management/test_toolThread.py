@@ -43,10 +43,10 @@ class TestToolThread(TestCase):
         f2 = IOFilePut(name="output1", path="resources/outputs/output_File1.txt")
         f2.type = output_entry
 
-        t1 = IODbPut(name="FooBase")
+        t1 = IODbPut(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
         t1.type = output_entry
-        modification_table_entry = ModificationTable(date=datetime.datetime.fromtimestamp(time.time()), table_name=t1.name)
+        modification_table_entry = ModificationTable(date=datetime.datetime.fromtimestamp(time.time()), table_name=t1.tablename)
         t1.modification = modification_table_entry
 
         tw1 = FooWrapper5(rule_name="rule1")
@@ -59,11 +59,11 @@ class TestToolThread(TestCase):
         f22 = IOFilePut(name="output1", path="resources/outputs/output_File1.txt")
         f22.type = output_entry
 
-        t12 = IODbPut(name="FooBase")
+        t12 = IODbPut(model="FooBase", tablename="FooBase")
         t12.set_table(FooBase)
         t12.type = output_entry
         modification_table_entry = ModificationTable(
-            date=datetime.datetime.fromtimestamp(time.time()), table_name=t12.name)
+            date=datetime.datetime.fromtimestamp(time.time()), table_name=t12.tablename)
         t12.modification = modification_table_entry
 
         tw2 = FooWrapper5(rule_name="rule2")
@@ -76,11 +76,11 @@ class TestToolThread(TestCase):
         f23 = IOFilePut(name="output1", path="resources/outputs/output_File1.txt")
         f23.type = output_entry
 
-        t13 = IODbPut(name="FooBase")
+        t13 = IODbPut(model="FooBase", tablename="FooBase")
         t13.set_table(FooBase)
         t13.type = output_entry
         modification_table_entry = ModificationTable(
-            date=datetime.datetime.fromtimestamp(time.time()), table_name=t13.name)
+            date=datetime.datetime.fromtimestamp(time.time()), table_name=t13.tablename)
         t13.modification = modification_table_entry
 
         tw3 = FooWrapper5(rule_name="rule3")
@@ -108,10 +108,10 @@ class TestToolThread(TestCase):
         f1 = IOFilePut(name="input1", path="resources/input_File1.txt")
         f1.type = input_entry
 
-        t1 = IODbPut(name="FooBase")
+        t1 = IODbPut(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
         t1.type = output_entry
-        modification_table_entry = ModificationTable(date=datetime.datetime.fromtimestamp(time.time()), table_name=t1.name)
+        modification_table_entry = ModificationTable(date=datetime.datetime.fromtimestamp(time.time()), table_name=t1.tablename)
         t1.modification = modification_table_entry
 
         o1 = Option(name="rows", value="1000")
@@ -124,11 +124,11 @@ class TestToolThread(TestCase):
         f12 = IOFilePut(name="input1", path="resources/input_File1.txt")
         f12.type = input_entry
 
-        t12 = IODbPut(name="FooBase")
+        t12 = IODbPut(model="FooBase", tablename="FooBase")
         t12.set_table(FooBase)
         t12.type = output_entry
         modification_table_entry = ModificationTable(date=datetime.datetime.fromtimestamp(time.time()),
-                                                     table_name=t12.name)
+                                                     table_name=t12.tablename)
         t12.modification = modification_table_entry
 
         o12 = Option(name="rows", value="1000")
@@ -141,11 +141,11 @@ class TestToolThread(TestCase):
         f13 = IOFilePut(name="input1", path="resources/input_File1.txt")
         f13.type = input_entry
 
-        t13 = IODbPut(name="FooBase")
+        t13 = IODbPut(model="FooBase", tablename="FooBase")
         t13.set_table(FooBase)
         t13.type = output_entry
         modification_table_entry = ModificationTable(date=datetime.datetime.fromtimestamp(time.time()),
-                                                     table_name=t13.name)
+                                                     table_name=t13.tablename)
         t13.modification = modification_table_entry
 
         o13 = Option(name="rows", value="1000")
@@ -159,21 +159,21 @@ class TestToolThread(TestCase):
         tt2 = ToolThread(tw12)
         tt3 = ToolThread(tw13)
 
-        t21 = IODbPut(name="FooBase")
+        t21 = IODbPut(model="FooBase", tablename="FooBase")
         t21.set_table(FooBase)
         t21.type = input_entry
 
         tw21 = tw_query(rule_name="rule1")
         tw21.tables.append(t21)
 
-        t22 = IODbPut(name="FooBase")
+        t22 = IODbPut(model="FooBase", tablename="FooBase")
         t22.set_table(FooBase)
         t22.type = input_entry
 
         tw22 = tw_query(rule_name="rule1")
         tw22.tables.append(t22)
 
-        t23 = IODbPut(name="FooBase")
+        t23 = IODbPut(model="FooBase", tablename="FooBase")
         t23.set_table(FooBase)
         t23.type = input_entry
 

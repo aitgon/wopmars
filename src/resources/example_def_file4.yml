@@ -15,6 +15,8 @@ rule rule2:
     output:
         files:
             output1: "resources/outputs/output_File2.txt"
+        tables:
+            FooBaseP: "fooPackage.FooBaseP"
 
 rule rule3:
     tool: fooPackage.FooWrapper6
@@ -28,6 +30,12 @@ rule rule3:
 
 rule rule4:
     tool: fooPackage.FooWrapper7
+    input:
+        tables:
+            FooBaseP: "fooPackage.FooBaseP"
+    output:
+        tables:
+            FooBase2P: "fooPackage.FooBase2P"
 
 rule rule5:
     tool: fooPackage.FooWrapper8
@@ -44,6 +52,8 @@ rule rule6:
     input:
         files:
             input1: "resources/outputs/output_File4.txt"
+        tables:
+            FooBase2P: "fooPackage.FooBase2P"
     output:
         files:
             output1: "resources/outputs/output_File6.txt"

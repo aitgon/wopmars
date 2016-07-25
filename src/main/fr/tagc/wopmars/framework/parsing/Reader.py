@@ -239,31 +239,68 @@ class Reader:
                 Logger.instance().debug("Encounter rule " + str_rule_name + ": \n" +
                                         str(DictUtils.pretty_repr(self.__dict_workflow_definition[rule])))
                 # The dict of "input"s, "output"s and "params" is re-initialized for each wrapper
-                dict_dict_dict_elm = dict(dict_input={"files":{}, "tables":{}}, dict_params={}, dict_output={"files":{}, "tables":{}})
+                dict_dict_dict_elm = dict(dict_input={"files": {}, "tables": {}},
+                                          dict_params={},
+                                          dict_output={"files": {}, "tables": {}})
                 for key_second_step in self.__dict_workflow_definition[rule]:
                     # key_second_step is supposed to be "tool", "input", "output" or "params"
                     if type(self.__dict_workflow_definition[rule][key_second_step]) == dict:
                         # if it is a dict, then inputs, outputs or params are coming
-                        for elm in self.__dict_workflow_definition[rule][key_second_step]:
+                        for key_third_step in self.__dict_workflow_definition[rule][key_second_step]:
                             # todo tabling modification of the indentation levels + appearance of tables in file
                             if key_second_step == "params":
-                                obj_created = Option(name=elm,
-                                                     value=self.__dict_workflow_definition[rule][key_second_step][elm])
-                            elif elm == "files":
-                                for elm2 in self.__dict_workflow_definition[rule][key_second_step][elm]:
-                                    str_path_to_file = os.path.join(OptionManager.instance()["--directory"],
-                                                                    self.__dict_workflow_definition[rule][key_second_step][elm][elm2])
-                                    obj_created = IOFilePut(name=elm2,
-                                                            path=os.path.abspath(str_path_to_file))
-                            # all elements of the current rule block are stored in there
-                                    dict_dict_dict_elm["dict_" + key_second_step][elm][elm2] = obj_created
-                                    Logger.instance().debug("Object " + key_second_step + ": " +
-                                                            elm2 + " created.")
-                            elif elm == "tables":
-                                dict_dict_dict_elm["dict_" + key_second_step][elm] = self.__dict_workflow_definition[rule][key_second_step]
+                                key = key_third_step
+                                value = self.__dict_workflow_definition[rule][key_second_step][key_third_step]
+                                obj_created = Option(name=key,
+                                                     value=value)
+                                dict_dict_dict_elm["dict_params"][key] = obj_created
+                            else:
+                                for key_fourth_step in self.__dict_workflow_definition[rule][key_second_step][key_third_step]:
+                                    obj_created = None
+                                    if key_third_step == "files":
+                                        key = key_fourth_step
+                                        str_path_to_file = os.path.join(OptionManager.instance()["--directory"],
+                                                                        self.__dict_workflow_definition[rule][
+                                                                            key_second_step][
+                                                                            key_third_step][
+                                                                            key])
+                                        obj_created = IOFilePut(name=key,
+                                                                path=os.path.abspath(str_path_to_file))
+
+                                    elif key_third_step == "tables":
+                                        key = key_fourth_step
+                                        modelname = self.__dict_workflow_definition[rule][
+                                            key_second_step][
+                                            key_third_step][
+                                            key]
+                                        obj_created = IODbPut(model=modelname, tablename=key)
+
+                                        dict_dict_dict_elm["dict_" + key_second_step][
+                                            key_third_step][
+                                            key] = self.__dict_workflow_definition[rule][key_second_step][key_third_step][key]
+                                    # all elements of the current rule block are stored in there
+                                    # key_second_step is input or output here
+                                    dict_dict_dict_elm["dict_" + key_second_step][key_third_step][key] = obj_created
+                                    Logger.instance().debug("Object " + key_second_step + " " + key_third_step + ": " +
+                                                            key + " created.")
                     else:
                         # if the step is not a dict, then it is supposed to be the "tool" line
                         str_wrapper_name = self.__dict_workflow_definition[rule][key_second_step]
+                # At this point, "dict_dict_dict_elm" is like this:
+                # {
+                #     'dict_params': {
+                #         'option1': Option('option1', 'valueofoption1')
+                #     },
+                #     'dict_input': {
+                #         'files' : {
+                #             'input1': IOFilePut('input1', 'path/to/input1')
+                #         }
+                #         'tables': {
+                #             'table1': IODbPut('table1', 'package.of.table1')
+                #         }
+                #     },
+                # }
+
                 # Instantiate the refered class and add it to the set of objects
                 wrapper_entry = self.create_toolwrapper_entry(str_rule_name, str_wrapper_name, dict_dict_dict_elm, input_entry, output_entry)
                 # Associating a toolwrapper to an execution
@@ -294,8 +331,6 @@ class Reader:
     def create_toolwrapper_entry(self, str_rule_name, str_wrapper_name, dict_dict_dict_elm, input_entry, output_entry):
         """
         Actual creating of the toolwrapper object.
-
-
 
         The toolwrapper object is an entry of the table rule in the resulting database.
 
@@ -331,31 +366,35 @@ class Reader:
             if elm == "files":
                 for input_f in dict_dict_dict_elm["dict_input"][elm]:
                     # set the type of IOFilePut object
-                    dict_dict_dict_elm["dict_input"][elm][input_f].type = input_entry
+                    iofileput_entry = dict_dict_dict_elm["dict_input"][elm][input_f]
+                    iofileput_entry.type = input_entry
                     try:
                         # associating file and toolwrapper
-                        toolwrapper_wrapper.files.append(dict_dict_dict_elm["dict_input"][elm][input_f])
+                        toolwrapper_wrapper.files.append(iofileput_entry)
                     except ObjectDeletedError as e:
                         raise WopMarsException("Error in the toolwrapper class declaration. Please, notice the developer",
                                                "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
                                                " in the toolwrapper. Error message: \n" + str(e))
             elif elm == "tables":
                 for input_t in dict_dict_dict_elm["dict_input"][elm]:
-                    # this is a preventing commit because next statement will create a new table and the session has to be clean
-                    # I think it is a bug in SQLAlchemy which not allows queries then insert statements in the same session
+                    # input_t is the name of the table (not the model)
+                    # this is a preventing commit because next statement will create a new table and the session has to
+                    # be clean. I think it is a bug in SQLAlchemy which not allows queries then insert statements in
+                    # the same session
                     session.commit()
+                    iodbput_entry = dict_dict_dict_elm["dict_input"][elm][input_t]
                     # the user-side tables are created during the reading of the definition file
-                    table_entry = IODbPut(name=input_t)
-                    # insert in the database the date of last modification of a developper-side table (if it doesn't exist)
+                    # table_entry = IODbPut(name=dict_dict_dict_elm["dict_input"][elm][input_t], tablename=input_t)
+                    # insert in the database the date of last modification of a developper-side table
                     modification_table_entry, created = session.get_or_create(ModificationTable,
                                                                               defaults={
                                                                                   "date": datetime.datetime.fromtimestamp(
                                                                                       time.time())},
                                                                               table_name=input_t)
-                    table_entry.modification = modification_table_entry
-                    table_entry.type = input_entry
+                    iodbput_entry.modification = modification_table_entry
+                    iodbput_entry.type = input_entry
                     try:
-                        toolwrapper_wrapper.tables.append(table_entry)
+                        toolwrapper_wrapper.tables.append(iodbput_entry)
                     except ObjectDeletedError as e:
                         raise WopMarsException("Error in the toolwrapper class declaration. Please, notice the developer",
                                                "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
@@ -364,26 +403,28 @@ class Reader:
         for elm in dict_dict_dict_elm["dict_output"]:
             if elm == "files":
                 for output_f in dict_dict_dict_elm["dict_output"][elm]:
-                    dict_dict_dict_elm["dict_output"][elm][output_f].type = output_entry
+                    iofileput_entry = dict_dict_dict_elm["dict_output"][elm][output_f]
+                    iofileput_entry.type = output_entry
                     try:
-                        toolwrapper_wrapper.files.append(dict_dict_dict_elm["dict_output"][elm][output_f])
+                        toolwrapper_wrapper.files.append(iofileput_entry)
                     except ObjectDeletedError as e:
                         raise WopMarsException("Error in the toolwrapper class declaration. Please, notice the developer",
                                                "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
                                                " in the toolwrapper. Error message: \n" + str(e))
             elif elm == "tables":
-                for output_t in dict_dict_dict_elm["dict_input"][elm]:
+                for output_t in dict_dict_dict_elm["dict_output"][elm]:
+                    # output_t is the table name (not the model)
                     session.commit()
-                    table_entry = IODbPut(name=output_t)
+                    iodbput_entry = dict_dict_dict_elm["dict_output"][elm][output_t]
                     modification_table_entry, created = session.get_or_create(ModificationTable,
                                                                               defaults={
                                                                                   "date": datetime.datetime.fromtimestamp(
                                                                                       time.time())},
                                                                               table_name=output_t)
-                    table_entry.modification = modification_table_entry
-                    table_entry.type = output_entry
+                    iodbput_entry.modification = modification_table_entry
+                    iodbput_entry.type = output_entry
                     try:
-                        toolwrapper_wrapper.tables.append(table_entry)
+                        toolwrapper_wrapper.tables.append(iodbput_entry)
                     except ObjectDeletedError as e:
                         raise WopMarsException(
                             "Error in the toolwrapper class declaration. Please, notice the developer",
@@ -394,45 +435,6 @@ class Reader:
         for opt in dict_dict_dict_elm["dict_params"]:
             # associating option and toolwrapper
             toolwrapper_wrapper.options.append(dict_dict_dict_elm["dict_params"][opt])
-
-        # for input_t in toolwrapper_wrapper.get_input_table():
-        #     # this is a preventing commit because next statement will create a new table and the session has to be clean
-        #     # I think it is a bug in SQLAlchemy which not allows queries then insert statements in the same session
-        #     session.commit()
-        #     # the user-side tables are created during the reading of the definition file
-        #     table_entry = IODbPut(name=input_t)
-        #     # insert in the database the date of last modification of a developper-side table (if it doesn't exist)
-        #     modification_table_entry, created = session.get_or_create(ModificationTable,
-        #                                                               defaults={
-        #                                                                   "date": datetime.datetime.fromtimestamp(
-        #                                                                       time.time())},
-        #                                                               table_name=input_t)
-        #     table_entry.modification = modification_table_entry
-        #     table_entry.type = input_entry
-        #     try:
-        #         toolwrapper_wrapper.tables.append(table_entry)
-        #     except ObjectDeletedError as e:
-        #         raise WopMarsException("Error in the toolwrapper class declaration. Please, notice the developer",
-        #                                "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
-        #                                " in the toolwrapper. Error message: \n" + str(e))
-
-        # for output_t in toolwrapper_wrapper.get_output_table():
-        #     session.commit()
-        #     table_entry = IODbPut(name=output_t)
-        #     modification_table_entry, created = session.get_or_create(ModificationTable,
-        #                                                               defaults={
-        #                                                                   "date": datetime.datetime.fromtimestamp(
-        #                                                                       time.time())},
-        #                                                               table_name=output_t)
-        #     table_entry.modification = modification_table_entry
-        #     table_entry.type = output_entry
-        #     try:
-        #         toolwrapper_wrapper.tables.append(table_entry)
-        #     except ObjectDeletedError as e:
-        #         raise WopMarsException("Error in the toolwrapper class declaration. Please, notice the developer",
-        #                                "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
-        #                                " in the toolwrapper. Error message: \n" + str(
-        #                                    e))
 
         # toolwrapper_wrapper.is_content_respected()
         return toolwrapper_wrapper

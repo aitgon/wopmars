@@ -14,17 +14,17 @@ class FooWrapper7(ToolWrapper):
     """
     __mapper_args__ = {'polymorphic_identity': "fooPackage.FooWrapper7"}
     def get_input_table(self):
-        return ["fooPackage.FooBaseP"]
+        return ["FooBaseP"]
 
     def get_output_table(self):
-        return ["fooPackage.FooBase2P"]
+        return ["FooBase2P"]
 
     def run(self):
         print(self.__class__.__name__ + " en cours d'exécution.")
-        inputs = self.session().query(self.input_table("fooPackage.FooBaseP")).all()
-        self.session().delete_content(self.output_table("fooPackage.FooBase2P"))
+        inputs = self.session().query(self.input_table("FooBaseP")).all()
+        self.session().delete_content(self.output_table("FooBase2P"))
         for i in inputs:
-            entry = self.output_table("fooPackage.FooBase2P")(name=i.name)
+            entry = self.output_table("FooBase2P")(name=i.name)
             self.session().add(entry)
         print(self.session().query(FooBase2).all())
         time.sleep(1)

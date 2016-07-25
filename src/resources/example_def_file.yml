@@ -15,6 +15,9 @@ rule rule2:
     output:
         files:
             output1: "resources/outputs/output_File2.txt"
+        tables:
+            FooBase: "FooBase"
+
 
 rule rule3:
     tool: FooWrapper6
@@ -28,6 +31,12 @@ rule rule3:
 
 rule rule4:
     tool: FooWrapper7
+    input:
+        tables:
+            FooBase: "FooBase"
+    output:
+        tables:
+            FooBase2: "FooBase2"
 
 rule rule5:
     tool: FooWrapper8
@@ -45,8 +54,7 @@ rule rule6:
         files:
             input1: "resources/outputs/output_File4.txt"
         tables:
-            - coucou
-            - salut
+            FooBase2: "FooBase2"
     output:
         files:
             output1: "resources/outputs/output_File6.txt"

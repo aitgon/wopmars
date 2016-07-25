@@ -50,7 +50,7 @@ class TestWorkflowManager(TestCase):
 
         f1 = IOFilePut(name="output1", path=test_out_file_path)
         f1.type = output_entry
-        t1 = IODbPut(name="FooBase")
+        t1 = IODbPut(model="FooBase", tablename="FooBase")
         t1.type = output_entry
         tw = FooWrapper12(rule_name="testworkflowmanager")
         tw.files.extend([f1])
