@@ -38,6 +38,7 @@ class IODbPut(IOPut, Base):
     modification = relationship("ModificationTable", back_populates="tables")
 
     tables = set()
+    tablenames = set()
 
     def __init__(self, name):
         """
@@ -56,6 +57,7 @@ class IODbPut(IOPut, Base):
             mod = importlib.import_module(table)
             try:
                 if table == self.name:
+                    # todo tabling
                     self.__table = eval("mod." + self.name.split(".")[-1])
             except AttributeError as e:
                 raise e
@@ -68,6 +70,7 @@ class IODbPut(IOPut, Base):
 
         for table in tables:
             IODbPut.tables.add(table.name)
+            IODbPut.tablenames.add(table.__tablename__)
             mod = importlib.import_module(table.name)
             table.set_table(eval("mod." + table.name.split(".")[-1]))
             SQLManager.instance().get_session().add(table)
