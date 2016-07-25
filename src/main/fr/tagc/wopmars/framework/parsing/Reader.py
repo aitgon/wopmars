@@ -365,6 +365,7 @@ class Reader:
                 raise WopMarsException("Error in the toolwrapper class declaration. Please, notice the developer",
                                        "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
                                        " in the toolwrapper. Error message: \n" + str(e))
+                # raise e
 
         for output_t in toolwrapper_wrapper.get_output_table():
             session.commit()
@@ -383,6 +384,7 @@ class Reader:
                                        "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
                                        " in the toolwrapper. Error message: \n" + str(
                                            e))
+                # raise e
 
         # the toolwrapper returned by this method are valid according to the toolwrapper developper
         toolwrapper_wrapper.is_content_respected()
