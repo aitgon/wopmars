@@ -70,9 +70,9 @@ class IODbPut(IOPut, Base):
 
         for table in tables:
             IODbPut.tables.add(table.name)
-            IODbPut.tablenames.add(table.__tablename__)
             mod = importlib.import_module(table.name)
             table.set_table(eval("mod." + table.name.split(".")[-1]))
+            IODbPut.tablenames.add(table.get_table().__tablename__)
             SQLManager.instance().get_session().add(table)
 
     @staticmethod

@@ -4,7 +4,6 @@ multiple-lined
 """
 from sqlalchemy import Column, Integer, String
 
-from FooBase import FooBase
 from src.main.fr.tagc.wopmars.framework.bdd.Base import Base
 
 

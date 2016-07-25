@@ -99,8 +99,6 @@ class WorkflowManager(ToolWrapperObserver):
             s += "\n" + f_path
             PathFinder.silentremove(f_path)
         Logger.instance().debug("Removed files:" + s)
-
-
         s = ""
         SQLManager.instance().drop_table_list(IODbPut.tablenames)
         for t_name in IODbPut.tablenames:
@@ -244,7 +242,9 @@ class WorkflowManager(ToolWrapperObserver):
                                            " been runned with same" +
                                            " parameters.")
                     dry = True
+
                 elif OptionManager.instance()["--forceall"] and not OptionManager.instance()["--dry-run"]:
+                    # print(tw.tables)
                     self.erase_output(tw)
                 # todo twthread verification des ressources
                 thread_tw.subscribe(self)

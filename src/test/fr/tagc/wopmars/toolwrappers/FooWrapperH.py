@@ -19,3 +19,9 @@ class FooWrapperH(ToolWrapper):
     def get_output_table(self):
         return ["FooBaseH2"]
 
+    def run(self):
+        q = self.session().query(self.input_table("FooBaseH")).all()
+        for r in q:
+            r.name2="FooBaseH2 - " + str(r.id)
+            self.session().add(r)
+        self.session().commit()
