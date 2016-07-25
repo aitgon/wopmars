@@ -272,11 +272,11 @@ class Reader:
                 session.rollback()
                 # todo set_table_properties outside the rules loop to take into account all the tables at once
                 # (error if one tool has a foreign key refering to a table that is not in its I/O put
-                IODbPut.set_tables_properties(IODbPut.get_execution_tables())
-                session.commit()
-                session.rollback()
-                # This create_all will create all tables that have been found in the toolwrapper
-                SQLManager.instance().create_all()
+            IODbPut.set_tables_properties(IODbPut.get_execution_tables())
+            session.commit()
+            session.rollback()
+            # This create_all will create all tables that have been found in the toolwrapper
+            SQLManager.instance().create_all()
             session.add_all(set_wrapper)
             # save all operations done so far.
             session.commit()
