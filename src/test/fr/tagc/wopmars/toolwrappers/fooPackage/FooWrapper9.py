@@ -15,13 +15,13 @@ class FooWrapper9(ToolWrapper):
     Modifications may lead to failure in tests.
     """
     __mapper_args__ = {'polymorphic_identity': "fooPackage.FooWrapper9"}
-    def get_input_file(self):
+    def specify_input_file(self):
         return ["input1"]
 
-    def get_input_table(self):
+    def specify_input_table(self):
         return ["FooBase2P"]
 
-    def get_output_file(self):
+    def specify_output_file(self):
         return ["output1"]
 
     def run(self):

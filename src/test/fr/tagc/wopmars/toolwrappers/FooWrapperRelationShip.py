@@ -16,7 +16,7 @@ class FooWrapperRelationShip(ToolWrapper):
     """
     __mapper_args__ = {'polymorphic_identity': "FooWrapperRelationShip"}
 
-    def get_output_table(self):
+    def specify_output_table(self):
         return ["FooBase3", "FooBase4", "FooBase5", "FooBase6"]
 
     def run(self):

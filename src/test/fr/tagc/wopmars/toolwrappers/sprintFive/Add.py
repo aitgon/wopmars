@@ -4,13 +4,13 @@ from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrappe
 class Add(ToolWrapper):
     __mapper_args__ = {'polymorphic_identity': "sprintFive.Add"}
 
-    def get_input_file(self):
+    def specify_input_file(self):
         return ["input1"]
 
-    def get_output_table(self):
+    def specify_output_table(self):
         return ["FooBase"]
 
-    def get_params(self):
+    def specify_params(self):
         return {"rows": "required|int", "del": "bool"}
 
     def run(self):

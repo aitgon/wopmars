@@ -61,7 +61,7 @@ class Option(Base):
                 if s_formated_type != Option.static_option_default and s_formated_type != Option.static_option_req:
                     raise WopMarsException("Malformed toolwrapper class.",
                                            "The toolwrapper " + str(self.rule.toolwrapper) + " of the rule " +
-                                           str(self.rule.name) + " has an incorrect \"get_params\" method wich is " +
+                                           str(self.rule.name) + " has an incorrect \"specify_params\" method wich is " +
                                            "associating the " + self.name + " option with an unknown type. " +
                                            "Found: " + s_type + " - Allowed: " +
                                            str(",".join(Option.static_option_castable)))

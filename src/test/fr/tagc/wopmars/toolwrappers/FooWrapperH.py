@@ -13,10 +13,10 @@ class FooWrapperH(ToolWrapper):
         "polymorphic_identity": "FooWrapperH"
     }
 
-    def get_input_table(self):
+    def specify_input_table(self):
         return ["FooBaseH"]
 
-    def get_output_table(self):
+    def specify_output_table(self):
         return ["FooBaseH2"]
 
     def run(self):

@@ -14,10 +14,10 @@ class FooWrapper7(ToolWrapper):
     """
     __mapper_args__ = {'polymorphic_identity': "FooWrapper7"}
 
-    def get_input_table(self):
+    def specify_input_table(self):
         return ["FooBase"]
 
-    def get_output_table(self):
+    def specify_output_table(self):
         return ["FooBase2"]
 
     def run(self):

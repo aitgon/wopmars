@@ -4,10 +4,10 @@ from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrappe
 class AddWithOrWithoutDeleteBefore(ToolWrapper):
     __mapper_args__ = {'polymorphic_identity': "sprintFive.AddWithOrWithoutDeleteBefore"}
 
-    def get_input_file(self):
+    def specify_input_file(self):
         return ["input1"]
 
-    def get_output_table(self):
+    def specify_output_table(self):
         return ["FooBase", "FooBase2"]
 
     def run(self):

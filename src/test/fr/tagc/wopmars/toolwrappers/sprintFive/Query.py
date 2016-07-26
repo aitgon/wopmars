@@ -6,7 +6,7 @@ from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrappe
 class Query(ToolWrapper):
     __mapper_args__ = {'polymorphic_identity': "sprintFive.Query"}
 
-    def get_input_table(self):
+    def specify_input_table(self):
         return ["FooBase"]
 
     def run(self):

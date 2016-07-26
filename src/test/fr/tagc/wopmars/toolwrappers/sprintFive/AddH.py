@@ -4,10 +4,10 @@ from src.main.fr.tagc.wopmars.framework.bdd.tables.ToolWrapper import ToolWrappe
 class AddH(ToolWrapper):
     __mapper_args__ = {'polymorphic_identity': "sprintFive.AddH"}
 
-    def get_output_table(self):
+    def specify_output_table(self):
         return ["FooBaseH"]
 
-    def get_params(self):
+    def specify_params(self):
         return {"rows": "required|int", "del": "bool"}
 
     def run(self):

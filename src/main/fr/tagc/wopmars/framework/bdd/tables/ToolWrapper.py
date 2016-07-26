@@ -112,7 +112,7 @@ class ToolWrapper(Base):
         It checks if the output variable names exists or not.
         If not, throws a WopMarsParsingException.
 
-        This method calls the "get_input_file" method which have been written by the toolwrapper developer. Since the
+        This method calls the "specify_input_file" method which have been written by the toolwrapper developer. Since the
         options are checked first, the developer can write a conditional behavior depending on the options given for
         the toolwrapper.
 
@@ -120,11 +120,11 @@ class ToolWrapper(Base):
         :return:void
         """
         set_input_file_names = set([f_input.name for f_input in self.files if f_input.type.name == "input"])
-        if set_input_file_names != set(self.get_input_file()):
+        if set_input_file_names != set(self.specify_input_file()):
             raise WopMarsException("The content of the definition file is not valid.",
                                    "The given input variable's names for " + self.__class__.__name__ +
                                    " are not correct, they should be: " +
-                                   "\n\t'{0}'".format("'\n\t'".join(self.get_input_file())) +
+                                   "\n\t'{0}'".format("'\n\t'".join(self.specify_input_file())) +
                                    "\n" + "They are:" +
                                    "\n\t'{0}'".format("'\n\t'".join(set_input_file_names))
                                    )
@@ -132,20 +132,20 @@ class ToolWrapper(Base):
         set_input_table = set([t_input for t_input in self.tables if t_input.type.name == "input"])
         for t_input in set_input_table:
             s_tablename = t_input.tablename
-            if s_tablename not in self.get_input_table():
+            if s_tablename not in self.specify_input_table():
                 raise WopMarsException("The content of the definition file is not valid.",
                                        "The given input tablenames for " + 
                                        self.__class__.__name__ + " is not correct. it should be in: " +
-                                       "\n\t'{0}'".format("'\n\t'".join(self.get_input_table())) +
+                                       "\n\t'{0}'".format("'\n\t'".join(self.specify_input_table())) +
                                        "\n" + "It is:" +
                                        "\n\t'" + s_tablename
                                        )
             s_tablename_of_model = t_input.get_table().__tablename__
-            if s_tablename_of_model not in self.get_input_table():
+            if s_tablename_of_model not in self.specify_input_table():
                 raise WopMarsException("The content of the definition file is not valid.",
                                        "The given tablename of model for " +
                                        self.__class__.__name__ + " is not correct. it should be in: " +
-                                       "\n\t'{0}'".format("'\n\t'".join(self.get_input_table())) +
+                                       "\n\t'{0}'".format("'\n\t'".join(self.specify_input_table())) +
                                        "\n" + "It is:" +
                                        "\n\t'" + s_tablename_of_model
                                        )
@@ -158,18 +158,18 @@ class ToolWrapper(Base):
         It checks if the output variable names exists or not.
         If not, throws a WopMarsParsingException.
 
-        This method calls the "get_output_file" method which have been written by the toolwrapper developer. Since the
+        This method calls the "specify_output_file" method which have been written by the toolwrapper developer. Since the
         options are checked first, the developer can write a conditional behavior depending on the options given for
         the toolwrapper.
 
         :raise: WopMarsException
         :return:void
         """
-        if set([f_output.name for f_output in self.files if f_output.type.name == "output"]) != set(self.get_output_file()):
+        if set([f_output.name for f_output in self.files if f_output.type.name == "output"]) != set(self.specify_output_file()):
             raise WopMarsException("The content of the definition file is not valid.",
                                    "The given output variable names for " + self.__class__.__name__ +
                                    " are not correct, they should be: " +
-                                   "\n\t'{0}'".format("'\n\t'".join(self.get_output_file())) +
+                                   "\n\t'{0}'".format("'\n\t'".join(self.specify_output_file())) +
                                    "\n" + "They are:" +
                                    "\n\t'{0}'".format("'\n\t'".join([f.name for f in self.files if f.type.name == "output"]))
                                    )
@@ -177,11 +177,11 @@ class ToolWrapper(Base):
         set_output_table = set([t_output for t_output in self.tables if t_output.type.name == "output"])
         for t_output in set_output_table:
             s_tablename = t_output.tablename
-            if s_tablename not in self.get_output_table():
+            if s_tablename not in self.specify_output_table():
                 raise WopMarsException("The content of the definition file is not valid.",
                                        "The given output tablenames for " + 
                                        self.__class__.__name__ + " is not correct. it should be in: " +
-                                       "\n\t'{0}'".format("'\n\t'".join(self.get_output_table())) +
+                                       "\n\t'{0}'".format("'\n\t'".join(self.specify_output_table())) +
                                        "\n" + "It is:" +
                                        "\n\t'" + s_tablename
                                        )   
@@ -195,7 +195,7 @@ class ToolWrapper(Base):
         options are given.
         If not, throws a WopMarsParsingException.
 
-        This method calls the "get_params" method of the toolwrapper. This method should return a dictionnary
+        This method calls the "specify_params" method of the toolwrapper. This method should return a dictionnary
         associating the name of the option with a String containing the types allowed with it. A "|" is used between
         each types allowed for one option.
 
@@ -207,7 +207,7 @@ class ToolWrapper(Base):
         }
         :raise: WopMarsException
         """
-        dict_wrapper_opt_carac = self.get_params()
+        dict_wrapper_opt_carac = self.specify_params()
 
         # check if the given options are authorized
         if not set([opt.name for opt in self.options]).issubset(dict_wrapper_opt_carac):
@@ -409,7 +409,7 @@ class ToolWrapper(Base):
     def get_state(self):
         return self.__state
 
-    def get_input_file_dict(self):
+    def specify_input_file_dict(self):
         """
         Return the dict of input_files:
 
@@ -417,7 +417,7 @@ class ToolWrapper(Base):
         """
         return self.__input_file_dict
 
-    def get_output_file_dict(self):
+    def specify_output_file_dict(self):
         """
         Return the dict of output_files:
 
@@ -425,7 +425,7 @@ class ToolWrapper(Base):
         """
         return self.__output_file_dict
 
-    def get_input_table_dict(self):
+    def specify_input_table_dict(self):
         """
         Return the dict of input_tables:
 
@@ -433,7 +433,7 @@ class ToolWrapper(Base):
         """
         return self.__input_table_dict
 
-    def get_output_table_dict(self):
+    def specify_output_table_dict(self):
         """
         Return the dict of output_tables:
 
@@ -540,19 +540,19 @@ class ToolWrapper(Base):
         return s
     # ###### Method that worker developper should implement#######
 
-    def get_input_file(self):
+    def specify_input_file(self):
         return []
 
-    def get_input_table(self):
+    def specify_input_table(self):
         return []
 
-    def get_output_file(self):
+    def specify_output_file(self):
         return []
 
-    def get_output_table(self):
+    def specify_output_table(self):
         return []
 
-    def get_params(self):
+    def specify_params(self):
         return {}
 
     def run(self):
@@ -600,7 +600,7 @@ class ToolWrapper(Base):
     def option(self, key):
         try:
             value = [o.value for o in self.options if o.name == key][0]
-            list_splitted_carac = self.get_params()[key].split("|")
+            list_splitted_carac = self.specify_params()[key].split("|")
             for s_type in list_splitted_carac:
                 s_formated_type = s_type.strip().lower()
                 # check if the carac is a castable type

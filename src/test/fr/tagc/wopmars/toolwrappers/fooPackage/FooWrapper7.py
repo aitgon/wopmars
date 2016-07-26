@@ -13,10 +13,10 @@ class FooWrapper7(ToolWrapper):
     Modifications may lead to failure in tests.
     """
     __mapper_args__ = {'polymorphic_identity': "fooPackage.FooWrapper7"}
-    def get_input_table(self):
+    def specify_input_table(self):
         return ["FooBaseP"]
 
-    def get_output_table(self):
+    def specify_output_table(self):
         return ["FooBase2P"]
 
     def run(self):

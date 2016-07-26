@@ -15,13 +15,13 @@ class FooWrapper5(ToolWrapper):
     """
     __mapper_args__ = {'polymorphic_identity': "fooPackage.FooWrapper5"}
 
-    def get_input_file(self):
+    def specify_input_file(self):
         return ["input1"]
 
-    def get_output_file(self):
+    def specify_output_file(self):
         return ["output1"]
 
-    def get_output_table(self):
+    def specify_output_table(self):
         return ["FooBaseP"]
 
     def run(self):

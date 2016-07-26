@@ -12,7 +12,7 @@ class FooWrapperNoTable(ToolWrapper):
     """
     __mapper_args__ = {'polymorphic_identity': "FooWrapperNoTable"}
 
-    def get_input_table(self):
+    def specify_input_table(self):
         return ["failure"]
 
 

@@ -16,8 +16,8 @@ class FooWrapper12(ToolWrapper):
     """
     __mapper_args__ = {'polymorphic_identity': "FooWrapper12"}
 
-    def get_output_file(self):
+    def specify_output_file(self):
         return ["output1"]
 
-    def get_output_table(self):
+    def specify_output_table(self):
         return ["FooBase"]

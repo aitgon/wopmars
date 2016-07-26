@@ -14,10 +14,10 @@ class FooWrapper6(ToolWrapper):
     """
     __mapper_args__ = {'polymorphic_identity': "fooPackage.FooWrapper6"}
 
-    def get_input_file(self):
+    def specify_input_file(self):
         return ["input1"]
 
-    def get_output_file(self):
+    def specify_output_file(self):
         return ["output1", "output2"]
 
     def run(self):
