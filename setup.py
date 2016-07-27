@@ -47,6 +47,6 @@ setup(
     package_data={},
     data_files=[],
     entry_points={
-        'console_scripts':['wopmars=src.main.fr.tagc.wopmars.wopmars:main']
+        'console_scripts':['wopmars=wopmars.main.tagc.wopmars:main']
     }
 )
