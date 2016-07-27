@@ -17,7 +17,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='wopmars',
-    version='1.1.0',
+    version='1.1.1',
     description='Workflow Python Manager for Reproducible Science',
     long_description=long_description,
     # todo ask aitor url home page
