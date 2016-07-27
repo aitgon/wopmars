@@ -13,7 +13,7 @@ class Type(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
 
-    # One type is in Many tables
+    # One type is in Many table
     tables = relationship("IODbPut", back_populates="type")
     # One type is in Many files
     files = relationship("IOFilePut", back_populates="type")

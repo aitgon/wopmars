@@ -169,32 +169,32 @@ class Reader:
             output_entry = session.query(Type).filter(Type.name == "output").one()
 
             Logger.instance().debug("Loading unique toolwrapper " + s_toolwrapper)
-            dict_dict_dict_elm = dict(dict_input={"files": {}, "tables": {}},
+            dict_dict_dict_elm = dict(dict_input={"file": {}, "table": {}},
                                  dict_params={},
-                                 dict_output={"files": {}, "tables": {}})
+                                 dict_output={"file": {}, "table    ": {}})
             for type in dict_inputs:
-                if type == "files":
+                if type == "file":
                     for s_input in dict_inputs[type]:
                         obj_created = IOFilePut(name=s_input,
                                                 path=os.path.abspath(os.path.join(OptionManager.instance()["--directory"],
                                                                                   dict_inputs[type][s_input])))
                         dict_dict_dict_elm["dict_input"][type][s_input] = obj_created
                         Logger.instance().debug("Object input file: " + s_input + " created.")
-                elif type == "tables":
+                elif type == "table":
                     for s_input in dict_inputs[type]:
                         obj_created = IODbPut(model=dict_inputs[type][s_input],
                                               tablename=s_input)
                         dict_dict_dict_elm["dict_input"][type][s_input] = obj_created
                         Logger.instance().debug("Object input table: " + s_input + " created.")
             for type in dict_outputs:
-                if type == "files":
+                if type == "file":
                     for s_output in dict_outputs[type]:
                         obj_created = IOFilePut(name=s_output,
                                                 path=os.path.abspath(os.path.join(OptionManager.instance()["--directory"],
                                                                                   dict_outputs[type][s_output])))
                         dict_dict_dict_elm["dict_output"][type][s_output] = obj_created
                         Logger.instance().debug("Object output file: " + s_output + " created.")
-                elif type == "tables":
+                elif type == "table":
                     for s_output in dict_outputs[type]:
                         obj_created = IODbPut(model=dict_outputs[type][s_output],
                                               tablename=s_output)
@@ -258,9 +258,9 @@ class Reader:
                 Logger.instance().debug("Encounter rule " + str_rule_name + ": \n" +
                                         str(DictUtils.pretty_repr(self.__dict_workflow_definition[rule])))
                 # The dict of "input"s, "output"s and "params" is re-initialized for each wrapper
-                dict_dict_dict_elm = dict(dict_input={"files": {}, "tables": {}},
+                dict_dict_dict_elm = dict(dict_input={"file": {}, "table": {}},
                                           dict_params={},
-                                          dict_output={"files": {}, "tables": {}})
+                                          dict_output={"file": {}, "table": {}})
                 for key_second_step in self.__dict_workflow_definition[rule]:
                     # key_second_step is supposed to be "tool", "input", "output" or "params"
                     if type(self.__dict_workflow_definition[rule][key_second_step]) == dict:
@@ -276,7 +276,7 @@ class Reader:
                             else:
                                 for key_fourth_step in self.__dict_workflow_definition[rule][key_second_step][key_third_step]:
                                     obj_created = None
-                                    if key_third_step == "files":
+                                    if key_third_step == "file":
                                         key = key_fourth_step
                                         str_path_to_file = os.path.join(OptionManager.instance()["--directory"],
                                                                         self.__dict_workflow_definition[rule][
@@ -286,7 +286,7 @@ class Reader:
                                         obj_created = IOFilePut(name=key,
                                                                 path=os.path.abspath(str_path_to_file))
 
-                                    elif key_third_step == "tables":
+                                    elif key_third_step == "table":
                                         key = key_fourth_step
                                         modelname = self.__dict_workflow_definition[rule][
                                             key_second_step][
@@ -311,10 +311,10 @@ class Reader:
                 #         'option1': Option('option1', 'valueofoption1')
                 #     },
                 #     'dict_input': {
-                #         'files' : {
+                #         'file' : {
                 #             'input1': IOFilePut('input1', 'path/to/input1')
                 #         }
-                #         'tables': {
+                #         'table': {
                 #             'table1': IODbPut('table1', 'package.of.table1')
                 #         }
                 #     },
@@ -382,7 +382,7 @@ class Reader:
 
         # associating ToolWrapper instances with their files / tables
         for elm in dict_dict_dict_elm["dict_input"]:
-            if elm == "files":
+            if elm == "file":
                 for input_f in dict_dict_dict_elm["dict_input"][elm]:
                     # set the type of IOFilePut object
                     iofileput_entry = dict_dict_dict_elm["dict_input"][elm][input_f]
@@ -394,7 +394,7 @@ class Reader:
                         raise WopMarsException("Error in the toolwrapper class declaration. Please, notice the developer",
                                                "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
                                                " in the toolwrapper. Error message: \n" + str(e))
-            elif elm == "tables":
+            elif elm == "table":
                 for input_t in dict_dict_dict_elm["dict_input"][elm]:
                     # input_t is the name of the table (not the model)
                     # this is a preventing commit because next statement will create a new table and the session has to
@@ -420,7 +420,7 @@ class Reader:
                                                " in the toolwrapper. Error message: \n" + str(e))
 
         for elm in dict_dict_dict_elm["dict_output"]:
-            if elm == "files":
+            if elm == "file":
                 for output_f in dict_dict_dict_elm["dict_output"][elm]:
                     iofileput_entry = dict_dict_dict_elm["dict_output"][elm][output_f]
                     iofileput_entry.type = output_entry
@@ -430,7 +430,7 @@ class Reader:
                         raise WopMarsException("Error in the toolwrapper class declaration. Please, notice the developer",
                                                "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
                                                " in the toolwrapper. Error message: \n" + str(e))
-            elif elm == "tables":
+            elif elm == "table":
                 for output_t in dict_dict_dict_elm["dict_output"][elm]:
                     # output_t is the table name (not the model)
                     session.commit()
@@ -471,8 +471,8 @@ class Reader:
         ni         = NEWLINE INDENT
         ruleparams = [ni tool] [ni input] [ni output] [ni params]
         filesortables = (ni files|ni tables){0-2}
-        files = "files"  ":" (ni identifier ”:” stringliteral)+
-        tables = "tables"  ":" (ni identifier ”:” stringliteral)+
+        files = "file"  ":" (ni identifier ”:” stringliteral)+
+        tables = "table"  ":" (ni identifier ”:” stringliteral)+
         NEWLINE WoPMaRS
         tool       = "tool"   ":"  identifier ”:” stringliteral
         input      = "input"  ":" ni filesortables
@@ -485,14 +485,14 @@ class Reader:
     rule RULENAME:
         tool: TOOLNAME
         input:
-            files:
+            file:
                 INPUTNAME: INPUTVALUE
-            tables:
+            table:
                 - path.to.table
         output:
-            files:
+            file:
                 OUTPUTNAME: OUTPUTVALUE
-            tables:
+            table:
                 - path.to.table
         params:
             OPTIONNAME: OPTIONVALUE
@@ -505,7 +505,7 @@ class Reader:
         # recognize the elements of the rule
         regex_step2 = re.compile(r"(^params$)|(^tool$)|(^input$)|(^output$)")
 
-        regex_step3 = re.compile(r"(^files$)|(^tables$)")
+        regex_step3 = re.compile(r"(^file$)|(^table$)")
 
         # The found words are tested against the regex to see if they match or not
         for s_key_step1 in self.__dict_workflow_definition:
@@ -539,9 +539,9 @@ class Reader:
                                                    "The line containing:'" + str(s_key_step3) + "'" +
                                                    " for rule '" + str(s_key_step1) + "'" +
                                                    " doesn't match the grammar: it should be " +
-                                                   "'files' or 'tables'" +
+                                                   "'file' or 'table'" +
                                                    "\nexemple:" + exemple_file_def)
-                        elif s_key_step3 == "files":
+                        elif s_key_step3 == "file":
                             for s_variable_name in self.__dict_workflow_definition[s_key_step1][s_key_step2][s_key_step3]:
                                 if type(self.__dict_workflow_definition[s_key_step1][s_key_step2][s_key_step3][s_variable_name]) != str:
                                     raise WopMarsException("Error while parsing the configuration file: \n\t"
@@ -550,7 +550,7 @@ class Reader:
                                                            " for rule '" + str(s_key_step1) + "'" +
                                                            " doesn't match the grammar: it should be the string containing the path to the file."
                                                            "\nexemple:" + exemple_file_def)
-                        elif s_key_step3 == "tables":
+                        elif s_key_step3 == "table":
                             for s_tablename in self.__dict_workflow_definition[s_key_step1][s_key_step2][s_key_step3]:
                                 if type(s_tablename) != str:
                                     raise WopMarsException("Error while parsing the configuration file: \n\t"

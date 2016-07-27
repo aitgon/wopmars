@@ -1,26 +1,26 @@
 rule rule4:
     tool: FooWrapper4
     input:
-        files:
+        file:
             input1: "resources/input_File1.txt"
     output:
-        files:
+        file:
             output1: "resources/outputs/output_File1.txt"
 
 rule rule5:
     tool: FooWrapperNoRun
     input:
-        files:
+        file:
             input1: "resources/outputs/output_File1.txt"
     output:
-        files:
+        file:
             output1: "resources/never_done.txt"
 
 rule rule6:
     tool: FooWrapperNoRun
     input:
-        files:
+        file:
             input1: "resources/never_done.txt"
     output:
-        files:
+        file:
             output1: "resources/outputs/output_File2.txt"
