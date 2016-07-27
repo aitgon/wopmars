@@ -1,0 +1,9 @@
+rule rule1:
+    tool: FooWrapper1
+    tool: FooWrapper2
+    input:
+        files:
+            input1: "myfile.txt"
+    output:
+        files:
+            output2: "myfile2.txt"

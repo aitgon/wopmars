@@ -1,7 +1,0 @@
-rule rule1:
-    tool: fooPackage.FooWrapperPackaged
-    input:
-        input1: "resources/input_File1.txt"
-    output:
-        output1: "resources/outputs/output_File1.txt"
-

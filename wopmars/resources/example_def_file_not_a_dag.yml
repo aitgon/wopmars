@@ -1,0 +1,27 @@
+rule rule4:
+    tool: FooWrapper4
+    input:
+        files:
+            input1: "input_File1.txt"
+    output:
+        files:
+            output1: "aFile2.txt"
+
+rule rule5:
+    tool: FooWrapper5
+    input:
+        files:
+            input1: "aFile2.txt"
+    output:
+        files:
+            output1: "aFile3.txt"
+
+rule rule6:
+    tool: FooWrapper6
+    input:
+        files:
+            input1: "aFile2.txt"
+    output:
+        files:
+            output1: "input_File1.txt"
+

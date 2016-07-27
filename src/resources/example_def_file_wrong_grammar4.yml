@@ -1,7 +1,0 @@
-rule rule1:
-    tool: FooWrapper1
-    tool: FooWrapper2
-    input:
-        input1: "myfile.txt"
-    output:
-        output2: "myfile2.txt"

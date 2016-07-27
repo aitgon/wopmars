@@ -1,0 +1,35 @@
+rule rule1:
+    tool: FooWrapper1
+    input:
+        files:
+            input1: "aFile.txt"
+    params:
+        param1: 5
+
+rule rule2:
+    tool: FooWrapper2
+    output:
+        files:
+            output1: "the second file.txt"
+    params:
+        param1: "an_option"
+
+rule rule2:
+    tool: FooWrapper2
+    output:
+        files:
+            output1: "the second file.txt"
+    params:
+        param1: "an_option"
+
+rule rule3:
+    tool: FooWrapper3
+    input:
+        files:
+            input1: "the_second_file.txt"
+    output:
+        files:
+            output1: "the final_file.txt"
+    params:
+        param1: 10.285
+

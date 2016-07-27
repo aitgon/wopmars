@@ -1,0 +1,71 @@
+rule rule1:
+    tool: FooWrapper4
+    input:
+        files:
+            input1: "resources/input_File1.txt"
+    output:
+        files:
+            output1: "resources/outputs/output_File1.txt"
+
+rule rule2:
+    tool: FooWrapper5
+    input:
+        files:
+            input1: "resources/outputs/output_File1.txt"
+    output:
+        files:
+            output1: "resources/outputs/output_File2.txt"
+        tables:
+            FooBase: "FooBase"
+
+
+rule rule3:
+    tool: FooWrapper6
+    input:
+        files:
+            input1: "resources/outputs/output_File1.txt"
+    output:
+        files:
+            output1: "resources/outputs/output_File3.txt"
+            output2: "resources/outputs/output_File4.txt"
+
+rule rule4:
+    tool: FooWrapper7
+    input:
+        tables:
+            FooBase: "FooBase"
+    output:
+        tables:
+            FooBase2: "FooBase2"
+
+rule rule5:
+    tool: FooWrapper8
+    input:
+        files:
+            input1: "resources/outputs/output_File3.txt"
+            input2: "resources/outputs/output_File2.txt"
+    output:
+        files:
+            output1: "resources/outputs/output_File5.txt"
+
+rule rule6:
+    tool: FooWrapper9
+    input:
+        files:
+            input1: "resources/outputs/output_File4.txt"
+        tables:
+            FooBase2: "FooBase2"
+    output:
+        files:
+            output1: "resources/outputs/output_File6.txt"
+
+rule rule7:
+    tool: FooWrapper10
+    input:
+        files:
+            input1: "resources/outputs/output_File1.txt"
+            input2: "resources/outputs/output_File5.txt"
+            input3: "resources/outputs/output_File6.txt"
+    output:
+        files:
+            output1: "resources/outputs/output_File7.txt"
