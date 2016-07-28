@@ -225,7 +225,7 @@ class ToolWrapper(Base):
 
         # check if the required options are given
         for opt in dict_wrapper_opt_carac:
-            if "required" in dict_wrapper_opt_carac[opt].lower() and opt not in [opt2.name for opt2 in self.options]:
+            if "required" in str(dict_wrapper_opt_carac[opt]).lower() and opt not in [opt2.name for opt2 in self.options]:
                 raise WopMarsException("The content of the definition file is not valid.",
                                        "The option '" + opt + "' has not been provided but it is required.")
 

@@ -17,7 +17,7 @@ class CarAssembler(ToolWrapper):
 
     def specify_params(self):
         return {
-            "max_price": int,
+            "max_price": "int",
         }
 
     def run(self):
@@ -40,14 +40,15 @@ class CarAssembler(ToolWrapper):
                         car_serial_number = CarAssembler.id_generator()
                     uniques_serials.append(car_serial_number)
                     price = w.price + e.price + b.price
-                    if max_price and price <= max_price:
+                    if not max_price or (max_price and price <= max_price):
                         session.add(Piece_car(car_serial_number=car_serial_number,
                                               bodywork_serial_number=b.serial_number,
                                               engine_serial_number=e.serial_number,
                                               wheel_serial_number=w.serial_number,
                                               price=price))
+
         session.commit()
 
     @staticmethod
-    def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
+    def id_generator(size=10, chars=string.ascii_uppercase + string.digits):
         return ''.join(random.choice(chars) for _ in range(size))

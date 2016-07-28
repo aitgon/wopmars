@@ -1,6 +1,6 @@
 from sqlalchemy.sql.schema import ForeignKey
 
-from main.tagc.framework.bdd.Base import Base
+from wopmars.main.tagc.framework.bdd.Base import Base
 
 from sqlalchemy import Column, Integer, String, Float
 
