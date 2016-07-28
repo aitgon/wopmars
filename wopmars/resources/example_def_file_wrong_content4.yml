@@ -1,10 +1,10 @@
 rule rule3:
     tool: FooWrapper1
     input:
-        files:
+        file:
             input1: "the_second_file.txt"
     output:
-        files:
+        file:
             output1: "the final_file.txt"
     params:
         param1: "failure"

@@ -342,7 +342,7 @@ class ToolWrapper(Base):
         Check if the other ToolWrapper have the same input than self.
 
         The input are say "the same" if:
-            - The tables have the same name and the same last modifcation datetime
+            - The table have the same name and the same last modifcation datetime
             - The file have the same name, the same lastm mdoficiation datetime and the same size
         :param other:
         :return:
@@ -383,7 +383,7 @@ class ToolWrapper(Base):
                 - Their date are after all input dates
                 - Their size and date in bdd are the same than the real ones
 
-            - for tables:
+            - for table:
                 - They exists
                 - Their date are after all input dates
                 - Their date are the same in table 'table' than in 'modification_table'
@@ -427,7 +427,7 @@ class ToolWrapper(Base):
 
     def specify_input_table_dict(self):
         """
-        Return the dict of input_tables:
+        Return the dict of input_table:
 
         :return: Dict: <String>INPUTNAME : <IODbPut>INPUT
         """
@@ -435,7 +435,7 @@ class ToolWrapper(Base):
 
     def specify_output_table_dict(self):
         """
-        Return the dict of output_tables:
+        Return the dict of output_table:
 
         :return: Dict: <String>OUTPUTNAME : <IODbPut>OUTPUT
         """

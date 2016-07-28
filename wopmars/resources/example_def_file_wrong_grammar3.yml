@@ -1,4 +1,4 @@
 rule rule1:
     input:
-        files:
+        file:
             input1: "myfile.txt"

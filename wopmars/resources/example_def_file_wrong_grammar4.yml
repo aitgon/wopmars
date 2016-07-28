@@ -2,8 +2,8 @@ rule rule1:
     tool: FooWrapper1
     tool: FooWrapper2
     input:
-        files:
+        file:
             input1: "myfile.txt"
     output:
-        files:
+        file:
             output2: "myfile2.txt"

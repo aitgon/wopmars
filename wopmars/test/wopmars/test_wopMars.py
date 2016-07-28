@@ -169,8 +169,8 @@ class TestWopMars(TestCase):
 
     def test_run_one_tool(self):
         cmd_line = ["python", "tool", "FooWrapper4",
-                    "-i", "{'files': {'input1': 'resources/input_File1.txt'}}",
-                    "-o", "{'files': {'output1': 'resources/outputs/output1.txt'}}", "-D", self.__db_path, "-vvvv", "-p", "-d",
+                    "-i", "{'file': {'input1': 'resources/input_File1.txt'}}",
+                    "-o", "{'file': {'output1': 'resources/outputs/output1.txt'}}", "-D", self.__db_path, "-vvvv", "-p", "-d",
                     PathFinder.find_src(os.path.realpath(__file__))]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
