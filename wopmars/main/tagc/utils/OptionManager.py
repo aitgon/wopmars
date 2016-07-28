@@ -59,13 +59,13 @@ class OptionManager(dict, SingletonMixin):
 
     def validate_definition_file(self):
         if self["--wopfile"] is None:
-            self["--wopfile"] = "wopfile.yml"
+            self["--wopfile"] = "Wopfile"
 
     def validate_database(self):
         if self["--database"]:
             self["--database"] = os.path.expanduser(self["--database"])
         else:
-            self["--database"] = os.path.join(self["--directory"], "wopdb.sqlite")
+            self["--database"] = os.path.join(self["--directory"], "wopmars.sqlite")
 
     def validate_dot(self):
         if self["--dot"]:
@@ -74,8 +74,6 @@ class OptionManager(dict, SingletonMixin):
             elif self["--dot"][-4:] != '.dot':
                 self["--dot"] += ".dot"
             self["--dot"] = os.path.expanduser(self["--dot"])
-        else:
-            self["--dot"] = os.path.join(self["--directory"], "wopdot.dot")
 
     def validate_log(self):
         if self["--log"]:

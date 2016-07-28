@@ -6,6 +6,7 @@ See:
 from setuptools import setup, find_packages
 from codecs import open
 from os import path
+import sys
 
 here = path.abspath(path.dirname(__file__))
 
@@ -14,6 +15,14 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 with open('requirements.txt') as f:
     required = f.read().splitlines()
+
+
+if '--no-pygraphviz' in sys.argv:
+    for package in required:
+        if 'pygraphviz' in package:
+            required.remove(package)
+            sys.argv.remove('--no-pygraphviz')
+
 
 setup(
     name='wopmars',

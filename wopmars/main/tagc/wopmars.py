@@ -1,8 +1,9 @@
 """WopMars: Workflow Python Manager for Reproducible Science.
 
 Usage:
-  wopmars.py [-n] [-p] [-F] [-v...] [-d DIR] [-g FILE] [-L FILE] [-f RULE | -t RULE] [-D DATABASE] [-w DEFINITION_FILE]
-  wopmars.py tool TOOLWRAPPER [-i DICT] [-o DICT] [-P DICT] [-p] [-F] [-D DATABASE] [-v...] [-d DIR] [-L FILE] [-g FILE]
+  wopmars [-n] [-p] [-F] [-v...] [-d DIR] [-g FILE] [-L FILE] [-f RULE | -t RULE] [-D DATABASE] [-w DEFINITION_FILE]
+  wopmars tool TOOLWRAPPER [-i DICT] [-o DICT] [-P DICT] [-p] [-F] [-D DATABASE] [-v...] [-d DIR] [-L FILE] [-g FILE]
+  wopmars example
 
 Arguments:
   DEFINITION_FILE  Path to the definition file of the workflow [default: wopfile.yml].
@@ -30,6 +31,7 @@ Options:
   -P --params=DICT             Set the parameters of the toolwrapper you want to use in the dictionnary format.
 """
 import datetime
+import importlib
 import os
 import sys
 import re
@@ -38,6 +40,7 @@ import time
 from docopt import docopt, DocoptExit
 from schema import Schema, And, Or, Use, SchemaError
 
+from wopmars.main.tagc.utils.ExampleBuilder import ExampleBuilder
 from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager
 from wopmars.main.tagc.framework.bdd.tables.Execution import Execution
 from wopmars.main.tagc.framework.management.WorkflowManager import WorkflowManager
@@ -67,10 +70,10 @@ class WopMars:
 
         try:
             schema_option = Schema({
-                '--wopfile': Or("wopfile.yml", str),
+                '--wopfile': Or("Wopfile", str),
                 '--database': Use(PathFinder.check_valid_path),
                 '-v': Or(0, And(int, lambda n: 1 < n < 5)),
-                '--dot': Use(PathFinder.check_valid_path),
+                '--dot': Or(None, And(Use(PathFinder.check_valid_path), Use(PathFinder.check_pygraphviz))),
                 "--log": Use(PathFinder.check_valid_path),
                 '--printtools': Use(bool),
                 "--sourcerule": Or(None, str),
@@ -82,7 +85,8 @@ class WopMars:
                 "--output": Use(DictUtils.str_to_dict),
                 "--params": Use(DictUtils.str_to_dict),
                 "TOOLWRAPPER": Or(None, Use(PathFinder.is_in_python_path)),
-                "tool": Use(bool)
+                "tool": Use(bool),
+                "example": Use(bool)
             })
             # The option values are validated using schema library
             OptionManager.instance().validate(schema_option)
@@ -93,6 +97,7 @@ class WopMars:
             match_open_def = re.match(r"^open\('(.[^\)]+)'\)", str(schema_msg))
             match_dot_def = re.match(r"^check_valid_path\(('.[^\)]+')\)", str(schema_msg))
             match_wrong_key = re.match(r"^Wrong keys ('.[^\)]+')", str(schema_msg))
+            match_pygraphviz = re.match(r".*pygraphviz.*", str(schema_msg))
 
             # Check the different regex..
             if match_open_def:
@@ -102,12 +107,19 @@ class WopMars:
             elif match_wrong_key:
                 # Normally never reach
                 Logger.instance().error("The option key " + match_wrong_key.group(1) + " is not known.")
+            elif match_pygraphviz:
+                Logger.instance().error("The pygraphviz module is not installed, try installing WoPMaRS again without the 'no-pygraphviz' option.\n\t python3 setup.py install")
             else:
                 # Normally never reach
                 Logger.instance().error("An unknown error has occured. Message: " + str(schema_msg))
             sys.exit(2)
 
         Logger.instance().debug("\nCommand line Args:" + str(OptionManager.instance()))
+
+        if OptionManager.instance()["example"]:
+            ExampleBuilder().build()
+            sys.exit(1)
+
 
         wm = WorkflowManager()
         try:

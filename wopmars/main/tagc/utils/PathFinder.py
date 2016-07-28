@@ -22,6 +22,10 @@ class PathFinder:
         return root_path
 
     @staticmethod
+    def check_pygraphviz(path):
+        importlib.import_module("pygraphviz")
+
+    @staticmethod
     def check_valid_path(path):
         """
         Check if the path given is correct on the system.

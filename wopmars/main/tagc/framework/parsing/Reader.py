@@ -79,7 +79,9 @@ class Reader:
                 # Allows to raise an exception if duplicate keys are found on the same document hirearchy level.
                 yaml.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, Reader.no_duplicates_constructor)
                 # The whole content of the definition file is loaded in this dict.
-                self.__dict_workflow_definition = yaml.load(s_def_file_content)
+                self.__dict_workflow_definition = yaml.load(s_def_file_content) or {}
+                if self.__dict_workflow_definition == {}:
+                    Logger.instance().warning("The workflow definition file is empty")
                 Logger.instance().debug("\n" + DictUtils.pretty_repr(self.__dict_workflow_definition))
                 Logger.instance().debug("Read complete.")
                 Logger.instance().info("Checking whether the file is well formed...")

@@ -305,11 +305,12 @@ class WorkflowManager(ToolWrapperObserver):
         :param status: the final status of the workflow
         """
         modify_exec = self.__session.query(Execution).order_by(Execution.id.desc()).first()
-        modify_exec.finished_at = finished_at
-        modify_exec.time = (modify_exec.finished_at - modify_exec.started_at).total_seconds()
-        modify_exec.status = status
-        self.__session.add(modify_exec)
-        self.__session.commit()
+        if modify_exec is not None:
+            modify_exec.finished_at = finished_at
+            modify_exec.time = (modify_exec.finished_at - modify_exec.started_at).total_seconds()
+            modify_exec.status = status
+            self.__session.add(modify_exec)
+            self.__session.commit()
 
     def all_predecessors_have_run(self, tw):
         """
