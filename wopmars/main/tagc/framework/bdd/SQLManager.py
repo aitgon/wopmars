@@ -269,3 +269,11 @@ class SQLManager(SingletonMixin):
         finally:
             # Always release the lock
             self.__lock.release()
+
+    def df_to_sql(self, df, *args, **kwargs):
+        try:
+            self.__lock.acquire_write()
+            df.to_sql(*args, **kwargs)
+            Logger.instance().debug("SQLManager.df_to_sql: Adding dataframe to database")
+        finally:
+            self.__lock.release()
