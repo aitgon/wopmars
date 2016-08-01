@@ -616,5 +616,3 @@ class ToolWrapper(Base):
     def session(self):
         return self.__session
 
-
-

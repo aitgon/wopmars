@@ -53,9 +53,9 @@ setup(
     keywords='workflow manager python object-oriented reproducible science database framework',
     packages=find_packages(exclude=['log', 'doc', '*.test.*', 'soutenance', 'rapport']),
     install_requires=required,
-    package_data={},
     data_files=[],
     entry_points={
         'console_scripts':['wopmars=wopmars.main.tagc.wopmars:main']
-    }
+    },
+    include_package_data=True
 )

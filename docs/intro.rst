@@ -21,7 +21,7 @@ Using WoPMaRS
 Developping *ToolWrappers*
 **************************
 
-- Basic knowledge on Python (controling structure `if/else/elif`, loops `while/for`, declaring and using variables and exception handling)
+- Basic knowledge on Python (controling structures `if/else/elif`, loops `while/for`, declaring and using variables and exception handling)
 - More advanced knowledge in relational databases (data types, selecting and modificating rows, primary keys and foreign keys)
 - Understanding Object Oriented Programming in Python is recommended
 - Basic knowledge on the use of SQLAlchemy

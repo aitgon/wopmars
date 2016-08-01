@@ -14,4 +14,3 @@ class PieceCar(Base):
     engine_serial_number = Column(String, ForeignKey("piece.serial_number"))
     wheel_serial_number = Column(String, ForeignKey("piece.serial_number"))
     price = Column(Float)
-

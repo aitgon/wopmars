@@ -269,3 +269,20 @@ class SQLManager(SingletonMixin):
         finally:
             # Always release the lock
             self.__lock.release()
+
+    def drop_table_content_list(self, list_str_table):
+        """
+        Remove a list of tables from the list of their tablenames.
+
+        :param list_str_table: [String] the name of the tables.
+        """
+        session = self.get_session()
+        # Get the list of Table objects from tablenames, then sort them according to their relationships / foreignkeys
+        # and take the reverse to delete them in the right order (reverse of the correct order for creating them)
+        list_obj_table = reversed(
+            sort_tables([Base.metadata.tables[tablename.split(".")[-1]] for tablename in list_str_table]))
+        for t in list_obj_table:
+            Logger.instance().debug(
+                "SQLManager.drop_table_content_list(" + str(list_str_table) + "): drop table content " + str(t.name))
+            self.execute(session._session(), t.delete())
+

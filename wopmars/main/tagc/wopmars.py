@@ -3,7 +3,7 @@
 Usage:
   wopmars [-n] [-p] [-F] [-v...] [-d DIR] [-g FILE] [-L FILE] [-f RULE | -t RULE] [-D DATABASE] [-w DEFINITION_FILE]
   wopmars tool TOOLWRAPPER [-i DICT] [-o DICT] [-P DICT] [-p] [-F] [-D DATABASE] [-v...] [-d DIR] [-L FILE] [-g FILE]
-  wopmars example
+  wopmars example [-d DIR]
 
 Arguments:
   DEFINITION_FILE  Path to the definition file of the workflow [default: wopfile.yml].
@@ -31,24 +31,24 @@ Options:
   -P --params=DICT             Set the parameters of the toolwrapper you want to use in the dictionnary format.
 """
 import datetime
-import importlib
 import os
-import sys
 import re
-
+import sys
 import time
+
 from docopt import docopt, DocoptExit
 from schema import Schema, And, Or, Use, SchemaError
 
-from wopmars.main.tagc.utils.ExampleBuilder import ExampleBuilder
+from wopmars.main.tagc.example.ExampleBuilder import ExampleBuilder
 from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager
-from wopmars.main.tagc.framework.bdd.tables.Execution import Execution
 from wopmars.main.tagc.framework.management.WorkflowManager import WorkflowManager
 from wopmars.main.tagc.utils.DictUtils import DictUtils
 from wopmars.main.tagc.utils.Logger import Logger
 from wopmars.main.tagc.utils.OptionManager import OptionManager
 from wopmars.main.tagc.utils.PathFinder import PathFinder
 from wopmars.main.tagc.utils.exceptions.WopMarsException import WopMarsException
+
+
 # todo combinatoire pour les rules
 # todo option pour reset les resultats (supprimer le contenu de la bdd) / fresh run
 # todo ajouter un flag NOT_FINISHED aux executions

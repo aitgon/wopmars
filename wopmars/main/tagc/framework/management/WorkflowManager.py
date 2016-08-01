@@ -89,21 +89,31 @@ class WorkflowManager(ToolWrapperObserver):
         # Build the DAG which is willing to be executed according
         self.get_dag_to_exec()
         # Start the execution at the root nodes
+        if OptionManager.instance()["--forceall"] and not OptionManager.instance()["--dry-run"]:
+            self.erase_output()
         self.execute_from()
 
-    def erase_output(self, tw):
-        list_outputs_path = [f.path for f in tw.files if f.type.name == "output"]
+    def erase_output(self):
+        list_tw = self.__dag_to_exec.nodes()
+        set_files = set()
+        set_tables = set()
+
         Logger.instance().info("Forced execution implies overwrite existing output. Erasing files and tables.")
+        for tw in list_tw:
+           [set_files.add(f.path) for f in tw.files if f.type.name == "output"]
+           [set_tables.add(t.tablename) for t in tw.tables if t.type.name == "output"]
+
         s = ""
-        for f_path in list_outputs_path:
+        for f_path in set_files:
             s += "\n" + f_path
             PathFinder.silentremove(f_path)
         Logger.instance().debug("Removed files:" + s)
-        s = ""
-        SQLManager.instance().drop_table_list(set(IODbPut.tablenames).intersection(set([t.tablename for t in tw.tables if t.type.name == "output"])))
-        for t_name in IODbPut.tablenames:
-            s += "\n" + t_name
-            SQLManager.instance().create(t_name)
+
+        SQLManager.instance().drop_table_content_list(
+            set(IODbPut.tablenames).intersection(set_tables))
+
+        s = "\n"
+        s += "\n".join(set_tables)
         Logger.instance().debug("Removed tables content:" + s)
 
         Logger.instance().info("Output files and tables from previous execution have been erased.")
@@ -243,9 +253,9 @@ class WorkflowManager(ToolWrapperObserver):
                                            " parameters.")
                     dry = True
 
-                elif OptionManager.instance()["--forceall"] and not OptionManager.instance()["--dry-run"]:
-                    # print(tw.tables)
-                    self.erase_output(tw)
+                # elif OptionManager.instance()["--forceall"] and not OptionManager.instance()["--dry-run"]:
+                #     # print(tw.tables)
+                #     self.erase_output(tw)
                 # todo twthread verification des ressources
                 thread_tw.subscribe(self)
                 self.__count_exec += 1
