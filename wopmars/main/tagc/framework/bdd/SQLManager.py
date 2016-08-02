@@ -14,6 +14,8 @@ from wopmars.main.tagc.utils.Singleton import SingletonMixin
 from wopmars.main.tagc.utils.exceptions.WopMarsException import WopMarsException
 
 
+import pandas
+
 class SQLManager(SingletonMixin):
     """
     The class SQLManager is responsible of all operations performed on the database.
@@ -263,7 +265,7 @@ class SQLManager(SingletonMixin):
         list_obj_table = reversed(sort_tables([Base.metadata.tables[tablename.split(".")[-1]] for tablename in list_str_table]))
         try:
             self.__lock.acquire_write()
-            for t in list_obj_table:
+            for t in list_obj_table:Adding dataframe to database
                 Logger.instance().debug("SQLManager.drop_table_list(" + str(list_str_table) + "): drop table " + str(t.name))
                 t.drop(self.__engine, checkfirst=True)
         finally:
@@ -275,5 +277,13 @@ class SQLManager(SingletonMixin):
             self.__lock.acquire_write()
             df.to_sql(*args, **kwargs)
             Logger.instance().debug("SQLManager.df_to_sql: Adding dataframe to database")
+        finally:
+            self.__lock.release()
+
+    def pandas_read_sql(self, *args, **kwargs):
+        try:
+            self.__lock.acquire_read()
+            pandas.read_sql(*args, **kwargs)
+            Logger.instance().debug("SQLManager.read_sql: Reading database using pandas")
         finally:
             self.__lock.release()

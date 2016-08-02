@@ -97,3 +97,6 @@ class WopMarsSession:
 
     def df_to_sql(self, df, *args, **kwargs):
         self.__manager.df_to_sql(df, *args, **kwargs)
+
+    def pandas_read_sql(self, *args, **kwargs):
+        self.__manager.pandas_read_sql(*args, **kwargs)
