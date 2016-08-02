@@ -14,6 +14,10 @@ class ExampleBuilder:
         cwd = os.path.join(OptionManager.instance()["--directory"], "wopmars_example")
         example_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "wopmars_example")
 
+        print(cwd)
+        print(example_directory)
+        print(os.listdir(example_directory))
+
         ExampleBuilder.copy(example_directory, cwd)
 
         os.remove(os.path.join(cwd, "output/empty.txt"))

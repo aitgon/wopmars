@@ -57,5 +57,6 @@ setup(
     entry_points={
         'console_scripts':['wopmars=wopmars.main.tagc.wopmars:main']
     },
+    package_data={},
     include_package_data=True
 )

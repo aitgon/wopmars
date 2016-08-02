@@ -118,6 +118,7 @@ There are two rules named `Rule1` and `Rule2`. It means that the workflow is com
 It came time to start your first workflow!
 
 .. code-block:: python
+
     wopmars -w Wopfile -D output/wopmars.sqlite -vvv -p
 
 You will see a little bit of output in the console thanks to the `-p` coupled with the `-vvv` option which describe the work processed by WoPMaRS. The `-D` option allows to specify the path to the database file and, you have probably realized, the `-w` option allows to specify the path to the **Workflow Definition File**.
