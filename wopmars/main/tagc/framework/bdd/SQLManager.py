@@ -282,7 +282,9 @@ class SQLManager(SingletonMixin):
     def pandas_read_sql(self, *args, **kwargs):
         try:
             self.__lock.acquire_read()
-            pandas.read_sql(*args, **kwargs)
+            df = pandas.read_sql(*args, **kwargs)
             Logger.instance().debug("SQLManager.read_sql: Reading database using pandas")
         finally:
             self.__lock.release()
+        return df
+
