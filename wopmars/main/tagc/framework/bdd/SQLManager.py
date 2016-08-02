@@ -1,6 +1,7 @@
 """
 Module containing the SQLManager class.
 """
+import pandas
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import create_engine
 from sqlalchemy.schema import sort_tables
@@ -13,8 +14,6 @@ from wopmars.main.tagc.utils.RWLock import RWLock
 from wopmars.main.tagc.utils.Singleton import SingletonMixin
 from wopmars.main.tagc.utils.exceptions.WopMarsException import WopMarsException
 
-
-import pandas
 
 class SQLManager(SingletonMixin):
     """
@@ -265,7 +264,7 @@ class SQLManager(SingletonMixin):
         list_obj_table = reversed(sort_tables([Base.metadata.tables[tablename.split(".")[-1]] for tablename in list_str_table]))
         try:
             self.__lock.acquire_write()
-            for t in list_obj_table:Adding dataframe to database
+            for t in list_obj_table:
                 Logger.instance().debug("SQLManager.drop_table_list(" + str(list_str_table) + "): drop table " + str(t.name))
                 t.drop(self.__engine, checkfirst=True)
         finally:
