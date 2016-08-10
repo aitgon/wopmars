@@ -17,7 +17,7 @@ class FooWrapperH(ToolWrapper):
         return ["FooBaseH"]
 
     def specify_output_table(self):
-        return ["FooBaseH2"]
+        return ["FooBaseH"]
 
     def run(self):
         q = self.session().query(self.input_table("FooBaseH")).all()

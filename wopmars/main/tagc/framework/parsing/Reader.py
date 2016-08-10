@@ -467,19 +467,19 @@ class Reader:
 
         The grammar is the following:
 
-        NEWLINE configfile
-        WoPMaRS = rule
-        rule       = "rule" (identifier | "") ":" ruleparams
-        ni         = NEWLINE INDENT
-        ruleparams = [ni tool] [ni input] [ni output] [ni params]
+        WoPMaRS       = rule
+        identifier    = String
+        ni            = NEWLINE INDENT
+        rule          = "rule" identifier ":" ruleparams
+        ruleparams    = [ni tool] [ni input] [ni output] [ni params]
         filesortables = (ni files|ni tables){0-2}
-        files = "file"  ":" (ni identifier ”:” stringliteral)+
-        tables = "table"  ":" (ni identifier ”:” stringliteral)+
-        NEWLINE WoPMaRS
-        tool       = "tool"   ":"  identifier ”:” stringliteral
-        input      = "input"  ":" ni filesortables
-        output     = "output" ":" ni filesortables
-        params     = "params" ":" (identifier ”:” stringliteral ni?)+
+        files         = "file"  ":" (ni identifier ”:” stringliteral)+
+        tables        = "table"  ":" (ni identifier ”:” stringliteral)+
+        tool          = "tool"   ":" stringliteral
+        input         = "input"  ":" ni filesortables
+        output        = "output" ":" ni filesortables
+        params        = "params" ":" (ni identifier ”:” stringliteral)+
+        (NEWLINE WoPMaRS)+
 
         :raise: WopMarsParsingException
         """

