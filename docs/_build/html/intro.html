@@ -1,0 +1,320 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introduction &mdash; WoPMaRS 1.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="WoPMaRS 1.1.1 documentation" href="index.html" />
+    <link rel="next" title="Usage" href="use.html" />
+    <link rel="prev" title="Welcome to WoPMaRS&#39;s documentation!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>The connection between the results of a tool and their insertion into the database is done thanks to Python classes called <em>wrappers</em> compatible with WoPMaRS. These wrapper classes are able to both wrap the execution command line of an analysis tool and perform <em>pre</em> or <em>post</em> data processing (like, for example, gather data from the database or insert them).</p>
+<p>Here comes two use-cases which are:</p>
+<ul class="simple">
+<li><strong>develop</strong> wrapper classes also called <em>Toolwrappers</em></li>
+<li><strong>use</strong> these <em>Toolwrappers</em> to perform an analysis workflow</li>
+</ul>
+<div class="section" id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="using-wopmars">
+<h3>Using WoPMaRS<a class="headerlink" href="#using-wopmars" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Basic knowledge on relational databases</li>
+<li>Basic knowledge on command line use</li>
+</ul>
+</div>
+<div class="section" id="developing-toolwrappers">
+<h3>Developing <em>ToolWrappers</em><a class="headerlink" href="#developing-toolwrappers" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Basic knowledge on Python (controling structures <cite>if/else/elif</cite>, loops <cite>while/for</cite>, declaring and using variables and exception handling)</li>
+<li>More advanced knowledge in relational databases (data types, selecting and modificating rows, primary keys and foreign keys)</li>
+<li>Understanding Object Oriented Programming in Python is recommended</li>
+<li>Basic knowledge on the use of SQLAlchemy</li>
+</ul>
+</div>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>To install wopmars, you have to get the sources on the git repository and then go to the source directory and type:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">.</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p>There could be some issues regarding the <cite>pygraphviz</cite> package.</p>
+<ul>
+<li><p class="first">If you do not have permission for the <code class="docutils literal"><span class="pre">sudo</span></code>, you should use the command line</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">pygraphviz</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>But you won't be able to run the <code class="docutils literal"><span class="pre">--dot</span></code> option on WoPMaRS.</p>
+<ul class="last">
+<li><p class="first">Else, install <cite>graphviz-dev</cite> and <cite>libcgraph6</cite>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">graphviz</span><span class="o">-</span><span class="n">dev</span> <span class="n">libcgraph6</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="basic-usage">
+<h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h2>
+<p>Now you should be able to run WoPMaRS for the first time and we have prepared a simple example of workflow to introduce you to the basics of WoPMaRS.</p>
+<p>To build the workflow files architecture, go to any directory and type the following command:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">wopmars</span> <span class="n">example</span>
+</pre></div>
+</div>
+<p>You'll get the following files architecture:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>.
+└── wopmars_example
+    ├── input
+    │   └── pieces.txt
+    ├── output
+    ├── setup.py
+    ├── wopexample
+    │   ├── __init__.py
+    │   ├── models
+    │   │   ├── __init__.py
+    │   │   ├── PieceCar.py
+    │   │   └── Piece.py
+    │   └── wrappers
+    │       ├── CarAssembler.py
+    │       ├── __init__.py
+    │       └── SparePartsManufacturer.py
+    └── Wopfile
+</pre></div>
+</div>
+<p>Move to <cite>wopmars_example</cite> directory and install the package <em>wopexample</em>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">wopmars_example</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="o">.</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You have just installed your first <strong>WoPMaRS Package</strong>, congratulations! Every <em>Toolwrapper</em> for WoPMaRS is supposed to be built in a package in order to be easily installed.</p>
+</div>
+<p>Now, let's look in the <cite>Wopfile</cite></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># Rule1 use SparePartsManufacturer to insert pieces informations into the table piece</span>
+<span class="l l-Scalar l-Scalar-Plain">rule Rule1</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">tool</span><span class="p p-Indicator">:</span> <span class="s">&#39;wopexample.wrappers.SparePartsManufacturer&#39;</span>
+    <span class="l l-Scalar l-Scalar-Plain">input</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span>
+            <span class="l l-Scalar l-Scalar-Plain">pieces</span><span class="p p-Indicator">:</span> <span class="s">&#39;input/pieces.txt&#39;</span>
+    <span class="l l-Scalar l-Scalar-Plain">output</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">table</span><span class="p p-Indicator">:</span>
+            <span class="l l-Scalar l-Scalar-Plain">piece</span><span class="p p-Indicator">:</span> <span class="s">&#39;wopexample.models.Piece&#39;</span>
+
+<span class="c1"># CarAssembler make the combinations of all possible pieces and calculate the final price</span>
+<span class="l l-Scalar l-Scalar-Plain">rule Rule2</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">tool</span><span class="p p-Indicator">:</span> <span class="s">&#39;wopexample.wrappers.CarAssembler&#39;</span>
+    <span class="l l-Scalar l-Scalar-Plain">input</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">table</span><span class="p p-Indicator">:</span>
+            <span class="l l-Scalar l-Scalar-Plain">piece</span><span class="p p-Indicator">:</span> <span class="s">&#39;wopexample.models.Piece&#39;</span>
+    <span class="l l-Scalar l-Scalar-Plain">output</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">table</span><span class="p p-Indicator">:</span>
+            <span class="l l-Scalar l-Scalar-Plain">piece_car</span><span class="p p-Indicator">:</span> <span class="s">&#39;wopexample.models.PieceCar&#39;</span>
+    <span class="l l-Scalar l-Scalar-Plain">params</span><span class="p p-Indicator">:</span>
+        <span class="c1"># The price have to be under 2000!</span>
+        <span class="l l-Scalar l-Scalar-Plain">max_price</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">2000</span>
+</pre></div>
+</div>
+<p>There are two rules named <cite>Rule1</cite> and <cite>Rule2</cite>. It means that the workflow is composed of two steps. For each rule, the used <em>Toolwrapper</em>, its parameters (if needed), inputs and outputs are specified. If you look closely at the values of these inputs and outputs, you can notice that the output of the <cite>Rule1</cite> has the exact same value than the input of the <cite>Rule2</cite>: <code class="docutils literal"><span class="pre">wopexample.models.Piece</span></code>. It means that the <cite>Rule1</cite> will write into the table associated with the Model <cite>Piece</cite> and the <cite>Rule2</cite> will read these writes. Therefore, <cite>Rule2</cite> won't run before <cite>Rule1</cite> because there is a <em>dependency relation</em> between them.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Have you noticed the path to the models for the <code class="docutils literal"><span class="pre">tool</span></code> and <code class="docutils literal"><span class="pre">table</span></code> parts? The path to the different modules are explicitly specified to prevent ambiguity.</p>
+</div>
+<p>It came time to start your first workflow!</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">wopmars</span> <span class="o">-</span><span class="n">w</span> <span class="n">Wopfile</span> <span class="o">-</span><span class="n">D</span> <span class="n">output</span><span class="o">/</span><span class="n">wopmars</span><span class="o">.</span><span class="n">sqlite</span> <span class="o">-</span><span class="n">vvv</span> <span class="o">-</span><span class="n">p</span>
+</pre></div>
+</div>
+<p>You will see a little bit of output in the console thanks to the <code class="docutils literal"><span class="pre">-p</span></code> coupled with the <code class="docutils literal"><span class="pre">-vvv</span></code> option which describe the work processed by WoPMaRS. The <code class="docutils literal"><span class="pre">-D</span></code> option allows to specify the path to the database file and, you have probably realized, the <code class="docutils literal"><span class="pre">-w</span></code> option allows to specify the path to the <strong>Workflow Definition File</strong>.</p>
+<div class="section" id="looking-at-results">
+<h3>Looking at results<a class="headerlink" href="#looking-at-results" title="Permalink to this headline">¶</a></h3>
+<p>Now, I'll show you a brief overview of what you can do with the database. First, make sure you have installed <cite>sqlite3</cite> on your machine:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">sqlite3</span>
+</pre></div>
+</div>
+<p>Then, open the database using sqlite:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">output</span>
+<span class="n">sqlite3</span> <span class="n">wopmars</span><span class="o">.</span><span class="n">sqlite</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">If you get an error <cite>Unable to open database &quot;wopmars.sqlite&quot;: file is encrypted or is not a database</cite>. Make sure to use <cite>sqlite3</cite> instead of <cite>sqlite</cite>.</p>
+</div>
+<p>The preceding workflow had two steps:</p>
+<ol class="arabic simple">
+<li>Get pieces references in the <cite>input/pieces.txt</cite> file and insert them in the table <cite>piece</cite> of the database</li>
+</ol>
+<div class="highlight-sql"><div class="highlight"><pre><span></span><span class="n">sqlite</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">piece</span><span class="p">;</span>
+<span class="mi">1</span><span class="o">|</span><span class="n">UC8T9P7D0F</span><span class="o">|</span><span class="n">wheel</span><span class="o">|</span><span class="mi">664</span><span class="p">.</span><span class="mi">24</span>
+<span class="mi">2</span><span class="o">|</span><span class="mi">2</span><span class="n">BPN653B9D</span><span class="o">|</span><span class="n">engine</span><span class="o">|</span><span class="mi">550</span><span class="p">.</span><span class="mi">49</span>
+<span class="mi">3</span><span class="o">|</span><span class="n">T808AHY3DS</span><span class="o">|</span><span class="n">engine</span><span class="o">|</span><span class="mi">672</span><span class="p">.</span><span class="mi">09</span>
+<span class="mi">4</span><span class="o">|</span><span class="mi">977</span><span class="n">FPG7QJZ</span><span class="o">|</span><span class="n">bodywork</span><span class="o">|</span><span class="mi">667</span><span class="p">.</span><span class="mi">23</span>
+<span class="mi">5</span><span class="o">|</span><span class="n">KJ6WPB3N56</span><span class="o">|</span><span class="n">engine</span><span class="o">|</span><span class="mi">678</span><span class="p">.</span><span class="mi">83</span>
+<span class="mi">6</span><span class="o">|</span><span class="n">C71CQA0OP2</span><span class="o">|</span><span class="n">wheel</span><span class="o">|</span><span class="mi">643</span><span class="p">.</span><span class="mi">7</span>
+<span class="mi">7</span><span class="o">|</span><span class="mi">518</span><span class="n">SVJ81BV</span><span class="o">|</span><span class="n">bodywork</span><span class="o">|</span><span class="mi">744</span><span class="p">.</span><span class="mi">15</span>
+<span class="mi">8</span><span class="o">|</span><span class="n">PELSRMD8TZ</span><span class="o">|</span><span class="n">wheel</span><span class="o">|</span><span class="mi">646</span><span class="p">.</span><span class="mi">13</span>
+<span class="mi">9</span><span class="o">|</span><span class="n">YWL0MK7ACX</span><span class="o">|</span><span class="n">bodywork</span><span class="o">|</span><span class="mi">909</span><span class="p">.</span><span class="mi">75</span>
+<span class="mi">10</span><span class="o">|</span><span class="mi">8</span><span class="n">Z59Q9AFEX</span><span class="o">|</span><span class="n">bodywork</span><span class="o">|</span><span class="mi">594</span><span class="p">.</span><span class="mi">44</span>
+<span class="mi">11</span><span class="o">|</span><span class="n">E83B8KGTVQ</span><span class="o">|</span><span class="n">wheel</span><span class="o">|</span><span class="mi">978</span><span class="p">.</span><span class="mi">16</span>
+<span class="mi">12</span><span class="o">|</span><span class="n">XQ7D1DITW4</span><span class="o">|</span><span class="n">bodywork</span><span class="o">|</span><span class="mi">578</span><span class="p">.</span><span class="mi">58</span>
+<span class="mi">13</span><span class="o">|</span><span class="n">RUN7ZM09T1</span><span class="o">|</span><span class="n">wheel</span><span class="o">|</span><span class="mi">783</span><span class="p">.</span><span class="mi">2</span>
+<span class="mi">14</span><span class="o">|</span><span class="n">DFTITSG853</span><span class="o">|</span><span class="n">wheel</span><span class="o">|</span><span class="mi">776</span><span class="p">.</span><span class="mi">57</span>
+<span class="mi">15</span><span class="o">|</span><span class="n">Y5D5BTEXIY</span><span class="o">|</span><span class="n">wheel</span><span class="o">|</span><span class="mi">618</span><span class="p">.</span><span class="mi">89</span>
+<span class="mi">16</span><span class="o">|</span><span class="n">LS8WABU4JN</span><span class="o">|</span><span class="n">engine</span><span class="o">|</span><span class="mi">916</span><span class="p">.</span><span class="mi">34</span>
+<span class="mi">17</span><span class="o">|</span><span class="n">EMYJH4TLYG</span><span class="o">|</span><span class="n">bodywork</span><span class="o">|</span><span class="mi">611</span><span class="p">.</span><span class="mi">92</span>
+<span class="mi">18</span><span class="o">|</span><span class="n">QJ20KRBC7R</span><span class="o">|</span><span class="n">bodywork</span><span class="o">|</span><span class="mi">867</span><span class="p">.</span><span class="mi">01</span>
+<span class="mi">19</span><span class="o">|</span><span class="mi">9</span><span class="n">M9KLUB6MG</span><span class="o">|</span><span class="n">wheel</span><span class="o">|</span><span class="mi">859</span><span class="p">.</span><span class="mi">07</span>
+<span class="mi">20</span><span class="o">|</span><span class="mi">007</span><span class="n">PPKWZ18</span><span class="o">|</span><span class="n">bodywork</span><span class="o">|</span><span class="mi">603</span><span class="p">.</span><span class="mi">58</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li>Build all possible cars composed of those three types of pieces and store those combinations in the table <cite>piece_car</cite>. Here, we select only those which have a wheel of price below 650 and the total price is below 1800</li>
+</ol>
+<div class="highlight-sql"><div class="highlight"><pre><span></span><span class="n">sqlite</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="k">DISTINCT</span> <span class="n">car_serial_number</span><span class="p">,</span> <span class="n">PC</span><span class="p">.</span><span class="n">price</span>
+   <span class="p">...</span><span class="o">&gt;</span> <span class="k">FROM</span> <span class="n">piece_car</span> <span class="n">PC</span><span class="p">,</span> <span class="n">piece</span> <span class="n">P</span>
+   <span class="p">...</span><span class="o">&gt;</span> <span class="k">WHERE</span> <span class="n">PC</span><span class="p">.</span><span class="n">wheel_serial_number</span><span class="o">=</span><span class="n">P</span><span class="p">.</span><span class="n">serial_number</span>
+   <span class="p">...</span><span class="o">&gt;</span> <span class="k">AND</span> <span class="n">P</span><span class="p">.</span><span class="n">price</span><span class="o">&lt;</span><span class="mi">650</span>
+   <span class="p">...</span><span class="o">&gt;</span> <span class="k">AND</span> <span class="n">PC</span><span class="p">.</span><span class="n">price</span><span class="o">&lt;</span><span class="mi">1800</span><span class="p">;</span>
+<span class="n">BVWQEB7NY4</span><span class="o">|</span><span class="mi">1772</span><span class="p">.</span><span class="mi">96</span>
+<span class="n">FVGAKR6W8F</span><span class="o">|</span><span class="mi">1775</span><span class="p">.</span><span class="mi">2</span>
+<span class="n">HCN4YNU9XJ</span><span class="o">|</span><span class="mi">1797</span><span class="p">.</span><span class="mi">77</span>
+<span class="n">JHIAGDA3GG</span><span class="o">|</span><span class="mi">1791</span><span class="p">.</span><span class="mi">06</span>
+<span class="n">LZVCC9LW3O</span><span class="o">|</span><span class="mi">1781</span><span class="p">.</span><span class="mi">3</span>
+<span class="n">NERS4IU9SG</span><span class="o">|</span><span class="mi">1763</span><span class="p">.</span><span class="mi">82</span>
+<span class="n">OIQITLOFF1</span><span class="o">|</span><span class="mi">1747</span><span class="p">.</span><span class="mi">96</span>
+<span class="n">V9968T5YOX</span><span class="o">|</span><span class="mi">1788</span><span class="p">.</span><span class="mi">63</span>
+<span class="n">W8LPW24SXR</span><span class="o">|</span><span class="mi">1772</span><span class="p">.</span><span class="mi">77</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="pros-and-cons">
+<h2>Pros and Cons<a class="headerlink" href="#pros-and-cons" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">Pros:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Formatting your results in order to make them easy to analyze</li>
+<li>Using <cite>SQL</cite> to improve analysis performance</li>
+<li>Keeping track of your analyzes and enrich your database over time</li>
+<li>Make your results reproducible</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">Cons:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Read and writes in the database has a cost in time. #todo benchmarking</li>
+<li>Knowledge in <cite>Python</cite> and <cite>SQL</cite> is more than suitable for an optimum use of WoPMaRS</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div>
+<div class="section" id="go-further">
+<h2>Go further<a class="headerlink" href="#go-further" title="Permalink to this headline">¶</a></h2>
+<p>Now that you should understand the basics of WoPMaRS, I recommand you learn <a class="reference internal" href="use.html"><span class="doc">how to use WoPMaRS</span></a> before go to the <a class="reference internal" href="dev_wrapper.html"><span class="doc">build of ToolWrappers</span></a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Introduction</a><ul>
+<li><a class="reference internal" href="#prerequisites">Prerequisites</a><ul>
+<li><a class="reference internal" href="#using-wopmars">Using WoPMaRS</a></li>
+<li><a class="reference internal" href="#developing-toolwrappers">Developing <em>ToolWrappers</em></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#basic-usage">Basic Usage</a><ul>
+<li><a class="reference internal" href="#looking-at-results">Looking at results</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pros-and-cons">Pros and Cons</a></li>
+<li><a class="reference internal" href="#go-further">Go further</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to WoPMaRS's documentation!</a></li>
+      <li>Next: <a href="use.html" title="next chapter">Usage</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Luc Giffon, Aitor Gonzalez, Lionel Spinelli.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

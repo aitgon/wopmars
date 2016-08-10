@@ -1,0 +1,4 @@
+Software Documentation
+======================
+
+conseil: faire une option "supprimer le contenu de la table avant l'exécution" si l'utilisateur veut écraser des résultats

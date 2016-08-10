@@ -1,1 +1,1 @@
-recursive-include wopmars/main/tagc/example/wopmars_example/ *
+recursive-include wopmars/main/tagc/example/wopmars_example *

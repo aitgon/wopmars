@@ -51,19 +51,16 @@ class Logger(SingletonMixin):
         self.__err_handler.setFormatter(formatter_err)
         self.__err_handler.setLevel(logging.DEBUG)
 
-        verbosity = OptionManager.instance()["-v"]
+        verbosity = int(OptionManager.instance()["-v"])
 
         # set the verbosity of the stream handler and file handler depending of the needs of the user.
-        if verbosity == 1:
-            self.__stream_handler.setLevel(logging.ERROR)
-            self.__file_handler.setLevel(logging.ERROR)
-        elif verbosity == 2 or verbosity <= 0:
+        if verbosity <= 0:
             self.__stream_handler.setLevel(logging.WARNING)
             self.__file_handler.setLevel(logging.WARNING)
-        elif verbosity == 3:
+        elif verbosity == 1:
             self.__stream_handler.setLevel(logging.INFO)
             self.__file_handler.setLevel(logging.INFO)
-        elif verbosity >= 4:
+        elif verbosity >= 2:
             self.__stream_handler.setLevel(logging.DEBUG)
             self.__file_handler.setLevel(logging.DEBUG)
 

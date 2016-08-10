@@ -5,7 +5,7 @@ import importlib
 import datetime
 import time
 
-from sqlalchemy.exc import OperationalError
+from sqlalchemy.exc import OperationalError, InvalidRequestError
 
 from wopmars.main.tagc.framework.bdd.Base import Base
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
@@ -72,7 +72,7 @@ class IODbPut(IOPut, Base):
         :param tables: Resulset IODbPut objects
         """
         # import models for avoid references errors between models when dealing with them
-        IODbPut.import_models([t.model for t in tables])
+        IODbPut.import_models(set([t.model for t in tables]))
 
         for table in tables:
             # keep track of the models used in static variable of IODbPut
@@ -103,6 +103,7 @@ class IODbPut(IOPut, Base):
         :param table_names: Iterable containing strings of path to the models
         """
         for t in table_names:
+            Logger.instance().debug("IODbPut.import_models: importing " + str(t))
             importlib.import_module(t)
 
     def set_table(self, model):

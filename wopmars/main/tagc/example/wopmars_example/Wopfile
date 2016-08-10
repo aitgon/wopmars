@@ -1,3 +1,4 @@
+# Rule1 use SparePartsManufacturer to insert pieces informations into the table piece
 rule Rule1:
     tool: 'wopexample.wrappers.SparePartsManufacturer'
     input:
@@ -7,6 +8,7 @@ rule Rule1:
         table:
             piece: 'wopexample.models.Piece'
 
+# CarAssembler make the combinations of all possible pieces to build cars and calculate the final price
 rule Rule2:
     tool: 'wopexample.wrappers.CarAssembler'
     input:
@@ -16,4 +18,5 @@ rule Rule2:
         table:
             piece_car: 'wopexample.models.PieceCar'
     params:
+        # The price have to be under 2000!
         max_price: 2000

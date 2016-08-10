@@ -55,7 +55,7 @@ setup(
     install_requires=required,
     data_files=[],
     entry_points={
-        'console_scripts':['wopmars=wopmars.main.tagc.wopmars:main']
+        'console_scripts':['wopmars=wopmars:run']
     },
     package_data={},
     include_package_data=True
