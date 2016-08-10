@@ -94,3 +94,10 @@ class WopMarsSession:
             instance = model(**params)
             self.__session.add(instance)
             return instance, True
+
+    def df_to_sql(self, df, *args, **kwargs):
+        self.__manager.df_to_sql(df, *args, **kwargs)
+
+    def pandas_read_sql(self, *args, **kwargs):
+        return self.__manager.pandas_read_sql(*args, **kwargs)
+
