@@ -1,6 +1,7 @@
 """
 Module containing the SQLManager class.
 """
+import pandas
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import create_engine
 from sqlalchemy.schema import sort_tables
@@ -270,6 +271,7 @@ class SQLManager(SingletonMixin):
             # Always release the lock
             self.__lock.release()
 
+
     def drop_table_content_list(self, list_str_table):
         """
         Remove a list of tables from the list of their tablenames.
@@ -285,4 +287,22 @@ class SQLManager(SingletonMixin):
             Logger.instance().debug(
                 "SQLManager.drop_table_content_list(" + str(list_str_table) + "): drop table content " + str(t.name))
             self.execute(session._session(), t.delete())
+
+    def df_to_sql(self, df, *args, **kwargs):
+        try:
+            self.__lock.acquire_write()
+            df.to_sql(*args, **kwargs)
+            Logger.instance().debug("SQLManager.df_to_sql: Adding dataframe to database")
+        finally:
+            self.__lock.release()
+
+    def pandas_read_sql(self, *args, **kwargs):
+        try:
+            self.__lock.acquire_read()
+            df = pandas.read_sql(*args, **kwargs)
+            Logger.instance().debug("SQLManager.read_sql: Reading database using pandas")
+        finally:
+            self.__lock.release()
+        return df
+
 
