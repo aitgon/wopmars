@@ -1,4 +1,46 @@
 Software Documentation
 ======================
 
+This manual is dedicated to the developers who want to improve **WoPMaRS** by adding new features or correcting bugs.
+
+The history of WoPMaRS
+----------------------
+
+**WoPMaRS** keeps track of what has been done thanks to an history stored in database with the prefix ``wom`` in table names.
+
+Numerous calls to those tables are done during all the process of the parsing of the definition file and the building of the execution DAG.
+
+.. note::
+
+	The execution DAG is the directed acyclic graph representing the workflow about to be executed
+
+Here is a list of the tables used for history. All of the associated models are stored under ``wopmars.main.tagc.framework.bdd.tables``. If you want more informations about the models themselves, you should follow the links to get the code documentation:
+
+- ``wom_execution`` represented by the model ``Execution``
+- ``wom_rule`` represented by the model ``Toolwrapper``
+- ``wom_file`` represented by the model ``IOFilePut``
+- ``wom_table`` represented by the model ``IODbPut``
+- ``wom_modification_table`` represented by the model ``ModificationTable``
+- ``wom_option`` represented by the model ``Option``
+
+.. figure: images/mcd.png
+	:align: center
+
+	*Here is a detailed entity-relationship model of the history in the database*
+
+Building the execution DAG
+--------------------------
+
+The workflow DAG is built from the workflow definition file. However, there is a post treatment of the workflow DAG to get only the rules that the user wants to execute. In this part, I'll focus on the reading of the workflow definition file.
+
+The module responsible of the parsing of the workflow definition file is ``wopmars.main.tagc.framework.parsing.Reader``. The class ``Reader`` of this module aims to fill the databse with the informations relatives to the workflow.
+
+.. note::
+
+	``Reader`` is also responsible of parsing tool command
+
+Once all informations regarding the workflow definition file have been stored in the database, the options ``--targetrule`` and ``--sourcerule`` are parsed in order to get only the rules that are intended to be executed by the user.
+
+
+
 conseil: faire une option "supprimer le contenu de la table avant l'exécution" si l'utilisateur veut écraser des résultats
