@@ -1,6 +1,3 @@
-"""
-This module contains the Execution table model.
-"""
 from sqlalchemy import Column, Integer, DateTime, Float, String
 from sqlalchemy.orm import relationship
 
@@ -11,9 +8,18 @@ class Execution(Base):
     """
     The execution table is a counter of the executions. It allows to discriminate one execution from one other.
 
-    If 2 executions are exactly the same, they will be both stocked in the database with different execution numbers.
-    The times at which the execution has started and finished are stored (as the the time of the whole execution).
-    The status of the execution is stored with "FINISHED" as possible flags.
+    If 2 executions are exactly the same, they will be both stocked in the database with different execution ids.
+    The table ``wom_execution`` contains the following fields:
+
+    - id: INTEGRE: primary key - auto increment - arbitrary iD
+    - started_at: DATE - date at wich the execution started
+    - finished_at: DATE - date at wich the execution finished
+    - time: FLOAT - the total time of execution
+    - status: VARCHAR(255) - the final status of the Execution. it can be:
+
+        - SUCCESS
+        - ERROR
+
     """
 
     __tablename__ = "wom_execution"

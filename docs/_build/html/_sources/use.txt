@@ -184,6 +184,8 @@ Options and Arguments
 -p --printtools
     This option allows to actually display the output of WoPMaRS in the Terminal, not only write it in the log file. You should use it sparingly, writing things at screen has an udge cost for your machine and can drastically lower your performances.
 
+.. _sourcerule-label:
+
 -f --sourcerule=RULE
     This option allows to say to WoPMaRS from which rule you want to start the workflow. Each rule successing this one will be executed. 
     

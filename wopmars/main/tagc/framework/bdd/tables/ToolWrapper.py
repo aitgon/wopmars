@@ -1,6 +1,3 @@
-"""
-This module contains the ToolWrapper class
-"""
 import datetime
 import os
 
@@ -20,8 +17,22 @@ from wopmars.main.tagc.utils.exceptions.WopMarsException import WopMarsException
 
 class ToolWrapper(Base):
     """
-    The class ToolWrapper is the superclass of the Wrapper which
-    will be designed by the wrapper developers.
+    The class ToolWrapper is the superclass of the wrappers which will be designed by the wrapper developers. It is the
+    SQLAlchemy Model of the table ``wom_rule`` with the following fields:
+
+    - id: INTEGER - primary_key - auto increment - arbitrary ID
+    - name: VARCHAR(255) - the name of the rule
+    - toolwrapper: VARCHAR(255) - the name of the Toolwrapper
+    - execution_id: INTEGER - foreign key to the table ``wom_execution`` - the associated execution
+    - started_at: DATE - date at wich the toolwrapper started its execution
+    - finished_at: DATE - date at wich the toolwrapper finished its execution
+    - time: FLOAT - the total time toolwrapper execution
+    - status: VARCHAR(255) - the final status of the Toolwrapper. it can be:
+
+       - NOT PLANNED: the toolwrapper execution wasn't evene xpected by the user
+       - ALREADY EXECUTED: the toolwrapper has been previously executed in an old workflow and doesn't need to be re-executed
+       - EXECUTED: the toolwrapper has been executed
+       - EXECUTION_ERROR: the toolwrapper has encountered an error during the execution
     """
 
     __tablename__ = "wom_rule"
@@ -58,18 +69,15 @@ class ToolWrapper(Base):
         """
         The constructor of the toolwrapper, must not be overwritten.
 
-        set_observer is the set of all observers of the toolwrappers.
-        input_file_dict is the dict containing the IOFilePut objects of the file input of the toolwrapper.
-        option_dict is the dict containing the Option objects of the params of the toolwrapper.
-        output_file_dict is the dict containing the IOFilePut objects of the file output of the toolwrapper.
-        state is the constant refering to the state of the toolwrapper, it is initialized at "NEW"
+        self.__state is the state given to the Toolwrapper to let the
+        :class:`~.wopmars.main.tagc.framework.management.WorflowManager.WorkflowManager` knows if the Toolwrapper is
+        able to be executed or not.
 
-        :param input_file_dict: dict(String: IOPUT)
-        :param output_file_dict: dict(String: IOPUT)
-        :param option_dict: dict(String: Option)
-        :return: void
+        self.__session is the session associated with the Toolwrapper and which will be used in the run method.
+
+        :param rule_name: the name of the rule
+        :type rule_name: str
         """
-        # todo ask lionel peut-être autoriser super().__init__
         # todo ajouter un flag de vérification du passage dans cette méthode
         super().__init__(name=rule_name)
         # int
@@ -77,26 +85,16 @@ class ToolWrapper(Base):
         # <WopMarsSession>
         self.__session = None
 
-    def set_execution_infos(self, start=None, stop=None, status=None):
-        if start is not None:
-            self.started_at = start
-        if stop is not None:
-            self.finished_at = stop
-        if self.started_at is not None and self.finished_at is not None:
-            self.time = (self.finished_at - self.started_at).total_seconds()
-        if status is not None:
-            self.status = status
-
     ### PARSING METHODS
 
     def is_content_respected(self):
         """
+        Parsing method:
+
         This method checks if the parameters dictionary are properly formed, according to the specifications of the
         wrapper developer.
 
         Call of the methods "is_options_respected", "is_input_respected" and "is_output_respected"
-
-        :return:
         """
         # the options have to be checked first because they can alter the behavior of the is_input_respected and
         # is_output_respected methods
@@ -107,17 +105,17 @@ class ToolWrapper(Base):
 
     def is_input_respected(self):
         """
+        Parsing method:
+
         Check if the input files associated with the toolwrapper are ok according to the toolwrapper developer.
 
-        It checks if the output variable names exists or not.
-        If not, throws a WopMarsParsingException.
+        It checks if the output variable names exists or not. If not, throws a WopMarsParsingException.
 
         This method calls the "specify_input_file" method which have been written by the toolwrapper developer. Since the
         options are checked first, the developer can write a conditional behavior depending on the options given for
         the toolwrapper.
 
-        :raise: WopMarsException
-        :return:void
+        :raises WopMarsException: The input are not respected by the user.
         """
         set_input_file_names = set([f_input.name for f_input in self.files if f_input.type.name == "input"])
         if set_input_file_names != set(self.specify_input_file()):
@@ -149,21 +147,20 @@ class ToolWrapper(Base):
                                        "\n" + "It is:" +
                                        "\n\t'" + s_tablename_of_model
                                        )
-            # todo ask aitor le dictionnaire pour le get_io_table permet plus de précision au niveau des tests, je pense que ca vaut le coup
 
     def is_output_respected(self):
         """
+        Parsing method:
+
         Check if the output dictionary given in the constructor is properly formed for the tool.
 
-        It checks if the output variable names exists or not.
-        If not, throws a WopMarsParsingException.
+        It checks if the output variable names exists or not. If not, throws a WopMarsParsingException.
 
         This method calls the "specify_output_file" method which have been written by the toolwrapper developer. Since the
         options are checked first, the developer can write a conditional behavior depending on the options given for
         the toolwrapper.
 
-        :raise: WopMarsException
-        :return:void
+        :raises WopMarsException: The output are not respected by the user.
         """
         if set([f_output.name for f_output in self.files if f_output.type.name == "output"]) != set(self.specify_output_file()):
             raise WopMarsException("The content of the definition file is not valid.",
@@ -186,26 +183,29 @@ class ToolWrapper(Base):
                                        "\n\t'" + s_tablename
                                        )   
 
-
     def is_options_respected(self):
         """
+        Parsing method:
+
         This method check if the params given in the constructor are properly formed for the tool.
 
         It checks if the params names given by the user exists or not, if the type correspond and if the required
-        options are given.
-        If not, throws a WopMarsParsingException.
+        options are given. If not, throws a WopMarsParsingException.
 
         This method calls the "specify_params" method of the toolwrapper. This method should return a dictionnary
         associating the name of the option with a String containing the types allowed with it. A "|" is used between
         each types allowed for one option.
 
-        examples:
+        Example:
 
-        {
-            'option1': "int",
-            'option2': "required|str",
-        }
-        :raise: WopMarsException
+        .. code-block:: python
+
+            {
+                'option1': "int",
+                'option2': "required|str",
+            }
+
+        :raises WopMarsException: If the params names and types are not respected by the user.
         """
         dict_wrapper_opt_carac = self.specify_params()
 
@@ -231,6 +231,8 @@ class ToolWrapper(Base):
 
     def follows(self, other):
         """
+        Parsing method:
+
         Check whether the "self" follows directly "other" in the execution DAG.
 
         Check whether "other" has one output value in "self" possible input values.
@@ -257,6 +259,8 @@ class ToolWrapper(Base):
 
     def are_inputs_ready(self):
         """
+        WorkflowManager method:
+
         Check if inputs are ready
 
         :return: bool - True if inputs are ready.
@@ -284,7 +288,7 @@ class ToolWrapper(Base):
 
     def set_args_date_and_size(self, type, dry=False):
         """
-        The date and the size of IOPut elements are set (if needed).
+        WorkflowManager method:
 
         The date and the size of the files are set according to the actual date of last modification and size of the system files
 
@@ -292,9 +296,12 @@ class ToolWrapper(Base):
         If the type of IOPut is "output" and the execution is "not dry", the date in modification_table is set to the
         current time.time() datetime.
 
-        :param type: String "input" or "output"
-        :param dry: Bool (True or False)
-        :return:
+        # todo modify it to take commits into account isntead of the status of 'output' of a table
+
+        :param type: "input" or "output"
+        :type type: str
+        :param dry: Say if the execution has been simulated.
+        :type dry: bool
         """
         session = SQLManager.instance().get_session()
         for f in [f for f in self.files if f.type.name == type]:
@@ -344,8 +351,11 @@ class ToolWrapper(Base):
         The input are say "the same" if:
             - The table have the same name and the same last modifcation datetime
             - The file have the same name, the same lastm mdoficiation datetime and the same size
-        :param other:
-        :return:
+
+        :param other: an other Toolwrapper which maybe as the same inputs
+        :type other: :class:`~.wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper`
+
+        :return: bool
         """
         for t in [t for t in self.tables if t.type.name == "input"]:
             is_same = False
@@ -377,19 +387,22 @@ class ToolWrapper(Base):
         Check if the output of self are ready to use.
 
         What is checked:
-            -for files:
-                - They exists
-                - Their size and date are not None
-                - Their date are after all input dates
-                - Their size and date in bdd are the same than the real ones
+        -for files:
 
-            - for table:
-                - They exists
-                - Their date are after all input dates
-                - Their date are the same in table 'table' than in 'modification_table'
-        :return:
+           - They exists
+           - Their size and date are not None
+           - Their date are after all input dates
+           - Their size and date in bdd are the same than the real ones
+
+        - for table:
+
+           - They exists
+           - Their date are after all input dates
+           - Their date are the same in table 'table' than in 'modification_table'
+
+        :return: bool
         """
-        # todo tester ça, je ne pense pas que ca fonctionne, en fin de compte
+        # todo tester ça
         for of in [f for f in self.files if f.type.name == "output"]:
             if not os.path.exists(of.path) or \
                     not all(of.used_at > in_ft.used_at for in_ft in self.files + self.tables if (in_ft.type.name == "input" and
@@ -408,6 +421,23 @@ class ToolWrapper(Base):
 
     def get_state(self):
         return self.__state
+
+    def set_execution_infos(self, start=None, stop=None, status=None):
+        """
+        Generic method to set the informations relatives to the execution of the ToolWrapper.
+
+        :param start: The date of start of the Toolwrapper
+        :param stop: The date of end of the Toolwrapper
+        :param status: The status of the Toolwrapper
+        """
+        if start is not None:
+            self.started_at = start
+        if stop is not None:
+            self.finished_at = stop
+        if self.started_at is not None and self.finished_at is not None:
+            self.time = (self.finished_at - self.started_at).total_seconds()
+        if status is not None:
+            self.status = status
 
     def specify_input_file_dict(self):
         """

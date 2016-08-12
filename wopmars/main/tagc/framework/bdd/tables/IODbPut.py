@@ -1,6 +1,3 @@
-"""
-Module containing the IODbPut class.
-"""
 import importlib
 import datetime
 import time
@@ -20,7 +17,16 @@ from wopmars.main.tagc.framework.bdd.tables.Type import Type
 
 class IODbPut(IOPut, Base):
     """
-    This class extends IOPut and is specific to table input or output
+    This class extends IOPut and is specific to the input or output tables. It is the model which store the references
+    to the actual tables needed by the user. The table ``wom_table`` associated with this model contains the
+    following fields:
+
+    - id: INTEGER - primary key - autoincrement - arbitrary ID
+    - tablename: VARCHAR(255) - foreign key to the associated table: :class:`wopmars.main.tagc.framework.bdd.tables.ModificationTable.ModificationTable` - the name of the referenced table
+    - model: VARCHAR(255) - the path to the model (in python notation)
+    - rule_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper`
+    - type_id: INTEGER - foreign key to the associated type ID: :class:`wopmars.main.tagc.framework.bdd.tables.Type.Type`
+    - used_at: DATE - date at which the table have been used
     """
     __tablename__ = "wom_table"
 
@@ -38,14 +44,19 @@ class IODbPut(IOPut, Base):
 
     modification = relationship("ModificationTable", back_populates="tables")
 
+    # all the model names met since the begining of this instance of WopMaRS
     tablemodelnames = set()
+    # al the table names met since the begining of this instance of WopMaRS
     tablenames = set()
 
     def __init__(self, model, tablename):
         """
-        :param table: Base: an object extending the Base type from SQLAlchemy
-        which has been created by a tool developper
-        :return:
+        self.__table is initialized to None and will contain the model of this IODbPut object.
+
+        :param model: The path to the model
+        :type model: str
+        :param tablename: The name of the table associated with the model
+        :type tablename: str
         """
         # The file containing the table should be in PYTHONPATH
         Base.__init__(self, model=model, tablename=tablename)
@@ -54,6 +65,10 @@ class IODbPut(IOPut, Base):
 
     @reconstructor
     def init_on_load(self):
+        """
+        This is used by SQLAlchemy to regenerate the right object when loading it from the database. Here, we need to
+        get back the actual Model from the model name and store it in self.__table.
+        """
         for table in IODbPut.tablemodelnames:
             mod = importlib.import_module(table)
             try:
@@ -64,12 +79,19 @@ class IODbPut(IOPut, Base):
                 raise e
         Logger.instance().debug(self.tablename + " table class reloaded. Model: " + self.model)
 
+    def set_table(self, model):
+        self.__table = model
+
+    def get_table(self):
+        return self.__table
+
     @staticmethod
     def set_tables_properties(tables):
         """
         Import the models of the current execution and then associate models with IODbPut objects.
 
-        :param tables: Resulset IODbPut objects
+        :param tables: the IODbPut which need their table properties to be set.
+        :type tables: ResultSet(IODbPut)
         """
         # import models for avoid references errors between models when dealing with them
         IODbPut.import_models(set([t.model for t in tables]))
@@ -96,21 +118,37 @@ class IODbPut(IOPut, Base):
         return session.query(IODbPut).all()
 
     @staticmethod
-    def import_models(table_names):
+    def import_models(model_names):
         """
         Import all the given models
 
-        :param table_names: Iterable containing strings of path to the models
+        :param model_names: The path to the models
+        :type model_names: Iterable(String)
         """
-        for t in table_names:
+        for t in model_names:
             Logger.instance().debug("IODbPut.import_models: importing " + str(t))
             importlib.import_module(t)
 
-    def set_table(self, model):
-        self.__table = model
+    def is_ready(self):
+        """
+        A IODbPut object is ready if its table exists and contains entries.
 
-    def get_table(self):
-        return self.__table
+        :return: bool if the table is ready
+        """
+        session = SQLManager.instance().get_session()
+        try:
+            results = session.query(self.__table).first()
+            if results is None:
+                Logger.instance().debug("The table " + self.tablename + " is empty.")
+                return False
+        except OperationalError as e:
+            Logger.instance().debug("The table " + self.__table.__tablename__ + " doesn't exist.")
+            return False
+        except Exception as e:
+            session.rollback()
+            raise e
+            # todo twthread
+        return True
 
     def __eq__(self, other):
         """
@@ -130,26 +168,7 @@ class IODbPut(IOPut, Base):
                 return False
         except Exception as e:
             session.rollback()
-            # session.close()
             raise e
-        return True
-
-    def is_ready(self):
-        session = SQLManager.instance().get_session()
-        try:
-            results = session.query(self.__table).first()
-            if results is None:
-                Logger.instance().debug("The table " + self.tablename + " is empty.")
-                return False
-        except OperationalError as e:
-            Logger.instance().debug("The table " + self.__table.__tablename__ + " doesn't exist.")
-            return False
-        except Exception as e:
-            session.rollback()
-            raise e
-        # finally:
-            # todo twthread
-            # session.close()
         return True
 
     def __hash__(self):
@@ -159,4 +178,4 @@ class IODbPut(IOPut, Base):
         return "<Table (" + self.type.name + "  ):\"" + str(self.tablename) + "\"; used_at:" + str(self.used_at) + ">"
 
     def __str__(self):
-        return "table: " + self.tablename + "; model: " + self.model
+        return "<Table: " + self.tablename + "; model: " + self.model + ">"

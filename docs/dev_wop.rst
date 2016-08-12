@@ -3,8 +3,8 @@ Software Documentation
 
 This manual is dedicated to the developers who want to improve **WoPMaRS** by adding new features or correcting bugs.
 
-The history of WoPMaRS
-----------------------
+The history of WoPMaRS executions
+---------------------------------
 
 **WoPMaRS** keeps track of what has been done thanks to an history stored in database with the prefix ``wom`` in table names.
 
@@ -16,40 +16,93 @@ Numerous calls to those tables are done during all the process of the parsing of
 
 Here is a list of the tables used for history. All of the associated models are stored under ``wopmars.main.tagc.framework.bdd.tables``. If you want more informations about the models themselves, you should follow the links to get the code documentation:
 
-- ``wom_execution`` represented by the model ``Execution``
-- ``wom_rule`` represented by the model ``Toolwrapper``
-- ``wom_file`` represented by the model ``IOFilePut``
-- ``wom_table`` represented by the model ``IODbPut``
-- ``wom_modification_table`` represented by the model ``ModificationTable``
-- ``wom_option`` represented by the model ``Option``
+- ``wom_execution`` represented by the model :class:`~.wopmars.main.tagc.framework.bdd.tables.Execution.Execution`
+- ``wom_rule`` represented by the model :class:`~.wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper`
+- ``wom_type`` represented by the model :class:`~.wopmars.main.tagc.framework.bdd.tables.Type.Type`
+- ``wom_file`` represented by the model :class:`~.wopmars.main.tagc.framework.bdd.tables.IOFilePut.IOFilePut`
+- ``wom_table`` represented by the model :class:`~.wopmars.main.tagc.framework.bdd.tables.IODbPut.IODbPut`
+- ``wom_modification_table`` represented by the model :class:`~.wopmars.main.tagc.framework.bdd.tables.ModificationTable.ModificationTable`
+- ``wom_option`` represented by the model :class:`wopmars.main.tagc.framework.bdd.tables.Option.Option`
 
-.. figure: images/mcd.png
-	:align: center
+.. figure:: images/mcd.png
+   :align: center
 
-	*Here is a detailed entity-relationship model of the history in the database*
+   *Here is a detailed entity-relationship model of the history in the database*
 
 Building the execution DAG
 --------------------------
 
-The workflow DAG is built from the workflow definition file. However, there is a post treatment of the workflow DAG to get only the rules that the user wants to execute. In this part, I'll focus on the reading of the workflow definition file.
+The workflow DAG is built from the workflow definition file. However, there is a post treatment of the workflow DAG to get only the rules that the user wants to execute. 
 
-The module responsible of the parsing of the workflow definition file is ``wopmars.main.tagc.framework.parsing.Reader``. The class ``Reader`` of this module aims to fill the databse with the informations relatives to the workflow.
+The class responsible of the parsing of the workflow definition file (and the ``tool`` command) is :class:`wopmars.main.tagc.framework.parsing.Reader.Reader`. The class :class:`~.wopmars.main.tagc.framework.parsing.Reader.Reader` aims to fill the database with the informations relatives to the workflow.
 
-.. note::
+Once all informations regarding the workflow definition file have been stored in the database, the options ``--targetrule`` and ``--sourcerule`` are parsed in order to get only the rules that are intended to be executed by the user (see `Options and Arguments <use.html#options-and-arguments>`__ of WoPMaRS).
 
-	``Reader`` is also responsible of parsing tool command
+To build the DAG itself, a class :class:`~.wopmars.main.tagc.framework.management.DAG.DAG` which inherit from ``networkx.DiGraph`` has been written. This class takes a set of nodes as argument and build itself by determining which nodes are following which others. Since the nodes are actually :class:`~.wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper`, a node follows an other node if one output of the former is in the list of inputs of the last. This information is given by the method :meth:`~.wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.follows` of :class:`~.wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper`.
 
-Once all informations regarding the workflow definition file have been stored in the database, the options ``--targetrule`` and ``--sourcerule`` are parsed in order to get only the rules that are intended to be executed by the user.
-
-To build the DAG itself. A class ``DAG`` which inherit from ``networkx.DiGraph`` has been written. This class takes a set of nodes as argument and build itself by determining which nodes are following which others. Since the node are actually ``Toolwrapper``, a node follows an other node if one output of the former is in the list of inputs of the last. This information is given by the method ``follows`` of ``Toolwrappers``.
 
 Executing the DAG
 -----------------
 
-It is the ``WorkflowManager`` class from the package ``wopmars.main.tagc.framework.management.WorfklowManager`` which is responsible of executing the DAG. The main methods of this class are ``run_queue`` and ``execute_from``. Basically, ``execute_from`` fill the queue with the `Toolwrappers` that should be executed soon and ``run_queue`` actually execute the queue after performing some tests on the inputs of the `Toolwrappers`.
-
-.. automodule:: wopmars.main.tagc.framework.management.WorkflowManager
-   :members:
+It is the :class:`~.wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager` which is responsible of executing the DAG. The main methods of this class are :meth:`~.wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.run_queue` and :meth:`~.wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.execute_from`. Basically, ``execute_from`` fill the queue with the `Toolwrappers` that should be executed soon and ``run_queue`` actually execute the queue after performing some tests on the inputs of the `Toolwrappers`.
 
 
 conseil: faire une option "supprimer le contenu de la table avant l'exécution" si l'utilisateur veut écraser des résultats
+
+
+----
+
+.. autoclass:: wopmars.main.tagc.framework.parsing.Reader.Reader
+   :members:
+   :exclude-members: no_duplicates_constructor
+   :member-order: bysource
+
+----
+
+.. autoclass:: wopmars.main.tagc.utils.exceptions.WopMarsException.WopMarsException
+   :members:
+
+----
+
+.. autoclass:: wopmars.main.tagc.framework.bdd.tables.Execution.Execution
+   :members:    
+
+----
+
+.. autoclass:: wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper
+   :members:
+
+----
+
+.. autoclass:: wopmars.main.tagc.framework.bdd.tables.IOFilePut.IOFilePut
+   :members:
+
+----
+
+.. autoclass:: wopmars.main.tagc.framework.bdd.tables.IODbPut.IODbPut
+   :members:
+
+----
+
+.. autoclass:: wopmars.main.tagc.framework.bdd.tables.Type.Type
+   :members:
+
+----
+
+.. autoclass:: wopmars.main.tagc.framework.management.DAG.DAG
+   :members:
+   
+----
+
+.. autoclass:: wopmars.main.tagc.framework.bdd.tables.Option.Option
+   :members:
+
+----
+
+.. autoclass:: wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager
+   :members:
+   
+----
+
+.. autoclass:: wopmars.main.tagc.framework.management.ToolThread.ToolThread
+   :members:

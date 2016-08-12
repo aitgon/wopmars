@@ -1,6 +1,3 @@
-"""
-Module containing the ModificationTable class.
-"""
 from wopmars.main.tagc.framework.bdd.Base import Base
 from sqlalchemy import Column, String, DateTime
 from sqlalchemy.orm import relationship
@@ -8,7 +5,11 @@ from sqlalchemy.orm import relationship
 
 class ModificationTable(Base):
     """
-    class ModificationTable
+    The ModificationTable model contains the table names of the workflow and their date of last modification. The table
+    ``wom_modification_table`` contains the following fields:
+
+    - table_name: VARCHAR(255) - primary key - the name of the table
+    - date: DATE - the date of last modification of the table
     """
 
     __tablename__ = "wom_modification_table"

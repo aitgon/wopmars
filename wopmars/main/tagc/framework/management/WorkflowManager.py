@@ -1,6 +1,3 @@
-"""
-Module containing the WorkflowManager class
-"""
 import datetime
 import sys
 
@@ -27,27 +24,28 @@ class WorkflowManager(ToolWrapperObserver):
     The WorkflowManager class manage all the workflow execution.
 
     WorkflowManager will ask the parser to build the DAG then execute it. The execution of the DAG is done as following:
-      1- The workflow manager take the "tool_dag" with all the rules of the workflow and build the "dag_to_exec" which
-      will be actually executed according to the "target rule" and "source rule" options.
-      2- The method "execute_from()" is call without argument, meaning that the execution begin at the top of the dag
-      (the root of the tree).
-      3- The nodes are gathered thanks to the "successors" method of the DAG.
-      4- Each node is wrapped inside a ToolThread object which will be added to the queue.
-      5- Each ToolThread is executed (ordered) as follows:
-        a- If the inputs are ready: they are executed.
-        b- If not, they are put in the buffer.
-      6- When the ToolThread has finished its execution, a notification of success is sent.
-      7- The method "execute_from" is called again with the succeeded ToolWrapper as argument.
-      8- Loop to the 3rd step
-      9- When the DAG is finished, the software exits
 
-    Every exception or error are raised to the top level of the software (tagc.py) through WopMarsException with
+    1- The workflow manager take the "tool_dag" with all the rules of the workflow and build the "dag_to_exec" which
+    will be actually executed according to the "target rule" and "source rule" options.
+    2- The method :meth:`~.wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.execute_from` is call without argument, meaning that the execution begin at the top of the dag
+    (the root of the tree).
+    3- The nodes are gathered thanks to the :meth:`~.wopmars.main.tagc.framework.management.DAG.DAG.successors` method of the :class:`wopmars.main.tagc.framework.management.DAG.DAG`
+    4- Each node is wrapped inside a :class:`~.wopmars.main.tagc.framework.management.ToolThread.ToolThread` object which will be added to the queue.
+    5- Each ToolThread is executed (ordered) as follows:
+
+      a- If the inputs are ready: they are executed.
+      b- If not, they are put in the buffer.
+
+    6- When the :class:`~.wopmars.main.tagc.framework.management.ToolThread.ToolThread` has finished its execution, a notification of success is sent.
+    7- The method :meth:`~wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.execute_from` is called again with the succeeded ToolWrapper as argument.
+    8- Loop to the 3rd step
+    9- When the DAG is finished, the software exits
+
+    Every exception or error are raised to the top level of the software through WopMarsException with
     a String explaining the context and details about the exception.
     """    
     def __init__(self):
         """
-        Constructor of WorkflowManager.
-
         The parser will give the DAG which will be executed.
         The queue_exec is the Thread pool. It will contains the tool threads that will wait for being executed. Each tool
         should appear only once in the queue.
@@ -73,10 +71,9 @@ class WorkflowManager(ToolWrapperObserver):
 
         The database is setUp here if workflow side tables have not been created yet.
 
-        The dag is taken thanks to the "parse()" method of the parser. And then pruned by the get_dag_to_exec method
+        The dag is taken thanks to the :meth:`~.wopmars.main.tagc.framework.parsing.Parser.Parser.parse` method of the parser. And then pruned by the :meth:`~.wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.get_dag_to_exec` method
         which will set the right DAG to be executed.
-        Then, execute_from is called with no argument to get the origin nodes.
-        :return:
+        Then, :meth:`~.wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.execute_from` is called with no argument to get the origin nodes.
         """
         # This create_all is supposed to only create workflow-management side tables (called "wom_*")
         SQLManager.instance().create_all()
@@ -94,6 +91,9 @@ class WorkflowManager(ToolWrapperObserver):
         self.execute_from()
 
     def erase_output(self):
+        """
+        Erase the outputs of the DAG that will be executed in order to prevents conflicts.
+        """
         list_tw = self.__dag_to_exec.nodes()
         set_files = set()
         set_tables = set()
@@ -129,7 +129,6 @@ class WorkflowManager(ToolWrapperObserver):
 
         The set of obtained rules are used to build the "dag_to_exec". The nodes returned by get_all_successors and
         get_all_predecessors are implicitly all related.
-        :return:
         """
         if OptionManager.instance()["--sourcerule"] is not None:
             try:
@@ -178,7 +177,8 @@ class WorkflowManager(ToolWrapperObserver):
 
         A trace of the already_runned ToolWrapper objects is kept in order to avoid duplicate execution.
 
-        :param node: ToolWrapper a node of the DAG or None, if it executes from the root.
+        :param node: A node of the DAG or None, if it needs to be executed from the root.
+        :type node: :class:`~.wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper`
         :return: void
         """
         # the first list will be the root nodes
@@ -211,8 +211,7 @@ class WorkflowManager(ToolWrapperObserver):
         After that, the code check for the state of the workflow and gather the informations to see if the workflow
         is finished, if it encounter an error or if it is currently running.
 
-        :raise WopMarsException: The workflow encounter a problem and must stop.
-        :return: void
+        :raises WopMarsException: The workflow encounter a problem and must stop.
         """
 
         #
@@ -311,8 +310,10 @@ class WorkflowManager(ToolWrapperObserver):
         """
         Set the finsihing information of the whole workflow.
 
-        :param finished_at: datetime.datetime object representing the finishing date of the workflow
-        :param status: the final status of the workflow
+        :param finished_at: The finishing date of the workflow
+        :type finished_at: datetime.datetime
+        :param status: The final status of the workflow
+        :type status: str
         """
         modify_exec = self.__session.query(Execution).order_by(Execution.id.desc()).first()
         if modify_exec is not None:
@@ -326,7 +327,8 @@ class WorkflowManager(ToolWrapperObserver):
         """
         Check if all the predecessors of the given toolwrapper have yet been executed in this workflow.
 
-        :param tw: ToolWrapper
+        :param tw: Node of the DAG
+        :type tw: :class:`~.wopmars.main.framework.bdd.tables.ToolWrapper.ToolWrapper`
         :return: Bool
         """
         return bool(self.__dag_to_exec.get_all_predecessors(tw).difference(set([tw])).issubset(set(self.__already_runned)))
@@ -342,8 +344,8 @@ class WorkflowManager(ToolWrapperObserver):
             - the tw_old inputs are the same
             - the tw_old outputs are ok and ready
 
-        :param tw:
-        :return:
+        :param tw: The Toolwrapper to test
+        :type tw: :class:`~.wopmars.main.framework.bdd.tables.ToolWrapper.ToolWrapper`
         """
         session = SQLManager.instance().get_session()
         list_same_toolwrappers = session.query(ToolWrapper).filter(ToolWrapper.toolwrapper == tw.toolwrapper)\
@@ -375,7 +377,7 @@ class WorkflowManager(ToolWrapperObserver):
         Handle thread_toolwrapper success by continuing the dag.
 
         :param thread_toolwrapper: ToolWrapper thread that just succeed
-        :return:
+        :type thread_toolwrapper: :class:`~.wopmars.main.tagc.management.ToolThread.ToolThread`
         """
         self.__session.add(thread_toolwrapper.get_toolwrapper())
         self.__session.commit()

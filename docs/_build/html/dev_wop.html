@@ -43,8 +43,8 @@
   <div class="section" id="software-documentation">
 <h1>Software Documentation<a class="headerlink" href="#software-documentation" title="Permalink to this headline">¶</a></h1>
 <p>This manual is dedicated to the developers who want to improve <strong>WoPMaRS</strong> by adding new features or correcting bugs.</p>
-<div class="section" id="the-history-of-wopmars">
-<h2>The history of WoPMaRS<a class="headerlink" href="#the-history-of-wopmars" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="the-history-of-wopmars-executions">
+<h2>The history of WoPMaRS executions<a class="headerlink" href="#the-history-of-wopmars-executions" title="Permalink to this headline">¶</a></h2>
 <p><strong>WoPMaRS</strong> keeps track of what has been done thanks to an history stored in database with the prefix <code class="docutils literal"><span class="pre">wom</span></code> in table names.</p>
 <p>Numerous calls to those tables are done during all the process of the parsing of the definition file and the building of the execution DAG.</p>
 <div class="admonition note">
@@ -53,29 +53,826 @@
 </div>
 <p>Here is a list of the tables used for history. All of the associated models are stored under <code class="docutils literal"><span class="pre">wopmars.main.tagc.framework.bdd.tables</span></code>. If you want more informations about the models themselves, you should follow the links to get the code documentation:</p>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">wom_execution</span></code> represented by the model <code class="docutils literal"><span class="pre">Execution</span></code></li>
-<li><code class="docutils literal"><span class="pre">wom_rule</span></code> represented by the model <code class="docutils literal"><span class="pre">Toolwrapper</span></code></li>
-<li><code class="docutils literal"><span class="pre">wom_file</span></code> represented by the model <code class="docutils literal"><span class="pre">IOFilePut</span></code></li>
-<li><code class="docutils literal"><span class="pre">wom_table</span></code> represented by the model <code class="docutils literal"><span class="pre">IODbPut</span></code></li>
-<li><code class="docutils literal"><span class="pre">wom_modification_table</span></code> represented by the model <code class="docutils literal"><span class="pre">ModificationTable</span></code></li>
-<li><code class="docutils literal"><span class="pre">wom_option</span></code> represented by the model <code class="docutils literal"><span class="pre">Option</span></code></li>
+<li><code class="docutils literal"><span class="pre">wom_execution</span></code> represented by the model <a class="reference internal" href="#wopmars.main.tagc.framework.bdd.tables.Execution.Execution" title="wopmars.main.tagc.framework.bdd.tables.Execution.Execution"><code class="xref py py-class docutils literal"><span class="pre">Execution</span></code></a></li>
+<li><code class="docutils literal"><span class="pre">wom_rule</span></code> represented by the model <a class="reference internal" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper" title="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper"><code class="xref py py-class docutils literal"><span class="pre">ToolWrapper</span></code></a></li>
+<li><code class="docutils literal"><span class="pre">wom_type</span></code> represented by the model <a class="reference internal" href="#wopmars.main.tagc.framework.bdd.tables.Type.Type" title="wopmars.main.tagc.framework.bdd.tables.Type.Type"><code class="xref py py-class docutils literal"><span class="pre">Type</span></code></a></li>
+<li><code class="docutils literal"><span class="pre">wom_file</span></code> represented by the model <a class="reference internal" href="#wopmars.main.tagc.framework.bdd.tables.IOFilePut.IOFilePut" title="wopmars.main.tagc.framework.bdd.tables.IOFilePut.IOFilePut"><code class="xref py py-class docutils literal"><span class="pre">IOFilePut</span></code></a></li>
+<li><code class="docutils literal"><span class="pre">wom_table</span></code> represented by the model <a class="reference internal" href="#wopmars.main.tagc.framework.bdd.tables.IODbPut.IODbPut" title="wopmars.main.tagc.framework.bdd.tables.IODbPut.IODbPut"><code class="xref py py-class docutils literal"><span class="pre">IODbPut</span></code></a></li>
+<li><code class="docutils literal"><span class="pre">wom_modification_table</span></code> represented by the model <code class="xref py py-class docutils literal"><span class="pre">ModificationTable</span></code></li>
+<li><code class="docutils literal"><span class="pre">wom_option</span></code> represented by the model <a class="reference internal" href="#wopmars.main.tagc.framework.bdd.tables.Option.Option" title="wopmars.main.tagc.framework.bdd.tables.Option.Option"><code class="xref py py-class docutils literal"><span class="pre">wopmars.main.tagc.framework.bdd.tables.Option.Option</span></code></a></li>
 </ul>
+<div class="figure align-center" id="id1">
+<img alt="_images/mcd.png" src="_images/mcd.png" />
+<p class="caption"><span class="caption-text"><em>Here is a detailed entity-relationship model of the history in the database</em></span></p>
+</div>
 </div>
 <div class="section" id="building-the-execution-dag">
 <h2>Building the execution DAG<a class="headerlink" href="#building-the-execution-dag" title="Permalink to this headline">¶</a></h2>
-<p>The workflow DAG is built from the workflow definition file. However, there is a post treatment of the workflow DAG to get only the rules that the user wants to execute. In this part, I'll focus on the reading of the workflow definition file.</p>
-<p>The module responsible of the parsing of the workflow definition file is <code class="docutils literal"><span class="pre">wopmars.main.tagc.framework.parsing.Reader</span></code>. The class <code class="docutils literal"><span class="pre">Reader</span></code> of this module aims to fill the databse with the informations relatives to the workflow.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last"><code class="docutils literal"><span class="pre">Reader</span></code> is also responsible of parsing tool command</p>
-</div>
-<p>Once all informations regarding the workflow definition file have been stored in the database, the options <code class="docutils literal"><span class="pre">--targetrule</span></code> and <code class="docutils literal"><span class="pre">--sourcerule</span></code> are parsed in order to get only the rules that are intended to be executed by the user.</p>
-<p>To build the DAG itself. A class <code class="docutils literal"><span class="pre">DAG</span></code> which inherit from <code class="docutils literal"><span class="pre">networkx.DiGraph</span></code> has been written. This class takes a set of nodes as argument and build itself by determining which nodes are following which others. Since the node are actually <code class="docutils literal"><span class="pre">Toolwrapper</span></code>, a node follows an other node if one output of the former is in the list of inputs of the last. This information is given by the method <code class="docutils literal"><span class="pre">follows</span></code> of <code class="docutils literal"><span class="pre">Toolwrappers</span></code>.</p>
+<p>The workflow DAG is built from the workflow definition file. However, there is a post treatment of the workflow DAG to get only the rules that the user wants to execute.</p>
+<p>The class responsible of the parsing of the workflow definition file (and the <code class="docutils literal"><span class="pre">tool</span></code> command) is <a class="reference internal" href="#wopmars.main.tagc.framework.parsing.Reader.Reader" title="wopmars.main.tagc.framework.parsing.Reader.Reader"><code class="xref py py-class docutils literal"><span class="pre">wopmars.main.tagc.framework.parsing.Reader.Reader</span></code></a>. The class <a class="reference internal" href="#wopmars.main.tagc.framework.parsing.Reader.Reader" title="wopmars.main.tagc.framework.parsing.Reader.Reader"><code class="xref py py-class docutils literal"><span class="pre">Reader</span></code></a> aims to fill the database with the informations relatives to the workflow.</p>
+<p>Once all informations regarding the workflow definition file have been stored in the database, the options <code class="docutils literal"><span class="pre">--targetrule</span></code> and <code class="docutils literal"><span class="pre">--sourcerule</span></code> are parsed in order to get only the rules that are intended to be executed by the user (see <a class="reference external" href="use.html#options-and-arguments">Options and Arguments</a> of WoPMaRS).</p>
+<p>To build the DAG itself, a class <a class="reference internal" href="#wopmars.main.tagc.framework.management.DAG.DAG" title="wopmars.main.tagc.framework.management.DAG.DAG"><code class="xref py py-class docutils literal"><span class="pre">DAG</span></code></a> which inherit from <code class="docutils literal"><span class="pre">networkx.DiGraph</span></code> has been written. This class takes a set of nodes as argument and build itself by determining which nodes are following which others. Since the nodes are actually <a class="reference internal" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper" title="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper"><code class="xref py py-class docutils literal"><span class="pre">ToolWrapper</span></code></a>, a node follows an other node if one output of the former is in the list of inputs of the last. This information is given by the method <a class="reference internal" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.follows" title="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.follows"><code class="xref py py-meth docutils literal"><span class="pre">follows()</span></code></a> of <a class="reference internal" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper" title="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper"><code class="xref py py-class docutils literal"><span class="pre">ToolWrapper</span></code></a>.</p>
 </div>
 <div class="section" id="executing-the-dag">
 <h2>Executing the DAG<a class="headerlink" href="#executing-the-dag" title="Permalink to this headline">¶</a></h2>
-<p>It is the <code class="docutils literal"><span class="pre">WorkflowManager</span></code> class from the package <code class="docutils literal"><span class="pre">wopmars.main.tagc.framework.management.WorfklowManager</span></code> which is responsible of executing the DAG. The main methods of this class are <code class="docutils literal"><span class="pre">run_queue</span></code> and <code class="docutils literal"><span class="pre">execute_from</span></code>. Basically, <code class="docutils literal"><span class="pre">execute_from</span></code> fill the queue with the <cite>Toolwrappers</cite> that should be executed soon and <code class="docutils literal"><span class="pre">run_queue</span></code> actually execute the queue after performing some tests on the inputs of the <cite>Toolwrappers</cite>.</p>
-<span class="target" id="module-wopmars.main.tagc.framework.management.WorkflowManager"></span><p>Module containing the WorkflowManager class</p>
+<p>It is the <a class="reference internal" href="#wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager" title="wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager"><code class="xref py py-class docutils literal"><span class="pre">WorkflowManager</span></code></a> which is responsible of executing the DAG. The main methods of this class are <a class="reference internal" href="#wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.run_queue" title="wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.run_queue"><code class="xref py py-meth docutils literal"><span class="pre">run_queue()</span></code></a> and <a class="reference internal" href="#wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.execute_from" title="wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.execute_from"><code class="xref py py-meth docutils literal"><span class="pre">execute_from()</span></code></a>. Basically, <code class="docutils literal"><span class="pre">execute_from</span></code> fill the queue with the <cite>Toolwrappers</cite> that should be executed soon and <code class="docutils literal"><span class="pre">run_queue</span></code> actually execute the queue after performing some tests on the inputs of the <cite>Toolwrappers</cite>.</p>
+<p>conseil: faire une option &quot;supprimer le contenu de la table avant l'exécution&quot; si l'utilisateur veut écraser des résultats</p>
+<hr class="docutils" />
+<dl class="class">
+<dt id="wopmars.main.tagc.framework.parsing.Reader.Reader">
+<em class="property">class </em><code class="descclassname">wopmars.main.tagc.framework.parsing.Reader.</code><code class="descname">Reader</code><a class="headerlink" href="#wopmars.main.tagc.framework.parsing.Reader.Reader" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class is responsible of the parsing of the user's entries:</p>
+<blockquote>
+<div><ul class="simple">
+<li>the arguments given with the <code class="docutils literal"><span class="pre">tool</span></code> command</li>
+<li>the content of the workflow definition file, in normal mode</li>
+</ul>
+</div></blockquote>
+<p>This module uses the <code class="docutils literal"><span class="pre">yaml</span></code> library in order to parse the workflow definition file. Some additional rules have been
+added to the <code class="docutils literal"><span class="pre">yaml</span></code> library in order to prevent duplicate rules.</p>
+<p>Also, once the <code class="docutils literal"><span class="pre">Reader</span></code> has gotten the workflow definition informations, it'll check for eventual errors and then
+store them in the database. Those stored informations are what we call the &quot;history&quot; of <strong>WoPMaRS</strong>.</p>
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.parsing.Reader.Reader.load_definition_file">
+<code class="descname">load_definition_file</code><span class="sig-paren">(</span><em>s_definition_file</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.parsing.Reader.Reader.load_definition_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open the definition file and load it's content in a dictionnary thanks to the <code class="docutils literal"><span class="pre">yaml</span></code> library. <code class="docutils literal"><span class="pre">yaml</span></code> can
+raise an exception if the yaml specifications are not respected or if there is duplicates at the same level of
+hierarchy in the definition file. If so, the exception is caught then wrapped into a <code class="docutils literal"><span class="pre">WopMarsException</span></code>.</p>
+<p>The check of the grammar of the definition file is done during this step but no tests are performed regarding
+to the actual content of the definition file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>s_definition_file</strong> (<em>str</em>) -- Path to the definition file</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>WopMarsException</strong> -- The yaml specifications are not respected</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="wopmars.main.tagc.framework.parsing.Reader.Reader.check_duplicate_rules">
+<em class="property">static </em><code class="descname">check_duplicate_rules</code><span class="sig-paren">(</span><em>s_workflow_file</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.parsing.Reader.Reader.check_duplicate_rules" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method raises an exception if the workflow definition file contains duplicate rule names.</p>
+<p>The workflow definition file should contain rules with different name. It is therefore recommended to not
+call rules with tool names but functionality instead. Example:</p>
+<blockquote>
+<div><div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">rule get_snp</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">tool</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">SNPGetter</span>
+    <span class="l l-Scalar l-Scalar-Plain">input</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span>
+            <span class="l l-Scalar l-Scalar-Plain">etc..</span>
+        <span class="l l-Scalar l-Scalar-Plain">table</span><span class="p p-Indicator">:</span>
+            <span class="l l-Scalar l-Scalar-Plain">etc..</span>
+    <span class="l l-Scalar l-Scalar-Plain">output</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span>
+            <span class="l l-Scalar l-Scalar-Plain">etc..</span>
+        <span class="l l-Scalar l-Scalar-Plain">table</span><span class="p p-Indicator">:</span>
+            <span class="l l-Scalar l-Scalar-Plain">etc..</span>
+    <span class="l l-Scalar l-Scalar-Plain">params</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">etc..</span>
+</pre></div>
+</div>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>s_workflow_file</strong> (<em>str</em>) -- The content of the definition file</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>WopMarsException</strong> -- There is a duplicate rule name</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.parsing.Reader.Reader.is_grammar_respected">
+<code class="descname">is_grammar_respected</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.parsing.Reader.Reader.is_grammar_respected" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the definition file respects the grammar. Throw a WopMarsException exception if not.</p>
+<p>The formal representation of the grammar is:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>WoPMaRS       = rule
+identifier    = String
+ni            = NEWLINE INDENT
+rule          = &quot;rule&quot; identifier &quot;:&quot; ruleparams
+ruleparams    = [ni tool] [ni input] [ni output] [ni params]
+filesortables = (ni files|ni tables){0-2}
+files         = &quot;file&quot;  &quot;:&quot; (ni identifier ”:” stringliteral)+
+tables        = &quot;table&quot;  &quot;:&quot; (ni identifier ”:” stringliteral)+
+tool          = &quot;tool&quot;   &quot;:&quot; stringliteral
+input         = &quot;input&quot;  &quot;:&quot; ni filesortables
+output        = &quot;output&quot; &quot;:&quot; ni filesortables
+params        = &quot;params&quot; &quot;:&quot; (ni identifier ”:” stringliteral)+
+(NEWLINE WoPMaRS)+
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><strong>WopMarsException</strong> -- The grammar is not respected</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.parsing.Reader.Reader.load_one_toolwrapper">
+<code class="descname">load_one_toolwrapper</code><span class="sig-paren">(</span><em>s_toolwrapper</em>, <em>s_dict_inputs</em>, <em>s_dict_outputs</em>, <em>s_dict_params</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.parsing.Reader.Reader.load_one_toolwrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method called when the <code class="docutils literal"><span class="pre">tool</span></code> command is used. It is equivalent to the <a class="reference internal" href="#wopmars.main.tagc.framework.parsing.Reader.Reader.read" title="wopmars.main.tagc.framework.parsing.Reader.Reader.read"><code class="xref py py-meth docutils literal"><span class="pre">read()</span></code></a> method but create a workflow
+with only one toolwrapper. The workflow is also stored inside the database.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>s_toolwrapper</strong> (<em>str</em>) -- The name of the toolwrapper (will be imported)</li>
+<li><strong>s_dict_inputs</strong> (<em>str</em>) -- A string containing the dict of input files</li>
+<li><strong>s_dict_outputs</strong> (<em>str</em>) -- A string containing the dict of output files</li>
+<li><strong>s_dict_params</strong> (<em>str</em>) -- A string containing the dict of params</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>WopMarsException</strong> -- There is an error while accessing the database</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.parsing.Reader.Reader.read">
+<code class="descname">read</code><span class="sig-paren">(</span><em>s_definition_file</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.parsing.Reader.Reader.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the file given and insert the rules of the workflow in the database.</p>
+<p>The definition file is supposed to be properly formed. The validation of the content of the definition is done
+during the instanciation of the tools.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Param:</th><td class="field-body">s_definition_file: String containing the path to the definition file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raise:</th><td class="field-body">WopmarsException: The content is not validated</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.parsing.Reader.Reader.create_toolwrapper_entry">
+<code class="descname">create_toolwrapper_entry</code><span class="sig-paren">(</span><em>str_rule_name</em>, <em>str_wrapper_name</em>, <em>dict_dict_dict_elm</em>, <em>input_entry</em>, <em>output_entry</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.parsing.Reader.Reader.create_toolwrapper_entry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Actual creating of the Toolwrapper object.</p>
+<p>The toolwrapper object is an entry of the table rule in the resulting database.</p>
+<p>If the scoped_session has current modification, they probably will be commited during this method:
+tables are created and this can only be done with clean session.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>str_rule_name</strong> (<em>str</em>) -- Contains the name of the rule in which the toolwrapper will be used.</li>
+<li><strong>str_wrapper_name</strong> (<em>str</em>) -- Contains the name of the toolwrapper. It will be used for importing the correct module and then for creating the class</li>
+<li><strong>dict_dict_dict_elm</strong> (<em>dict(dict(dict()))</em>) -- &quot;input&quot;s &quot;output&quot;s and &quot;params&quot; and will be used to make relations between options / input / output and the toolwrapper.</li>
+<li><strong>input_entry</strong> (<a class="reference internal" href="#wopmars.main.tagc.framework.bdd.tables.Type.Type" title="wopmars.main.tagc.framework.bdd.tables.Type.Type"><code class="xref py py-class docutils literal"><span class="pre">wopmars.main.tagc.framework.bdd.tables.Type.Type</span></code></a>) -- input entry</li>
+<li><strong>output_entry</strong> (<a class="reference internal" href="#wopmars.main.tagc.framework.bdd.tables.Type.Type" title="wopmars.main.tagc.framework.bdd.tables.Type.Type"><code class="xref py py-class docutils literal"><span class="pre">wopmars.main.tagc.framework.bdd.tables.Type.Type</span></code></a>) -- output entry</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">TooLWrapper instance</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="class">
+<dt id="wopmars.main.tagc.utils.exceptions.WopMarsException.WopMarsException">
+<em class="property">class </em><code class="descclassname">wopmars.main.tagc.utils.exceptions.WopMarsException.</code><code class="descname">WopMarsException</code><span class="sig-paren">(</span><em>context=''</em>, <em>message=''</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.utils.exceptions.WopMarsException.WopMarsException" title="Permalink to this definition">¶</a></dt>
+<dd><p>WopMarsException inherit from Exception and is thrown by every part of the .</p>
+<p>This exception is thrown with a context and a message. The context is supposed to explain where the exception has
+occured while the message gives more specific details about the exception.</p>
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="class">
+<dt id="wopmars.main.tagc.framework.bdd.tables.Execution.Execution">
+<em class="property">class </em><code class="descclassname">wopmars.main.tagc.framework.bdd.tables.Execution.</code><code class="descname">Execution</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.Execution.Execution" title="Permalink to this definition">¶</a></dt>
+<dd><p>The execution table is a counter of the executions. It allows to discriminate one execution from one other.</p>
+<p>If 2 executions are exactly the same, they will be both stocked in the database with different execution ids.
+The table <code class="docutils literal"><span class="pre">wom_execution</span></code> contains the following fields:</p>
+<ul>
+<li><p class="first">id: INTEGRE: primary key - auto increment - arbitrary iD</p>
+</li>
+<li><p class="first">started_at: DATE - date at wich the execution started</p>
+</li>
+<li><p class="first">finished_at: DATE - date at wich the execution finished</p>
+</li>
+<li><p class="first">time: FLOAT - the total time of execution</p>
+</li>
+<li><p class="first">status: VARCHAR(255) - the final status of the Execution. it can be:</p>
+<blockquote>
+<div><ul class="simple">
+<li>SUCCESS</li>
+<li>ERROR</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="class">
+<dt id="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper">
+<em class="property">class </em><code class="descclassname">wopmars.main.tagc.framework.bdd.tables.ToolWrapper.</code><code class="descname">ToolWrapper</code><span class="sig-paren">(</span><em>rule_name=''</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>The class ToolWrapper is the superclass of the wrappers which will be designed by the wrapper developers. It is the
+SQLAlchemy Model of the table <code class="docutils literal"><span class="pre">wom_rule</span></code> with the following fields:</p>
+<ul>
+<li><p class="first">id: INTEGER - primary_key - auto increment - arbitrary ID</p>
+</li>
+<li><p class="first">name: VARCHAR(255) - the name of the rule</p>
+</li>
+<li><p class="first">toolwrapper: VARCHAR(255) - the name of the Toolwrapper</p>
+</li>
+<li><p class="first">execution_id: INTEGER - foreign key to the table <code class="docutils literal"><span class="pre">wom_execution</span></code> - the associated execution</p>
+</li>
+<li><p class="first">started_at: DATE - date at wich the toolwrapper started its execution</p>
+</li>
+<li><p class="first">finished_at: DATE - date at wich the toolwrapper finished its execution</p>
+</li>
+<li><p class="first">time: FLOAT - the total time toolwrapper execution</p>
+</li>
+<li><p class="first">status: VARCHAR(255) - the final status of the Toolwrapper. it can be:</p>
+<blockquote>
+<div><ul class="simple">
+<li>NOT PLANNED: the toolwrapper execution wasn't evene xpected by the user</li>
+<li>ALREADY EXECUTED: the toolwrapper has been previously executed in an old workflow and doesn't need to be re-executed</li>
+<li>EXECUTED: the toolwrapper has been executed</li>
+<li>EXECUTION_ERROR: the toolwrapper has encountered an error during the execution</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.are_inputs_ready">
+<code class="descname">are_inputs_ready</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.are_inputs_ready" title="Permalink to this definition">¶</a></dt>
+<dd><p>WorkflowManager method:</p>
+<p>Check if inputs are ready</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">bool - True if inputs are ready.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.follows">
+<code class="descname">follows</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.follows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parsing method:</p>
+<p>Check whether the &quot;self&quot; follows directly &quot;other&quot; in the execution DAG.</p>
+<p>Check whether &quot;other&quot; has one output value in &quot;self&quot; possible input values.
+The output value are given from the Relationnal mapping between toolwrappers and related objects:
+* IODbPut
+* IOFilePut</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> -- ToolWrapper that is possibly a predecessor of &quot;self&quot;</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool True if &quot;self&quot; follows &quot;other&quot;</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.input_file">
+<code class="descname">input_file</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.input_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the path of the specified input file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> -- String the name of the variable containing the path</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.input_table">
+<code class="descname">input_table</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.input_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the input table object of the given name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> -- String: the name of the Table object.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.is_content_respected">
+<code class="descname">is_content_respected</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.is_content_respected" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parsing method:</p>
+<p>This method checks if the parameters dictionary are properly formed, according to the specifications of the
+wrapper developer.</p>
+<p>Call of the methods &quot;is_options_respected&quot;, &quot;is_input_respected&quot; and &quot;is_output_respected&quot;</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.is_input_respected">
+<code class="descname">is_input_respected</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.is_input_respected" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parsing method:</p>
+<p>Check if the input files associated with the toolwrapper are ok according to the toolwrapper developer.</p>
+<p>It checks if the output variable names exists or not. If not, throws a WopMarsParsingException.</p>
+<p>This method calls the &quot;specify_input_file&quot; method which have been written by the toolwrapper developer. Since the
+options are checked first, the developer can write a conditional behavior depending on the options given for
+the toolwrapper.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><strong>WopMarsException</strong> -- The input are not respected by the user.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.is_options_respected">
+<code class="descname">is_options_respected</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.is_options_respected" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parsing method:</p>
+<p>This method check if the params given in the constructor are properly formed for the tool.</p>
+<p>It checks if the params names given by the user exists or not, if the type correspond and if the required
+options are given. If not, throws a WopMarsParsingException.</p>
+<p>This method calls the &quot;specify_params&quot; method of the toolwrapper. This method should return a dictionnary
+associating the name of the option with a String containing the types allowed with it. A &quot;|&quot; is used between
+each types allowed for one option.</p>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s1">&#39;option1&#39;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;option2&#39;</span><span class="p">:</span> <span class="s2">&quot;required|str&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><strong>WopMarsException</strong> -- If the params names and types are not respected by the user.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.is_output_ok">
+<code class="descname">is_output_ok</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.is_output_ok" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the output of self are ready to use.</p>
+<p>What is checked:
+-for files:</p>
+<blockquote>
+<div><ul class="simple">
+<li>They exists</li>
+<li>Their size and date are not None</li>
+<li>Their date are after all input dates</li>
+<li>Their size and date in bdd are the same than the real ones</li>
+</ul>
+</div></blockquote>
+<ul>
+<li><p class="first">for table:</p>
+<blockquote>
+<div><ul class="simple">
+<li>They exists</li>
+<li>Their date are after all input dates</li>
+<li>Their date are the same in table 'table' than in 'modification_table'</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.is_output_respected">
+<code class="descname">is_output_respected</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.is_output_respected" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parsing method:</p>
+<p>Check if the output dictionary given in the constructor is properly formed for the tool.</p>
+<p>It checks if the output variable names exists or not. If not, throws a WopMarsParsingException.</p>
+<p>This method calls the &quot;specify_output_file&quot; method which have been written by the toolwrapper developer. Since the
+options are checked first, the developer can write a conditional behavior depending on the options given for
+the toolwrapper.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><strong>WopMarsException</strong> -- The output are not respected by the user.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.output_file">
+<code class="descname">output_file</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.output_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the path of the specified output file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> -- String the name of the variable containing the path</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.output_table">
+<code class="descname">output_table</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.output_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the output table object of the given name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> -- String: the name of the Table object.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.same_input_than">
+<code class="descname">same_input_than</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.same_input_than" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the other ToolWrapper have the same input than self.</p>
+<dl class="docutils">
+<dt>The input are say &quot;the same&quot; if:</dt>
+<dd><ul class="first last simple">
+<li>The table have the same name and the same last modifcation datetime</li>
+<li>The file have the same name, the same lastm mdoficiation datetime and the same size</li>
+</ul>
+</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> (<a class="reference internal" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper" title="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper"><code class="xref py py-class docutils literal"><span class="pre">ToolWrapper</span></code></a>) -- an other Toolwrapper which maybe as the same inputs</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.set_args_date_and_size">
+<code class="descname">set_args_date_and_size</code><span class="sig-paren">(</span><em>type</em>, <em>dry=False</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.set_args_date_and_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>WorkflowManager method:</p>
+<p>The date and the size of the files are set according to the actual date of last modification and size of the system files</p>
+<p>The date of the tables are set according to the date of last modification notified in the modification_table table
+If the type of IOPut is &quot;output&quot; and the execution is &quot;not dry&quot;, the date in modification_table is set to the
+current time.time() datetime.</p>
+<p># todo modify it to take commits into account isntead of the status of 'output' of a table</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>type</strong> (<em>str</em>) -- &quot;input&quot; or &quot;output&quot;</li>
+<li><strong>dry</strong> (<em>bool</em>) -- Say if the execution has been simulated.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.set_execution_infos">
+<code class="descname">set_execution_infos</code><span class="sig-paren">(</span><em>start=None</em>, <em>stop=None</em>, <em>status=None</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.set_execution_infos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic method to set the informations relatives to the execution of the ToolWrapper.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>start</strong> -- The date of start of the Toolwrapper</li>
+<li><strong>stop</strong> -- The date of end of the Toolwrapper</li>
+<li><strong>status</strong> -- The status of the Toolwrapper</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.specify_input_file_dict">
+<code class="descname">specify_input_file_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.specify_input_file_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the dict of input_files:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Dict: &lt;String&gt;INPUTNAME : &lt;IOFilePut&gt;INPUT</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.specify_input_table_dict">
+<code class="descname">specify_input_table_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.specify_input_table_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the dict of input_table:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Dict: &lt;String&gt;INPUTNAME : &lt;IODbPut&gt;INPUT</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.specify_output_file_dict">
+<code class="descname">specify_output_file_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.specify_output_file_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the dict of output_files:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Dict: &lt;String&gt;OUTPUTNAME : &lt;IOFilePut&gt;OUTPUT</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.specify_output_table_dict">
+<code class="descname">specify_output_table_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper.specify_output_table_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the dict of output_table:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Dict: &lt;String&gt;OUTPUTNAME : &lt;IODbPut&gt;OUTPUT</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="class">
+<dt id="wopmars.main.tagc.framework.bdd.tables.IOFilePut.IOFilePut">
+<em class="property">class </em><code class="descclassname">wopmars.main.tagc.framework.bdd.tables.IOFilePut.</code><code class="descname">IOFilePut</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.IOFilePut.IOFilePut" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class extends IOPut and is specific to the input or output files. It is the model which store the references
+to the actual files needed by the user. The table <code class="docutils literal"><span class="pre">wom_file</span></code> associated with this model contains the
+following fields:</p>
+<ul class="simple">
+<li>id: INTEGER - primary key - autoincrement - arbitrary ID</li>
+<li>name: VARCHAR(255) - the name of the reference to the file</li>
+<li>path: VARCHAR(255) - the path to the file</li>
+<li>rule_id: INTEGER - foreign key to the associated rule ID: <a class="reference internal" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper" title="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper"><code class="xref py py-class docutils literal"><span class="pre">wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper</span></code></a></li>
+<li>type_id: INTEGER - foreign key to the associated type ID: <a class="reference internal" href="#wopmars.main.tagc.framework.bdd.tables.Type.Type" title="wopmars.main.tagc.framework.bdd.tables.Type.Type"><code class="xref py py-class docutils literal"><span class="pre">wopmars.main.tagc.framework.bdd.tables.Type.Type</span></code></a></li>
+<li>used_at: DATE - date at which the table have been used</li>
+<li>size: INTEGER - the size of the file</li>
+</ul>
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.bdd.tables.IOFilePut.IOFilePut.is_ready">
+<code class="descname">is_ready</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.IOFilePut.IOFilePut.is_ready" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the file exists on the system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">boolean: True if it exists, false if not</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="class">
+<dt id="wopmars.main.tagc.framework.bdd.tables.IODbPut.IODbPut">
+<em class="property">class </em><code class="descclassname">wopmars.main.tagc.framework.bdd.tables.IODbPut.</code><code class="descname">IODbPut</code><span class="sig-paren">(</span><em>model</em>, <em>tablename</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.IODbPut.IODbPut" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class extends IOPut and is specific to the input or output tables. It is the model which store the references
+to the actual tables needed by the user. The table <code class="docutils literal"><span class="pre">wom_table</span></code> associated with this model contains the
+following fields:</p>
+<ul class="simple">
+<li>id: INTEGER - primary key - autoincrement - arbitrary ID</li>
+<li>tablename: VARCHAR(255) - foreign key to the associated table: <code class="xref py py-class docutils literal"><span class="pre">wopmars.main.tagc.framework.bdd.tables.ModificationTable.ModificationTable</span></code> - the name of the referenced table</li>
+<li>model: VARCHAR(255) - the path to the model (in python notation)</li>
+<li>rule_id: INTEGER - foreign key to the associated rule ID: <a class="reference internal" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper" title="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper"><code class="xref py py-class docutils literal"><span class="pre">wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper</span></code></a></li>
+<li>type_id: INTEGER - foreign key to the associated type ID: <a class="reference internal" href="#wopmars.main.tagc.framework.bdd.tables.Type.Type" title="wopmars.main.tagc.framework.bdd.tables.Type.Type"><code class="xref py py-class docutils literal"><span class="pre">wopmars.main.tagc.framework.bdd.tables.Type.Type</span></code></a></li>
+<li>used_at: DATE - date at which the table have been used</li>
+</ul>
+<dl class="staticmethod">
+<dt id="wopmars.main.tagc.framework.bdd.tables.IODbPut.IODbPut.get_execution_tables">
+<em class="property">static </em><code class="descname">get_execution_tables</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.IODbPut.IODbPut.get_execution_tables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all the IODbPut objects found in model IODbPut.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">ResultSet IODbPut objects</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="wopmars.main.tagc.framework.bdd.tables.IODbPut.IODbPut.import_models">
+<em class="property">static </em><code class="descname">import_models</code><span class="sig-paren">(</span><em>model_names</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.IODbPut.IODbPut.import_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Import all the given models</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model_names</strong> (<em>Iterable(String)</em>) -- The path to the models</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.bdd.tables.IODbPut.IODbPut.init_on_load">
+<code class="descname">init_on_load</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.IODbPut.IODbPut.init_on_load" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is used by SQLAlchemy to regenerate the right object when loading it from the database. Here, we need to
+get back the actual Model from the model name and store it in self.__table.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.bdd.tables.IODbPut.IODbPut.is_ready">
+<code class="descname">is_ready</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.IODbPut.IODbPut.is_ready" title="Permalink to this definition">¶</a></dt>
+<dd><p>A IODbPut object is ready if its table exists and contains entries.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">bool if the table is ready</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="wopmars.main.tagc.framework.bdd.tables.IODbPut.IODbPut.set_tables_properties">
+<em class="property">static </em><code class="descname">set_tables_properties</code><span class="sig-paren">(</span><em>tables</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.IODbPut.IODbPut.set_tables_properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Import the models of the current execution and then associate models with IODbPut objects.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tables</strong> (<em>ResultSet(IODbPut)</em>) -- the IODbPut which need their table properties to be set.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="class">
+<dt id="wopmars.main.tagc.framework.bdd.tables.Type.Type">
+<em class="property">class </em><code class="descclassname">wopmars.main.tagc.framework.bdd.tables.Type.</code><code class="descname">Type</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.Type.Type" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class is the model of the table <code class="docutils literal"><span class="pre">wom_type</span></code>. It stores the two kind of entry named &quot;input&quot; and &quot;output&quot; which
+are associated with an ID.</p>
+<p>Fields:</p>
+<ul class="simple">
+<li>id: INTEGER - primary key -arbitrary ID</li>
+<li>name: VARCHAR(255) - the name of the type (&quot;input&quot; or &quot;output&quot;)</li>
+</ul>
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="class">
+<dt id="wopmars.main.tagc.framework.management.DAG.DAG">
+<em class="property">class </em><code class="descclassname">wopmars.main.tagc.framework.management.DAG.</code><code class="descname">DAG</code><span class="sig-paren">(</span><em>set_tools=None</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.management.DAG.DAG" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class inherits from networkx.DiGraph class and is able to represent a DAG of tool nodes. It takes a set of
+<code class="xref py py-class docutils literal"><span class="pre">ToolWrapper</span></code> and analyse it to extract dependencies between them.</p>
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.management.DAG.DAG.get_all_predecessors">
+<code class="descname">get_all_predecessors</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.management.DAG.DAG.get_all_predecessors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the set of all predecessors nodes from a given node in the DAG (node included).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>node</strong> (<a class="reference internal" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper" title="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper"><code class="xref py py-class docutils literal"><span class="pre">ToolWrapper</span></code></a>) -- a node of the DAG or None.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">set(node): all the predecessors of a given node.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.management.DAG.DAG.get_all_successors">
+<code class="descname">get_all_successors</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.management.DAG.DAG.get_all_successors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the set of all successors nodes from a given node in the DAG (node included).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>node</strong> (<a class="reference internal" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper" title="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper"><code class="xref py py-class docutils literal"><span class="pre">ToolWrapper</span></code></a>) -- a node of the DAG or None.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">set(node): all the successors of a given node.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.management.DAG.DAG.successors">
+<code class="descname">successors</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.management.DAG.DAG.successors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the successors of a node.</p>
+<p>The method is overwhelmed because if a node is None, then, the root nodes are returned.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>node</strong> (<a class="reference internal" href="#wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper" title="wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper"><code class="xref py py-class docutils literal"><span class="pre">ToolWrapper</span></code></a>) -- a node of the DAG or None.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">[node]:  the successors of the given node or the node at the root of the DAG.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.management.DAG.DAG.write_dot">
+<code class="descname">write_dot</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.management.DAG.DAG.write_dot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build the dot file.</p>
+<p>The .ps can be built from the dot file with the command line: &quot;dot -Tps {filename}.dot - o {filename}.ps&quot;</p>
+</dd></dl>
+
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="class">
+<dt id="wopmars.main.tagc.framework.bdd.tables.Option.Option">
+<em class="property">class </em><code class="descclassname">wopmars.main.tagc.framework.bdd.tables.Option.</code><code class="descname">Option</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.Option.Option" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Option class handle a key and a value and is able to say if it is properly formated. It is also the model of the
+table <code class="docutils literal"><span class="pre">wom_option</span></code> which contains the following fields:</p>
+<ul class="simple">
+<li>id: INTEGER - primary key - auto increment</li>
+<li>name: VARCHAR(255) - the name of the referenced option</li>
+<li>value: VRACHAR(255) - the value of the option</li>
+<li>rule_id: INTEGER - the ID of the associated rule</li>
+</ul>
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.bdd.tables.Option.Option.correspond">
+<code class="descname">correspond</code><span class="sig-paren">(</span><em>carac</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.bdd.tables.Option.Option.correspond" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the option value correspond to the type given by the tool wrapper. Throws a WopMarsException if
+not.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raise:</th><td class="field-body">WopMarsException</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>carac</strong> -- String containing the carac of the option in the format: &quot;carac1|carac2|carc3&quot;</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<hr class="docutils" />
 <dl class="class">
 <dt id="wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager">
 <em class="property">class </em><code class="descclassname">wopmars.main.tagc.framework.management.WorkflowManager.</code><code class="descname">WorkflowManager</code><a class="headerlink" href="#wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager" title="Permalink to this definition">¶</a></dt>
@@ -274,7 +1071,6 @@ is finished, if it encounter an error or if it is currently running.</p>
 
 </dd></dl>
 
-<p>conseil: faire une option &quot;supprimer le contenu de la table avant l'exécution&quot; si l'utilisateur veut écraser des résultats</p>
 </div>
 </div>
 
@@ -287,7 +1083,7 @@ is finished, if it encounter an error or if it is currently running.</p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Software Documentation</a><ul>
-<li><a class="reference internal" href="#the-history-of-wopmars">The history of WoPMaRS</a></li>
+<li><a class="reference internal" href="#the-history-of-wopmars-executions">The history of WoPMaRS executions</a></li>
 <li><a class="reference internal" href="#building-the-execution-dag">Building the execution DAG</a></li>
 <li><a class="reference internal" href="#executing-the-dag">Executing the DAG</a></li>
 </ul>

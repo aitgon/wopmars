@@ -1,6 +1,3 @@
-"""
-Module containing the IOFilePut class
-"""
 import os
 
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
@@ -13,7 +10,17 @@ from wopmars.main.tagc.utils.Logger import Logger
 
 class IOFilePut(IOPut, Base):
     """
-    This class extends IOPut and is specific to file input or output
+    This class extends IOPut and is specific to the input or output files. It is the model which store the references
+    to the actual files needed by the user. The table ``wom_file`` associated with this model contains the
+    following fields:
+
+    - id: INTEGER - primary key - autoincrement - arbitrary ID
+    - name: VARCHAR(255) - the name of the reference to the file
+    - path: VARCHAR(255) - the path to the file
+    - rule_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper`
+    - type_id: INTEGER - foreign key to the associated type ID: :class:`wopmars.main.tagc.framework.bdd.tables.Type.Type`
+    - used_at: DATE - date at which the table have been used
+    - size: INTEGER - the size of the file
     """
     __tablename__ = "wom_file"
 
@@ -32,7 +39,7 @@ class IOFilePut(IOPut, Base):
 
     def is_ready(self):
         """
-        Check if the file exists on the hard drive
+        Check if the file exists on the system.
 
         :return: boolean: True if it exists, false if not
         """
@@ -40,7 +47,7 @@ class IOFilePut(IOPut, Base):
         return os.path.isfile(self.path)
 
     def __eq__(self, other):
-        return os.path.abspath(self.path) == os.path.abspath(other.path)
+        return os.path.abspath(self.path) == os.path.abspath(other.path) and self.name == other.name
 
     def __hash__(self):
         return id(self)

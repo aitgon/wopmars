@@ -1,20 +1,11 @@
-"""
-This module contains the Reader class
-"""
 import datetime
 import importlib
 import re
-
 import time
-
 import os
 
-import sys
 import yaml
 from yaml.constructor import ConstructorError
-
-from wopmars.main.tagc.framework.bdd.tables.ToolWrapper import ToolWrapper
-
 try:
     from yaml import CLoader as Loader
 except ImportError:
@@ -27,10 +18,10 @@ from wopmars.main.tagc.framework.bdd.tables.Execution import Execution
 from wopmars.main.tagc.framework.bdd.tables.IODbPut import IODbPut
 from wopmars.main.tagc.framework.bdd.tables.IOFilePut import IOFilePut
 from wopmars.main.tagc.framework.bdd.tables.ModificationTable import ModificationTable
-
 from wopmars.main.tagc.framework.bdd.tables.Option import Option
 from wopmars.main.tagc.framework.bdd.tables.Type import Type
 from wopmars.main.tagc.utils.DictUtils import DictUtils
+
 from wopmars.main.tagc.utils.Logger import Logger
 from wopmars.main.tagc.utils.OptionManager import OptionManager
 from wopmars.main.tagc.utils.exceptions.WopMarsException import WopMarsException
@@ -38,33 +29,32 @@ from wopmars.main.tagc.utils.exceptions.WopMarsException import WopMarsException
 
 class Reader:
     """
-    The reader class is used to read the workflow definition file,
-    build the ToolWrapper objects and perform tests on the quality
-    of the definition file.
+    This class is responsible of the parsing of the user's entries:
+
+     - the arguments given with the ``tool`` command
+     - the content of the workflow definition file, in normal mode
+
+    This module uses the ``yaml`` library in order to parse the workflow definition file. Some additional rules have been
+    added to the ``yaml`` library in order to prevent duplicate rules.
+
+    Also, once the ``Reader`` has gotten the workflow definition informations, it'll check for eventual errors and then
+    store them in the database. Those stored informations are what we call the "history" of **WoPMaRS**.
     """
     def __init__(self):
-        """
-        Constructor of the reader.
-
-        Open the definition file and load it's content in a dictionnary thanks to the PyYaml library. If PyYaml raise
-        an exception, a WopMarsParsingException is raised instead.
-
-        The definition file is parsed in order to find duplicates rules if there is.
-        The method is_grammar_respected is called and can raise WopMarsParsingException too.
-
-        :raise: WopMarsParsingException: if the Yaml Spec are not respected
-        :param: s_definition_file: String: the definition file open in read mode
-        """
         self.__dict_workflow_definition = None
 
     def load_definition_file(self, s_definition_file):
         """
-        Load the definition file from the given path.
+        Open the definition file and load it's content in a dictionnary thanks to the ``yaml`` library. ``yaml`` can
+        raise an exception if the yaml specifications are not respected or if there is duplicates at the same level of
+        hierarchy in the definition file. If so, the exception is caught then wrapped into a ``WopMarsException``.
 
-        The integrity (form) of the definition is done during this step but no tests are performed regarding to the
-        actual content of the definition file.
+        The check of the grammar of the definition file is done during this step but no tests are performed regarding
+        to the actual content of the definition file.
 
-        :param s_definition_file: String path to the definition file
+        :param s_definition_file: Path to the definition file
+        :type s_definition_file: str
+        :raises WopMarsException: The yaml specifications are not respected
         """
         # Tests about grammar and syntax are performed here (file's existence is also tested here)
         try:
@@ -72,13 +62,13 @@ class Reader:
                 s_def_file_content = def_file.read()
             try:
                 # The workflow definition file is loaded as-it in memory by the pyyaml library
-                Logger.instance().info("Reading the definition file: " + str(s_definition_file))
-                # Parse the file to find duplicates rule names
+                Logger.instance().info("Reading the Wopfile: " + str(s_definition_file))
+                # Parse the file to find duplicates rule names (it is a double check with the following step)
                 Reader.check_duplicate_rules(s_def_file_content)
-                # Code found on the github: https://gist.github.com/pypt/94d747fe5180851196eb
                 # Allows to raise an exception if duplicate keys are found on the same document hirearchy level.
                 yaml.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, Reader.no_duplicates_constructor)
                 # The whole content of the definition file is loaded in this dict.
+                # yaml.load return None if there is no content in the String
                 self.__dict_workflow_definition = yaml.load(s_def_file_content) or {}
                 if self.__dict_workflow_definition == {}:
                     Logger.instance().warning("The workflow definition file is empty")
@@ -99,12 +89,12 @@ class Reader:
             raise WopMarsException("Error while parsing the configuration file: \n\tInput error:",
                                    "The specified file at " + s_definition_file + " doesn't exist.")
 
+    # Code from the github: https://gist.github.com/pypt/94d747fe5180851196eb
     @staticmethod
     def no_duplicates_constructor(loader, node, deep=False):
         """
-        Check for duplicate keys.
+        Make the yaml constructor to check for duplicate keys.
         """
-        # Code found on the github: https://gist.github.com/pypt/94d747fe5180851196eb
         mapping = {}
         for key_node, value_node in node.value:
             key = loader.construct_object(key_node, deep=deep)
@@ -113,51 +103,185 @@ class Reader:
                 raise ConstructorError("while constructing a mapping", node.start_mark,
                                        "found duplicate key (%s)" % key, key_node.start_mark)
             mapping[key] = value
-
         return loader.construct_mapping(node, deep)
 
     @staticmethod
-    def check_duplicate_rules(file):
+    def check_duplicate_rules(s_workflow_file):
         """
-        This method raises an exception if the workflow definition file contains duplicate keys.
+        This method raises an exception if the workflow definition file contains duplicate rule names.
 
         The workflow definition file should contain rules with different name. It is therefore recommended to not
         call rules with tool names but functionality instead. Example:
 
-        rule get_snp:
-            tool: SNPGetter
-            input:
-                etc..
-            output:
-                etc..
-            params:
-                etc..
+            .. code-block:: yaml
 
-        :param file: String this is the content of the definition file
+                rule get_snp:
+                    tool: SNPGetter
+                    input:
+                        file:
+                            etc..
+                        table:
+                            etc..
+                    output:
+                        file:
+                            etc..
+                        table:
+                            etc..
+                    params:
+                        etc..
+
+        :param s_workflow_file: The content of the definition file
+        :type s_workflow_file: str
+        :raises WopMarsException: There is a duplicate rule name
         """
         Logger.instance().debug("Looking for duplicate rules...")
         # All rules are found using this regex.
-        rules = re.findall(r'rule (.+?):', str(file))
+        rules = re.findall(r'rule (.+?):', str(s_workflow_file))
         seen = set()
+        # for each rule name
         for r in rules:
+            # if the rule has not been seen before
             if r not in seen:
+                # add it to the set of seen rules
                 seen.add(r)
             else:
+                # There is a duplicate rule name
                 raise WopMarsException("Error while parsing the configuration file:\n\t",
                                        "The rule " + r + " is duplicated.")
         Logger.instance().debug("No Duplicate.")
 
+    def is_grammar_respected(self):
+        """
+        Check if the definition file respects the grammar. Throw a WopMarsException exception if not.
+
+        The formal representation of the grammar is::
+
+            WoPMaRS       = rule
+            identifier    = String
+            ni            = NEWLINE INDENT
+            rule          = "rule" identifier ":" ruleparams
+            ruleparams    = [ni tool] [ni input] [ni output] [ni params]
+            filesortables = (ni files|ni tables){0-2}
+            files         = "file"  ":" (ni identifier ”:” stringliteral)+
+            tables        = "table"  ":" (ni identifier ”:” stringliteral)+
+            tool          = "tool"   ":" stringliteral
+            input         = "input"  ":" ni filesortables
+            output        = "output" ":" ni filesortables
+            params        = "params" ":" (ni identifier ”:” stringliteral)+
+            (NEWLINE WoPMaRS)+
+
+        :raises WopMarsException: The grammar is not respected
+        """
+        exemple_file_def = """
+    rule RULENAME:
+        tool: TOOLNAME
+        input:
+            file:
+                INPUTNAME: INPUTVALUE
+            table:
+                - path.to.table
+        output:
+            file:
+                OUTPUTNAME: OUTPUTVALUE
+            table:
+                - path.to.table
+        params:
+            OPTIONNAME: OPTIONVALUE
+
+    rule ...etc...
+        """
+        # recognize the rule blocks
+        regex_step1 = re.compile(r"(^rule [^\s]+$)")
+
+        # recognize the elements of the rule
+        regex_step2 = re.compile(r"(^params$)|(^tool$)|(^input$)|(^output$)")
+
+        # recognize the file/table blocks
+        regex_step3 = re.compile(r"(^file$)|(^table$)")
+
+        # The words found are tested against the regex to see if they match or not
+        for s_key_step1 in self.__dict_workflow_definition:
+            bool_toolwrapper = False
+            # The first level of indentation should only contain rules
+            if not regex_step1.search(s_key_step1):
+                raise WopMarsException("Error while parsing the configuration file: \n\t"
+                                       "The grammar of the WopMars's definition file is not respected:",
+                                       "The line containing:\'" +
+                                       str(s_key_step1) +
+                                       "\' doesn't match the grammar: it should start with 'rule'" +
+                                       "and contains only one word after the 'rule' keyword" +
+                                       "\nexemple:" + exemple_file_def)
+
+            for s_key_step2 in self.__dict_workflow_definition[s_key_step1]:
+                # the second level of indentation should only contain elements of rule
+                if not regex_step2.search(s_key_step2):
+                    raise WopMarsException("Error while parsing the configuration file: \n\t"
+                                           "The grammar of the WopMars's definition file is not respected:",
+                                           "The line containing:'" + str(s_key_step2) + "'" +
+                                           " for rule '" + str(s_key_step1) + "'" +
+                                           " doesn't match the grammar: it should be " +
+                                           "'tool', 'params', 'input' or 'output'" +
+                                           "\nexemple:" + exemple_file_def)
+                elif s_key_step2 == "input" or s_key_step2 == "output":
+                    for s_key_step3 in self.__dict_workflow_definition[s_key_step1][s_key_step2]:
+                        if not regex_step3.search(s_key_step3):
+                            raise WopMarsException("Error while parsing the configuration file: \n\t"
+                                                   "The grammar of the WopMars's definition file is not respected:",
+                                                   "The line containing:'" + str(s_key_step3) + "'" +
+                                                   " for rule '" + str(s_key_step1) + "'" +
+                                                   " doesn't match the grammar: it should be " +
+                                                   "'file' or 'table'" +
+                                                   "\nexemple:" + exemple_file_def)
+                        elif s_key_step3 == "file":
+                            for s_variable_name in self.__dict_workflow_definition[s_key_step1][s_key_step2][s_key_step3]:
+                                if type(self.__dict_workflow_definition[s_key_step1][s_key_step2][s_key_step3][s_variable_name]) != str:
+                                    raise WopMarsException("Error while parsing the configuration file: \n\t" +
+                                                           "The grammar of the WopMars's definition file is not respected:",
+                                                           "The line containing:'" + str(s_variable_name) + "'" +
+                                                           " for rule '" + str(s_key_step1) + "'" +
+                                                           " doesn't match the grammar: it should be the string containing the path to the file."
+                                                           "\nexemple:" + exemple_file_def)
+                        elif s_key_step3 == "table":
+                            for s_tablename in self.__dict_workflow_definition[s_key_step1][s_key_step2][s_key_step3]:
+                                if type(s_tablename) != str:
+                                    raise WopMarsException("Error while parsing the configuration file: \n\t"
+                                                           "The grammar of the WopMars's definition file is not respected:",
+                                                           "The line containing:'" + str(s_variable_name) + "'" +
+                                                           " for rule '" + str(s_key_step1) + "'" +
+                                                           " doesn't match the grammar: it should be the string containing the name of the Model."
+                                                           "\nexemple:" + exemple_file_def)
+
+                # There should be one tool at max in each rule
+                elif s_key_step2 == "tool":
+                    if bool_toolwrapper == False:
+                        bool_toolwrapper = True
+                    elif bool_toolwrapper == True:
+                        raise WopMarsException("Error while parsing the configuration file: \n\t",
+                                               "There is multiple tools specified for the " + str(s_key_step1))
+
+            # All rules should contain a tool
+            if not bool_toolwrapper:
+                raise WopMarsException("Error while parsing the configuration file: \n\t"
+                                       "The grammar of the WopMars's definition file is not respected:",
+                                       "The rule '" + str(s_key_step1) + "' doesn't contain any tool." +
+                                       "\nexemple:" + exemple_file_def
+                                       )
+
     def load_one_toolwrapper(self, s_toolwrapper, s_dict_inputs, s_dict_outputs, s_dict_params):
         """
-        Method called when the 'tool' command is used. It is equivalent to the "red" method but create a workflow with
-        only one toolwrapper
+        Method called when the ``tool`` command is used. It is equivalent to the :meth:`~.wopmars.main.tagc.framework.parsing.Reader.Reader.read` method but create a workflow
+        with only one toolwrapper. The workflow is also stored inside the database.
 
         :param s_toolwrapper: The name of the toolwrapper (will be imported)
+        :type s_toolwrapper: str
         :param s_dict_inputs: A string containing the dict of input files
+        :type s_dict_inputs: str
         :param s_dict_outputs: A string containing the dict of output files
+        :type s_dict_outputs: str
         :param s_dict_params: A string containing the dict of params
+        :type s_dict_params: str
 
-        :raise: WopmarsException
+        :raise WopMarsException: There is an error while accessing the database
         """
         session = SQLManager.instance().get_session()
         dict_inputs = dict(eval(s_dict_inputs))
@@ -232,13 +356,14 @@ class Reader:
 
     def read(self, s_definition_file):
         """
-        Reads the file given and build the workflow in the database.
+        Reads the file given and insert the rules of the workflow in the database.
 
         The definition file is supposed to be properly formed. The validation of the content of the definition is done
         during the instanciation of the tools.
 
         :param: s_definition_file: String containing the path to the definition file.
-        :raise: WopmarsException
+        :type s_definition_file: str
+        :raise: WopmarsException: The content is not validated
         """
         self.load_definition_file(s_definition_file)
 
@@ -351,18 +476,23 @@ class Reader:
 
     def create_toolwrapper_entry(self, str_rule_name, str_wrapper_name, dict_dict_dict_elm, input_entry, output_entry):
         """
-        Actual creating of the toolwrapper object.
+        Actual creating of the Toolwrapper object.
 
         The toolwrapper object is an entry of the table rule in the resulting database.
 
         If the scoped_session has current modification, they probably will be commited during this method:
         tables are created and this can only be done with clean session.
 
-        :param str_rule_name: String containing the name of the rule in which the toolwrapper will be used.
-        :param str_wrapper_name: String containing the name of the toolwrapper. It will be used for importing the
-        correct module and then for creating the class.
-        :param dict_dict_dict_elm: Dict <String: Dict <String: String>>  of "input"s "output"s and "params" and will be used
-        to make relations between options / input / output and the toolwrapper.
+        :param str_rule_name: Contains the name of the rule in which the toolwrapper will be used.
+        :type str_rule_name: str
+        :param str_wrapper_name: Contains the name of the toolwrapper. It will be used for importing the correct module and then for creating the class
+        :type str_wrapper_name: str
+        :param dict_dict_dict_elm: "input"s "output"s and "params" and will be used to make relations between options / input / output and the toolwrapper.
+        :type dict_dict_dict_elm: dict(dict(dict()))
+        :param input_entry: input entry
+        :type input_entry: :class:`wopmars.main.tagc.framework.bdd.tables.Type.Type`
+        :param output_entry: output entry
+        :type output_entry: :class:`wopmars.main.tagc.framework.bdd.tables.Type.Type`
 
         :return: TooLWrapper instance
         """
@@ -459,122 +589,3 @@ class Reader:
 
         # toolwrapper_wrapper.is_content_respected()
         return toolwrapper_wrapper
-
-    # todo tabling
-    def is_grammar_respected(self):
-        """
-        Check if the definition file respects the grammar. Throw an exception if not.
-
-        The grammar is the following:
-
-        WoPMaRS       = rule
-        identifier    = String
-        ni            = NEWLINE INDENT
-        rule          = "rule" identifier ":" ruleparams
-        ruleparams    = [ni tool] [ni input] [ni output] [ni params]
-        filesortables = (ni files|ni tables){0-2}
-        files         = "file"  ":" (ni identifier ”:” stringliteral)+
-        tables        = "table"  ":" (ni identifier ”:” stringliteral)+
-        tool          = "tool"   ":" stringliteral
-        input         = "input"  ":" ni filesortables
-        output        = "output" ":" ni filesortables
-        params        = "params" ":" (ni identifier ”:” stringliteral)+
-        (NEWLINE WoPMaRS)+
-
-        :raise: WopMarsParsingException
-        """
-        exemple_file_def = """
-    rule RULENAME:
-        tool: TOOLNAME
-        input:
-            file:
-                INPUTNAME: INPUTVALUE
-            table:
-                - path.to.table
-        output:
-            file:
-                OUTPUTNAME: OUTPUTVALUE
-            table:
-                - path.to.table
-        params:
-            OPTIONNAME: OPTIONVALUE
-
-    rule ...etc...
-        """
-        # recognize the rule blocks
-        regex_step1 = re.compile(r"(^rule [^\s]+$)")
-
-        # recognize the elements of the rule
-        regex_step2 = re.compile(r"(^params$)|(^tool$)|(^input$)|(^output$)")
-
-        regex_step3 = re.compile(r"(^file$)|(^table$)")
-
-        # The found words are tested against the regex to see if they match or not
-        for s_key_step1 in self.__dict_workflow_definition:
-            bool_toolwrapper = False
-            # The first level of indentation should only contain rules
-            if not regex_step1.search(s_key_step1):
-                raise WopMarsException("Error while parsing the configuration file: \n\t"
-                                       "The grammar of the WopMars's definition file is not respected:",
-                                       "The line containing:\'" +
-                                       str(s_key_step1) +
-                                       "\' doesn't match the grammar: it should start with 'rule'" +
-                                       "and contains only one word after the 'rule' keyword" +
-                                       "\nexemple:" + exemple_file_def)
-
-            for s_key_step2 in self.__dict_workflow_definition[s_key_step1]:
-                # the second level of indentation should only contain elements of rule
-                # todo tabling there will be other indentation levels for file / tables
-                if not regex_step2.search(s_key_step2):
-                    raise WopMarsException("Error while parsing the configuration file: \n\t"
-                                           "The grammar of the WopMars's definition file is not respected:",
-                                           "The line containing:'" + str(s_key_step2) + "'" +
-                                           " for rule '" + str(s_key_step1) + "'" +
-                                           " doesn't match the grammar: it should be " +
-                                           "'tool', 'params', 'input' or 'output'" +
-                                       "\nexemple:" + exemple_file_def)
-                elif s_key_step2 == "input" or s_key_step2 == "output":
-                    for s_key_step3 in self.__dict_workflow_definition[s_key_step1][s_key_step2]:
-                        if not regex_step3.search(s_key_step3):
-                            raise WopMarsException("Error while parsing the configuration file: \n\t"
-                                                   "The grammar of the WopMars's definition file is not respected:",
-                                                   "The line containing:'" + str(s_key_step3) + "'" +
-                                                   " for rule '" + str(s_key_step1) + "'" +
-                                                   " doesn't match the grammar: it should be " +
-                                                   "'file' or 'table'" +
-                                                   "\nexemple:" + exemple_file_def)
-                        elif s_key_step3 == "file":
-                            for s_variable_name in self.__dict_workflow_definition[s_key_step1][s_key_step2][s_key_step3]:
-                                if type(self.__dict_workflow_definition[s_key_step1][s_key_step2][s_key_step3][s_variable_name]) != str:
-                                    raise WopMarsException("Error while parsing the configuration file: \n\t"
-                                                           "The grammar of the WopMars's definition file is not respected:",
-                                                           "The line containing:'" + str(s_variable_name) + "'" +
-                                                           " for rule '" + str(s_key_step1) + "'" +
-                                                           " doesn't match the grammar: it should be the string containing the path to the file."
-                                                           "\nexemple:" + exemple_file_def)
-                        elif s_key_step3 == "table":
-                            for s_tablename in self.__dict_workflow_definition[s_key_step1][s_key_step2][s_key_step3]:
-                                if type(s_tablename) != str:
-                                    raise WopMarsException("Error while parsing the configuration file: \n\t"
-                                                           "The grammar of the WopMars's definition file is not respected:",
-                                                           "The line containing:'" + str(s_variable_name) + "'" +
-                                                           " for rule '" + str(s_key_step1) + "'" +
-                                                           " doesn't match the grammar: it should be the string containing the name of the Model."
-                                                           "\nexemple:" + exemple_file_def)
-
-
-                # There should be one tool at max in each rule
-                elif s_key_step2 == "tool":
-                    if bool_toolwrapper == False:
-                        bool_toolwrapper = True
-                    elif bool_toolwrapper == True:
-                        raise WopMarsException("Error while parsing the configuration file: \n\t",
-                                               "There is multiple tools specified for the " + str(s_key_step1))
-
-            # All rules should contain a tool
-            if not bool_toolwrapper:
-                raise WopMarsException("Error while parsing the configuration file: \n\t"
-                                       "The grammar of the WopMars's definition file is not respected:",
-                                       "The rule '" + str(s_key_step1) + "' doesn't contain any tool." +
-                                       "\nexemple:" + exemple_file_def
-                                       )
