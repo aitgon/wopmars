@@ -70,6 +70,210 @@
 <p class="last"><code class="docutils literal"><span class="pre">Reader</span></code> is also responsible of parsing tool command</p>
 </div>
 <p>Once all informations regarding the workflow definition file have been stored in the database, the options <code class="docutils literal"><span class="pre">--targetrule</span></code> and <code class="docutils literal"><span class="pre">--sourcerule</span></code> are parsed in order to get only the rules that are intended to be executed by the user.</p>
+<p>To build the DAG itself. A class <code class="docutils literal"><span class="pre">DAG</span></code> which inherit from <code class="docutils literal"><span class="pre">networkx.DiGraph</span></code> has been written. This class takes a set of nodes as argument and build itself by determining which nodes are following which others. Since the node are actually <code class="docutils literal"><span class="pre">Toolwrapper</span></code>, a node follows an other node if one output of the former is in the list of inputs of the last. This information is given by the method <code class="docutils literal"><span class="pre">follows</span></code> of <code class="docutils literal"><span class="pre">Toolwrappers</span></code>.</p>
+</div>
+<div class="section" id="executing-the-dag">
+<h2>Executing the DAG<a class="headerlink" href="#executing-the-dag" title="Permalink to this headline">¶</a></h2>
+<p>It is the <code class="docutils literal"><span class="pre">WorkflowManager</span></code> class from the package <code class="docutils literal"><span class="pre">wopmars.main.tagc.framework.management.WorfklowManager</span></code> which is responsible of executing the DAG. The main methods of this class are <code class="docutils literal"><span class="pre">run_queue</span></code> and <code class="docutils literal"><span class="pre">execute_from</span></code>. Basically, <code class="docutils literal"><span class="pre">execute_from</span></code> fill the queue with the <cite>Toolwrappers</cite> that should be executed soon and <code class="docutils literal"><span class="pre">run_queue</span></code> actually execute the queue after performing some tests on the inputs of the <cite>Toolwrappers</cite>.</p>
+<span class="target" id="module-wopmars.main.tagc.framework.management.WorkflowManager"></span><p>Module containing the WorkflowManager class</p>
+<dl class="class">
+<dt id="wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager">
+<em class="property">class </em><code class="descclassname">wopmars.main.tagc.framework.management.WorkflowManager.</code><code class="descname">WorkflowManager</code><a class="headerlink" href="#wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>The WorkflowManager class manage all the workflow execution.</p>
+<dl class="docutils">
+<dt>WorkflowManager will ask the parser to build the DAG then execute it. The execution of the DAG is done as following:</dt>
+<dd><p class="first">1- The workflow manager take the &quot;tool_dag&quot; with all the rules of the workflow and build the &quot;dag_to_exec&quot; which
+will be actually executed according to the &quot;target rule&quot; and &quot;source rule&quot; options.
+2- The method &quot;execute_from()&quot; is call without argument, meaning that the execution begin at the top of the dag
+(the root of the tree).
+3- The nodes are gathered thanks to the &quot;successors&quot; method of the DAG.
+4- Each node is wrapped inside a ToolThread object which will be added to the queue.
+5- Each ToolThread is executed (ordered) as follows:</p>
+<blockquote>
+<div>a- If the inputs are ready: they are executed.
+b- If not, they are put in the buffer.</div></blockquote>
+<p class="last">6- When the ToolThread has finished its execution, a notification of success is sent.
+7- The method &quot;execute_from&quot; is called again with the succeeded ToolWrapper as argument.
+8- Loop to the 3rd step
+9- When the DAG is finished, the software exits</p>
+</dd>
+</dl>
+<p>Every exception or error are raised to the top level of the software (tagc.py) through WopMarsException with
+a String explaining the context and details about the exception.</p>
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.all_predecessors_have_run">
+<code class="descname">all_predecessors_have_run</code><span class="sig-paren">(</span><em>tw</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.all_predecessors_have_run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if all the predecessors of the given toolwrapper have yet been executed in this workflow.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tw</strong> -- ToolWrapper</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.check_buffer">
+<code class="descname">check_buffer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.check_buffer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the buffer contains ToolWrapper that are ready.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">bool: True if there is at least one toolwrapper that is READY in the buffer.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.execute_from">
+<code class="descname">execute_from</code><span class="sig-paren">(</span><em>tw=None</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.execute_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute the dag from the toolwrappers in the list given.</p>
+<p>The next nodes are taken thanks to the &quot;successors()&quot; method of the DAG and are put into the queue.
+The &quot;run_queue()&quot; is then called.</p>
+<p>A trace of the already_runned ToolWrapper objects is kept in order to avoid duplicate execution.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>node</strong> -- ToolWrapper a node of the DAG or None, if it executes from the root.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">void</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.get_dag_to_exec">
+<code class="descname">get_dag_to_exec</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.get_dag_to_exec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the dag to exec in terms of --sourcerule option and --targetrule option.</p>
+<p>The source rule is checked first (there should not be both set because of the checks at the begining of the software)</p>
+<p>If sourcerule is set, then it is its successors that are searched in the whole dag.
+Else, it is its predecessors.</p>
+<p>The set of obtained rules are used to build the &quot;dag_to_exec&quot;. The nodes returned by get_all_successors and
+get_all_predecessors are implicitly all related.
+:return:</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.is_this_tool_already_done">
+<em class="property">static </em><code class="descname">is_this_tool_already_done</code><span class="sig-paren">(</span><em>tw</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.is_this_tool_already_done" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if conditions for saying &quot;The output of this ToolWrapper are already available&quot; are filled.</p>
+<dl class="docutils">
+<dt>The conditions are:</dt>
+<dd><ul class="first last simple">
+<li>The ToolWrapper exist in bdd (named = tw_old)</li>
+<li>The tw_old param are the same than the same which is about to start</li>
+<li>the tw_old inputs are the same</li>
+<li>the tw_old outputs are ok and ready</li>
+</ul>
+</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tw</strong> -- </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.notify_failure">
+<code class="descname">notify_failure</code><span class="sig-paren">(</span><em>thread_toolwrapper</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.notify_failure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle thread_toolwrapper failure by re-puting it in the queue.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>thread_toolwrapper</strong> -- ToolWrapper thread that just failed</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.notify_success">
+<code class="descname">notify_success</code><span class="sig-paren">(</span><em>thread_toolwrapper</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.notify_success" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle thread_toolwrapper success by continuing the dag.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>thread_toolwrapper</strong> -- ToolWrapper thread that just succeed</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.run">
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the dag then execute it.</p>
+<p>The database is setUp here if workflow side tables have not been created yet.</p>
+<p>The dag is taken thanks to the &quot;parse()&quot; method of the parser. And then pruned by the get_dag_to_exec method
+which will set the right DAG to be executed.
+Then, execute_from is called with no argument to get the origin nodes.
+:return:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.run_queue">
+<code class="descname">run_queue</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.run_queue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call start() method of all elements of the queue.</p>
+<p>The tools inside the queue are taken then their inputs are checked. If they are ready, the tools are started.
+If not, they are put in a buffer list of &quot;not ready tools&quot; or &quot;ready but has not necessary ressources available
+tools&quot;.</p>
+<p>The start method is called with a dry argument, if it appears that the input of the ToolWrapper are the same
+than in a previous execution, and that the output are already ready. The dry parameter is set to True and the
+start method will only simulate the execution.</p>
+<p>After that, the code check for the state of the workflow and gather the informations to see if the workflow
+is finished, if it encounter an error or if it is currently running.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><strong>WopMarsException</strong> -- The workflow encounter a problem and must stop.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">void</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.set_finishing_informations">
+<code class="descname">set_finishing_informations</code><span class="sig-paren">(</span><em>finished_at</em>, <em>status</em><span class="sig-paren">)</span><a class="headerlink" href="#wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.set_finishing_informations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the finsihing information of the whole workflow.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>finished_at</strong> -- datetime.datetime object representing the finishing date of the workflow</li>
+<li><strong>status</strong> -- the final status of the workflow</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 <p>conseil: faire une option &quot;supprimer le contenu de la table avant l'exécution&quot; si l'utilisateur veut écraser des résultats</p>
 </div>
 </div>
@@ -85,6 +289,7 @@
 <li><a class="reference internal" href="#">Software Documentation</a><ul>
 <li><a class="reference internal" href="#the-history-of-wopmars">The history of WoPMaRS</a></li>
 <li><a class="reference internal" href="#building-the-execution-dag">Building the execution DAG</a></li>
+<li><a class="reference internal" href="#executing-the-dag">Executing the DAG</a></li>
 </ul>
 </li>
 </ul>

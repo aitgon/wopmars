@@ -43,4 +43,13 @@ Once all informations regarding the workflow definition file have been stored in
 
 To build the DAG itself. A class ``DAG`` which inherit from ``networkx.DiGraph`` has been written. This class takes a set of nodes as argument and build itself by determining which nodes are following which others. Since the node are actually ``Toolwrapper``, a node follows an other node if one output of the former is in the list of inputs of the last. This information is given by the method ``follows`` of ``Toolwrappers``.
 
+Executing the DAG
+-----------------
+
+It is the ``WorkflowManager`` class from the package ``wopmars.main.tagc.framework.management.WorfklowManager`` which is responsible of executing the DAG. The main methods of this class are ``run_queue`` and ``execute_from``. Basically, ``execute_from`` fill the queue with the `Toolwrappers` that should be executed soon and ``run_queue`` actually execute the queue after performing some tests on the inputs of the `Toolwrappers`.
+
+.. automodule:: wopmars.main.tagc.framework.management.WorkflowManager
+   :members:
+
+
 conseil: faire une option "supprimer le contenu de la table avant l'exécution" si l'utilisateur veut écraser des résultats
