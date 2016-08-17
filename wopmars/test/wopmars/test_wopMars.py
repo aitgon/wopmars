@@ -9,7 +9,7 @@ from FooBase2 import FooBase2
 from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager
 from wopmars.main.tagc.utils.OptionManager import OptionManager
 from wopmars.main.tagc.utils.PathFinder import PathFinder
-from wopmars.main.tagc.wopmars import WopMars
+from wopmars import WopMars
 
 
 class TestWopMars(TestCase):
@@ -24,13 +24,13 @@ class TestWopMars(TestCase):
         self.__def_file_never_ready = s_root_path + "resources/example_def_file_toolwrapper_never_ready.yml"
 
     def test_run(self):
-        cmd_line = ["python", "-D", self.__db_path, "-w", self.__right_def_file, "-vvv", "-p", "-d", PathFinder.find_src(os.path.realpath(__file__))]
+        cmd_line = ["python", "-D", self.__db_path, "-w", self.__right_def_file, "-vv", "-p", "-d", PathFinder.find_src(os.path.realpath(__file__))]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 0)
 
     def test_dry_run(self):
-        cmd_line = ["python", "-n", "-D", self.__db_path, "-w", self.__right_def_file, "-vvv", "-p", "-d",
+        cmd_line = ["python", "-n", "-D", self.__db_path, "-w", self.__right_def_file, "-vv", "-p", "-d",
                     PathFinder.find_src(os.path.realpath(__file__))]
 
         with self.assertRaises(SystemExit) as se:
@@ -38,14 +38,14 @@ class TestWopMars(TestCase):
         self.assertEqual(se.exception.code, 0)
 
     def test_run_that_fail(self):
-        cmd_line = ["python", "-D", self.__db_path, "-w", self.__def_file_never_ready, "-vvv", "-p", "-d",
+        cmd_line = ["python", "-D", self.__db_path, "-w", self.__def_file_never_ready, "-vv", "-p", "-d",
                     PathFinder.find_src(os.path.realpath(__file__))]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 1)
 
     def test_run_sourcerule_fail(self):
-        cmd_line = ["python", "-D", self.__db_path, "-w", self.__right_def_file, "-vvvv", "-p", "--sourcerule", "failure"]
+        cmd_line = ["python", "-D", self.__db_path, "-w", self.__right_def_file, "-vv", "-p", "--sourcerule", "failure"]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 1)
@@ -60,20 +60,20 @@ class TestWopMars(TestCase):
             SQLManager.instance().get_session().add(f)
         SQLManager.instance().get_session().commit()
 
-        cmd_line = ["python", "-D", self.__db_path, "-w", self.__right_def_file, "-vvvv", "-p", "--sourcerule", "rule6"]
+        cmd_line = ["python", "-D", self.__db_path, "-w", self.__right_def_file, "-vv", "-p", "--sourcerule", "rule6"]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 0)
 
     def test_run_target_rule(self):
         SQLManager.instance().create_all()
-        cmd_line = ["python", "-D", self.__db_path, "-w", self.__right_def_file, "-vvvv", "-p", "--targetrule", "rule3"]
+        cmd_line = ["python", "-D", self.__db_path, "-w", self.__right_def_file, "-vv", "-p", "--targetrule", "rule3"]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 0)
 
     def test_run_skiping_steps_time_check(self):
-        cmd_line = ["python", "-D", self.__db_path, "-w", self.__right_def_file_only_files, "-vvvv", "-p"]
+        cmd_line = ["python", "-D", self.__db_path, "-w", self.__right_def_file_only_files, "-vv", "-p"]
         start = time.time()
         with self.assertRaises(SystemExit):
             WopMars().run(cmd_line)
@@ -101,7 +101,7 @@ class TestWopMars(TestCase):
         self.assertTrue(runtime1 * 0.4 <= runtime2 <= runtime1 * 1.4)
 
     def test_dry_drun_skipping(self):
-        cmd_line = ["python", "-D", self.__db_path, "-w", self.__right_def_file_only_files, "-vvv", "-p"]
+        cmd_line = ["python", "-D", self.__db_path, "-w", self.__right_def_file_only_files, "-vv", "-p"]
         with self.assertRaises(SystemExit):
             WopMars().run(cmd_line)
 
@@ -109,7 +109,7 @@ class TestWopMars(TestCase):
             WopMars().run(cmd_line + ["-n"])
 
     def test_dry_drun_skipping_all_but_one(self):
-        cmd_line = ["python", "-D", self.__db_path, "-w", self.__right_def_file, "-vvv", "-p"]
+        cmd_line = ["python", "-D", self.__db_path, "-w", self.__right_def_file, "-vv", "-p"]
         with self.assertRaises(SystemExit):
             WopMars().run(cmd_line)
 
@@ -119,7 +119,7 @@ class TestWopMars(TestCase):
             WopMars().run(cmd_line + ["-n"])
 
     def test_run6(self):
-        cmd_line = ["python", "-D", self.__db_path, "-w", self.__right_def_file, "-p", "-vvvv"]
+        cmd_line = ["python", "-D", self.__db_path, "-w", self.__right_def_file, "-p", "-vv"]
         start = time.time()
         with self.assertRaises(SystemExit):
             WopMars().run(cmd_line)
@@ -161,7 +161,7 @@ class TestWopMars(TestCase):
         self.assertEqual(SE.exception.code, 2)
 
     def test_run_packaged_wrappers(self):
-        cmd_line = ["python", "-D", self.__db_path, "-w", self.__right_def_file2, "-vvvv", "-p", "-d",
+        cmd_line = ["python", "-D", self.__db_path, "-w", self.__right_def_file2, "-vv", "-p", "-d",
                     PathFinder.find_src(os.path.realpath(__file__))]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
@@ -170,7 +170,7 @@ class TestWopMars(TestCase):
     def test_run_one_tool(self):
         cmd_line = ["python", "tool", "FooWrapper4",
                     "-i", "{'file': {'input1': 'resources/input_File1.txt'}}",
-                    "-o", "{'file': {'output1': 'resources/outputs/output1.txt'}}", "-D", self.__db_path, "-vvvv", "-p", "-d",
+                    "-o", "{'file': {'output1': 'resources/outputs/output1.txt'}}", "-D", self.__db_path, "-vv", "-p", "-d",
                     PathFinder.find_src(os.path.realpath(__file__))]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)

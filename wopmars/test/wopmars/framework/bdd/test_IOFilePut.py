@@ -32,7 +32,7 @@ class TestIOFilePut(TestCase):
 
     def test_eq(self):
         self.assertEqual(self.__io_file_existing, self.__io_file_existing2)
-        self.assertEqual(self.__io_file_existing, self.__io_file_existing3)
+        self.assertNotEqual(self.__io_file_existing, self.__io_file_existing3)
         self.assertNotEqual(self.__io_file_existing, self.__io_file_existing4)
         self.assertNotEqual(self.__io_file_existing, self.__io_file_not_existing)
 
