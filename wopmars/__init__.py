@@ -1,8 +1,8 @@
 """WopMars: Workflow Python Manager for Reproducible Science.
 
 Usage:
-  wopmars [-n] [-p] [-F] [-v...] [-d DIR] [-g FILE] [-L FILE] [-f RULE | -t RULE] [-D DATABASE] [-w DEFINITION_FILE]
-  wopmars tool TOOLWRAPPER [-i DICT] [-o DICT] [-P DICT] [-p] [-F] [-D DATABASE] [-v...] [-d DIR] [-L FILE] [-g FILE]
+  wopmars [-n] [-p] [-F] [-v...] [-d DIR] [-g FILE] [-L FILE] [-f RULE | -t RULE] [-D DATABASE] [-w DEFINITION_FILE] [-c]
+  wopmars tool TOOLWRAPPER [-i DICT] [-o DICT] [-P DICT] [-p] [-F] [-D DATABASE] [-v...] [-d DIR] [-L FILE] [-g FILE] [-c]
   wopmars example [-d DIR]
 
 Arguments:
@@ -29,6 +29,7 @@ Options:
   -i --input=DICT              Set the input of the toolwrapper you want to use in the dictionnary format.
   -o --output=DICT             Set the output of the toolwrapper you want to use in the dictionnary format.
   -P --params=DICT             Set the parameters of the toolwrapper you want to use in the dictionnary format.
+  -c --clear-history           Clear WoPMaRS history. Should be used in case of bug which seem to be related to the history. Be carefull, clearing history will result in a re-execution of the whole workflow.
 """
 import datetime
 import os
@@ -86,7 +87,8 @@ class WopMars:
                 "--params": Use(DictUtils.str_to_dict),
                 "TOOLWRAPPER": Or(None, Use(PathFinder.is_in_python_path)),
                 "tool": Use(bool),
-                "example": Use(bool)
+                "example": Use(bool),
+                "--clear-history": Use(bool)
             })
             # The option values are validated using schema library
             OptionManager.instance().validate(schema_option)

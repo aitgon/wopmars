@@ -30,6 +30,15 @@ class SQLManager(SingletonMixin):
     Allows droping and creating tables from table names ("create" and "drop"), list of table models ("drop_table_list")
     and all ("create_all" and "drop_all").
     """
+    wom_table_names = [
+        "wom_type",
+        "wom_modification_table",
+        "wom_execution",
+        "wom_rule",
+        "wom_table",
+        "wom_file",
+        "wom_option"
+    ]
 
     def __init__(self):
         """
@@ -155,18 +164,20 @@ class SQLManager(SingletonMixin):
             Logger.instance().debug("\"" + str(query.session) + "\" has released the read lock on SQLManager.")
         return result
 
-    def execute(self, session, statement):
+    def execute(self, session, statement, *args, **kwargs):
         """
         Allow to execute a statement object on the given session.
 
         :param session: SQLAlchemy session object.
         :param statement: SQLAlchemy statement object.
         """
+        Logger.instance().debug("SQLManager.execute(" + str(session) + ", " + str(statement) + ", " +
+                                    str(args) + ", " + str(kwargs) + ")")
         try:
             Logger.instance().debug(str(session) + " want the write lock on SQLManager for statement \"" + str(statement) + "\"")
             self.__lock.acquire_write()
             Logger.instance().debug(str(session) + " has taken the write lock on SQLManager.")
-            session.execute(statement)
+            return session.execute(statement, *args, **kwargs)
         finally:
             # Always release the lock
             self.__lock.release()
@@ -288,11 +299,11 @@ class SQLManager(SingletonMixin):
                 "SQLManager.drop_table_content_list(" + str(list_str_table) + "): drop table content " + str(t.name))
             self.execute(session._session(), t.delete())
 
-    def df_to_sql(self, df, *args, **kwargs):
+    def pandas_to_sql(self, df, *args, **kwargs):
         try:
             self.__lock.acquire_write()
             df.to_sql(*args, **kwargs)
-            Logger.instance().debug("SQLManager.df_to_sql: Adding dataframe to database")
+            Logger.instance().debug("SQLManager.pandas_to_sql: Adding dataframe to database")
         finally:
             self.__lock.release()
 

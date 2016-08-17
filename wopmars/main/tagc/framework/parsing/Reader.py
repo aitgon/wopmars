@@ -297,7 +297,7 @@ class Reader:
             Logger.instance().debug("Loading unique toolwrapper " + s_toolwrapper)
             dict_dict_dict_elm = dict(dict_input={"file": {}, "table": {}},
                                  dict_params={},
-                                 dict_output={"file": {}, "table    ": {}})
+                                 dict_output={"file": {}, "table": {}})
             for type in dict_inputs:
                 if type == "file":
                     for s_input in dict_inputs[type]:
@@ -318,13 +318,13 @@ class Reader:
                         obj_created = IOFilePut(name=s_output,
                                                 path=os.path.abspath(os.path.join(OptionManager.instance()["--directory"],
                                                                                   dict_outputs[type][s_output])))
-                        dict_dict_dict_elm["dict_output"][type][s_output] = obj_created
+                        dict_dict_dict_elm["dict_output"]["file"][s_output] = obj_created
                         Logger.instance().debug("Object output file: " + s_output + " created.")
                 elif type == "table":
                     for s_output in dict_outputs[type]:
                         obj_created = IODbPut(model=dict_outputs[type][s_output],
                                               tablename=s_output)
-                        dict_dict_dict_elm["dict_output"][type][s_output] = obj_created
+                        dict_dict_dict_elm["dict_output"]["table"][s_output] = obj_created
                         Logger.instance().debug("Object output table: " + s_output + " created.")
             for s_param in dict_params:
                 obj_created = Option(name=s_param,

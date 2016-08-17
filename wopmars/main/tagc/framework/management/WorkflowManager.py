@@ -75,8 +75,14 @@ class WorkflowManager(ToolWrapperObserver):
         which will set the right DAG to be executed.
         Then, :meth:`~.wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.execute_from` is called with no argument to get the origin nodes.
         """
+
         # This create_all is supposed to only create workflow-management side tables (called "wom_*")
         SQLManager.instance().create_all()
+
+        if OptionManager.instance()["--clear-history"]:
+            Logger.instance().info("Deleting WoPMaRS history...")
+            SQLManager.instance().drop_table_content_list(SQLManager.wom_table_names)
+
         # The following lines allow to create types 'input' and 'output' in the db if they don't exist.
         self.__session.get_or_create(Type, defaults={"id": 1}, name="input")
         self.__session.get_or_create(Type, defaults={"id": 2}, name="output")
