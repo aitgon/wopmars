@@ -120,7 +120,8 @@ class ToolWrapper(Base):
         set_input_file_names = set([f_input.name for f_input in self.files if f_input.type.name == "input"])
         if set_input_file_names != set(self.specify_input_file()):
             raise WopMarsException("The content of the definition file is not valid.",
-                                   "The given input variable's names for " + self.__class__.__name__ +
+                                   "The given input file variable names for " + self.__class__.__name__ +
+                                   " (rule " + str(self.name) + ")" +
                                    " are not correct, they should be: " +
                                    "\n\t'{0}'".format("'\n\t'".join(self.specify_input_file())) +
                                    "\n" + "They are:" +
@@ -128,12 +129,24 @@ class ToolWrapper(Base):
                                    )
 
         set_input_table = set([t_input for t_input in self.tables if t_input.type.name == "input"])
+        set_input_table_names = set([t_input.tablename for t_input in set_input_table])
+        if set_input_table_names != set(self.specify_input_table()):
+            raise WopMarsException("The content of the definition file is not valid.",
+                                   "The given input table variable names for " + self.__class__.__name__ +
+                                   " (rule " + str(self.name) + ")" +
+                                   " are not correct, they should be: " +
+                                   "\n\t'{0}'".format("'\n\t'".join(self.specify_input_table())) +
+                                   "\n" + "They are:" +
+                                   "\n\t'{0}'".format("'\n\t'".join(set_input_table_names))
+                                   )
+
         for t_input in set_input_table:
             s_tablename = t_input.tablename
             if s_tablename not in self.specify_input_table():
                 raise WopMarsException("The content of the definition file is not valid.",
                                        "The given input tablenames for " + 
-                                       self.__class__.__name__ + " is not correct. it should be in: " +
+                                       self.__class__.__name__ + " (rule " + str(self.name) + ")" +
+                                       " is not correct. it should be in: " +
                                        "\n\t'{0}'".format("'\n\t'".join(self.specify_input_table())) +
                                        "\n" + "It is:" +
                                        "\n\t'" + s_tablename
@@ -142,7 +155,9 @@ class ToolWrapper(Base):
             if s_tablename_of_model not in self.specify_input_table():
                 raise WopMarsException("The content of the definition file is not valid.",
                                        "The given tablename of model for " +
-                                       self.__class__.__name__ + " is not correct. it should be in: " +
+                                       self.__class__.__name__ +
+                                       " (rule " + str(self.name) + ")" +
+                                       " is not correct. it should be in: " +
                                        "\n\t'{0}'".format("'\n\t'".join(self.specify_input_table())) +
                                        "\n" + "It is:" +
                                        "\n\t'" + s_tablename_of_model
@@ -165,6 +180,7 @@ class ToolWrapper(Base):
         if set([f_output.name for f_output in self.files if f_output.type.name == "output"]) != set(self.specify_output_file()):
             raise WopMarsException("The content of the definition file is not valid.",
                                    "The given output variable names for " + self.__class__.__name__ +
+                                   " (rule " + str(self.name) + ")" +
                                    " are not correct, they should be: " +
                                    "\n\t'{0}'".format("'\n\t'".join(self.specify_output_file())) +
                                    "\n" + "They are:" +
@@ -172,12 +188,23 @@ class ToolWrapper(Base):
                                    )
 
         set_output_table = set([t_output for t_output in self.tables if t_output.type.name == "output"])
+        set_output_table_names = set([t_input.tablename for t_input in set_output_table])
+        if set_output_table_names != set(self.specify_output_table()):
+            raise WopMarsException("The content of the definition file is not valid.",
+                                   "The given output table variable names for " + self.__class__.__name__ +
+                                   " (rule " + str(self.name) + ")" +
+                                   " are not correct, they should be: " +
+                                   "\n\t'{0}'".format("'\n\t'".join(self.specify_output_table())) +
+                                   "\n" + "They are:" +
+                                   "\n\t'{0}'".format("'\n\t'".join(set_output_table_names))
+                                   )
         for t_output in set_output_table:
             s_tablename = t_output.tablename
             if s_tablename not in self.specify_output_table():
                 raise WopMarsException("The content of the definition file is not valid.",
                                        "The given output tablenames for " + 
-                                       self.__class__.__name__ + " is not correct. it should be in: " +
+                                       self.__class__.__name__ + " (rule " + str(self.name) + ")" +
+                                       " is not correct. it should be in: " +
                                        "\n\t'{0}'".format("'\n\t'".join(self.specify_output_table())) +
                                        "\n" + "It is:" +
                                        "\n\t'" + s_tablename

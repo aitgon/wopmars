@@ -146,23 +146,28 @@ class WopMarsSession:
             self.__session.add(instance)
             return instance, True
 
-    def pandas_to_sql(self, df, *args, **kwargs):
+    def pandas_to_sql(self, df, tablename, *args, **kwargs):
         """
         Interface for using the to_sql method from pandas dataframes.
 
         :param df: pandas dataframe
+        :type df: DataFrame
+        :param tablename: the name of the table on which you want to perform operations
+        :type tablename: str
         :param args: args of the conventionnal pandas.to_sql method
         :param kwargs: kwargs of the conventionnal pandas.to_sql method
         """
-        self.__manager.pandas_to_sql(df, *args, **kwargs)
+        self.__manager.pandas_to_sql(df, tablename, self.__session.connection(), *args, **kwargs)
 
-    def pandas_read_sql(self, *args, **kwargs):
+    def pandas_read_sql(self, sql, *args, **kwargs):
         """
         Interface for using the read_sql method from pandas dataframes.
 
+        :param sql: the sql query to perform on the database
+        :type sql: str
         :param args: args of the conventionnal pandas.read_sql method
         :param kwargs: kwargs of the conventionnal pandas.read_sql method
         :return: Pandas dataframe contianing the result
         """
-        return self.__manager.pandas_read_sql(*args, **kwargs)
+        return self.__manager.pandas_read_sql(sql, self.__session.connection(), *args, **kwargs)
 

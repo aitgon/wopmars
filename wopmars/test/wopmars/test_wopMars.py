@@ -7,6 +7,7 @@ import time
 
 from FooBase2 import FooBase2
 from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager
+from wopmars.main.tagc.framework.bdd.tables.Execution import Execution
 from wopmars.main.tagc.utils.OptionManager import OptionManager
 from wopmars.main.tagc.utils.PathFinder import PathFinder
 from wopmars import WopMars
@@ -174,6 +175,34 @@ class TestWopMars(TestCase):
                     PathFinder.find_src(os.path.realpath(__file__))]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
+        self.assertEqual(se.exception.code, 0)
+
+    def test_core(self):
+        cmd_line = ["python", "tool", "FooWrapperCore",
+                    "-o", "{'table': {'FooBase': 'FooBase'}}",
+                    "-vv", "-p", "-D", self.__db_path, "-d", PathFinder.find_src(os.path.realpath(__file__))]
+        with self.assertRaises(SystemExit) as se:
+            WopMars().run(cmd_line)
+        self.assertEqual(se.exception.code, 0)
+
+    def test_clear_history(self):
+        cmd_line = ["python", "-D", self.__db_path,
+                    "-w", self.__right_def_file,
+                    "-vv", "-p", "-d", PathFinder.find_src(os.path.realpath(__file__)), "-c", "-F"]
+        with self.assertRaises(SystemExit):
+            WopMars().run(cmd_line)
+            WopMars().run(cmd_line)
+        session = SQLManager.instance().get_session()
+        self.assertEqual(session.query(Execution).count(), 1)
+
+    def test_pandas(self):
+        cmd_line = ["python", "tool", "FooWrapperDataframe",
+                    "-o", "{'table': {'FooBase': 'FooBase'}}",
+                    "-vv", "-p", "-D", self.__db_path, "-d", PathFinder.find_src(os.path.realpath(__file__))]
+
+        with self.assertRaises(SystemExit) as se:
+            WopMars().run(cmd_line)
+
         self.assertEqual(se.exception.code, 0)
 
     def tearDown(self):
