@@ -3,6 +3,8 @@ rule rule1:
     input:
         file:
             input1: "resources/input_File1.txt"
+        table:
+            FooBasePackaged: "fooPackage.FooBasePackaged"
     output:
         file:
             output1: "resources/outputs/output_File1.txt"

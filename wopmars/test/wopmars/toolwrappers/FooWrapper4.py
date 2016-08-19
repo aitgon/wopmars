@@ -1,7 +1,6 @@
 """
 Module containing the FooWrapper1 class
 """
-import os
 import time
 
 from matplotlib.compat import subprocess
@@ -14,6 +13,7 @@ class FooWrapper4(ToolWrapper):
     Modifications may lead to failure in tests.
     """
     __mapper_args__ = {'polymorphic_identity': "FooWrapper4"}
+
     def specify_input_file(self):
         return ["input1"]
 

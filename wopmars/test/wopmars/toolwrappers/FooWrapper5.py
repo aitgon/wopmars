@@ -1,11 +1,8 @@
 """
 Module containing the FooWrapper1 class
 """
-import time
-
 from matplotlib.compat import subprocess
 
-from FooBase import FooBase
 from wopmars.main.tagc.framework.bdd.tables.ToolWrapper import ToolWrapper
 
 class FooWrapper5(ToolWrapper):
@@ -33,4 +30,3 @@ class FooWrapper5(ToolWrapper):
             f = self.output_table("FooBase")(name="Foowrapper5 - " + str(i))
             self.session().add(f)
         self.session().commit()
-        time.sleep(1)

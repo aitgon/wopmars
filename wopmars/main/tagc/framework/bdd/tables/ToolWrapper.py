@@ -8,7 +8,6 @@ from sqlalchemy.orm import relationship
 from wopmars.main.tagc.framework.bdd.Base import Base
 from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager
 from wopmars.main.tagc.framework.bdd.tables.Execution import Execution
-from wopmars.main.tagc.framework.bdd.tables.IODbPut import IODbPut
 from wopmars.main.tagc.framework.bdd.tables.Option import Option
 from wopmars.main.tagc.utils.Logger import Logger
 from wopmars.main.tagc.utils.OptionManager import OptionManager

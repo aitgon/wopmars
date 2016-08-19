@@ -18,5 +18,5 @@ class FooWrapperPackaged(ToolWrapper):
         return ["output1"]
 
     def specify_input_table(self):
-        return ["fooPackage.FooBasePackaged"]
+        return ["FooBasePackaged"]
 

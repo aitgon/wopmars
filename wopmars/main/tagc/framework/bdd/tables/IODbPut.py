@@ -2,7 +2,7 @@ import importlib
 import datetime
 import time
 
-from sqlalchemy.exc import OperationalError, InvalidRequestError
+from sqlalchemy.exc import OperationalError
 
 from wopmars.main.tagc.framework.bdd.Base import Base
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
@@ -11,9 +11,10 @@ from sqlalchemy.orm import relationship, reconstructor
 from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager
 from wopmars.main.tagc.framework.bdd.tables.IOPut import IOPut
 from wopmars.main.tagc.framework.bdd.tables.ModificationTable import ModificationTable
+from wopmars.main.tagc.framework.bdd.tables.ToolWrapper import ToolWrapper
 from wopmars.main.tagc.utils.Logger import Logger
 from wopmars.main.tagc.framework.bdd.tables.Type import Type
-
+from sqlalchemy.sql.functions import func
 
 class IODbPut(IOPut, Base):
     """
@@ -115,7 +116,8 @@ class IODbPut(IOPut, Base):
         :return: ResultSet IODbPut objects
         """
         session = SQLManager.instance().get_session()
-        return session.query(IODbPut).all()
+        execution_id = session.query(func.max(ToolWrapper.execution_id))
+        return session.query(IODbPut).filter(IODbPut.rule_id == ToolWrapper.id).filter(ToolWrapper.execution_id == execution_id).all()
 
     @staticmethod
     def import_models(model_names):
