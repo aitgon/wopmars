@@ -27,7 +27,7 @@ class Logger(SingletonMixin):
 
     def __init__(self):
         # the top level logger which will distribute messages to different handlers
-        self.__logger = logging.getLogger()
+        self.__logger = logging.getLogger("wopmars")
         self.__logger.setLevel(logging.DEBUG)
 
         # the loger for std out
@@ -72,6 +72,11 @@ class Logger(SingletonMixin):
         self.__logger.addHandler(self.__file_handler)
         self.__logger.addHandler(self.__err_handler)
 
+        self.__tw_logger = logging.getLogger("tw")
+        self.__tw_streamhandler = logging.StreamHandler()
+        self.__tw_logger.addHandler(self.__tw_streamhandler)
+        self.__tw_logger.setLevel(logging.DEBUG)
+
     def info(self, msg):
         formatter_stream = logging.Formatter(ColorPrint.blue('%(levelname)s :: %(message)s'))
         self.__stream_handler.setFormatter(formatter_stream)
@@ -105,4 +110,27 @@ class Logger(SingletonMixin):
         self.__stream_handler.setFormatter(formatter_stream)
 
         self.__logger.critical(msg)
+
+    def toolwrapper_debug(self, msg, tw_name):
+        if OptionManager.instance()["--toolwrapper-log"]:
+            self.__tw_streamhandler.setFormatter(
+                logging.Formatter(ColorPrint.green(tw_name + ' ::  %(levelname)s :: %(message)s')))
+            self.__tw_logger.debug(msg)
+
+    def toolwrapper_info(self, msg, tw_name):
+        if OptionManager.instance()["--toolwrapper-log"]:
+            self.__tw_streamhandler.setFormatter(
+                logging.Formatter(ColorPrint.green(tw_name + ' :: %(levelname)s :: %(message)s')))
+            self.__tw_logger.info(msg)
+
+    def toolwrapper_warning(self, msg, tw_name):
+        if OptionManager.instance()["--toolwrapper-log"]:
+            self.__tw_streamhandler.setFormatter(
+                logging.Formatter(ColorPrint.green(tw_name + ' :: %(levelname)s :: %(message)s')))
+            self.__tw_logger.warning(msg)
+
+    def toolwrapper_error(self, msg, tw_name):
+        if OptionManager.instance()["--toolwrapper-log"]:
+            self.__tw_streamhandler.setFormatter(logging.Formatter(ColorPrint.green(tw_name + ' :: %(levelname)s :: %(message)s')))
+            self.__tw_logger.error(msg)
 

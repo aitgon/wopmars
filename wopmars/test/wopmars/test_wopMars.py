@@ -25,7 +25,7 @@ class TestWopMars(TestCase):
         self.__def_file_never_ready = s_root_path + "resources/example_def_file_toolwrapper_never_ready.yml"
 
     def test_run(self):
-        cmd_line = ["python", "-D", self.__db_path, "-w", self.__right_def_file, "-vv", "-p", "-d", PathFinder.find_src(os.path.realpath(__file__))]
+        cmd_line = ["python", "-l", "-D", self.__db_path, "-w", self.__right_def_file, "-vv", "-p", "-d", PathFinder.find_src(os.path.realpath(__file__))]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 0)

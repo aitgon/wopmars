@@ -686,3 +686,15 @@ class ToolWrapper(Base):
     def session(self):
         return self.__session
 
+    def log(self, level, msg):
+        if level == "debug":
+            Logger.instance().toolwrapper_debug(msg, self.toolwrapper)
+        elif level == "info":
+            Logger.instance().toolwrapper_info(msg, self.toolwrapper)
+        elif level == "warning":
+            Logger.instance().toolwrapper_debug(msg, self.toolwrapper)
+        elif level == "error":
+            Logger.instance().toolwrapper_error(msg, self.toolwrapper)
+        else:
+            raise WopMarsException("Error in the toolwrapper definition",
+                                   "The is no logging level associated with " + str(level) + ".")

@@ -110,3 +110,4 @@ class OptionManager(dict, SingletonMixin):
         OptionManager.instance()["--directory"] = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
         OptionManager.instance()["--clear-history"] = False
         os.chdir(OptionManager.instance()["--directory"])
+        OptionManager.instance()["--toolwrapper-log"] = False

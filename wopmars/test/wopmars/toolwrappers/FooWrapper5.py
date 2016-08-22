@@ -31,3 +31,7 @@ class FooWrapper5(ToolWrapper):
             f = self.output_table("FooBase")(name="Foowrapper5 - " + str(i))
             self.session().add(f)
         self.session().commit()
+        self.log("info", "coucou")
+        self.log("warning", "coucou")
+        self.log("error", "coucou")
+        self.log("debug", "coucou")
