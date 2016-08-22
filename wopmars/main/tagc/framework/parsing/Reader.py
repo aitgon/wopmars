@@ -347,6 +347,7 @@ class Reader:
             session.commit()
             session.rollback()
             # This create_all will create all tables that have been found in the toolwrapper
+            IODbPut.create_triggers()
             SQLManager.instance().create_all()
             wrapper_entry.is_content_respected()
         except NoResultFound as e:
@@ -462,6 +463,7 @@ class Reader:
             session.commit()
             session.rollback()
             # This create_all will create all tables that have been found in the toolwrapper
+            IODbPut.create_triggers()
             SQLManager.instance().create_all()
             session.add_all(set_wrapper)
             # save all operations done so far.

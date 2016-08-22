@@ -359,13 +359,13 @@ class ToolWrapper(Base):
         session.commit()
 
         for t in [t for t in self.tables if t.type.name == type]:
-            if type == "output" and not dry:
-                Logger.instance().debug("Output table " + str(t) + " has been modified.")
-                t.modification.date = datetime.datetime.fromtimestamp(time.time())
-            elif type == "output" and dry:
-                Logger.instance().debug("Output table " + str(t) + " not modified because of dry run.")
-            elif type == "input":
-                Logger.instance().debug("Input table " + str(t) + " used.")
+            # if type == "output" and not dry:
+            #     Logger.instance().debug("Output table " + str(t) + " has been modified.")
+            #     t.modification.date = datetime.datetime.fromtimestamp(time.time())
+            # elif type == "output" and dry:
+            #     Logger.instance().debug("Output table " + str(t) + " not modified because of dry run.")
+            # elif type == "input":
+            #     Logger.instance().debug("Input table " + str(t) + " used.")
             t.used_at = t.modification.date
             session.add(t)
         session.commit()

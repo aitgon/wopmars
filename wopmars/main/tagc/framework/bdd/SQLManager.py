@@ -5,6 +5,7 @@ import pandas
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import create_engine
 from sqlalchemy.schema import sort_tables
+from sqlalchemy import event
 
 from wopmars.main.tagc.framework.bdd.Base import Base
 from wopmars.main.tagc.framework.bdd.WopMarsSession import WopMarsSession
@@ -316,4 +317,14 @@ class SQLManager(SingletonMixin):
             self.__lock.release()
         return df
 
+    def create_trigger(self, table, ddl):
+        try:
+            self.__lock.acquire_write()
+            event.listen(
+                table,
+                'after_create',
+                ddl
+            )
+        finally:
+            self.__lock.release()
 

@@ -392,8 +392,8 @@ class WorkflowManager(ToolWrapperObserver):
         self.__session.commit()
 
         dry_status = thread_toolwrapper.get_dry()
-        if not OptionManager.instance()["--dry-run"]:
-            thread_toolwrapper.get_toolwrapper().set_args_date_and_size("output", dry_status)
+        # if not OptionManager.instance()["--dry-run"]:
+        #     thread_toolwrapper.get_toolwrapper().set_args_date_and_size("output", dry_status)
         if dry_status is False and not OptionManager.instance()["--dry-run"]:
             Logger.instance().info("Rule " + str(thread_toolwrapper.get_toolwrapper().name) + " -> " + str(thread_toolwrapper.get_toolwrapper().__class__.__name__) + " has succeed.")
         # Continue the dag execution from the toolwrapper that just finished.

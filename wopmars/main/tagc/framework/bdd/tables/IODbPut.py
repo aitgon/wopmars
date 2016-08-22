@@ -3,6 +3,7 @@ import datetime
 import time
 
 from sqlalchemy.exc import OperationalError
+from sqlalchemy.sql.ddl import DDL
 
 from wopmars.main.tagc.framework.bdd.Base import Base
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
@@ -85,6 +86,21 @@ class IODbPut(IOPut, Base):
 
     def get_table(self):
         return self.__table
+
+    @staticmethod
+    def create_triggers():
+        stmt = ["INSERT", "UPDATE", "DELETE"]
+        for tablename in Base.metadata.tables:
+            if tablename[:4] != "wom_":
+                for s in stmt:
+                    obj_ddl = DDL("""CREATE TRIGGER IF NOT EXISTS """ + "modification_" + str(tablename) +
+                                  """ AFTER """ + str(s) + """ ON """ + str(tablename) + """
+  BEGIN
+    UPDATE wom_modification_table SET date = CURRENT_TIMESTAMP WHERE table_name = '""" + str(tablename) + """';
+  END;
+""")
+                    SQLManager.instance().create_trigger(Base.metadata.tables[tablename], obj_ddl)
+
 
     @staticmethod
     def set_tables_properties(tables):
