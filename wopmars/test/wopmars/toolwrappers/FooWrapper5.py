@@ -5,6 +5,7 @@ from matplotlib.compat import subprocess
 
 from wopmars.main.tagc.framework.bdd.tables.ToolWrapper import ToolWrapper
 
+
 class FooWrapper5(ToolWrapper):
     """
     This class has been done for example/testing purpose.

@@ -505,10 +505,13 @@ class Reader:
         except AttributeError:
             raise WopMarsException("Error while parsing the configuration file: \n\t",
                                    "The class " + str_wrapper_name + " doesn't exist.")
-        except ImportError:
-            # todo fix the ambiguous import error -> check in sys.path / sys.modules
-            raise WopMarsException("Error while parsing the configuration file:",
-                                   str_wrapper_name + " module is not in the pythonpath.")
+        except ImportError as IE:
+            if str_wrapper_name in str(IE):
+                raise WopMarsException("Error while parsing the configuration file:",
+                                       str_wrapper_name + " module is not in the pythonpath. ")
+            else:
+                raise WopMarsException("Error while parsing the configuration file:",
+                                       str_wrapper_name + " module contains an ImportError: " + str(IE))
         # Initialize the instance of ToolWrapper
         toolwrapper_wrapper = toolwrapper_class(rule_name=str_rule_name)
 
