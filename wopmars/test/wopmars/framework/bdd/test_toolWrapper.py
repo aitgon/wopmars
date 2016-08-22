@@ -328,50 +328,50 @@ class TestToolWrapper(TestCase):
         self.assertTrue(toolwrapper1.same_input_than(toolwrapper2))
         self.assertFalse(toolwrapper1.same_input_than(toolwrapper3))
 
-    def test_is_output_ok(self):
-
-        moment = datetime.datetime.fromtimestamp(time.time())
-        t1 = IODbPut(model="FooBase", tablename="FooBase")
-        t1.set_table(FooBase)
-        t1.type = self.input_entry
-        t1.used_at = moment
-        modif = ModificationTable(table_name="FooBase", date=moment)
-        modif.tables.append(t1)
-
-        root = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
-        path_f1 = root + "resources/outputs/path1"
-        time.sleep(2)
-        p = subprocess.Popen(["touch", path_f1])
-        p.wait()
-
-        f1 = IOFilePut(name="input1", path=path_f1, used_at=datetime.datetime.fromtimestamp(os.path.getmtime(path_f1)),
-                       size=os.path.getsize(path_f1))
-        f1.type = self.output_entry
-
-        toolwrapper1 = FooWrapper2(rule_name="rule1")
-        toolwrapper1.files.append(f1)
-        toolwrapper1.tables.append(t1)
-
-
-        f1 = IOFilePut(name="input1", path=path_f1, used_at=datetime.datetime.fromtimestamp(os.path.getmtime(path_f1)),
-                       size=os.path.getsize(path_f1))
-
-        f1.type = self.output_entry
-
-        moment = datetime.datetime.fromtimestamp(time.time())
-        t1 = IODbPut(model="FooBase", tablename="FooBase")
-        t1.set_table(FooBase)
-        t1.type = self.input_entry
-        t1.used_at = moment
-        modif = ModificationTable(table_name="FooBase", date=moment)
-        modif.tables.append(t1)
-
-        toolwrapper2 = FooWrapper2(rule_name="rule1")
-        toolwrapper2.files.append(f1)
-        toolwrapper2.tables.append(t1)
-
-        self.assertTrue(toolwrapper1.is_output_ok())
-        self.assertFalse(toolwrapper2.is_output_ok())
+    # def test_is_output_ok(self):
+    #
+    #     moment = datetime.datetime.fromtimestamp(time.time())
+    #     t1 = IODbPut(model="FooBase", tablename="FooBase")
+    #     t1.set_table(FooBase)
+    #     t1.type = self.input_entry
+    #     t1.used_at = moment
+    #     modif = ModificationTable(table_name="FooBase", date=moment)
+    #     modif.tables.append(t1)
+    #
+    #     root = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
+    #     path_f1 = root + "resources/outputs/path1"
+    #     time.sleep(2)
+    #     p = subprocess.Popen(["touch", path_f1])
+    #     p.wait()
+    #
+    #     f1 = IOFilePut(name="input1", path=path_f1, used_at=datetime.datetime.fromtimestamp(os.path.getmtime(path_f1)),
+    #                    size=os.path.getsize(path_f1))
+    #     f1.type = self.output_entry
+    #
+    #     toolwrapper1 = FooWrapper2(rule_name="rule1")
+    #     toolwrapper1.files.append(f1)
+    #     toolwrapper1.tables.append(t1)
+    #
+    #
+    #     f1 = IOFilePut(name="input1", path=path_f1, used_at=datetime.datetime.fromtimestamp(os.path.getmtime(path_f1)),
+    #                    size=os.path.getsize(path_f1))
+    #
+    #     f1.type = self.output_entry
+    #
+    #     moment = datetime.datetime.fromtimestamp(time.time())
+    #     t1 = IODbPut(model="FooBase", tablename="FooBase")
+    #     t1.set_table(FooBase)
+    #     t1.type = self.input_entry
+    #     t1.used_at = moment
+    #     modif = ModificationTable(table_name="FooBase", date=moment)
+    #     modif.tables.append(t1)
+    #
+    #     toolwrapper2 = FooWrapper2(rule_name="rule1")
+    #     toolwrapper2.files.append(f1)
+    #     toolwrapper2.tables.append(t1)
+    #
+    #     self.assertTrue(toolwrapper1.is_output_ok())
+    #     self.assertFalse(toolwrapper2.is_output_ok())
 
     def tearDown(self):
         SQLManager.instance().drop_all()

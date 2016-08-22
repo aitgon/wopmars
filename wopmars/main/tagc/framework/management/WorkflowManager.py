@@ -258,9 +258,6 @@ class WorkflowManager(ToolWrapperObserver):
                                            " parameters.")
                     dry = True
 
-                # elif OptionManager.instance()["--forceall"] and not OptionManager.instance()["--dry-run"]:
-                #     # print(tw.tables)
-                #     self.erase_output(tw)
                 # todo twthread verification des ressources
                 thread_tw.subscribe(self)
                 self.__count_exec += 1
@@ -348,7 +345,7 @@ class WorkflowManager(ToolWrapperObserver):
             - The ToolWrapper exist in bdd (named = tw_old)
             - The tw_old param are the same than the same which is about to start
             - the tw_old inputs are the same
-            - the tw_old outputs are ok and ready
+            - the tw_old outputs exists with the same name and are more recent than inputs
 
         :param tw: The Toolwrapper to test
         :type tw: :class:`~.wopmars.main.framework.bdd.tables.ToolWrapper.ToolWrapper`
@@ -358,8 +355,14 @@ class WorkflowManager(ToolWrapperObserver):
             .filter(ToolWrapper.execution_id != tw.execution_id).all()
         i = 0
         while i < len(list_same_toolwrappers):
-            if list_same_toolwrappers[i] != tw or \
-                    not list_same_toolwrappers[i].same_input_than(tw):
+            same = False
+            # two tw are equals if they have the same parameters, the same file names and path
+            # and the same table names and models
+            if list_same_toolwrappers[i] == tw and \
+                    list_same_toolwrappers[i].does_output_exist() and \
+                    list_same_toolwrappers[i].is_output_more_recent_than_input():
+                    same = True
+            if not same:
                 del list_same_toolwrappers[i]
             else:
                 i += 1

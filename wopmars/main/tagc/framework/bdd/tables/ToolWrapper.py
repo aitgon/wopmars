@@ -408,40 +408,54 @@ class ToolWrapper(Base):
                 return False
         return True
 
-    def is_output_ok(self):
+    def is_output_more_recent_than_input(self):
+        most_recent_input = max([datetime.datetime.fromtimestamp(os.path.getmtime(f.path)) for f in self.files if f.type.name == "input"] +
+                                [t.modification.date for t in self.tables if t.type.name == "input"])
+        oldest_output = min([datetime.datetime.fromtimestamp(os.path.getmtime(f.path)) for f in self.files if f.type.name == "output"] +
+                            [t.modification.date for t in self.tables if t.type.name == "output"])
+        return most_recent_input < oldest_output
+
+    def same_output_than(self, other):
         """
-        Check if the output of self are ready to use.
+        Check if the output of self is the same than other.
 
-        What is checked:
-        -for files:
-
-           - They exists
-           - Their size and date are not None
-           - Their date are after all input dates
-           - Their size and date in bdd are the same than the real ones
-
-        - for table:
-
-           - They exists
-           - Their date are after all input dates
-           - Their date are the same in table 'table' than in 'modification_table'
+        Checks only if the file names, table names and models are the same.
 
         :return: bool
         """
-        # todo tester ça
+        for t in [t for t in self.tables if t.type.name == "output"]:
+            is_same = False
+            for t2 in [t2 for t2 in other.tables if t2.type.name == "output"]:
+                if t.model == t2.model and t.tablename == t2.tablename:
+                    is_same = True
+                    break
+            if not is_same:
+                return False
+
+        for f in [f for f in self.files if f.type.name == "input"]:
+            is_same = False
+            for f2 in [f2 for f2 in other.files if f2.type.name == "input"]:
+                if (f.name == f2.name and
+                        f.path == f2.path):
+                    is_same = True
+                    break
+            if not is_same:
+                return False
+        return True
+
+    def does_output_exist(self):
         for of in [f for f in self.files if f.type.name == "output"]:
-            if not os.path.exists(of.path) or \
-                    not all(of.used_at > in_ft.used_at for in_ft in self.files + self.tables if (in_ft.type.name == "input" and
+            if not all(of.used_at > in_ft.used_at for in_ft in self.files + self.tables if (in_ft.type.name == "input" and
                                                                                                  of.used_at is not None and
                                                                                                  in_ft.used_at is not None)) or \
-                    not (of.size == os.path.getsize(of.path) and of.used_at == datetime.datetime.fromtimestamp(os.path.getmtime(of.path))):
+                    not os.path.exists(of.path):
                 return False
 
         for ot in [t for t in self.tables if t.type.name == "output"]:
             if not all(ot.used_at > in_ft.used_at for in_ft in self.files + self.tables if (in_ft.type.name == "input" and
                                                                                             ot.used_at is not None and
                                                                                             in_ft.used_at is not None)) or \
-                    not (ot.used_at == ot.modification.date):
+                    not SQLManager.instance().get_session().query(ot.get_table()).count():
                 return False
         return True
 
