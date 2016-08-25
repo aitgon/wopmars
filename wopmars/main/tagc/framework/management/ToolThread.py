@@ -5,11 +5,13 @@ import datetime
 import threading
 
 import time
+import traceback
 
 from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager
 from wopmars.main.tagc.framework.management.Observable import Observable
 from wopmars.main.tagc.utils.Logger import Logger
 from wopmars.main.tagc.utils.OptionManager import OptionManager
+from wopmars.main.tagc.utils.exceptions.WopMarsException import WopMarsException
 
 
 class ToolThread(threading.Thread, Observable):
@@ -47,6 +49,7 @@ class ToolThread(threading.Thread, Observable):
         start = datetime.datetime.fromtimestamp(time.time())
         try:
             self.__toolwrapper.set_session(session_tw)
+            # if the tool need to be executed
             if not self.__dry:
                 Logger.instance().info(
                     "\n" + str(self.__toolwrapper) + "\n" + "command line: \n\t" + self.get_command_line())
@@ -64,7 +67,9 @@ class ToolThread(threading.Thread, Observable):
         except Exception as e:
             session_tw.rollback()
             self.__toolwrapper.set_execution_infos(start, datetime.datetime.fromtimestamp(time.time()), "EXECUTION_ERROR")
-            raise e
+            raise WopMarsException("Error while executing rule " + self.__toolwrapper.name +
+                                   " (ToolWrapper " + self.__toolwrapper.toolwrapper + ")",
+                                   "Full stack trace: \n" + str(traceback.format_exc()))
         finally:
             # todo twthread , fermer session
             # session_tw.close()

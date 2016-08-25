@@ -1,6 +1,3 @@
-"""
-Module contianing the Option class
-"""
 from wopmars.main.tagc.framework.bdd.Base import Base
 
 from wopmars.main.tagc.utils.exceptions.WopMarsException import WopMarsException
@@ -10,8 +7,13 @@ from sqlalchemy.orm import relationship
 
 class Option(Base):
     """
-    The Option class handle a key and a value and is able to say if
-    it is properly formated
+    The Option class handle a key and a value and is able to say if it is properly formated. It is also the model of the
+    table ``wom_option`` which contains the following fields:
+
+    - id: INTEGER - primary key - auto increment
+    - name: VARCHAR(255) - the name of the referenced option
+    - value: VRACHAR(255) - the value of the option
+    - rule_id: INTEGER - the ID of the associated rule
     """
 
     # static value necessary to perform tests on Options
@@ -24,7 +26,6 @@ class Option(Base):
     static_option_req = "required"
     static_option_default = "default"
 
-
     __tablename__ = "wom_option"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -36,7 +37,7 @@ class Option(Base):
 
     def correspond(self, carac):
         """
-        Check if the option value correspond to the type given by the tool wrapper. Throws a WopMarsParsingException if
+        Check if the option value correspond to the type given by the tool wrapper. Throws a WopMarsException if
         not.
 
         :raise: WopMarsException

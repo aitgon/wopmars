@@ -1,9 +1,11 @@
 """
 Module containing the SQLManager class.
 """
+import pandas
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import create_engine
 from sqlalchemy.schema import sort_tables
+from sqlalchemy import event
 
 from wopmars.main.tagc.framework.bdd.Base import Base
 from wopmars.main.tagc.framework.bdd.WopMarsSession import WopMarsSession
@@ -29,6 +31,15 @@ class SQLManager(SingletonMixin):
     Allows droping and creating tables from table names ("create" and "drop"), list of table models ("drop_table_list")
     and all ("create_all" and "drop_all").
     """
+    wom_table_names = [
+        "wom_type",
+        "wom_modification_table",
+        "wom_execution",
+        "wom_rule",
+        "wom_table",
+        "wom_file",
+        "wom_option"
+    ]
 
     def __init__(self):
         """
@@ -154,18 +165,20 @@ class SQLManager(SingletonMixin):
             Logger.instance().debug("\"" + str(query.session) + "\" has released the read lock on SQLManager.")
         return result
 
-    def execute(self, session, statement):
+    def execute(self, session, statement, *args, **kwargs):
         """
         Allow to execute a statement object on the given session.
 
         :param session: SQLAlchemy session object.
         :param statement: SQLAlchemy statement object.
         """
+        Logger.instance().debug("SQLManager.execute(" + str(session) + ", " + str(statement) + ", " +
+                                    str(args) + ", " + str(kwargs) + ")")
         try:
             Logger.instance().debug(str(session) + " want the write lock on SQLManager for statement \"" + str(statement) + "\"")
             self.__lock.acquire_write()
             Logger.instance().debug(str(session) + " has taken the write lock on SQLManager.")
-            session.execute(statement)
+            return session.execute(statement, *args, **kwargs)
         finally:
             # Always release the lock
             self.__lock.release()
@@ -269,3 +282,71 @@ class SQLManager(SingletonMixin):
         finally:
             # Always release the lock
             self.__lock.release()
+
+    def drop_table_content_list(self, list_str_table):
+        """
+        Remove a list of tables from the list of their tablenames.
+
+        :param list_str_table: [String] the name of the tables.
+        """
+        session = self.get_session()
+        # Get the list of Table objects from tablenames, then sort them according to their relationships / foreignkeys
+        # and take the reverse to delete them in the right order (reverse of the correct order for creating them)
+        list_obj_table = reversed(
+            sort_tables([Base.metadata.tables[tablename.split(".")[-1]] for tablename in list_str_table]))
+        for t in list_obj_table:
+            Logger.instance().debug(
+                "SQLManager.drop_table_content_list(" + str(list_str_table) + "): drop table content " + str(t.name))
+            self.execute(session._session(), t.delete())
+
+    def pandas_to_sql(self, df, *args, **kwargs):
+        """
+        Execute the `DataFrame.to_sql <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.to_sql.html>`_ function from pandas.DataFrame.
+
+        :param df: The DataFrame to insert in database.
+        :type df: `pandas.DataFrame <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html>`_
+        :param args: The conventional arguments for the pandas.to_sql function.
+        :param kwargs: The conventional key arguments for the pandas.to_sql function.
+        """
+        try:
+            self.__lock.acquire_write()
+            df.to_sql(*args, **kwargs)
+            Logger.instance().debug("SQLManager.pandas_to_sql: Adding dataframe to database")
+        finally:
+            self.__lock.release()
+
+    def pandas_read_sql(self, *args, **kwargs):
+        """
+        Execute the `pandas.read_sql <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.read_sql.html?highlight=sql>`_ function
+
+        :param args: The conventional arguments for the pandas.read_sql function.
+        :param kwargs: The conventional key arguments for the pandas.read_sql function.
+        :return DataFrame: The dataframe containing the results of the query.
+        """
+        try:
+            self.__lock.acquire_read()
+            df = pandas.read_sql(*args, **kwargs)
+            Logger.instance().debug("SQLManager.read_sql: Reading database using pandas")
+        finally:
+            self.__lock.release()
+        return df
+
+    def create_trigger(self, table, ddl):
+        """
+        Create a Trigger after creating a given table.
+
+        :param table:
+        :type table: `Table <http://docs.sqlalchemy.org/en/latest/core/metadata.html#sqlalchemy.schema.Table>`_
+        :param ddl:
+        :type ddl: `DDL <http://docs.sqlalchemy.org/en/latest/core/ddl.html#sqlalchemy.schema.DDL>`_
+        """
+        try:
+            self.__lock.acquire_write()
+            event.listen(
+                table,
+                'after_create',
+                ddl
+            )
+        finally:
+            self.__lock.release()
+

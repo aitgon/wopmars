@@ -1,9 +1,17 @@
 rule rule1:
     tool: sprintFive.AddH
+    output:
+        table:
+            FooBaseH: FooBaseH
     params:
         rows: 10
         del: False
 
 rule rule2:
     tool: FooWrapperH
-
+    input:
+        table:
+            FooBaseH: FooBaseH
+    output:
+        table:
+            FooBaseH: FooBaseH2

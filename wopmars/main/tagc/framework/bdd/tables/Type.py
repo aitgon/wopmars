@@ -1,6 +1,3 @@
-"""
-Module containing the Type class.
-"""
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 
@@ -8,6 +5,15 @@ from wopmars.main.tagc.framework.bdd.Base import Base
 
 
 class Type(Base):
+    """
+    This class is the model of the table ``wom_type``. It stores the two kind of entry named "input" and "output" which
+    are associated with an ID.
+
+    Fields:
+
+    - id: INTEGER - primary key -arbitrary ID
+    - name: VARCHAR(255) - the name of the type ("input" or "output")
+    """
     __tablename__ = "wom_type"
 
     id = Column(Integer, primary_key=True, autoincrement=True)

@@ -27,7 +27,7 @@ class Logger(SingletonMixin):
 
     def __init__(self):
         # the top level logger which will distribute messages to different handlers
-        self.__logger = logging.getLogger()
+        self.__logger = logging.getLogger("wopmars")
         self.__logger.setLevel(logging.DEBUG)
 
         # the loger for std out
@@ -51,19 +51,16 @@ class Logger(SingletonMixin):
         self.__err_handler.setFormatter(formatter_err)
         self.__err_handler.setLevel(logging.DEBUG)
 
-        verbosity = OptionManager.instance()["-v"]
+        verbosity = int(OptionManager.instance()["-v"])
 
         # set the verbosity of the stream handler and file handler depending of the needs of the user.
-        if verbosity == 1:
-            self.__stream_handler.setLevel(logging.ERROR)
-            self.__file_handler.setLevel(logging.ERROR)
-        elif verbosity == 2 or verbosity <= 0:
+        if verbosity <= 0:
             self.__stream_handler.setLevel(logging.WARNING)
             self.__file_handler.setLevel(logging.WARNING)
-        elif verbosity == 3:
+        elif verbosity == 1:
             self.__stream_handler.setLevel(logging.INFO)
             self.__file_handler.setLevel(logging.INFO)
-        elif verbosity >= 4:
+        elif verbosity >= 2:
             self.__stream_handler.setLevel(logging.DEBUG)
             self.__file_handler.setLevel(logging.DEBUG)
 
@@ -74,6 +71,11 @@ class Logger(SingletonMixin):
             self.__logger.addHandler(self.__stream_handler_err)
         self.__logger.addHandler(self.__file_handler)
         self.__logger.addHandler(self.__err_handler)
+
+        self.__tw_logger = logging.getLogger("tw")
+        self.__tw_streamhandler = logging.StreamHandler()
+        self.__tw_logger.addHandler(self.__tw_streamhandler)
+        self.__tw_logger.setLevel(logging.DEBUG)
 
     def info(self, msg):
         formatter_stream = logging.Formatter(ColorPrint.blue('%(levelname)s :: %(message)s'))
@@ -108,4 +110,27 @@ class Logger(SingletonMixin):
         self.__stream_handler.setFormatter(formatter_stream)
 
         self.__logger.critical(msg)
+
+    def toolwrapper_debug(self, msg, tw_name):
+        if OptionManager.instance()["--toolwrapper-log"]:
+            self.__tw_streamhandler.setFormatter(
+                logging.Formatter(ColorPrint.green(tw_name + ' ::  %(levelname)s :: %(message)s')))
+            self.__tw_logger.debug(msg)
+
+    def toolwrapper_info(self, msg, tw_name):
+        if OptionManager.instance()["--toolwrapper-log"]:
+            self.__tw_streamhandler.setFormatter(
+                logging.Formatter(ColorPrint.green(tw_name + ' :: %(levelname)s :: %(message)s')))
+            self.__tw_logger.info(msg)
+
+    def toolwrapper_warning(self, msg, tw_name):
+        if OptionManager.instance()["--toolwrapper-log"]:
+            self.__tw_streamhandler.setFormatter(
+                logging.Formatter(ColorPrint.green(tw_name + ' :: %(levelname)s :: %(message)s')))
+            self.__tw_logger.warning(msg)
+
+    def toolwrapper_error(self, msg, tw_name):
+        if OptionManager.instance()["--toolwrapper-log"]:
+            self.__tw_streamhandler.setFormatter(logging.Formatter(ColorPrint.green(tw_name + ' :: %(levelname)s :: %(message)s')))
+            self.__tw_logger.error(msg)
 

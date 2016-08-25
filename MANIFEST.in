@@ -1,1 +1,1 @@
-include requirements.txt
+recursive-include wopmars/main/tagc/example/wopmars_example *
