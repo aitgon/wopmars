@@ -3,6 +3,53 @@ Software Documentation
 
 This manual is dedicated to the developers who want to improve **WoPMaRS** by adding new features or correcting bugs.
 
+Setting up WoPMaRS development environment
+------------------------------------------
+
+Once you have downloaded **WoPMaRS** from git, you should want to process the `unittests` in order to make sure that everything is ok.
+
+First, install the dependencies from the ``requirements.txt`` file in your virtual environment.
+
+.. code-block:: bash
+
+    pip install -r requirements.txt
+    
+Some modules should be accessible to your python interpreter in order to perform the tests. The called modules are the test `ToolWrappers` and `Models`. You should then add their location to the python path:
+
+.. code-block:: bash
+
+    export PYTHONPATH="/ThePathToWopmarsSourceFolder/wopmars/test/tagc/base"
+    export PYTHONPATH="$PYTHONPATH:/ThePathToWopmarsSourceFolder/wopmars/test/tagc/toolwrappers"
+    
+    
+You are now ready to perform unittests then stay in the source folder and run:
+
+.. code-block:: bash
+
+    python3 -m unittest discover
+
+And the tests should start and be ok. You are now ready to start improving **WoPMaRS**
+
+Contributing to WoPMaRS documentation
+------------------------------
+
+The WoPMaRS documentation has been done thanks to `Sphinx <http://www.sphinx-doc.org/en/stable/>`_. The documentation has been written according to the `rST format <http://docutils.sourceforge.net/rst.html>`_. There is two type of documentation in **WoPMaRS**:
+
+- ``docstring`` in the source code
+- rST files in the ``docs`` folder
+
+To build the ``html`` documentation, go in the ``docs`` folder and type the following command:
+
+.. code-block:: bash
+    
+    make html
+
+The result will be stored in the ``docs/_build/html``.
+
+.. note::
+
+    If you want to see what other format are available with Sphinx, you can look at the ``Makefile``. There is an help section but only html has been tested.
+
 The history of WoPMaRS executions
 ---------------------------------
 
@@ -46,8 +93,19 @@ Executing the DAG
 
 It is the :class:`~.wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager` which is responsible of executing the DAG. The main methods of this class are :meth:`~.wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.run_queue` and :meth:`~.wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.execute_from`. Basically, ``execute_from`` fill the queue with the `Toolwrappers` that should be executed soon and ``run_queue`` actually execute the queue after performing some tests on the inputs of the `Toolwrappers`.
 
+Managing the DataBase
+---------------------
 
-conseil: faire une option "supprimer le contenu de la table avant l'exécution" si l'utilisateur veut écraser des résultats
+The main class responsible of managing the database is the :class:`~.wopmars.main.tagc.framework.bdd.SQLManager.SQLManager`. This class is represented in **WoPMaRS** as a synchronized :class:`~.wopmars.main.tagc.utils.Singleton.SingletonMixin`. To access the Singleton instance, all you need to to is ``SQLManager.instance()``
+
+.. note::
+
+    A singleton, as described in the `Wikipedia article <https://en.wikipedia.org/wiki/Singleton_pattern>_` is a design pattern which allows to access anywhere and at anytime to the same instance of a given class. In our case, this is important because the SQLManager is the object which actually access the database and this needs to be synchronized. 
+
+The constructor of the ``SQLManager`` create the actual database and enable the foreign key support (https://www.sqlite.org/foreignkeys.html#fk_enable) in order to let the user benefit from this constraint.
+
+To get a :class:`~.wopmars.main.tagc.bdd.WopMarsSession.WopMarsSession` associated with this SQLManager, you just need to call :meth:`~wopmars.main.tagc.framework.bdd.SQLManager.SQLManager.get_session()`` and you can use the session anywhere, in any thread and at any time. Everything is already synchronized.
+
 
 
 ----
@@ -105,4 +163,14 @@ conseil: faire une option "supprimer le contenu de la table avant l'exécution" 
 ----
 
 .. autoclass:: wopmars.main.tagc.framework.management.ToolThread.ToolThread
+   :members:
+   
+----
+
+.. autoclass:: wopmars.main.tagc.framework.bdd.SQLManager.SQLManager
+   :members:
+
+----
+
+.. autoclass:: wopmars.main.tagc.utils.Singleton.SingletonMixin
    :members:

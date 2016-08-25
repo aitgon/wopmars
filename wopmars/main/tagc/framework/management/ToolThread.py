@@ -49,6 +49,7 @@ class ToolThread(threading.Thread, Observable):
         start = datetime.datetime.fromtimestamp(time.time())
         try:
             self.__toolwrapper.set_session(session_tw)
+            # if the tool need to be executed
             if not self.__dry:
                 Logger.instance().info(
                     "\n" + str(self.__toolwrapper) + "\n" + "command line: \n\t" + self.get_command_line())

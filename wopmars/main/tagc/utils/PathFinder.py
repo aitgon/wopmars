@@ -17,8 +17,9 @@ class PathFinder:
 
         :return: the path leading to the src file of the project
         """
+
         file_path_splitted = path.split('/')
-        root_path = "/".join(file_path_splitted[:file_path_splitted.index('wopmars') + 1]) + "/"
+        root_path = "/".join(file_path_splitted[:(len(file_path_splitted) - 1) - file_path_splitted[::-1].index('wopmars') + 1]) + "/"
         return root_path
 
     @staticmethod

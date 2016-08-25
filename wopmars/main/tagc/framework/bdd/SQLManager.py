@@ -283,7 +283,6 @@ class SQLManager(SingletonMixin):
             # Always release the lock
             self.__lock.release()
 
-
     def drop_table_content_list(self, list_str_table):
         """
         Remove a list of tables from the list of their tablenames.
@@ -301,6 +300,14 @@ class SQLManager(SingletonMixin):
             self.execute(session._session(), t.delete())
 
     def pandas_to_sql(self, df, *args, **kwargs):
+        """
+        Execute the `DataFrame.to_sql <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.to_sql.html>`_ function from pandas.DataFrame.
+
+        :param df: The DataFrame to insert in database.
+        :type df: `pandas.DataFrame <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html>`_
+        :param args: The conventional arguments for the pandas.to_sql function.
+        :param kwargs: The conventional key arguments for the pandas.to_sql function.
+        """
         try:
             self.__lock.acquire_write()
             df.to_sql(*args, **kwargs)
@@ -309,6 +316,13 @@ class SQLManager(SingletonMixin):
             self.__lock.release()
 
     def pandas_read_sql(self, *args, **kwargs):
+        """
+        Execute the `pandas.read_sql <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.read_sql.html?highlight=sql>`_ function
+
+        :param args: The conventional arguments for the pandas.read_sql function.
+        :param kwargs: The conventional key arguments for the pandas.read_sql function.
+        :return DataFrame: The dataframe containing the results of the query.
+        """
         try:
             self.__lock.acquire_read()
             df = pandas.read_sql(*args, **kwargs)
@@ -318,6 +332,14 @@ class SQLManager(SingletonMixin):
         return df
 
     def create_trigger(self, table, ddl):
+        """
+        Create a Trigger after creating a given table.
+
+        :param table:
+        :type table: `Table <http://docs.sqlalchemy.org/en/latest/core/metadata.html#sqlalchemy.schema.Table>`_
+        :param ddl:
+        :type ddl: `DDL <http://docs.sqlalchemy.org/en/latest/core/ddl.html#sqlalchemy.schema.DDL>`_
+        """
         try:
             self.__lock.acquire_write()
             event.listen(

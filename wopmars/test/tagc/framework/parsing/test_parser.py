@@ -142,8 +142,8 @@ class TestParser(TestCase):
         OptionManager.instance()["--dot"] = dot_path
         self.__parser.parse()
         self.assertTrue(os.path.isfile(dot_path))
-        os.remove(dot_path)
-        os.remove(dot_path[:-4] + ".ps")
+        # os.remove(dot_path)
+        # os.remove(dot_path[:-4] + ".ps")
 
 if __name__ == '__main__':
     unittest.main()

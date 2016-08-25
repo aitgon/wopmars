@@ -285,8 +285,6 @@ class ToolWrapper(Base):
 
     def are_inputs_ready(self):
         """
-        WorkflowManager method:
-
         Check if inputs are ready
 
         :return: bool - True if inputs are ready.
@@ -359,19 +357,14 @@ class ToolWrapper(Base):
         session.commit()
 
         for t in [t for t in self.tables if t.type.name == type]:
-            # if type == "output" and not dry:
-            #     Logger.instance().debug("Output table " + str(t) + " has been modified.")
-            #     t.modification.date = datetime.datetime.fromtimestamp(time.time())
-            # elif type == "output" and dry:
-            #     Logger.instance().debug("Output table " + str(t) + " not modified because of dry run.")
-            # elif type == "input":
-            #     Logger.instance().debug("Input table " + str(t) + " used.")
             t.used_at = t.modification.date
             session.add(t)
         session.commit()
 
     def same_input_than(self, other):
         """
+        Never used.
+
         Check if the other ToolWrapper have the same input than self.
 
         The input are say "the same" if:
@@ -409,6 +402,14 @@ class ToolWrapper(Base):
         return True
 
     def is_output_more_recent_than_input(self):
+        """
+        Check for files and tables if the outputs are more recent than inputs.
+
+        In a conventionnal use of WoPMaRS, the output are supposed to be younger than the inputs. If they are not,
+        we can consider that the input has changed since the last execution and the output has to be re-written.
+
+        :return: Bool: True if the output is actually more recent than input
+        """
         most_recent_input = max([datetime.datetime.fromtimestamp(os.path.getmtime(f.path)) for f in self.files if f.type.name == "input"] +
                                 [t.modification.date for t in self.tables if t.type.name == "input"])
         oldest_output = min([datetime.datetime.fromtimestamp(os.path.getmtime(f.path)) for f in self.files if f.type.name == "output"] +
@@ -417,6 +418,8 @@ class ToolWrapper(Base):
 
     def same_output_than(self, other):
         """
+        Never used.
+
         Check if the output of self is the same than other.
 
         Checks only if the file names, table names and models are the same.
@@ -444,18 +447,20 @@ class ToolWrapper(Base):
         return True
 
     def does_output_exist(self):
+        """
+        Check if the output of the ToolWrapper exists.
+
+        For files, it means that the file exists on the system.
+        For tables, it means that the table is not empty.
+
+        :return: Bool: True if outputs exist.
+        """
         for of in [f for f in self.files if f.type.name == "output"]:
-            if not all(of.used_at > in_ft.used_at for in_ft in self.files + self.tables if (in_ft.type.name == "input" and
-                                                                                                 of.used_at is not None and
-                                                                                                 in_ft.used_at is not None)) or \
-                    not os.path.exists(of.path):
+            if not os.path.exists(of.path):
                 return False
 
         for ot in [t for t in self.tables if t.type.name == "output"]:
-            if not all(ot.used_at > in_ft.used_at for in_ft in self.files + self.tables if (in_ft.type.name == "input" and
-                                                                                            ot.used_at is not None and
-                                                                                            in_ft.used_at is not None)) or \
-                    not SQLManager.instance().get_session().query(ot.get_table()).count():
+            if not SQLManager.instance().get_session().query(ot.get_table()).count():
                 return False
         return True
 
@@ -479,49 +484,17 @@ class ToolWrapper(Base):
         if status is not None:
             self.status = status
 
-    def specify_input_file_dict(self):
-        """
-        Return the dict of input_files:
-
-        :return: Dict: <String>INPUTNAME : <IOFilePut>INPUT
-        """
-        return self.__input_file_dict
-
-    def specify_output_file_dict(self):
-        """
-        Return the dict of output_files:
-
-        :return: Dict: <String>OUTPUTNAME : <IOFilePut>OUTPUT
-        """
-        return self.__output_file_dict
-
-    def specify_input_table_dict(self):
-        """
-        Return the dict of input_table:
-
-        :return: Dict: <String>INPUTNAME : <IODbPut>INPUT
-        """
-        return self.__input_table_dict
-
-    def specify_output_table_dict(self):
-        """
-        Return the dict of output_table:
-
-        :return: Dict: <String>OUTPUTNAME : <IODbPut>OUTPUT
-        """
-        return self.__output_table_dict
-
-    def get_option_dict(self):
-        return self.__option_dict
-
     def set_session(self, session):
         self.__session = session
 
     def __eq__(self, other):
         """
-        Two ToolWrapper objects are equals if all their attributes are equals
+        Two ToolWrapper objects are equals if all their attributes are equals.
+
+        We check if the files, tables and options are the same.
         :param other: ToolWrapper
-        :return:
+        :type other: ToolWrapper
+        :return: Bool: True if the ToolWrappers are equals.
         """
         return (isinstance(other, self.__class__) and
                 self.same_files(other, "input") and
@@ -530,27 +503,50 @@ class ToolWrapper(Base):
                 self.same_tables(other, "output") and
                 self.same_options(other))
 
-    # todo check size / date -> non! pour le moment on vérifie juste que les paramètres sont identiques
     def same_files(self, other, type_name):
-        for input_f in [rf for rf in self.files if rf.type.name == type_name]:
-            is_in = bool([rf for rf in other.files if (os.path.abspath(input_f.path) == os.path.abspath(rf.path) and
-                                                       input_f.name == rf.name and
+        """
+        Check if the files of a ToolWrapper are the same than the files of the other for a given type (input or output).
+
+        :param other: ToolWrapper with which you need to compare
+        :type other: ToolWrapper
+        :param type_name: The name of the type of file (input or output)
+        :type type_name: str
+        :return: Bool: True if the files are the same
+        """
+        for f in [rf for rf in self.files if rf.type.name == type_name]:
+            is_in = bool([rf for rf in other.files if (os.path.abspath(f.path) == os.path.abspath(rf.path) and
+                                                       f.name == rf.name and
                                                        rf.type.name == type_name)])
             if not is_in:
                 return False
         return True
 
-    # todo check_content? -> dans le == des IODbPut
     def same_tables(self, other, type_name):
-        for input_t in [t for t in self.tables if t.type.name == type_name]:
-            is_in = bool([t for t in other.tables if (input_t.model == t.model and
+        """
+        Check if the tables of a ToolWrapper are the same than the tables of the other for a given type (input or output).
+
+        :param other: ToolWrapper with which you need to compare
+        :type other: ToolWrapper
+        :param type_name: The name of the type of table (input or output)
+        :type type_name: str
+        :return: Bool: True if the tables are the same
+        """
+        for t in [t for t in self.tables if t.type.name == type_name]:
+            is_in = bool([t for t in other.tables if (t.model == t.model and
                                                       t.type.name == type_name and
-                                                      input_t.tablename == t.tablename)])
+                                                      t.tablename == t.tablename)])
             if not is_in:
                 return False
         return True
 
     def same_options(self, other):
+        """
+        Check if the options of a ToolWrapper are the same the options of the other.
+
+        :param other: ToolWrapper with which you need to compare.
+        :type other: ToolWrapper
+        :return: Bool: True if the options are the same.
+        """
         for opt in self.options:
             is_in = bool([o for o in other.options if (o.name == opt.name and
                                                        o.value == opt.value)])
@@ -561,8 +557,11 @@ class ToolWrapper(Base):
 
     def __hash__(self):
         """
-        Redefining the hash method allows ToolWrapper objects to be indexed in sets and dict
-        :return:
+        Redefining the hash method allows ToolWrapper objects to be indexed in sets and dict.
+
+        Needed to use ToolWrapper as nodes of the DiGraph.
+
+        :return: int
         """
         return id(self)
 
@@ -626,7 +625,7 @@ class ToolWrapper(Base):
         return {}
 
     def run(self):
-        pass
+        raise NotImplementedError("The method run of the ToolWrapper " + str(self.toolwrapper) + " should be implemented")
 
     ### Methods availables for the tool developer
 
@@ -637,7 +636,12 @@ class ToolWrapper(Base):
         :param key: String the name of the variable containing the path
         :return:
         """
-        return [f.path for f in self.files if f.name == key and f.type.name == "input"][0]
+        try:
+            return [f.path for f in self.files if f.name == key and f.type.name == "input"][0]
+        except IndexError:
+            raise WopMarsException("Error during the execution of the ToolWrapper " + str(self.toolwrapper) +
+                                   " (rule " + self.name + ").",
+                                   "The input file " + str(key) + " has not been specified.")
 
     def input_table(self, key):
         """
@@ -646,9 +650,13 @@ class ToolWrapper(Base):
         :param key: String: the name of the Table object.
         :return:
         """
-        return [t for t in self.tables if t.tablename == key and t.type.name == "input"][0].get_table()
+        try:
+            return [t for t in self.tables if t.tablename == key and t.type.name == "input"][0].get_table()
+        except IndexError:
+            raise WopMarsException("Error during the execution of the ToolWrapper " + str(self.toolwrapper) +
+                                   " (rule " + self.name + ").",
+                                   "The input table " + str(key) + " has not been specified.")
 
-    # todo exception erreur speciale developpeur métier (aide au debogage)
     def output_file(self, key):
         """
         Return the path of the specified output file.
@@ -656,7 +664,12 @@ class ToolWrapper(Base):
         :param key: String the name of the variable containing the path
         :return:
         """
-        return [f.path for f in self.files if f.name == key and f.type.name == "output"][0]
+        try:
+            return [f.path for f in self.files if f.name == key and f.type.name == "output"][0]
+        except IndexError:
+            raise WopMarsException("Error during the execution of the ToolWrapper " + str(self.toolwrapper) +
+                                   " (rule " + self.name + ").",
+                                   "The output file " + str(key) + " has not been specified.")
 
     def output_table(self, key):
         """
@@ -665,7 +678,12 @@ class ToolWrapper(Base):
         :param key: String: the name of the Table object.
         :return:
         """
-        return [t for t in self.tables if t.tablename == key and t.type.name == "output"][0].get_table()
+        try:
+            return [t for t in self.tables if t.tablename == key and t.type.name == "output"][0].get_table()
+        except IndexError:
+            raise WopMarsException("Error during the execution of the ToolWrapper " + str(self.toolwrapper) +
+                                   " (rule " + self.name + ").",
+                                   "The output table " + str(key) + " has not been specified.")
 
     def option(self, key):
         try:
@@ -696,5 +714,5 @@ class ToolWrapper(Base):
         elif level == "error":
             Logger.instance().toolwrapper_error(msg, self.toolwrapper)
         else:
-            raise WopMarsException("Error in the toolwrapper definition",
+            raise WopMarsException("Error in the Toolwrapper definition of method run()",
                                    "The is no logging level associated with " + str(level) + ".")

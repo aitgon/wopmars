@@ -15,6 +15,7 @@ from wopmars import WopMars
 
 class TestWopMars(TestCase):
     def setUp(self):
+        print(os.path.dirname(os.path.realpath(__file__)))
         s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
         print(s_root_path)
         os.chdir(s_root_path)
