@@ -7,6 +7,13 @@ This starting guide will allow you to understand the main mecanisms which rule *
 
 To illustrate the necessary conditions to build a correct `Toolwrapper`, we will use some kind of *TO DO* task list to prevent forgetting steps. The order doesn't matter but, I insist, each step is essential.
 
+Table of Content
+................
+
+.. toctree::
+
+   dev_wrapper
+
 Developing basic `Toolwrappers`
 ...............................
 

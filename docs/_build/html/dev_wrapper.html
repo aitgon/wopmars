@@ -45,6 +45,44 @@
 <p>This manual aims to explain with simple words how to write the <cite>Toolwrappers</cite> in order to allow a fresh Python developer to configure his own analysis workflow. This manual refers to the <a class="reference internal" href="use.html"><span class="doc">User Manual</span></a> so I recommand you to keep it open in case of blackout.</p>
 <p>This starting guide will allow you to understand the main mecanisms which rule <strong>WoPMaRS</strong>. It means the way WoPMaRS talks with the <cite>Toolwrappers</cite> you are using to understand their role in the workflow in terms of input and output parameters.</p>
 <p>To illustrate the necessary conditions to build a correct <cite>Toolwrapper</cite>, we will use some kind of <em>TO DO</em> task list to prevent forgetting steps. The order doesn't matter but, I insist, each step is essential.</p>
+<div class="section" id="table-of-content">
+<h2>Table of Content<a class="headerlink" href="#table-of-content" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ToolWrapper development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#table-of-content">Table of Content</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#developing-basic-toolwrappers">Developing basic <cite>Toolwrappers</cite></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#declaring-your-class">Declaring your class</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#toolwrapper-specifying-methods"><cite>Toolwrapper</cite> specifying methods</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#describing-files-specify-input-file-and-specif-output-file">Describing files: <code class="docutils literal"><span class="pre">specify_input_file</span></code> and <code class="docutils literal"><span class="pre">specif_output_file</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#describing-tables-specify-input-table-and-specify-output-table">Describing tables: <code class="docutils literal"><span class="pre">specify_input_table</span></code> and <code class="docutils literal"><span class="pre">specify_output_table</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#describing-paramaters-specify-params">Describing paramaters: <code class="docutils literal"><span class="pre">specify_params</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#declaring-the-method-run">Declaring the method <code class="docutils literal"><span class="pre">run</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#calling-files-self-input-file-and-self-output-file">Calling files: <code class="docutils literal"><span class="pre">self.input_file</span></code> and <code class="docutils literal"><span class="pre">self.output_file</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#calling-models-self-input-table-and-self-output-table">Calling models: <code class="docutils literal"><span class="pre">self.input_table</span></code> and <code class="docutils literal"><span class="pre">self.output_table</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#session-and-accessing-the-database">Session and accessing the database</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#declaring-a-model">Declaring a model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#developing-advanced-toolwrappers">Developing Advanced <cite>Toolwrappers</cite></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#parametrize-inputs-and-outputs">Parametrize inputs and outputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inherit-models">Inherit models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#executing-clean-command-line">Executing clean command line</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
 <div class="section" id="developing-basic-toolwrappers">
 <h2>Developing basic <cite>Toolwrappers</cite><a class="headerlink" href="#developing-basic-toolwrappers" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="declaring-your-class">
@@ -351,6 +389,7 @@
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">ToolWrapper development</a><ul>
+<li><a class="reference internal" href="#table-of-content">Table of Content</a></li>
 <li><a class="reference internal" href="#developing-basic-toolwrappers">Developing basic <cite>Toolwrappers</cite></a><ul>
 <li><a class="reference internal" href="#declaring-your-class">Declaring your class</a><ul>
 <li><a class="reference internal" href="#toolwrapper-specifying-methods"><cite>Toolwrapper</cite> specifying methods</a><ul>

@@ -3,6 +3,13 @@ Usage
 
 Now that you have learn :doc:`the basics of WoPMaRS </intro>` we can go further and understand how to speak with **WoPMaRS**. First, we'll look at the *workflow definition file* and its specifications then we'll describe the command line options to make optimum use of WoPMaRS.
 
+Table of Content
+----------------
+
+.. toctree::
+
+   use
+
 Workflow definition file
 ------------------------
 
