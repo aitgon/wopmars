@@ -1,9 +1,0 @@
-rule rule1:
-    tool: sprintFive.AddH
-    params:
-        rows: 10
-        del: False
-
-rule rule2:
-    tool: FooWrapperH
-

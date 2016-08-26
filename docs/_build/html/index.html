@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Welcome to WoPMaRS&#39;s documentation! &mdash; WoPMaRS 1.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="WoPMaRS 1.1.1 documentation" href="#" />
+    <link rel="next" title="Introduction" href="intro.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="welcome-to-wopmars-s-documentation">
+<h1>Welcome to WoPMaRS's documentation!<a class="headerlink" href="#welcome-to-wopmars-s-documentation" title="Permalink to this headline">¶</a></h1>
+<p><strong>WoPMaRS</strong> is a workflow manager written in Python which aims to ease the <em>reproducibility</em> of the results obtained during an analysis workflow. This reproducibility is ensured by the support of a SQLite database containing the results obtained during the workflow. An other advantage of using a relational database is to let you use the constraints enforced by the Database Management System to guarantee consistent and easily manipulable results.</p>
+</div>
+<div class="section" id="table-of-contents">
+<h1>Table of Contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#table-of-content">Table of Content</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#prerequisites">Prerequisites</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="intro.html#using-wopmars">Using WoPMaRS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intro.html#developing-toolwrappers">Developing <em>ToolWrappers</em></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#basic-usage">Basic Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="intro.html#looking-at-results">Looking at results</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#pros-and-cons">Pros and Cons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#go-further">Go further</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="use.html">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="use.html#table-of-content">Table of Content</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="use.html#workflow-definition-file">Workflow definition file</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="use.html#wopfile-example">Wopfile example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="use.html#rule">rule</a></li>
+<li class="toctree-l3"><a class="reference internal" href="use.html#tool">tool</a></li>
+<li class="toctree-l3"><a class="reference internal" href="use.html#input-and-output">input and output</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="use.html#file">file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="use.html#table">table</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="use.html#params">params</a></li>
+<li class="toctree-l3"><a class="reference internal" href="use.html#the-dag">The DAG</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="use.html#command-line-usage">Command line usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="use.html#execution-modes">Execution modes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="use.html#options-and-arguments">Options and Arguments</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dev_wrapper.html">ToolWrapper development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dev_wrapper.html#table-of-content">Table of Content</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dev_wrapper.html#developing-basic-toolwrappers">Developing basic <cite>Toolwrappers</cite></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dev_wrapper.html#declaring-your-class">Declaring your class</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dev_wrapper.html#toolwrapper-specifying-methods"><cite>Toolwrapper</cite> specifying methods</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="dev_wrapper.html#describing-files-specify-input-file-and-specif-output-file">Describing files: <code class="docutils literal"><span class="pre">specify_input_file</span></code> and <code class="docutils literal"><span class="pre">specif_output_file</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="dev_wrapper.html#describing-tables-specify-input-table-and-specify-output-table">Describing tables: <code class="docutils literal"><span class="pre">specify_input_table</span></code> and <code class="docutils literal"><span class="pre">specify_output_table</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="dev_wrapper.html#describing-paramaters-specify-params">Describing paramaters: <code class="docutils literal"><span class="pre">specify_params</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="dev_wrapper.html#declaring-the-method-run">Declaring the method <code class="docutils literal"><span class="pre">run</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="dev_wrapper.html#calling-files-self-input-file-and-self-output-file">Calling files: <code class="docutils literal"><span class="pre">self.input_file</span></code> and <code class="docutils literal"><span class="pre">self.output_file</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="dev_wrapper.html#calling-models-self-input-table-and-self-output-table">Calling models: <code class="docutils literal"><span class="pre">self.input_table</span></code> and <code class="docutils literal"><span class="pre">self.output_table</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="dev_wrapper.html#session-and-accessing-the-database">Session and accessing the database</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dev_wrapper.html#declaring-a-model">Declaring a model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dev_wrapper.html#developing-advanced-toolwrappers">Developing Advanced <cite>Toolwrappers</cite></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dev_wrapper.html#parametrize-inputs-and-outputs">Parametrize inputs and outputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dev_wrapper.html#inherit-models">Inherit models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dev_wrapper.html#executing-clean-command-line">Executing clean command line</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dev_wop.html">Software Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dev_wop.html#table-of-content">Table of Content</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dev_wop.html#setting-up-wopmars-development-environment">Setting up WoPMaRS development environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_wop.html#contributing-to-wopmars-documentation">Contributing to WoPMaRS documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_wop.html#sub-packages-descriptions">Sub-packages descriptions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dev_wop.html#bin">bin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dev_wop.html#docs">docs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dev_wop.html#wopmars">wopmars</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dev_wop.html#wopmars-tagc-example">wopmars.tagc.example</a></li>
+<li class="toctree-l4"><a class="reference internal" href="dev_wop.html#wopmars-tagc-framework">wopmars.tagc.framework</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="dev_wop.html#wopmars-tagc-framework-bdd">wopmars.tagc.framework.bdd</a></li>
+<li class="toctree-l5"><a class="reference internal" href="dev_wop.html#wopmars-tagc-framework-management">wopmars.tagc.framework.management</a></li>
+<li class="toctree-l5"><a class="reference internal" href="dev_wop.html#wopmars-tagc-framework-parsing">wopmars.tagc.framework.parsing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dev_wop.html#the-history-of-wopmars-executions">The history of WoPMaRS executions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_wop.html#building-the-execution-dag">Building the execution DAG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_wop.html#executing-the-dag">Executing the DAG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_wop.html#managing-the-database">Managing the DataBase</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Welcome to WoPMaRS's documentation!</a></li>
+<li><a class="reference internal" href="#table-of-contents">Table of Contents</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="intro.html" title="next chapter">Introduction</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Luc Giffon, Aitor Gonzalez, Lionel Spinelli.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

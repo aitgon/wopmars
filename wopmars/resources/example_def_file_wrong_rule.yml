@@ -1,0 +1,7 @@
+rule rule3:
+    tool: Failure
+    input:
+        file:
+            input1: "aFile.txt"
+    params:
+        param1: 5

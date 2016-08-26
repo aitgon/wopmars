@@ -1,0 +1,4 @@
+rule rule1:
+    input:
+        file:
+            input1: "myfile.txt"

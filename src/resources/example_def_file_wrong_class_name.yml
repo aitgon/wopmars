@@ -1,6 +1,0 @@
-rule rule3:
-    tool: BadClassNameWrapper
-    input:
-        input1: "aFile.txt"
-    params:
-        param1: 5

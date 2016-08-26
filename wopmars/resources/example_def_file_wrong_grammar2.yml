@@ -1,0 +1,5 @@
+failure rule1:
+    tool: FooWrapper3
+    input:
+        file:
+            input1: "myfile.txt"
