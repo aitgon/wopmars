@@ -144,6 +144,7 @@ class SQLManager(SingletonMixin):
             self.__lock.acquire_read()
             Logger.instance().debug("\"" + str(query.session) + "\" has taken the read lock on SQLManager.")
             # switch case according to the demanded method.
+            # in each condition, we call the superclass associated method: superclass is Query from sqlalchemy
             if method == "all":
                 result = super(query.__class__, query).all()
             elif method == "one":
@@ -241,7 +242,6 @@ class SQLManager(SingletonMixin):
         """
         try:
             self.__lock.acquire_write()
-            # todo tabling
             Logger.instance().debug("SQLManager.create(" + str(tablename) + "): create table " + str(tablename))
             Base.metadata.tables[tablename.split(".")[-1]].create(self.__engine, checkfirst=True)
         finally:

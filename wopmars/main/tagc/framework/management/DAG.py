@@ -22,6 +22,7 @@ class DAG(nx.DiGraph):
         
         :param set_tools: A set of tools
         """
+        # the DAG is a DiGraph
         super().__init__()
         Logger.instance().info("Building the execution DAG...")
         if set_tools:

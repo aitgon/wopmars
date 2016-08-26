@@ -58,7 +58,10 @@ class Option(Base):
                     raise WopMarsException("The content of the definition file is not valid.",
                                            "The given option value of " + str(self.name) +
                                            " should be of type " + s_formated_type)
+
+            # if not, it may be "default" or "required"
             else:
+                # we check if an option is required and has no default value
                 if s_formated_type != Option.static_option_default and s_formated_type != Option.static_option_req:
                     raise WopMarsException("Malformed toolwrapper class.",
                                            "The toolwrapper " + str(self.rule.toolwrapper) + " of the rule " +

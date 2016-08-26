@@ -62,7 +62,7 @@ class Parser:
         set_toolwrappers = self.get_set_toolwrappers()
         dag_tools = DAG(set_toolwrappers)
         if not is_directed_acyclic_graph(dag_tools):
-            # todo find out the loop to specify it in the rror message
+            # todo find out the loop to specify it in the error message
             raise WopMarsException("Error while parsing the configuration file: \n\tThe workflow is malformed:",
                                    "The specified Workflow cannot be represented as a DAG.")
         s_dot_option = OptionManager.instance()["--dot"]

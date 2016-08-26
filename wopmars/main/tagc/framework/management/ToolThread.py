@@ -16,18 +16,25 @@ from wopmars.main.tagc.utils.exceptions.WopMarsException import WopMarsException
 
 class ToolThread(threading.Thread, Observable):
     """
-    class ToolThread
+    The class ToolThread is a wrapper for executing toolwrappers.
+
+    It has been designed in order to implement the multithreading, this is why it inherit from threading.Thread.
     """
 
     def __init__(self, toolwrapper):
         """
-        
+        self.__dry = True means that the tool shouldn't be executed because its output already exist
 
         :return:
         """
         threading.Thread.__init__(self)
         self.__set_observer = set([])
+        # the wrapped toolwrapper
         self.__toolwrapper = toolwrapper
+        #self.__dry is different than the --dry-run option because it says "this has already been executed" whereas
+        # the --dry-run option means "simulate the whole execution"
+        # self.__dry can be True even if the --dry-run mode is enabled: it means "this tool has already its output, you
+        # don't even need to simulate execution, just skip"
         self.__dry = False
 
     def get_toolwrapper(self):
@@ -49,10 +56,11 @@ class ToolThread(threading.Thread, Observable):
         start = datetime.datetime.fromtimestamp(time.time())
         try:
             self.__toolwrapper.set_session(session_tw)
-            # if the tool need to be executed
+            # if the tool need to be executed because its output doesn't exist
             if not self.__dry:
                 Logger.instance().info(
                     "\n" + str(self.__toolwrapper) + "\n" + "command line: \n\t" + self.get_command_line())
+                # if you shouldn't simulate
                 if not OptionManager.instance()["--dry-run"]:
                     Logger.instance().info("Rule: " + str(self.__toolwrapper.name) + " -> " + self.__toolwrapper.__class__.__name__ + " started.")
                     self.__toolwrapper.run()
@@ -77,6 +85,11 @@ class ToolThread(threading.Thread, Observable):
         self.fire_success()
 
     def get_command_line(self):
+        """
+        This create a string containing the command line for executing the toolwrapper only.
+
+        :return: The string containg the command line
+        """
         list_str_inputs_files = [f.name + "': '" + f.path for f in self.__toolwrapper.files if f.type.name == "input"]
         list_str_inputs_tables = [t.tablename + "': '" + t.model for t in self.__toolwrapper.tables if t.type.name == "input"]
         str_input_dict = ""

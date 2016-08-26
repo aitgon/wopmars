@@ -11,7 +11,7 @@ class Execution(Base):
     If 2 executions are exactly the same, they will be both stocked in the database with different execution ids.
     The table ``wom_execution`` contains the following fields:
 
-    - id: INTEGRE: primary key - auto increment - arbitrary iD
+    - id: INTEGER: primary key - auto increment - arbitrary iD
     - started_at: DATE - date at wich the execution started
     - finished_at: DATE - date at wich the execution finished
     - time: FLOAT - the total time of execution

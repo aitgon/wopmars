@@ -89,6 +89,9 @@ class IODbPut(IOPut, Base):
 
     @staticmethod
     def create_triggers():
+        """
+        Create an INSERT, UPDATE, DELETE trigger on the tables created by the user in order to store the modifications date.
+        """
         stmt = ["INSERT", "UPDATE", "DELETE"]
         for tablename in Base.metadata.tables:
             if tablename[:4] != "wom_":

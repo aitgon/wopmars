@@ -72,16 +72,14 @@ class ToolWrapper(Base):
         :class:`~.wopmars.main.tagc.framework.management.WorflowManager.WorkflowManager` knows if the Toolwrapper is
         able to be executed or not.
 
-        self.__session is the session associated with the Toolwrapper and which will be used in the run method.
+        self.__session is the session (WopMarsSession) associated with the Toolwrapper and which will be used in the run method.
+        self.__state is an integer which says the actual state of the TooLWrapper: ``NEW``, ``READY``, ``NOT_READY``
 
         :param rule_name: the name of the rule
         :type rule_name: str
         """
-        # todo ajouter un flag de vérification du passage dans cette méthode
         super().__init__(name=rule_name)
-        # int
         self.__state = ToolWrapper.NEW
-        # <WopMarsSession>
         self.__session = None
 
     ### PARSING METHODS
@@ -93,7 +91,11 @@ class ToolWrapper(Base):
         This method checks if the parameters dictionary are properly formed, according to the specifications of the
         wrapper developer.
 
-        Call of the methods "is_options_respected", "is_input_respected" and "is_output_respected"
+        Call of the methods:
+
+        - :meth:`~.wopmars.main.tagc.framework.bdd.ToolWrapper.ToolWrapper.is_options_respected`
+        - :meth:`~.wopmars.main.tagc.framework.bdd.ToolWrapper.ToolWrapper.is_input_respected`
+        - :meth:`~.wopmars.main.tagc.framework.bdd.ToolWrapper.ToolWrapper.is_output_respected`
         """
         # the options have to be checked first because they can alter the behavior of the is_input_respected and
         # is_output_respected methods
@@ -106,17 +108,17 @@ class ToolWrapper(Base):
         """
         Parsing method:
 
-        Check if the input files associated with the toolwrapper are ok according to the toolwrapper developer.
+        Check if the input file variables names associated with the toolwrapper are ok according to the toolwrapper developer.
 
-        It checks if the output variable names exists or not. If not, throws a WopMarsParsingException.
+        It checks if the input variable names exists or not. If not, throws a WopMarsParsingException.
 
-        This method calls the "specify_input_file" method which have been written by the toolwrapper developer. Since the
-        options are checked first, the developer can write a conditional behavior depending on the options given for
-        the toolwrapper.
+        This method calls the :meth:`~.wopmars.main.tagc.framework.bdd.ToolWrapper.ToolWrapper.specify_input_file` method
+        which have been written by the toolwrapper developer.
 
-        :raises WopMarsException: The input are not respected by the user.
+        :raise WopMarsException: The input are not respected by the user.
         """
         set_input_file_names = set([f_input.name for f_input in self.files if f_input.type.name == "input"])
+        # check if the input file names for the ToolWrapper are coherent with the ToolWrapper specifications
         if set_input_file_names != set(self.specify_input_file()):
             raise WopMarsException("The content of the definition file is not valid.",
                                    "The given input file variable names for " + self.__class__.__name__ +
@@ -129,6 +131,9 @@ class ToolWrapper(Base):
 
         set_input_table = set([t_input for t_input in self.tables if t_input.type.name == "input"])
         set_input_table_names = set([t_input.tablename for t_input in set_input_table])
+
+        # check if the input table names for the ToolWrapper are coherent with the ToolWrapper specifications
+        # this condition may be a duplicate... # todo to fix?
         if set_input_table_names != set(self.specify_input_table()):
             raise WopMarsException("The content of the definition file is not valid.",
                                    "The given input table variable names for " + self.__class__.__name__ +
@@ -170,9 +175,7 @@ class ToolWrapper(Base):
 
         It checks if the output variable names exists or not. If not, throws a WopMarsParsingException.
 
-        This method calls the "specify_output_file" method which have been written by the toolwrapper developer. Since the
-        options are checked first, the developer can write a conditional behavior depending on the options given for
-        the toolwrapper.
+        This method calls the "specify_output_file" method which have been written by the toolwrapper developer.
 
         :raises WopMarsException: The output are not respected by the user.
         """
@@ -379,6 +382,7 @@ class ToolWrapper(Base):
         for t in [t for t in self.tables if t.type.name == "input"]:
             is_same = False
             for t2 in [t2 for t2 in other.tables if t2.type.name == "input"]:
+                # two tables are the same if they have the same model/tablename/modfication date
                 if (t.model == t2.model and
                     t.tablename == t2.tablename and
                        t.used_at == t2.used_at):
@@ -390,7 +394,7 @@ class ToolWrapper(Base):
         for f in [f for f in self.files if f.type.name == "input"]:
             is_same = False
             for f2 in [f2 for f2 in other.files if f2.type.name == "input"]:
-                # todo refactorer pour rassembler la boucle et la condition
+                # two files are the same if they have the same name, path, size and modficiation date
                 if (f.name == f2.name and
                         f.path == f2.path and
                         f.used_at == f2.used_at and
@@ -414,6 +418,7 @@ class ToolWrapper(Base):
                                 [t.modification.date for t in self.tables if t.type.name == "input"])
         oldest_output = min([datetime.datetime.fromtimestamp(os.path.getmtime(f.path)) for f in self.files if f.type.name == "output"] +
                             [t.modification.date for t in self.tables if t.type.name == "output"])
+        # in seconds since the begining of time (computer), the oldest thing has a lower number of seconds
         return most_recent_input < oldest_output
 
     def same_output_than(self, other):
@@ -607,24 +612,63 @@ class ToolWrapper(Base):
             s += "\tparams:" + "\n"
             s += "\t\t" + "\n\t\t".join(params_list_str)
         return s
+
     # ###### Method that worker developper should implement#######
 
     def specify_input_file(self):
+        """
+        Should be implemented by the toolwrapper developper.
+
+        This method return a List of string containing the input file variable names as String.
+        :return: [String]
+        """
         return []
 
     def specify_input_table(self):
+        """
+        Should be implemented by the toolwrapper developper.
+
+        This method return a List of string containing the input table names names as String.
+        :return: [String]
+        """
         return []
 
     def specify_output_file(self):
+        """
+        Should be implemented by the toolwrapper developper.
+
+        This method return a List of string containing the output file variable names as String.
+        :return: [String]
+        """
         return []
 
     def specify_output_table(self):
+        """
+        Should be implemented by the toolwrapper developper.
+
+        This method return a List of string containing the output table names as String.
+        :return: [String]
+        """
         return []
 
     def specify_params(self):
+        """
+        Should be implemented by the toolwrapper developper.
+
+        This method return a dict of string associated with string. Keys are the name of the options and values, their types.
+
+        :return: {String: String}
+        """
         return {}
 
     def run(self):
+        """
+        Should be implemented by the toolwrapper developper.
+
+        The core function of the ToolWrapper is this method. It wraps the actual execution of the tool underlying the ToolWrapper.
+
+        :raises NotImplementedError: If it doesn't have been implemented by the ToolWrapper Developer.
+        """
         raise NotImplementedError("The method run of the ToolWrapper " + str(self.toolwrapper) + " should be implemented")
 
     ### Methods availables for the tool developer
@@ -686,6 +730,15 @@ class ToolWrapper(Base):
                                    "The output table " + str(key) + " has not been specified.")
 
     def option(self, key):
+        """
+        Return the value associated with the key option.
+
+        If no value is associated with key, return None.
+
+        :param key: The name of the option
+        :type key: str
+        :return:
+        """
         try:
             value = [o.value for o in self.options if o.name == key][0]
             list_splitted_carac = self.specify_params()[key].split("|")
@@ -697,14 +750,23 @@ class ToolWrapper(Base):
                     break
             return value
         except IndexError as e:
-            Logger.instance().warning("The option '" + str(key) + "' has been called but have not been set in rule " +
-                                                               str(self.name) + " -> " + str(self.toolwrapper) + ".")
+            # antipattern, this is bad, but I deleted the warning because if the ToolWrapper Developer put his call to
+            # option in a loop, there will be too mutch output
+            pass
             return None
 
     def session(self):
         return self.__session
 
     def log(self, level, msg):
+        """
+        use by the toolwrapper developer in order to have a dedicated logger.
+
+        :param level: The level of logging you need: "debug", "info", "warning", "error"
+        :type level: str
+        :param msg: The actual string to log.
+        :type msg: str
+        """
         if level == "debug":
             Logger.instance().toolwrapper_debug(msg, self.toolwrapper)
         elif level == "info":
@@ -715,4 +777,5 @@ class ToolWrapper(Base):
             Logger.instance().toolwrapper_error(msg, self.toolwrapper)
         else:
             raise WopMarsException("Error in the Toolwrapper definition of method run()",
-                                   "The is no logging level associated with " + str(level) + ".")
+                                   "The is no logging level associated with " + str(level) + ". " +
+                                   "The authorized ones are: debug, info, warning, error")

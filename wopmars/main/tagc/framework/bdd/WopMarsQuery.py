@@ -16,6 +16,7 @@ class WopMarsQuery(Query):
       - one_or_none
       - scalar
     """
+    # I call the whole thing in order to prevent circular import... thx python
     def all(self):
         return wopmars.main.tagc.framework.bdd.SQLManager.SQLManager.instance().result_factory(self, "all")
 
