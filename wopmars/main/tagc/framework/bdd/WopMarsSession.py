@@ -169,5 +169,5 @@ class WopMarsSession:
         :param kwargs: kwargs of the conventionnal pandas.read_sql method
         :return: Pandas dataframe contianing the result
         """
-        return self.__manager.pandas_read_sql(sql, self.__session.connection(), *args, **kwargs)
+        return self.__manager.pandas_read_sql(sql, *args, **kwargs)
 
