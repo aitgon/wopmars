@@ -26,7 +26,7 @@ if '--no-pygraphviz' in sys.argv:
 
 setup(
     name='wopmars',
-    version='1.1.1',
+    version='1.1.2',
     description='Workflow Python Manager for Reproducible Science',
     long_description=long_description,
     # todo ask aitor url home page

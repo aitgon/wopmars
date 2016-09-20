@@ -203,8 +203,8 @@ class TestWopMars(TestCase):
 
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
-
-        self.assertEqual(se.exception.code, 0)
+    
+        self.assertEqual(se.exception.code, 1)
 
     def tearDown(self):
         SQLManager.instance().drop_all()
