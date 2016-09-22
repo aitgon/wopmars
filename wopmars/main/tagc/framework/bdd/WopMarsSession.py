@@ -157,7 +157,7 @@ class WopMarsSession:
         :param args: args of the conventionnal pandas.to_sql method
         :param kwargs: kwargs of the conventionnal pandas.to_sql method
         """
-        self.__manager.pandas_to_sql(df, tablename, self.__session.connection(), *args, **kwargs)
+        self.__manager.pandas_to_sql(df, tablename, *args, **kwargs)
 
     def pandas_read_sql(self, sql, *args, **kwargs):
         """
