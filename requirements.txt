@@ -14,4 +14,3 @@ schema==0.6.5
 six==1.10.0
 SQLAlchemy==1.1.2
 termcolor==1.1.0
--e git+git+ssh://git@git.renater.fr:2222/wopmars.git@db1f54265bcf924e6323f288c804acfe0b72d8cf#egg=wopmars
