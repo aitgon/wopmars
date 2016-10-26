@@ -2,8 +2,9 @@
 Module containing the ToolThread class.
 """
 import datetime
+import errno
 import threading
-
+import os
 import time
 import traceback
 
@@ -63,6 +64,17 @@ class ToolThread(threading.Thread, Observable):
                 # if you shouldn't simulate
                 if not OptionManager.instance()["--dry-run"]:
                     Logger.instance().info("Rule: " + str(self.__toolwrapper.name) + " -> " + self.__toolwrapper.__class__.__name__ + " started.")
+                    # mkdir -p output dir: before running we need output dir
+                    output_file_fields = self._ToolThread__toolwrapper.specify_output_file()
+                    for out_field in output_file_fields:
+                        out_file_path = self._ToolThread__toolwrapper.output_file(out_field)
+                        out_dir = os.path.dirname(out_file_path)
+                        try:
+                            os.makedirs(out_dir)
+                        except OSError as exception:
+                            if exception.errno != errno.EEXIST:
+                                raise
+                    # end of mkdir -p output dir
                     self.__toolwrapper.run()
                     session_tw.commit()
                     self.__toolwrapper.set_execution_infos(start, datetime.datetime.fromtimestamp(time.time()), "EXECUTED")
