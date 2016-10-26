@@ -13,20 +13,27 @@ Table of Content
 Setting up WoPMaRS development environment
 ------------------------------------------
 
-Once you have downloaded **WoPMaRS** from git, you should want to process the `unittests` in order to make sure that everything is ok.
-
-First, install the dependencies from the ``requirements.txt`` file in your virtual environment.
+Once you have downloaded **WoPMaRS** from git, you should want to process the `unittests` in order to make sure that everything is ok. It is best to create a conda environment to isolate your development.
 
 .. code-block:: bash
 
+    conda create --name wopmars python=3
+
+Then, install the dependencies from the ``spec-file`` and ``requirements.txt`` file in your virtual environment.
+
+.. code-block:: bash
+
+    conda install --yes --name wopmars --file spec-files.txt
     pip install -r requirements.txt
+
     
 Some modules should be accessible to your python interpreter in order to perform the tests. The called modules are the test `ToolWrappers` and `Models`. You should then add their location to the python path:
 
 .. code-block:: bash
 
-    export PYTHONPATH="/ThePathToWopmarsSourceFolder/wopmars/test/tagc/base"
-    export PYTHONPATH="$PYTHONPATH:/ThePathToWopmarsSourceFolder/wopmars/test/tagc/toolwrappers"
+    export PYTHONPATH="$PWD/wopmars/test/tagc/base:$PYTHONPATH"
+    export PYTHONPATH="$PWD/wopmars/test/tagc/toolwrappers:$PYTHONPATH"
+
     
     
 You are now ready to perform unittests then stay in the source folder and run:
