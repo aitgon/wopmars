@@ -29,6 +29,7 @@ class Logger(SingletonMixin):
         # the top level logger which will distribute messages to different handlers
         self.__logger = logging.getLogger("wopmars")
         self.__logger.setLevel(logging.DEBUG)
+        formatter = logging.Formatter('%(asctime)s :: %(levelname)s :: %(message)s')
 
         # the loger for std out
         self.__stream_handler = logging.StreamHandler()
@@ -78,35 +79,35 @@ class Logger(SingletonMixin):
         self.__tw_logger.setLevel(logging.DEBUG)
 
     def info(self, msg):
-        formatter_stream = logging.Formatter(ColorPrint.blue('%(levelname)s :: %(message)s'))
+        formatter_stream = logging.Formatter(ColorPrint.blue('%(levelname)s :: %(asctime)s :: %(message)s'))
         self.__stream_handler.setFormatter(formatter_stream)
         self.__stream_handler_err.setFormatter(formatter_stream)
 
         self.__logger.info(msg)
 
     def debug(self, msg):
-        formatter_stream = logging.Formatter(ColorPrint.yellow('%(levelname)s :: %(message)s'))
+        formatter_stream = logging.Formatter(ColorPrint.yellow('%(levelname)s :: %(asctime)s :: %(message)s'))
         self.__stream_handler.setFormatter(formatter_stream)
         self.__stream_handler_err.setFormatter(formatter_stream)
 
         self.__logger.debug(msg)
 
     def error(self, msg):
-        formatter_stream = logging.Formatter(ColorPrint.red('%(levelname)s :: %(message)s'))
+        formatter_stream = logging.Formatter(ColorPrint.red('%(levelname)s :: %(asctime)s :: %(message)s'))
         self.__stream_handler.setFormatter(formatter_stream)
         self.__stream_handler_err.setFormatter(formatter_stream)
 
         self.__logger.error(msg)
 
     def warning(self, msg):
-        formatter_stream = logging.Formatter(ColorPrint.magenta('%(levelname)s :: %(message)s'))
+        formatter_stream = logging.Formatter(ColorPrint.magenta('%(levelname)s :: %(asctime)s :: %(message)s'))
         self.__stream_handler.setFormatter(formatter_stream)
         self.__stream_handler_err.setFormatter(formatter_stream)
 
         self.__logger.warning(msg)
 
     def critical(self, msg):
-        formatter_stream = logging.Formatter(ColorPrint.red('%(levelname)s :: %(message)s'))
+        formatter_stream = logging.Formatter(ColorPrint.red('%(levelname)s :: %(asctime)s :: %(message)s'))
         self.__stream_handler.setFormatter(formatter_stream)
 
         self.__logger.critical(msg)
@@ -114,23 +115,23 @@ class Logger(SingletonMixin):
     def toolwrapper_debug(self, msg, tw_name):
         if OptionManager.instance()["--toolwrapper-log"]:
             self.__tw_streamhandler.setFormatter(
-                logging.Formatter(ColorPrint.green(tw_name + ' ::  %(levelname)s :: %(message)s')))
+                logging.Formatter(ColorPrint.green(tw_name + ' ::  %(levelname)s :: %(asctime)s :: %(message)s')))
             self.__tw_logger.debug(msg)
 
     def toolwrapper_info(self, msg, tw_name):
         if OptionManager.instance()["--toolwrapper-log"]:
             self.__tw_streamhandler.setFormatter(
-                logging.Formatter(ColorPrint.green(tw_name + ' :: %(levelname)s :: %(message)s')))
+                logging.Formatter(ColorPrint.green(tw_name + ' :: %(levelname)s :: %(asctime)s :: %(message)s')))
             self.__tw_logger.info(msg)
 
     def toolwrapper_warning(self, msg, tw_name):
         if OptionManager.instance()["--toolwrapper-log"]:
             self.__tw_streamhandler.setFormatter(
-                logging.Formatter(ColorPrint.green(tw_name + ' :: %(levelname)s :: %(message)s')))
+                logging.Formatter(ColorPrint.green(tw_name + ' :: %(levelname)s :: %(asctime)s :: %(message)s')))
             self.__tw_logger.warning(msg)
 
     def toolwrapper_error(self, msg, tw_name):
         if OptionManager.instance()["--toolwrapper-log"]:
-            self.__tw_streamhandler.setFormatter(logging.Formatter(ColorPrint.green(tw_name + ' :: %(levelname)s :: %(message)s')))
+            self.__tw_streamhandler.setFormatter(logging.Formatter(ColorPrint.green(tw_name + ' :: %(asctime)s :: %(levelname)s :: %(message)s')))
             self.__tw_logger.error(msg)
 
