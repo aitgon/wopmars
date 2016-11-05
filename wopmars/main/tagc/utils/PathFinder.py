@@ -38,6 +38,27 @@ class PathFinder:
                 return True
 
     @staticmethod
+    def check_database_valid_path(path):
+        """
+        Check if the path given is correct on the system.
+
+        If path is None, return None.
+
+        :param path:
+        :return:
+        """
+        path_dir = os.path.dirname(path)
+        try:
+            os.makedirs(path_dir)
+        except OSError as exception:
+            if exception.errno != errno.EEXIST:
+                raise
+        if path is None or os.access(os.path.dirname(os.path.abspath(os.path.expanduser(path))), os.W_OK) or path[0] == "$":
+            return path
+        else:
+            raise FileNotFoundError
+
+    @staticmethod
     def check_valid_path(path):
         """
         Check if the path given is correct on the system.

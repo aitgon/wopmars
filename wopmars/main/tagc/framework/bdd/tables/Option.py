@@ -24,7 +24,7 @@ class Option(Base):
         "float"
        )
     static_option_req = "required"
-    static_option_default = "default"
+    static_option_default = "optional"
 
     __tablename__ = "wom_option"
 
