@@ -2,6 +2,7 @@
 Example of module documentation which can be
 multiple-lined
 """
+import errno
 import importlib
 import os
 
@@ -25,6 +26,16 @@ class PathFinder:
     @staticmethod
     def check_pygraphviz(path):
         importlib.import_module("pygraphviz")
+
+    @staticmethod
+    def create_workingdir(path):
+        try:
+            os.makedirs(path)
+            return True
+        except OSError as exception:
+            if exception.errno != errno.EEXIST:
+                raise
+                return True
 
     @staticmethod
     def check_valid_path(path):

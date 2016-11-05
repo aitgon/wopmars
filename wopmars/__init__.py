@@ -83,7 +83,7 @@ class WopMars:
                 "--targetrule": Or(None, str),
                 "--forceall": Use(bool),
                 "--dry-run": Use(bool),
-                "--directory": Use(os.path.isdir),
+                "--directory": Use(PathFinder.create_workingdir),
                 "--input": Use(DictUtils.str_to_dict),
                 "--output": Use(DictUtils.str_to_dict),
                 "--params": Use(DictUtils.str_to_dict),
