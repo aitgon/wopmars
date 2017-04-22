@@ -57,19 +57,20 @@ class SQLManager(SingletonMixin):
         The lock is initialized here thanks to the RW lock class and will be used to overide the behaviour of sqlite
         to assess the access to the databse without using the queue of SQLite, bound at 4 sec wait before error.
         """
-        s_database_name = OptionManager.instance()["--database"]
-
+        d_database_config = OptionManager.instance()["--database"]
         # echo=False mute the log of database
         # connect_args have been necessary because of the accession of the same objects in different Threads.
-        self.__engine = create_engine('sqlite:///' + s_database_name, echo=False,
-                                      connect_args={'check_same_thread': False})
-
+        if d_database_config['db_connection']=="sqlite":
+            self.__engine = create_engine("%s:///%s"%(d_database_config['db_connection'], d_database_config['db_database']), echo=False, connect_args={'check_same_thread': False})
+        else:
+            self.__engine = create_engine(d_database_config, echo=False)
         # Below, between "###", code copy-pasted from this post
         # http://stackoverflow.com/questions/2614984/sqlite-sqlalchemy-how-to-enforce-foreign-keys/7831210#7831210
         # enforce foreign key constraints
         ###
         def _fk_pragma_on_connect(dbapi_con, con_record):
-            dbapi_con.execute('pragma foreign_keys=ON')
+            if d_database_config['db_connection'] == "sqlite":
+                dbapi_con.execute('pragma foreign_keys=ON')
 
         from sqlalchemy import event
         event.listen(self.__engine, 'connect', _fk_pragma_on_connect)
