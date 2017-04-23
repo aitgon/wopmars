@@ -96,13 +96,21 @@ class IODbPut(IOPut, Base):
         for tablename in Base.metadata.tables:
             if tablename[:4] != "wom_":
                 for s in stmt:
-                    obj_ddl = DDL("""CREATE TRIGGER IF NOT EXISTS """ + "modification_" + str(tablename) +
-                                  """ AFTER """ + str(s) + """ ON """ + str(tablename) + """
-  BEGIN
-    UPDATE wom_modification_table SET date = CURRENT_TIMESTAMP WHERE table_name = '""" + str(tablename) + """';
-  END;
-""")
-                    SQLManager.instance().create_trigger(Base.metadata.tables[tablename], obj_ddl)
+                    if SQLManager.instance().__dict__['d_database_config']['db_connection'] == 'sqlite':
+                        obj_ddl = DDL("""CREATE TRIGGER IF NOT EXISTS """ + "modification_" + str(tablename) +
+                                      """ AFTER """ + str(s) + """ ON """ + str(tablename) + """
+      BEGIN
+        UPDATE wom_modification_table SET date = CURRENT_TIMESTAMP WHERE table_name = '""" + str(tablename) + """';
+      END;
+    """)
+                    else:
+                        obj_ddl = DDL("""CREATE TRIGGER """ + "modification_" + str(tablename) +
+                                      """ AFTER """ + str(s) + """ ON """ + str(tablename) + """
+      BEGIN
+        UPDATE wom_modification_table SET date = CURRENT_TIMESTAMP WHERE table_name = '""" + str(tablename) + """';
+      END;
+    """)
+                        SQLManager.instance().create_trigger(Base.metadata.tables[tablename], obj_ddl)
 
 
     @staticmethod
