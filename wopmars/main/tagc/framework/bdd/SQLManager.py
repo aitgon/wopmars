@@ -63,7 +63,7 @@ class SQLManager(SingletonMixin):
         if d_database_config['db_connection']=="sqlite":
             self.__engine = create_engine("%s:///%s"%(d_database_config['db_connection'], d_database_config['db_database']), echo=False, connect_args={'check_same_thread': False})
         else:
-            self.__engine = create_engine(d_database_config, echo=False)
+            self.__engine = create_engine(d_database_config['db_url'], echo=False)
         # Below, between "###", code copy-pasted from this post
         # http://stackoverflow.com/questions/2614984/sqlite-sqlalchemy-how-to-enforce-foreign-keys/7831210#7831210
         # enforce foreign key constraints

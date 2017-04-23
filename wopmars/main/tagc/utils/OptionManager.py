@@ -55,11 +55,10 @@ class OptionManager(dict, SingletonMixin):
         if self["--directory"]:
             self["--directory"] = os.path.abspath(os.path.expanduser(self["--directory"]))
         if self["--database"]:
-            database_bak = self["--database"]
-            self["--database"] = {'db_connection': None, 'db_host': None, 'db_port': None, 'db_database': None, 'db_username': None, 'db_password': None}
-            self["--database"]['db_connection'] = database_bak.split(":///")[0]
+            self["--database"] = {'db_connection': None, 'db_database': None, 'db_url': self["--database"]}
+            self["--database"]['db_connection'] = self["--database"]['db_url'].split("://")[0]
             if self["--database"]['db_connection']=="sqlite":
-                self["--database"]['db_database'] = os.path.abspath(os.path.expanduser(database_bak.split(":///")[1]))
+                self["--database"]['db_database'] = os.path.abspath(os.path.expanduser(self["--database"]['db_url'].split(":///")[1]))
 
     def validate_definition_file(self):
         if self["--wopfile"] is None:
