@@ -55,7 +55,12 @@ class OptionManager(dict, SingletonMixin):
         if self["--directory"]:
             self["--directory"] = os.path.abspath(os.path.expanduser(self["--directory"]))
         if self["--database"]:
-            self["--database"] = os.path.abspath(os.path.expanduser(self["--database"]))
+            if self["--database"].split("://")[0]=="sqlite": # if sqlite replace with full path
+                self["--database"]="sqlite:///" + os.path.abspath(os.path.expanduser(self["--database"].split(":///")[1]))
+            # self["--database"] = {'db_connection': None, 'db_database': None, 'db_url': self["--database"]}
+            # self["--database"]['db_connection'] = self["--database"]['db_url'].split("://")[0]
+            # if self["--database"]['db_connection']=="sqlite":
+            #     self["--database"]['db_database'] = os.path.abspath(os.path.expanduser(self["--database"]['db_url'].split(":///")[1]))
 
     def validate_definition_file(self):
         if self["--wopfile"] is None:
@@ -106,8 +111,9 @@ class OptionManager(dict, SingletonMixin):
         OptionManager.instance()["--forceall"] = None
         OptionManager.instance()["--dry-run"] = None
         OptionManager.instance()["tool"] = None
-        OptionManager.instance()["--database"] = os.path.join(PathFinder.find_src(os.path.dirname(os.path.realpath(__file__))), "resources/outputs/" + mod_name + ".sqlite")
+        OptionManager.instance()["--database"] = "sqlite:///" + os.path.join(PathFinder.find_src(os.path.dirname(os.path.realpath(__file__))), "resources/outputs/" + mod_name + ".sqlite")
         OptionManager.instance()["--directory"] = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
         OptionManager.instance()["--clear-history"] = False
         os.chdir(OptionManager.instance()["--directory"])
         OptionManager.instance()["--toolwrapper-log"] = False
+

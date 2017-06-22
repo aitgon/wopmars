@@ -57,19 +57,24 @@ class SQLManager(SingletonMixin):
         The lock is initialized here thanks to the RW lock class and will be used to overide the behaviour of sqlite
         to assess the access to the databse without using the queue of SQLite, bound at 4 sec wait before error.
         """
-        s_database_name = OptionManager.instance()["--database"]
-
+        s_database_url = OptionManager.instance()["--database"]
+        self.d_database_config = {'db_connection': None, 'db_database': None, 'db_url': s_database_url}
+        self.d_database_config['db_connection'] = s_database_url.split("://")[0]
+        if self.d_database_config['db_connection'] == "sqlite":
+            self.d_database_config['db_database'] = s_database_url.split(":///")[1]
         # echo=False mute the log of database
         # connect_args have been necessary because of the accession of the same objects in different Threads.
-        self.__engine = create_engine('sqlite:///' + s_database_name, echo=False,
-                                      connect_args={'check_same_thread': False})
-
+        if self.d_database_config['db_connection']=="sqlite":
+            self.__engine = create_engine(self.d_database_config['db_url'], echo=False, connect_args={'check_same_thread': False})
+        else:
+            self.__engine = create_engine(self.d_database_config['db_url'], echo=False)
         # Below, between "###", code copy-pasted from this post
         # http://stackoverflow.com/questions/2614984/sqlite-sqlalchemy-how-to-enforce-foreign-keys/7831210#7831210
         # enforce foreign key constraints
         ###
         def _fk_pragma_on_connect(dbapi_con, con_record):
-            dbapi_con.execute('pragma foreign_keys=ON')
+            if self.d_database_config['db_connection'] == "sqlite":
+                dbapi_con.execute('pragma foreign_keys=ON')
 
         from sqlalchemy import event
         event.listen(self.__engine, 'connect', _fk_pragma_on_connect)
@@ -213,7 +218,7 @@ class SQLManager(SingletonMixin):
         """
         try:
             self.__lock.acquire_write()
-            Logger.instance().debug("Droping all tables...")
+            Logger.instance().debug("Dropping all tables...")
             Base.metadata.drop_all(self.__engine)
         finally:
             # Always release the lock
