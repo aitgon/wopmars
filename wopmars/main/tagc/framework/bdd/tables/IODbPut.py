@@ -96,21 +96,35 @@ class IODbPut(IOPut, Base):
         for tablename in Base.metadata.tables:
             if tablename[:4] != "wom_":
                 for s in stmt:
+                    data={"statement": str(s), "tablename": str(tablename)} 
                     if SQLManager.instance().__dict__['d_database_config']['db_connection'] == 'sqlite':
-                        obj_ddl = DDL("""CREATE TRIGGER IF NOT EXISTS """ + "modification_" + str(tablename) +
-                                      """ AFTER """ + str(s) + """ ON """ + str(tablename) + """
-      BEGIN
-        UPDATE wom_modification_table SET date = CURRENT_TIMESTAMP WHERE table_name = '""" + str(tablename) + """';
-      END;
-    """)
+                        sql_trigger = """
+CREATE TRIGGER IF NOT EXISTS modification_%(tablename)s AFTER %(statement)s ON %(tablename)s
+BEGIN
+UPDATE wom_modification_table SET date = CURRENT_TIMESTAMP WHERE table_name = '%(tablename)s';
+END;
+    """%data
+                    elif SQLManager.instance().__dict__['d_database_config']['db_connection'] == 'postgresql':
+                        sql_trigger = """
+CREATE OR REPLACE FUNCTION proc_wom_modification() RETURNS TRIGGER AS $wom_modification$
+BEGIN
+UPDATE wom_modification_table SET date = CURRENT_TIMESTAMP WHERE table_name = '%(tablename)s';
+RETURN NULL; -- result is ignored since this is an AFTER trigger
+END;
+$wom_modification$ LANGUAGE plpgsql;
+DROP TRIGGER IF EXISTS modification_%(tablename)s ON %(tablename)s;
+CREATE TRIGGER modification_%(tablename)s AFTER %(statement)s ON %(tablename)s
+FOR EACH ROW EXECUTE PROCEDURE proc_wom_modification();
+    """%data
                     else:
-                        obj_ddl = DDL("""CREATE TRIGGER """ + "modification_" + str(tablename) +
-                                      """ AFTER """ + str(s) + """ ON """ + str(tablename) + """
-      BEGIN
-        UPDATE wom_modification_table SET date = CURRENT_TIMESTAMP WHERE table_name = '""" + str(tablename) + """';
-      END;
-    """)
-                        SQLManager.instance().create_trigger(Base.metadata.tables[tablename], obj_ddl)
+                        sql_trigger = """
+CREATE TRIGGER IF NOT EXISTS modification_%(tablename)s AFTER %(statement)s ON %(tablename)s
+BEGIN
+UPDATE wom_modification_table SET date = CURRENT_TIMESTAMP WHERE table_name = '%(tablename)s';
+END;
+    """%data
+                    obj_ddl = DDL(sql_trigger)
+                    SQLManager.instance().create_trigger(Base.metadata.tables[tablename], obj_ddl)
 
 
     @staticmethod
