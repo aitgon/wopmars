@@ -15,7 +15,7 @@ class FooBaseH(Base):
     __tablename__ = "FooBaseH"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String)
+    name = Column(String(255))
     state = Column(String)
 
     __mapper_args__ = {

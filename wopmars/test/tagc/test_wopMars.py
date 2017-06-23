@@ -17,8 +17,10 @@ class TestWopMars(TestCase):
     def setUp(self):
         self.s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
         os.chdir(self.s_root_path)
-        self.__db_url = "sqlite:///" + self.s_root_path + "resources/outputs/.sqlite"
-        #self.__db_url = "postgresql://newuser:mypass@127.0.0.1:5432/newdb"
+        if 'DB_URL' not in os.environ:
+            self.__db_url = "sqlite:///" + self.s_root_path + "resources/outputs/.sqlite"
+        else:
+            self.__db_url = os.environ['DB_URL']
         self.__right_def_file = self.s_root_path + "resources/example_def_file.yml"
         self.__right_def_file2 = self.s_root_path + "resources/example_def_file4.yml"
         self.__right_def_file_only_files = self.s_root_path + "resources/example_def_file2.yml"

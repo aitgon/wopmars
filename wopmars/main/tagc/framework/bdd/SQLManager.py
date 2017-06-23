@@ -76,7 +76,6 @@ class SQLManager(SingletonMixin):
             if self.d_database_config['db_connection'] == "sqlite":
                 dbapi_con.execute('pragma foreign_keys=ON')
 
-        from sqlalchemy import event
         event.listen(self.__engine, 'connect', _fk_pragma_on_connect)
         ###
 
@@ -347,11 +346,7 @@ class SQLManager(SingletonMixin):
         """
         try:
             self.__lock.acquire_write()
-            event.listen(
-                table,
-                'after_create',
-                ddl
-            )
+            event.listen(table, 'after_create', ddl)
         finally:
             self.__lock.release()
 

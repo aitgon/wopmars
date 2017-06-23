@@ -28,7 +28,7 @@ class Execution(Base):
     started_at = Column(DateTime, nullable=True)
     finished_at = Column(DateTime, nullable=True)
     time = Column(Float, nullable=True)
-    status = Column(String, nullable=True)
+    status = Column(String(255), nullable=True)
 
     # One execution has many rules
     rules = relationship("ToolWrapper", back_populates="execution")

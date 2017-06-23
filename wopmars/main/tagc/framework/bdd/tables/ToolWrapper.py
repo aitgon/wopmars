@@ -37,13 +37,13 @@ class ToolWrapper(Base):
     __tablename__ = "wom_rule"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String)
-    toolwrapper = Column(String)
+    name = Column(String(255))
+    toolwrapper = Column(String(255))
     execution_id = Column(Integer, ForeignKey("wom_execution.id"))
     started_at = Column(DateTime, nullable=True)
     finished_at = Column(DateTime, nullable=True)
     time = Column(Float, nullable=True)
-    status = Column(String, nullable=True, default="NOT_EXECUTED")
+    status = Column(String(255), nullable=True, default="NOT_EXECUTED")
 
     # One rule has Many table
     tables = relationship("IODbPut", back_populates="rule")

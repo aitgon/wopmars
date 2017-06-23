@@ -14,4 +14,4 @@ class FooBase2(Base):
     __tablename__ = "FooBase2"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String(255))

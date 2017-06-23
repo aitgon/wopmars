@@ -17,7 +17,7 @@ class Type(Base):
     __tablename__ = "wom_type"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String)
+    name = Column(String(255))
 
     # One type is in Many table
     tables = relationship("IODbPut", back_populates="type")

@@ -17,7 +17,7 @@ class FooBase3(Base):
 
     id = Column(Integer, primary_key=True)
     id_foobase6 = Column(Integer, ForeignKey("FooBase6.id"))
-    name = Column(String)
+    name = Column(String(255))
 
     foobase4 = relationship("FooBase4", back_populates="foobase3")
     foobase6 = relationship("FooBase6", back_populates="foobase3")

@@ -14,7 +14,7 @@ class ModificationTable(Base):
 
     __tablename__ = "wom_modification_table"
 
-    table_name = Column(String, primary_key=True)
+    table_name = Column(String(255), primary_key=True)
     date = Column(DateTime, nullable=False)
 
     tables = relationship("IODbPut", back_populates="modification")

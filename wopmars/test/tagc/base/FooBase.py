@@ -14,7 +14,7 @@ class FooBase(Base):
     __tablename__ = "FooBase"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String)
+    name = Column(String(255))
 
     def __repr__(self):
         s = ""

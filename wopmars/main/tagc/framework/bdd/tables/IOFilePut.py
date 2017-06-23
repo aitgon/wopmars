@@ -25,8 +25,8 @@ class IOFilePut(IOPut, Base):
     __tablename__ = "wom_file"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String)
-    path = Column(String)
+    name = Column(String(255))
+    path = Column(String(255))
     rule_id = Column(Integer, ForeignKey("wom_rule.id"))
     type_id = Column(Integer, ForeignKey("wom_type.id"))
     used_at = Column(DateTime, nullable=True)

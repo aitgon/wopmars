@@ -33,8 +33,8 @@ class IODbPut(IOPut, Base):
     __tablename__ = "wom_table"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    tablename = Column(String, ForeignKey("wom_modification_table.table_name"))
-    model = Column(String)
+    tablename = Column(String(255), ForeignKey("wom_modification_table.table_name"))
+    model = Column(String(255))
     rule_id = Column(Integer, ForeignKey("wom_rule.id"))
     type_id = Column(Integer, ForeignKey("wom_type.id"))
     used_at = Column(DateTime, nullable=True)
@@ -103,6 +103,10 @@ CREATE TRIGGER IF NOT EXISTS modification_%(tablename)s AFTER %(statement)s ON %
 BEGIN
 UPDATE wom_modification_table SET date = CURRENT_TIMESTAMP WHERE table_name = '%(tablename)s';
 END;
+    """%data
+                    elif SQLManager.instance().__dict__['d_database_config']['db_connection'] == 'mysql':
+                        sql_trigger = """
+CREATE TRIGGER IF NOT EXISTS modification_%(tablename)s AFTER %(statement)s ON %(tablename)s for each row UPDATE wom_modification_table SET date = CURRENT_TIMESTAMP WHERE table_name = '%(tablename)s';
     """%data
                     elif SQLManager.instance().__dict__['d_database_config']['db_connection'] == 'postgresql':
                         sql_trigger = """
