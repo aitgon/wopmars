@@ -347,7 +347,7 @@ class WorkflowManager(ToolWrapperObserver):
             - the tw_old inputs are the same
             - the tw_old outputs exists with the same name and are more recent than inputs
 
-        :param tw: The Toolwrapper to test
+        :param tw: The Toolwrapper to test_bak
         :type tw: :class:`~.wopmars.main.framework.bdd.tables.ToolWrapper.ToolWrapper`
         """
         session = SQLManager.instance().get_session()

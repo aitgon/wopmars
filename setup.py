@@ -51,7 +51,7 @@ setup(
         'Topic :: Software Development',
     ],
     keywords='workflow manager python object-oriented reproducible science database framework',
-    packages=find_packages(exclude=['log', 'doc', '*.test.*', 'soutenance', 'rapport']),
+    packages=find_packages(exclude=['log', 'doc', '*.test_bak.*', 'soutenance', 'rapport']),
     install_requires=required,
     data_files=[],
     entry_points={

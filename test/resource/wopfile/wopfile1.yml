@@ -1,0 +1,10 @@
+# Rule1 use SparePartsManufacturer to insert piece informations into the table piece
+rule Rule1:
+    tool: 'test.resource.wrapper.SparePartsManufacturer'
+    input:
+        file:
+            piece: '/home/gonzalez/Software/repositories/wopmars/test/resource/input_files/piece.tsv'
+    output:
+        table:
+            Piece: 'test.resource.model.Piece'
+
