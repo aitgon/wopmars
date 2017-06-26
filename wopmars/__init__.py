@@ -74,7 +74,7 @@ class WopMars:
         try:
             schema_option = Schema({
                 '--wopfile': Or("Wopfile", str),
-                '--database': Use(PathFinder.check_database_valid_path),
+                '--database': Use(PathFinder.check_database_valid_url),
                 '-v': Or(0, And(int, lambda n: 1 <= n <= 2)),
                 '--dot': Or(None, And(Use(PathFinder.check_valid_path), Use(PathFinder.check_pygraphviz))),
                 "--log": Use(PathFinder.check_valid_path),
