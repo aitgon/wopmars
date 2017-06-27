@@ -24,6 +24,7 @@ from wopmars.main.tagc.utils.exceptions.WopMarsException import WopMarsException
 class TestToolWrapper(TestCase):
     def setUp(self):
         OptionManager.initial_test_setup()
+        self.s_root_path = PathFinder.get_module_path()
         SQLManager.instance().create_all()
 
         set_tw_to_add = set()
@@ -375,7 +376,7 @@ class TestToolWrapper(TestCase):
 
     def tearDown(self):
         SQLManager.instance().drop_all()
-        PathFinder.dir_content_remove("resources/outputs/")
+        PathFinder.dir_content_remove(os.path.join(self.s_root_path, "test/output"))
         OptionManager._drop()
         SQLManager._drop()
 

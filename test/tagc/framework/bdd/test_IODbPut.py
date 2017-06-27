@@ -1,3 +1,4 @@
+import os
 import unittest
 from unittest import TestCase
 
@@ -11,6 +12,7 @@ from wopmars.main.tagc.utils.PathFinder import PathFinder
 
 class TestIODbPut(TestCase):
     def setUp(self):
+        self.s_root_path = PathFinder.get_module_path()
         OptionManager.initial_test_setup()
         print(OptionManager.instance()["--log"])
 
@@ -34,7 +36,7 @@ class TestIODbPut(TestCase):
 
     def tearDown(self):
         SQLManager.instance().drop_all()
-        PathFinder.dir_content_remove("resources/outputs/")
+        PathFinder.dir_content_remove(os.path.join(self.s_root_path, "test/output"))
         OptionManager._drop()
         SQLManager._drop()
 

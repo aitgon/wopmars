@@ -1,3 +1,4 @@
+import os
 import unittest
 from unittest import TestCase
 
@@ -12,13 +13,14 @@ from wopmars.main.tagc.utils.PathFinder import PathFinder
 class TestWopMarsSession(TestCase):
     def setUp(self):
         OptionManager.initial_test_setup()
+        self.s_root_path = PathFinder.get_module_path()
         SQLManager.instance().create_all()
         self.__session = SQLManager.instance().get_session()
 
     def tearDown(self):
         self.__session.rollback()
         SQLManager.instance().drop_all()
-        PathFinder.dir_content_remove("resources/outputs/")
+        PathFinder.dir_content_remove(os.path.join(self.s_root_path, "test/output"))
         OptionManager._drop()
         SQLManager._drop()
 

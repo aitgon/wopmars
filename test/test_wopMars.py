@@ -14,7 +14,7 @@ class TestWopMars(TestCase):
         self.s_root_path = PathFinder.get_module_path()
         os.chdir(self.s_root_path)
         if 'DB_URL' not in os.environ:
-            self.__db_url = "sqlite:///" + self.s_root_path + "test_bak/resource/outputs/.sqlite"
+            self.__db_url = "sqlite:///" + os.path.join(self.s_root_path, "test/output/db.sqlite")
         else:
             self.__db_url = os.environ['DB_URL']
         self.__right_def_file = os.path.join(self.s_root_path, "test/resource/wopfile/wopfile1.yml")

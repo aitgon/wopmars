@@ -350,9 +350,9 @@ class Reader:
             session.commit()
             session.rollback()
             # This create_all will create all tables that have been found in the toolwrapper
-            if not SQLManager.instance().d_database_config['db_connection'] == 'postgresql':
-                # TODO: this function is not creating the triggers after the table in postgresql so I switched it off
-                IODbPut.create_triggers()
+            # if not SQLManager.instance().d_database_config['db_connection'] == 'postgresql':
+            # TODO: this function is not creating the triggers after the table in postgresql so I switched it off
+            IODbPut.create_triggers()
             SQLManager.instance().create_all()
             wrapper_entry.is_content_respected()
         except NoResultFound as e:
@@ -468,9 +468,9 @@ class Reader:
             session.commit()
             session.rollback()
             # This create_all will create all tables that have been found in the toolwrapper
-            if not SQLManager.instance().d_database_config['db_connection'] == 'postgresql':
-                # TODO: this function is not creating the triggers after the table in postgresql so I switched it off
-                IODbPut.create_triggers()
+            # if not SQLManager.instance().d_database_config['db_connection'] == 'postgresql':
+            # TODO: this function is not creating the triggers after the table in postgresql so I switched it off
+            IODbPut.create_triggers()
             SQLManager.instance().create_all()
             session.add_all(set_wrapper)
             # save all operations done so far.

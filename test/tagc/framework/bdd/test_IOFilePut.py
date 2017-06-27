@@ -12,10 +12,10 @@ class TestIOFilePut(TestCase):
     def setUp(self):
         OptionManager.initial_test_setup()
 
-        s_root_path = PathFinder.get_module_path()
-        s_path_to_example_existing_file = os.path.join(s_root_path, "test/resource/input_files/example_existing_file.txt")
-        s_path_to_example_existing_file2 = os.path.join(s_root_path, "test/resource/input_files/example_existing_file2.txt")
-        s_path_to_example_not_existing_file = os.path.join(s_root_path, "test/resource/input_files/example_not_existing_file.txt")
+        self.s_root_path = PathFinder.get_module_path()
+        s_path_to_example_existing_file = os.path.join(self.s_root_path, "test/resource/input_files/example_existing_file.txt")
+        s_path_to_example_existing_file2 = os.path.join(self.s_root_path, "test/resource/input_files/example_existing_file2.txt")
+        s_path_to_example_not_existing_file = os.path.join(self.s_root_path, "test/resource/input_files/example_not_existing_file.txt")
 
         self.__io_file_existing = IOFilePut(name="existing_file", path=s_path_to_example_existing_file)
         self.__io_file_existing2 = IOFilePut(name="existing_file", path=s_path_to_example_existing_file)
@@ -35,7 +35,7 @@ class TestIOFilePut(TestCase):
 
     def tearDown(self):
         SQLManager.instance().drop_all()
-        PathFinder.dir_content_remove("resources/outputs/")
+        PathFinder.dir_content_remove(os.path.join(self.s_root_path, "test/output"))
         OptionManager._drop()
         SQLManager._drop()
 
