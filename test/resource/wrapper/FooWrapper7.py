@@ -4,7 +4,7 @@ Module containing the FooWrapper1 class
 import os
 import time
 
-from FooBase2 import FooBase2
+from test.resource.model.FooBase2 import FooBase2
 from wopmars.main.tagc.framework.bdd.tables.ToolWrapper import ToolWrapper
 
 class FooWrapper7(ToolWrapper):

@@ -5,7 +5,7 @@ import time
 
 from matplotlib.compat import subprocess
 
-from FooBasee import FooBase
+from FooBase import FooBase
 from wopmars.main.tagc.framework.bdd.tables.ToolWrapper import ToolWrapper
 
 class FooWrapper5(ToolWrapper):

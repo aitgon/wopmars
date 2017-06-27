@@ -4,9 +4,6 @@ from unittest import TestCase
 
 from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager
 from wopmars.main.tagc.framework.bdd.tables.IOFilePut import IOFilePut
-from wopmars.main.tagc.framework.bdd.tables.Option import Option
-from wopmars.main.tagc.framework.bdd.tables.ToolWrapper import ToolWrapper
-from wopmars.main.tagc.framework.bdd.tables.Type import Type
 from wopmars.main.tagc.utils.OptionManager import OptionManager
 from wopmars.main.tagc.utils.PathFinder import PathFinder
 
@@ -15,10 +12,10 @@ class TestIOFilePut(TestCase):
     def setUp(self):
         OptionManager.initial_test_setup()
 
-        s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
-        s_path_to_example_existing_file = s_root_path + "resources/example_existing_file.txt"
-        s_path_to_example_existing_file2 = s_root_path + "resources/example_existing_file2.txt"
-        s_path_to_example_not_existing_file = s_root_path + "resources/example_not_existing_file.txt"
+        s_root_path = PathFinder.get_module_path()
+        s_path_to_example_existing_file = os.path.join(s_root_path, "test/resource/input_files/example_existing_file.txt")
+        s_path_to_example_existing_file2 = os.path.join(s_root_path, "test/resource/input_files/example_existing_file2.txt")
+        s_path_to_example_not_existing_file = os.path.join(s_root_path, "test/resource/input_files/example_not_existing_file.txt")
 
         self.__io_file_existing = IOFilePut(name="existing_file", path=s_path_to_example_existing_file)
         self.__io_file_existing2 = IOFilePut(name="existing_file", path=s_path_to_example_existing_file)

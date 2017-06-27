@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from sqlalchemy.orm.exc import MultipleResultsFound
 
-from FooBasee import FooBase
+from test.resource.model.FooBase import FooBase
 from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager
 from wopmars.main.tagc.utils.OptionManager import OptionManager
 from wopmars.main.tagc.utils.PathFinder import PathFinder

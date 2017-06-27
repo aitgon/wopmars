@@ -1,10 +1,6 @@
 import unittest
 from unittest import TestCase
-
-from wopmars.main.tagc.framework.bdd.tables.IOFilePut import IOFilePut
 from wopmars.main.tagc.framework.bdd.tables.Option import Option
-from wopmars.main.tagc.framework.bdd.tables.ToolWrapper import ToolWrapper
-from wopmars.main.tagc.framework.bdd.tables.Type import Type
 from wopmars.main.tagc.utils.exceptions.WopMarsException import WopMarsException
 
 

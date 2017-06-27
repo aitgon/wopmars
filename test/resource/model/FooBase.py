@@ -7,11 +7,11 @@ from sqlalchemy import Column, Integer, String
 from wopmars.main.tagc.framework.bdd.Base import Base
 
 
-class FooBaseP(Base):
+class FooBase(Base):
     """
     Documentation for the class
     """
-    __tablename__ = "FooBaseP"
+    __tablename__ = "FooBase"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255))

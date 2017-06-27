@@ -14,7 +14,7 @@ class FooBasePackaged(Base):
     __tablename__ = "FooBasePackaged"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(255))
+    name = Column(String)
 
     def __repr__(self):
         s = ""

@@ -1,14 +1,10 @@
 import unittest
 from unittest import TestCase
 
-from FooBasee import FooBase
-from FooBase2 import FooBase2
+from test.resource.model.FooBase2 import FooBase2
+from test.resource.model.FooBase import FooBase
 from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager
 from wopmars.main.tagc.framework.bdd.tables.IODbPut import IODbPut
-from wopmars.main.tagc.framework.bdd.tables.IOFilePut import IOFilePut
-from wopmars.main.tagc.framework.bdd.tables.Option import Option
-from wopmars.main.tagc.framework.bdd.tables.ToolWrapper import ToolWrapper
-from wopmars.main.tagc.framework.bdd.tables.Type import Type
 from wopmars.main.tagc.utils.OptionManager import OptionManager
 from wopmars.main.tagc.utils.PathFinder import PathFinder
 

@@ -7,9 +7,8 @@ import time
 
 import datetime
 
-import sprintFive
-from FooBasee import FooBase
-from FooWrapper5 import FooWrapper5
+from test.resource.model.FooBase import FooBase
+from test.resource.wrapper.FooWrapper5 import FooWrapper5
 from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager
 from wopmars.main.tagc.framework.bdd.tables.IODbPut import IODbPut
 from wopmars.main.tagc.framework.bdd.tables.IOFilePut import IOFilePut
@@ -19,8 +18,8 @@ from wopmars.main.tagc.framework.bdd.tables.Type import Type
 from wopmars.main.tagc.framework.management.ToolThread import ToolThread
 from wopmars.main.tagc.utils.OptionManager import OptionManager
 from wopmars.main.tagc.utils.PathFinder import PathFinder
-from sprintFive.Add import Add as tw_add
-from sprintFive.Query import Query as tw_query
+from test.resource.wrapper.sprintFive.Add import Add as tw_add
+from test.resource.wrapper.sprintFive.Query import Query as tw_query
 
 
 class TestToolThread(TestCase):

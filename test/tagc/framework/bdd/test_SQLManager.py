@@ -2,7 +2,7 @@ from unittest import TestCase
 import unittest
 import threading
 
-from FooBasee import FooBase
+from test.resource.model.FooBase import FooBase
 from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager
 from wopmars.main.tagc.utils.OptionManager import OptionManager
 

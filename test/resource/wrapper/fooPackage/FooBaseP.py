@@ -7,14 +7,14 @@ from sqlalchemy import Column, Integer, String
 from wopmars.main.tagc.framework.bdd.Base import Base
 
 
-class FooBasee(Base):
+class FooBaseP(Base):
     """
     Documentation for the class
     """
-    __tablename__ = "FooBase"
+    __tablename__ = "FooBaseP"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(255))
+    name = Column(String)
 
     def __repr__(self):
         s = ""

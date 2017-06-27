@@ -2,22 +2,19 @@ import os
 import unittest
 from unittest import TestCase
 
-from FooWrapper10 import FooWrapper10
-from FooWrapper4 import FooWrapper4
-from FooWrapper5 import FooWrapper5
-from FooWrapper6 import FooWrapper6
-from FooWrapper7 import FooWrapper7
-from FooWrapper8 import FooWrapper8
-from FooWrapper9 import FooWrapper9
-from fooPackage.FooWrapperPackaged import FooWrapperPackaged
+from test.resource.wrapper.FooWrapper10 import FooWrapper10
+from test.resource.wrapper.FooWrapper4 import FooWrapper4
+from test.resource.wrapper.FooWrapper5 import FooWrapper5
+from test.resource.wrapper.FooWrapper6 import FooWrapper6
+from test.resource.wrapper.FooWrapper7 import FooWrapper7
+from test.resource.wrapper.FooWrapper8 import FooWrapper8
+from test.resource.wrapper.FooWrapper9 import FooWrapper9
+from test.resource.wrapper.fooPackage.FooWrapperPackaged import FooWrapperPackaged
+
 from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager
 from wopmars.main.tagc.framework.bdd.tables.IODbPut import IODbPut
 from wopmars.main.tagc.framework.bdd.tables.IOFilePut import IOFilePut
 
-from FooWrapper1 import FooWrapper1
-from FooWrapper2 import FooWrapper2
-from FooWrapper3 import FooWrapper3
-from wopmars.main.tagc.framework.bdd.tables.Option import Option
 from wopmars.main.tagc.framework.bdd.tables.ToolWrapper import ToolWrapper
 from wopmars.main.tagc.framework.bdd.tables.Type import Type
 from wopmars.main.tagc.framework.parsing.Reader import Reader
@@ -39,39 +36,39 @@ class TestReader(TestCase):
         self.__session = SQLManager.instance().get_session()
         self.__reader = Reader()
 
-        s_root_path = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
+        self.__s_root_path = PathFinder.get_module_path()
 
         # The good -------------------------------:
 
-        self.__s_example_definition_file = s_root_path + "resources/example_def_file.yml"
-        self.__s_example_definition_file2 = s_root_path + "resources/example_def_file3.yml"
+        self.__s_example_definition_file = os.path.join(self.__s_root_path, "test/resource/wopfile/example_def_file.yml")
+        self.__s_example_definition_file2 = os.path.join(self.__s_root_path, "test/resource/wopfile/example_def_file3.yml")
 
         # The ugly (malformed file) --------------------:
 
-        self.__s_example_definition_file_duplicate_rule = s_root_path + "resources/example_def_file_duplicate_rule.yml"
+        self.__s_example_definition_file_duplicate_rule = os.path.join(self.__s_root_path, "test/resource/wopfile/example_def_file_duplicate_rule.yml")
 
         self.__list_f_to_exception_init = [
-            s_root_path + s_path for s_path in [
-                "resources/example_def_file_wrong_yaml.yml",
-                "resources/example_def_file_duplicate_rule.yml",
-                "resources/example_def_file_wrong_grammar.yml",
-                "resources/example_def_file_wrong_grammar2.yml",
-                "resources/example_def_file_wrong_grammar3.yml",
-                "resources/example_def_file_wrong_grammar4.yml"
+            os.path.join(self.__s_root_path, s_path) for s_path in [
+                "test/resource/wopfile/example_def_file_wrong_yaml.yml",
+                "test/resource/wopfile/example_def_file_duplicate_rule.yml",
+                "test/resource/wopfile/example_def_file_wrong_grammar.yml",
+                "test/resource/wopfile/example_def_file_wrong_grammar2.yml",
+                "test/resource/wopfile/example_def_file_wrong_grammar3.yml",
+                "test/resource/wopfile/example_def_file_wrong_grammar4.yml"
                 ]
         ]
 
         # The bad (invalid file) ----------------------:
 
         self.__list_s_to_exception_read = [
-            s_root_path + s_path for s_path in [
-                "resources/example_def_file_wrong_content.yml",
-                "resources/example_def_file_wrong_content2.yml",
-                "resources/example_def_file_wrong_content3.yml",
-                "resources/example_def_file_wrong_content4.yml",
-                "resources/example_def_file_wrong_content5.yml",
-                "resources/example_def_file_wrong_class_name.yml",
-                "resources/example_def_file_wrong_rule.yml",
+            os.path.join(self.__s_root_path, s_path) for s_path in [
+                "test/resource/wopfile/example_def_file_wrong_content.yml",
+                "test/resource/wopfile/example_def_file_wrong_content2.yml",
+                "test/resource/wopfile/example_def_file_wrong_content3.yml",
+                "test/resource/wopfile/example_def_file_wrong_content4.yml",
+                "test/resource/wopfile/example_def_file_wrong_content5.yml",
+                "test/resource/wopfile/example_def_file_wrong_class_name.yml",
+                "test/resource/wopfile/example_def_file_wrong_rule.yml",
             ]
         ]
 
@@ -83,8 +80,9 @@ class TestReader(TestCase):
             self.__reader.load_definition_file("Not existing file.")
 
     def tearDown(self):
+        s_root_path = PathFinder.get_module_path()
         SQLManager.instance().drop_all()
-        PathFinder.dir_content_remove("resources/outputs/")
+        PathFinder.dir_content_remove(os.path.join(s_root_path, "test/output"))
         OptionManager._drop()
         SQLManager._drop()
 
@@ -115,7 +113,7 @@ class TestReader(TestCase):
         f2 = IOFilePut(name="output1", path="resources/outputs/output_File1.txt")
         f2.type = output_entry
 
-        t1 = IODbPut(model="fooPackage.FooBasePackaged", tablename="FooBasePackaged")
+        t1 = IODbPut(model="test.resource.model.fooPackage.FooBasePackaged", tablename="FooBasePackaged")
         t1.type = input_entry
 
         tw1 = FooWrapperPackaged(rule_name="rule1")
