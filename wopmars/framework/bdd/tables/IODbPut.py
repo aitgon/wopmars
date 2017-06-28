@@ -1,16 +1,21 @@
 import importlib
+import datetime
+import time
 
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.exc import OperationalError
-from sqlalchemy.orm import relationship, reconstructor
 from sqlalchemy.sql.ddl import DDL
-from sqlalchemy.sql.functions import func
-from wopmars.main.tagc.utils.Logger import Logger
 
-from wopmars.framework import Base
-from wopmars.framework import IOPut
-from wopmars.framework import SQLManager
-from wopmars.framework import ToolWrapper
+from wopmars.framework.bdd.Base import Base
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy.orm import relationship, reconstructor
+
+from wopmars.framework.bdd.SQLManager import SQLManager
+from wopmars.framework.bdd.tables.IOPut import IOPut
+from wopmars.framework.bdd.tables.ModificationTable import ModificationTable
+from wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
+from wopmars.utils.Logger import Logger
+from wopmars.framework.bdd.tables.Type import Type
+from sqlalchemy.sql.functions import func
 
 class IODbPut(IOPut, Base):
     """
@@ -19,10 +24,10 @@ class IODbPut(IOPut, Base):
     following fields:
 
     - id: INTEGER - primary key - autoincrement - arbitrary ID
-    - tablename: VARCHAR(255) - foreign key to the associated table: :class:`wopmars.main.tagc.framework.bdd.tables.ModificationTable.ModificationTable` - the name of the referenced table
+    - tablename: VARCHAR(255) - foreign key to the associated table: :class:`wopmars.framework.bdd.tables.ModificationTable.ModificationTable` - the name of the referenced table
     - model: VARCHAR(255) - the path to the model (in python notation)
-    - rule_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper`
-    - type_id: INTEGER - foreign key to the associated type ID: :class:`wopmars.main.tagc.framework.bdd.tables.Type.Type`
+    - rule_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.framework.bdd.tables.ToolWrapper.ToolWrapper`
+    - type_id: INTEGER - foreign key to the associated type ID: :class:`wopmars.framework.bdd.tables.Type.Type`
     - used_at: DATE - date at which the table have been used
     """
     __tablename__ = "wom_table"

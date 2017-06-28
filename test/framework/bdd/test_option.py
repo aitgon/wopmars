@@ -1,7 +1,7 @@
 import unittest
 from unittest import TestCase
-from wopmars.main.tagc.framework.bdd.tables.Option import Option
-from wopmars.main.tagc.utils.exceptions.WopMarsException import WopMarsException
+from wopmars.framework.bdd.tables.Option import Option
+from wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
 class TestOption(TestCase):

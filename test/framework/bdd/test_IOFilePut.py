@@ -2,10 +2,10 @@ import os
 import unittest
 from unittest import TestCase
 
-from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager
-from wopmars.main.tagc.framework.bdd.tables.IOFilePut import IOFilePut
-from wopmars.main.tagc.utils.OptionManager import OptionManager
-from wopmars.main.tagc.utils.PathFinder import PathFinder
+from wopmars.framework.bdd.SQLManager import SQLManager
+from wopmars.framework.bdd.tables.IOFilePut import IOFilePut
+from wopmars.utils.OptionManager import OptionManager
+from wopmars.utils.PathFinder import PathFinder
 
 
 class TestIOFilePut(TestCase):

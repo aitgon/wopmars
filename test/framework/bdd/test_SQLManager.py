@@ -3,8 +3,8 @@ import unittest
 from unittest import TestCase
 
 from test.resource.model.FooBase import FooBase
-from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager
-from wopmars.main.tagc.utils.OptionManager import OptionManager
+from wopmars.framework.bdd.SQLManager import SQLManager
+from wopmars.utils.OptionManager import OptionManager
 
 
 class ConcurrentCommitingThread(threading.Thread):

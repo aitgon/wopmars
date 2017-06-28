@@ -2,11 +2,11 @@ import os
 import unittest
 from unittest import TestCase
 
-from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager
-from wopmars.main.tagc.framework.management.WorkflowManager import WorkflowManager
-from wopmars.main.tagc.utils.OptionManager import OptionManager
-from wopmars.main.tagc.utils.PathFinder import PathFinder
-from wopmars.main.tagc.utils.exceptions.WopMarsException import WopMarsException
+from wopmars.framework.bdd.SQLManager import SQLManager
+from wopmars.framework.management.WorkflowManager import WorkflowManager
+from wopmars.utils.OptionManager import OptionManager
+from wopmars.utils.PathFinder import PathFinder
+from wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
 class TestWorkflowManager(TestCase):

@@ -1,7 +1,8 @@
-from sqlalchemy import Column, Integer, String, Float
 from sqlalchemy.sql.schema import ForeignKey
 
-from wopmars.framework import Base
+from wopmars.framework.bdd.Base import Base
+
+from sqlalchemy import Column, Integer, String, Float
 
 
 class PieceCar(Base):

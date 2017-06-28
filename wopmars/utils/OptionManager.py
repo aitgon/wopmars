@@ -3,8 +3,8 @@ Module containing the OptionManager class.
 """
 import os
 
-from wopmars.utils import PathFinder
-from wopmars.utils import SingletonMixin
+from wopmars.utils.PathFinder import PathFinder
+from wopmars.utils.Singleton import SingletonMixin
 
 
 class OptionManager(dict, SingletonMixin):

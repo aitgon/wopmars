@@ -19,10 +19,7 @@ class PathFinder:
         :return: the path leading to the src file of the project
         """
 
-        #file_path_splitted = path.split('/')
-        #import pdb; pdb.set_trace()
-        module_path = os.path.join(os.path.dirname(__file__), "../../../..")
-        #root_path = "/".join(file_path_splitted[:(len(file_path_splitted) - 1) - file_path_splitted[::-1].index('wopmars') + 1]) + "/"
+        module_path = os.path.join(os.path.dirname(__file__), "../..")
         return module_path
 
     @staticmethod

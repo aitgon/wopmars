@@ -9,15 +9,15 @@ from test.resource.wrapper.FooWrapper6 import FooWrapper6
 from test.resource.wrapper.FooWrapper7 import FooWrapper7
 from test.resource.wrapper.FooWrapper8 import FooWrapper8
 from test.resource.wrapper.FooWrapper9 import FooWrapper9
-from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager
-from wopmars.main.tagc.framework.bdd.tables.IODbPut import IODbPut
-from wopmars.main.tagc.framework.bdd.tables.IOFilePut import IOFilePut
-from wopmars.main.tagc.framework.bdd.tables.Type import Type
-from wopmars.main.tagc.framework.management.DAG import DAG
-from wopmars.main.tagc.framework.parsing.Parser import Parser
-from wopmars.main.tagc.utils.OptionManager import OptionManager
-from wopmars.main.tagc.utils.PathFinder import PathFinder
-from wopmars.main.tagc.utils.exceptions.WopMarsException import WopMarsException
+from wopmars.framework.bdd.SQLManager import SQLManager
+from wopmars.framework.bdd.tables.IODbPut import IODbPut
+from wopmars.framework.bdd.tables.IOFilePut import IOFilePut
+from wopmars.framework.bdd.tables.Type import Type
+from wopmars.framework.management.DAG import DAG
+from wopmars.framework.parsing.Parser import Parser
+from wopmars.utils.OptionManager import OptionManager
+from wopmars.utils.PathFinder import PathFinder
+from wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
 class TestParser(TestCase):

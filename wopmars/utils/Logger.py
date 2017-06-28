@@ -4,9 +4,9 @@ Module containing the Logger class.
 import logging
 from logging.handlers import RotatingFileHandler
 
-from wopmars.utils import ColorPrint
-from wopmars.utils import OptionManager
-from wopmars.utils import SingletonMixin
+from wopmars.utils.OptionManager import OptionManager
+from wopmars.utils.Singleton import SingletonMixin
+from wopmars.utils.ColorPrint import ColorPrint
 
 
 class Logger(SingletonMixin):

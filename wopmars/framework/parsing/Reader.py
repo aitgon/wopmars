@@ -1,13 +1,12 @@
 import datetime
 import importlib
-import os
+import jinja2
 import re
 import time
+import os
 
-import jinja2
 import yaml
 from yaml.constructor import ConstructorError
-
 try:
     from yaml import CLoader as Loader
 except ImportError:
@@ -15,18 +14,18 @@ except ImportError:
 
 from sqlalchemy.orm.exc import NoResultFound, ObjectDeletedError
 
-from wopmars.framework import SQLManager
-from wopmars.framework import Execution
-from wopmars.framework import IODbPut
-from wopmars.framework import IOFilePut
-from wopmars.framework import ModificationTable
-from wopmars.framework import Option
-from wopmars.framework import Type
-from wopmars.utils import DictUtils
+from wopmars.framework.bdd.SQLManager import SQLManager
+from wopmars.framework.bdd.tables.Execution import Execution
+from wopmars.framework.bdd.tables.IODbPut import IODbPut
+from wopmars.framework.bdd.tables.IOFilePut import IOFilePut
+from wopmars.framework.bdd.tables.ModificationTable import ModificationTable
+from wopmars.framework.bdd.tables.Option import Option
+from wopmars.framework.bdd.tables.Type import Type
+from wopmars.utils.DictUtils import DictUtils
 
-from wopmars.utils import Logger
-from wopmars.utils import OptionManager
-from wopmars.utils.exceptions import WopMarsException
+from wopmars.utils.Logger import Logger
+from wopmars.utils.OptionManager import OptionManager
+from wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
 class Reader:
@@ -273,7 +272,7 @@ class Reader:
 
     def load_one_toolwrapper(self, s_toolwrapper, s_dict_inputs, s_dict_outputs, s_dict_params):
         """
-        Method called when the ``tool`` command is used. It is equivalent to the :meth:`~.wopmars.main.tagc.framework.parsing.Reader.Reader.read` method but create a workflow
+        Method called when the ``tool`` command is used. It is equivalent to the :meth:`~.wopmars.framework.parsing.Reader.Reader.read` method but create a workflow
         with only one toolwrapper. The workflow is also stored inside the database.
 
         :param s_toolwrapper: The name of the toolwrapper (will be imported)
@@ -500,9 +499,9 @@ class Reader:
         :param dict_dict_dict_elm: "input"s "output"s and "params" and will be used to make relations between options / input / output and the toolwrapper.
         :type dict_dict_dict_elm: dict(dict(dict()))
         :param input_entry: input entry
-        :type input_entry: :class:`wopmars.main.tagc.framework.bdd.tables.Type.Type`
+        :type input_entry: :class:`wopmars.framework.bdd.tables.Type.Type`
         :param output_entry: output entry
-        :type output_entry: :class:`wopmars.main.tagc.framework.bdd.tables.Type.Type`
+        :type output_entry: :class:`wopmars.framework.bdd.tables.Type.Type`
 
         :return: TooLWrapper instance
         """

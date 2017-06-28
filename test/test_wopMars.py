@@ -2,8 +2,8 @@ import os
 import unittest
 from unittest import TestCase
 
-from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager
-from wopmars.main.tagc.utils.PathFinder import PathFinder
+from wopmars.framework.bdd.SQLManager import SQLManager
+from wopmars.utils.PathFinder import PathFinder
 from wopmars import WopMars
 
 # TODO: Fix remaining tests

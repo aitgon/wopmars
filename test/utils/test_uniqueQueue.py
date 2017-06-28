@@ -2,7 +2,7 @@ import queue
 import unittest
 from unittest import TestCase
 
-from wopmars.main.tagc.utils.UniqueQueue import UniqueQueue
+from wopmars.utils.UniqueQueue import UniqueQueue
 
 
 class TestUniqueQueue(TestCase):

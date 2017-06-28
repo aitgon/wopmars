@@ -1,15 +1,17 @@
 import datetime
 import os
 
+import time
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Float
 from sqlalchemy.orm import relationship
-from wopmars.main.tagc.utils.Logger import Logger
-from wopmars.main.tagc.utils.OptionManager import OptionManager
-from wopmars.main.tagc.utils.exceptions.WopMarsException import WopMarsException
 
-from wopmars.framework import Base
-from wopmars.framework import Option
-from wopmars.framework import SQLManager
+from wopmars.framework.bdd.Base import Base
+from wopmars.framework.bdd.SQLManager import SQLManager
+from wopmars.framework.bdd.tables.Execution import Execution
+from wopmars.framework.bdd.tables.Option import Option
+from wopmars.utils.Logger import Logger
+from wopmars.utils.OptionManager import OptionManager
+from wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
 class ToolWrapper(Base):
@@ -67,7 +69,7 @@ class ToolWrapper(Base):
         The constructor of the toolwrapper, must not be overwritten.
 
         self.__state is the state given to the Toolwrapper to let the
-        :class:`~.wopmars.main.tagc.framework.management.WorflowManager.WorkflowManager` knows if the Toolwrapper is
+        :class:`~.wopmars.framework.management.WorflowManager.WorkflowManager` knows if the Toolwrapper is
         able to be executed or not.
 
         self.__session is the session (WopMarsSession) associated with the Toolwrapper and which will be used in the run method.
@@ -91,9 +93,9 @@ class ToolWrapper(Base):
 
         Call of the methods:
 
-        - :meth:`~.wopmars.main.tagc.framework.bdd.ToolWrapper.ToolWrapper.is_options_respected`
-        - :meth:`~.wopmars.main.tagc.framework.bdd.ToolWrapper.ToolWrapper.is_input_respected`
-        - :meth:`~.wopmars.main.tagc.framework.bdd.ToolWrapper.ToolWrapper.is_output_respected`
+        - :meth:`~.wopmars.framework.bdd.ToolWrapper.ToolWrapper.is_options_respected`
+        - :meth:`~.wopmars.framework.bdd.ToolWrapper.ToolWrapper.is_input_respected`
+        - :meth:`~.wopmars.framework.bdd.ToolWrapper.ToolWrapper.is_output_respected`
         """
         # the options have to be checked first because they can alter the behavior of the is_input_respected and
         # is_output_respected methods
@@ -110,7 +112,7 @@ class ToolWrapper(Base):
 
         It checks if the input variable names exists or not. If not, throws a WopMarsParsingException.
 
-        This method calls the :meth:`~.wopmars.main.tagc.framework.bdd.ToolWrapper.ToolWrapper.specify_input_file` method
+        This method calls the :meth:`~.wopmars.framework.bdd.ToolWrapper.ToolWrapper.specify_input_file` method
         which have been written by the toolwrapper developer.
 
         :raise WopMarsException: The input are not respected by the user.
@@ -373,7 +375,7 @@ class ToolWrapper(Base):
             - The file have the same name, the same lastm mdoficiation datetime and the same size
 
         :param other: an other Toolwrapper which maybe as the same inputs
-        :type other: :class:`~.wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper`
+        :type other: :class:`~.wopmars.framework.bdd.tables.ToolWrapper.ToolWrapper`
 
         :return: bool
         """

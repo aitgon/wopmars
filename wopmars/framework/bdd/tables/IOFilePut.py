@@ -2,10 +2,10 @@ import os
 
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
-from wopmars.main.tagc.utils.Logger import Logger
 
-from wopmars.framework import Base
-from wopmars.framework import IOPut
+from wopmars.framework.bdd.Base import Base
+from wopmars.framework.bdd.tables.IOPut import IOPut
+from wopmars.utils.Logger import Logger
 
 
 class IOFilePut(IOPut, Base):
@@ -17,8 +17,8 @@ class IOFilePut(IOPut, Base):
     - id: INTEGER - primary key - autoincrement - arbitrary ID
     - name: VARCHAR(255) - the name of the reference to the file
     - path: VARCHAR(255) - the path to the file
-    - rule_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper`
-    - type_id: INTEGER - foreign key to the associated type ID: :class:`wopmars.main.tagc.framework.bdd.tables.Type.Type`
+    - rule_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.framework.bdd.tables.ToolWrapper.ToolWrapper`
+    - type_id: INTEGER - foreign key to the associated type ID: :class:`wopmars.framework.bdd.tables.Type.Type`
     - used_at: DATE - date at which the table have been used
     - size: INTEGER - the size of the file
     """

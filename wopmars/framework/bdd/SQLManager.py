@@ -2,18 +2,18 @@
 Module containing the SQLManager class.
 """
 import pandas
-from sqlalchemy import create_engine
-from sqlalchemy import event
 from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy import create_engine
 from sqlalchemy.schema import sort_tables
-from wopmars.main.tagc.utils.Logger import Logger
-from wopmars.main.tagc.utils.OptionManager import OptionManager
-from wopmars.main.tagc.utils.RWLock import RWLock
-from wopmars.main.tagc.utils.Singleton import SingletonMixin
-from wopmars.main.tagc.utils.exceptions.WopMarsException import WopMarsException
+from sqlalchemy import event
 
-from wopmars.framework import Base
-from wopmars.framework import WopMarsSession
+from wopmars.framework.bdd.Base import Base
+from wopmars.framework.bdd.WopMarsSession import WopMarsSession
+from wopmars.utils.Logger import Logger
+from wopmars.utils.OptionManager import OptionManager
+from wopmars.utils.RWLock import RWLock
+from wopmars.utils.Singleton import SingletonMixin
+from wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
 class SQLManager(SingletonMixin):

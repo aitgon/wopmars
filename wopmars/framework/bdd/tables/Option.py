@@ -1,8 +1,8 @@
+from wopmars.framework.bdd.Base import Base
+
+from wopmars.utils.exceptions.WopMarsException import WopMarsException
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
-from wopmars.main.tagc.utils.exceptions.WopMarsException import WopMarsException
-
-from wopmars.framework import Base
 
 
 class Option(Base):

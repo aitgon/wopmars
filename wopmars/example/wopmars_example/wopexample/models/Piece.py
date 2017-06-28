@@ -1,6 +1,6 @@
-from sqlalchemy import Column, Integer, String, Float
+from wopmars.framework.bdd.Base import Base
 
-from wopmars.framework import Base
+from sqlalchemy import Column, Integer, String, Float
 
 
 class Piece(Base):

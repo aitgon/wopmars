@@ -1,4 +1,4 @@
-from wopmars.framework import ToolWrapper
+from wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
 
 
 class SparePartsManufacturer(ToolWrapper):

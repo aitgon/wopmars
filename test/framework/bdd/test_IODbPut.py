@@ -4,10 +4,10 @@ from unittest import TestCase
 
 from test.resource.model.FooBase import FooBase
 from test.resource.model.FooBase2 import FooBase2
-from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager
-from wopmars.main.tagc.framework.bdd.tables.IODbPut import IODbPut
-from wopmars.main.tagc.utils.OptionManager import OptionManager
-from wopmars.main.tagc.utils.PathFinder import PathFinder
+from wopmars.framework.bdd.SQLManager import SQLManager
+from wopmars.framework.bdd.tables.IODbPut import IODbPut
+from wopmars.utils.OptionManager import OptionManager
+from wopmars.utils.PathFinder import PathFinder
 
 
 class TestIODbPut(TestCase):

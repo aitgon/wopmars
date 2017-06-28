@@ -2,9 +2,9 @@
 Module containing the WopMarsSession class.
 """
 from sqlalchemy.sql.elements import ClauseElement
-from wopmars.main.tagc.utils.Logger import Logger
 
-from wopmars.framework import WopMarsQuery
+from wopmars.framework.bdd.WopMarsQuery import WopMarsQuery
+from wopmars.utils.Logger import Logger
 
 
 class WopMarsSession:

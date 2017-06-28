@@ -1,7 +1,7 @@
 import unittest
 from unittest import TestCase
 
-from wopmars.main.tagc.utils.PathFinder import PathFinder
+from wopmars.utils.PathFinder import PathFinder
 
 
 class TestPathFinder(TestCase):

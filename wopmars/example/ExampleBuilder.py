@@ -1,10 +1,9 @@
-import errno
 import os
 import shutil
+import errno
 
-from wopmars.main.tagc.utils.OptionManager import OptionManager
-
-from wopmars.utils.exceptions import WopMarsException
+from wopmars.utils.OptionManager import OptionManager
+from wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
 class ExampleBuilder:

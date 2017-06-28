@@ -1,7 +1,6 @@
+from wopmars.framework.bdd.Base import Base
 from sqlalchemy import Column, String, DateTime
 from sqlalchemy.orm import relationship
-
-from wopmars.framework import Base
 
 
 class ModificationTable(Base):

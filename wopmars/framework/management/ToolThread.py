@@ -3,17 +3,16 @@ Module containing the ToolThread class.
 """
 import datetime
 import errno
-import os
 import threading
+import os
 import time
 import traceback
 
-from wopmars.main.tagc.utils.Logger import Logger
-from wopmars.main.tagc.utils.OptionManager import OptionManager
-from wopmars.main.tagc.utils.exceptions.WopMarsException import WopMarsException
-
-from wopmars.framework import Observable
-from wopmars.framework import SQLManager
+from wopmars.framework.bdd.SQLManager import SQLManager
+from wopmars.framework.management.Observable import Observable
+from wopmars.utils.Logger import Logger
+from wopmars.utils.OptionManager import OptionManager
+from wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
 class ToolThread(threading.Thread, Observable):

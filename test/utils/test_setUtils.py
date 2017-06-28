@@ -1,8 +1,8 @@
 import unittest
 from unittest import TestCase
 
-from wopmars.main.tagc.framework.bdd.tables.IOFilePut import IOFilePut
-from wopmars.main.tagc.utils.SetUtils import SetUtils
+from wopmars.framework.bdd.tables.IOFilePut import IOFilePut
+from wopmars.utils.SetUtils import SetUtils
 
 
 class TestSetUtils(TestCase):

@@ -10,16 +10,17 @@ from test.resource.wrapper.FooWrapper7 import FooWrapper7
 from test.resource.wrapper.FooWrapper8 import FooWrapper8
 from test.resource.wrapper.FooWrapper9 import FooWrapper9
 from test.resource.wrapper.fooPackage.FooWrapperPackaged import FooWrapperPackaged
-from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager
-from wopmars.main.tagc.framework.bdd.tables.IODbPut import IODbPut
-from wopmars.main.tagc.framework.bdd.tables.IOFilePut import IOFilePut
-from wopmars.main.tagc.framework.bdd.tables.ToolWrapper import ToolWrapper
-from wopmars.main.tagc.framework.bdd.tables.Type import Type
-from wopmars.main.tagc.framework.parsing.Reader import Reader
-from wopmars.main.tagc.utils.OptionManager import OptionManager
-from wopmars.main.tagc.utils.PathFinder import PathFinder
-from wopmars.main.tagc.utils.SetUtils import SetUtils
-from wopmars.main.tagc.utils.exceptions.WopMarsException import WopMarsException
+from wopmars import TEST_WOPFILE_PATH
+from wopmars.framework.bdd.SQLManager import SQLManager
+from wopmars.framework.bdd.tables.IODbPut import IODbPut
+from wopmars.framework.bdd.tables.IOFilePut import IOFilePut
+from wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
+from wopmars.framework.bdd.tables.Type import Type
+from wopmars.framework.parsing.Reader import Reader
+from wopmars.utils.OptionManager import OptionManager
+from wopmars.utils.PathFinder import PathFinder
+from wopmars.utils.SetUtils import SetUtils
+from wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
 class TestReader(TestCase):
@@ -38,8 +39,8 @@ class TestReader(TestCase):
 
         # The good -------------------------------:
 
-        self.__s_example_definition_file = os.path.join(self.__s_root_path, "test/resource/wopfile/example_def_file.yml")
-        self.__s_example_definition_file2 = os.path.join(self.__s_root_path, "test/resource/wopfile/example_def_file3.yml")
+        self.__s_example_definition_file = os.path.join(TEST_WOPFILE_PATH, "example_def_file.yml")
+        self.__s_example_definition_file2 = os.path.join(TEST_WOPFILE_PATH, "example_def_file3.yml")
 
         # The ugly (malformed file) --------------------:
 

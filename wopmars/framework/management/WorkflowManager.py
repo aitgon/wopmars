@@ -1,22 +1,22 @@
 import datetime
 import sys
+
 import time
 
-from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager
-from wopmars.main.tagc.framework.bdd.tables.Execution import Execution
-from wopmars.main.tagc.framework.bdd.tables.IODbPut import IODbPut
-from wopmars.main.tagc.framework.bdd.tables.ToolWrapper import ToolWrapper
-from wopmars.main.tagc.framework.bdd.tables.Type import Type
-from wopmars.main.tagc.framework.management.DAG import DAG
-from wopmars.main.tagc.framework.management.ToolThread import ToolThread
-from wopmars.main.tagc.framework.parsing.Parser import Parser
-from wopmars.main.tagc.utils.Logger import Logger
-from wopmars.main.tagc.utils.OptionManager import OptionManager
-from wopmars.main.tagc.utils.PathFinder import PathFinder
-from wopmars.main.tagc.utils.UniqueQueue import UniqueQueue
-from wopmars.main.tagc.utils.exceptions.WopMarsException import WopMarsException
-
+from wopmars.framework.bdd.SQLManager import SQLManager
+from wopmars.framework.bdd.tables.Execution import Execution
+from wopmars.framework.bdd.tables.IODbPut import IODbPut
+from wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
+from wopmars.framework.bdd.tables.Type import Type
+from wopmars.framework.management.DAG import DAG
+from wopmars.framework.management.ToolThread import ToolThread
 from wopmars.framework.management.ToolWrapperObserver import ToolWrapperObserver
+from wopmars.framework.parsing.Parser import Parser
+from wopmars.utils.PathFinder import PathFinder
+from wopmars.utils.Logger import Logger
+from wopmars.utils.OptionManager import OptionManager
+from wopmars.utils.UniqueQueue import UniqueQueue
+from wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 
 class WorkflowManager(ToolWrapperObserver):
@@ -27,17 +27,17 @@ class WorkflowManager(ToolWrapperObserver):
 
     1- The workflow manager take the "tool_dag" with all the rules of the workflow and build the "dag_to_exec" which
     will be actually executed according to the "target rule" and "source rule" options.
-    2- The method :meth:`~.wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.execute_from` is call without argument, meaning that the execution begin at the top of the dag
+    2- The method :meth:`~.wopmars.framework.management.WorkflowManager.WorkflowManager.execute_from` is call without argument, meaning that the execution begin at the top of the dag
     (the root of the tree).
-    3- The nodes are gathered thanks to the :meth:`~.wopmars.main.tagc.framework.management.DAG.DAG.successors` method of the :class:`wopmars.main.tagc.framework.management.DAG.DAG`
-    4- Each node is wrapped inside a :class:`~.wopmars.main.tagc.framework.management.ToolThread.ToolThread` object which will be added to the queue.
+    3- The nodes are gathered thanks to the :meth:`~.wopmars.framework.management.DAG.DAG.successors` method of the :class:`wopmars.framework.management.DAG.DAG`
+    4- Each node is wrapped inside a :class:`~.wopmars.framework.management.ToolThread.ToolThread` object which will be added to the queue.
     5- Each ToolThread is executed (ordered) as follows:
 
       a- If the inputs are ready: they are executed.
       b- If not, they are put in the buffer.
 
-    6- When the :class:`~.wopmars.main.tagc.framework.management.ToolThread.ToolThread` has finished its execution, a notification of success is sent.
-    7- The method :meth:`~wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.execute_from` is called again with the succeeded ToolWrapper as argument.
+    6- When the :class:`~.wopmars.framework.management.ToolThread.ToolThread` has finished its execution, a notification of success is sent.
+    7- The method :meth:`~wopmars.framework.management.WorkflowManager.WorkflowManager.execute_from` is called again with the succeeded ToolWrapper as argument.
     8- Loop to the 3rd step
     9- When the DAG is finished, the software exits
 
@@ -71,9 +71,9 @@ class WorkflowManager(ToolWrapperObserver):
 
         The database is setUp here if workflow side tables have not been created yet.
 
-        The dag is taken thanks to the :meth:`~.wopmars.main.tagc.framework.parsing.Parser.Parser.parse` method of the parser. And then pruned by the :meth:`~.wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.get_dag_to_exec` method
+        The dag is taken thanks to the :meth:`~.wopmars.framework.parsing.Parser.Parser.parse` method of the parser. And then pruned by the :meth:`~.wopmars.framework.management.WorkflowManager.WorkflowManager.get_dag_to_exec` method
         which will set the right DAG to be executed.
-        Then, :meth:`~.wopmars.main.tagc.framework.management.WorkflowManager.WorkflowManager.execute_from` is called with no argument to get the origin nodes.
+        Then, :meth:`~.wopmars.framework.management.WorkflowManager.WorkflowManager.execute_from` is called with no argument to get the origin nodes.
         """
 
         # This create_all is supposed to only create workflow-management side tables (called "wom_*")
@@ -184,7 +184,7 @@ class WorkflowManager(ToolWrapperObserver):
         A trace of the already_runned ToolWrapper objects is kept in order to avoid duplicate execution.
 
         :param node: A node of the DAG or None, if it needs to be executed from the root.
-        :type node: :class:`~.wopmars.main.tagc.framework.bdd.tables.ToolWrapper.ToolWrapper`
+        :type node: :class:`~.wopmars.framework.bdd.tables.ToolWrapper.ToolWrapper`
         :return: void
         """
         # the first list will be the root nodes
@@ -386,7 +386,7 @@ class WorkflowManager(ToolWrapperObserver):
         Handle thread_toolwrapper success by continuing the dag.
 
         :param thread_toolwrapper: ToolWrapper thread that just succeed
-        :type thread_toolwrapper: :class:`~.wopmars.main.tagc.management.ToolThread.ToolThread`
+        :type thread_toolwrapper: :class:`~.wopmars.management.ToolThread.ToolThread`
         """
         self.__session.add(thread_toolwrapper.get_toolwrapper())
         self.__session.commit()

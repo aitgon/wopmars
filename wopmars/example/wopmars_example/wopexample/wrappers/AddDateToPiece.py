@@ -1,8 +1,7 @@
-import datetime
+import time, datetime
 import random
-import time
 
-from wopmars.framework import ToolWrapper
+from wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
 
 
 class AddDateToPiece(ToolWrapper):
