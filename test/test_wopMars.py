@@ -10,6 +10,9 @@ from wopmars.framework.bdd.tables.Execution import Execution
 from wopmars.utils.PathFinder import PathFinder
 from wopmars import WopMars
 
+from test.resource.model.FooBase import FooBase
+from test.resource.model.FooBase2 import FooBase2
+
 class TestWopMars(TestCase):
     def setUp(self):
         #self.s_root_path = PathFinder.get_module_path(os.path.dirname(os.path.realpath(__file__)))
