@@ -2,7 +2,7 @@ rule rule1:
     tool: test.resource.wrapper.FooWrapper4
     input:
         file:
-            input1: "resources/input_File1.txt"
+            input1: "test/resource/input_files/input_File1.txt"
     output:
         file:
             output1: "test/output/output_File1.txt"
@@ -16,7 +16,7 @@ rule rule2:
         file:
             output1: "test/output/output_File2.txt"
         table:
-            FooBase: test.resource.model.FooBase2
+            FooBase: test.resource.model.FooBase
 #
 
 rule rule3:

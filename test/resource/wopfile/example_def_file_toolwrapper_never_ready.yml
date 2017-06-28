@@ -2,7 +2,7 @@ rule rule4:
     tool: FooWrapper4
     input:
         file:
-            input1: "resources/input_File1.txt"
+            input1: "test/resource/input_files/input_File1.txt"
     output:
         file:
             output1: "test/output/output_File1.txt"

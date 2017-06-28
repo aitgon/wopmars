@@ -2,7 +2,7 @@ rule rule1:
     tool: test.resource.wrapper.fooPackage.FooWrapperPackaged
     input:
         file:
-            input1: "resources/input_File1.txt"
+            input1: "test/resource/input_files/input_File1.txt"
         table:
             FooBasePackaged: test.resource.wrapper.fooPackage.FooBasePackaged
     output:
