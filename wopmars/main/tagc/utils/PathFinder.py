@@ -12,16 +12,18 @@ class PathFinder:
     Static class for finding paths
     """
     @staticmethod
-    def find_src(path):
+    def get_module_path():
         """
         Find the Src directory of the project
 
         :return: the path leading to the src file of the project
         """
 
-        file_path_splitted = path.split('/')
-        root_path = "/".join(file_path_splitted[:(len(file_path_splitted) - 1) - file_path_splitted[::-1].index('wopmars') + 1]) + "/"
-        return root_path
+        #file_path_splitted = path.split('/')
+        #import pdb; pdb.set_trace()
+        module_path = os.path.join(os.path.dirname(__file__), "../../../..")
+        #root_path = "/".join(file_path_splitted[:(len(file_path_splitted) - 1) - file_path_splitted[::-1].index('wopmars') + 1]) + "/"
+        return module_path
 
     @staticmethod
     def check_pygraphviz(path):

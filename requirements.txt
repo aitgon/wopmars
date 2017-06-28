@@ -2,10 +2,12 @@ cycler==0.10.0
 decorator==4.0.10
 docopt==0.6.2
 Jinja2==2.8
+MarkupSafe==1.0
 matplotlib==1.5.3
 networkx==1.11
 numpy==1.11.2
 pandas==0.20.2
+psycopg2==2.7.1
 pydotplus==2.0.2
 pyparsing==2.1.4
 python-dateutil==2.5.3

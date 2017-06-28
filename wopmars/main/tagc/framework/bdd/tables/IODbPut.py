@@ -108,27 +108,21 @@ END;
                         sql_trigger = """
 CREATE TRIGGER IF NOT EXISTS modification_%(tablename)s AFTER %(statement)s ON %(tablename)s for each row UPDATE wom_modification_table SET date = CURRENT_TIMESTAMP WHERE table_name = '%(tablename)s';
     """%data
+                        obj_ddl = DDL(sql_trigger)
+                        SQLManager.instance().create_trigger(Base.metadata.tables[tablename], obj_ddl)
                     elif SQLManager.instance().__dict__['d_database_config']['db_connection'] == 'postgresql':
                         sql_trigger = """
-CREATE OR REPLACE FUNCTION proc_wom_modification() RETURNS TRIGGER AS $wom_modification$
+CREATE OR REPLACE FUNCTION modif_%(statement)s_%(tablename)s() RETURNS TRIGGER AS $modif_%(statement)s_%(tablename)s$
 BEGIN
-UPDATE wom_modification_table SET date = CURRENT_TIMESTAMP WHERE table_name = '%(tablename)s';
+UPDATE wom_modification_table SET date = CURRENT_TIMESTAMP WHERE table_name = "%(tablename)s";
 RETURN NULL; -- result is ignored since this is an AFTER trigger
 END;
-$wom_modification$ LANGUAGE plpgsql;
-DROP TRIGGER IF EXISTS modification_%(tablename)s ON %(tablename)s;
-CREATE TRIGGER modification_%(tablename)s AFTER %(statement)s ON %(tablename)s
-FOR EACH ROW EXECUTE PROCEDURE proc_wom_modification();
+$modif_%(statement)s_%(tablename)s$ LANGUAGE plpgsql;
+DROP TRIGGER IF EXISTS modif_%(statement)s_%(tablename)s ON "%(tablename)s";
+CREATE TRIGGER modif_%(statement)s_%(tablename)s AFTER INSERT ON "%(tablename)s" FOR EACH ROW EXECUTE PROCEDURE modif_%(statement)s_%(tablename)s();
     """%data
-                    else:
-                        sql_trigger = """
-CREATE TRIGGER IF NOT EXISTS modification_%(tablename)s AFTER %(statement)s ON %(tablename)s
-BEGIN
-UPDATE wom_modification_table SET date = CURRENT_TIMESTAMP WHERE table_name = '%(tablename)s';
-END;
-    """%data
-                    obj_ddl = DDL(sql_trigger)
-                    SQLManager.instance().create_trigger(Base.metadata.tables[tablename], obj_ddl)
+                        obj_ddl = DDL(sql_trigger)
+                        SQLManager.instance().create_trigger(Base.metadata.tables[tablename], obj_ddl)
 
 
     @staticmethod

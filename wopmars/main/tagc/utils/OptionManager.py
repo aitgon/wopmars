@@ -111,8 +111,8 @@ class OptionManager(dict, SingletonMixin):
         OptionManager.instance()["--forceall"] = None
         OptionManager.instance()["--dry-run"] = None
         OptionManager.instance()["tool"] = None
-        OptionManager.instance()["--database"] = "sqlite:///" + os.path.join(PathFinder.find_src(os.path.dirname(os.path.realpath(__file__))), "resources/outputs/" + mod_name + ".sqlite")
-        OptionManager.instance()["--directory"] = PathFinder.find_src(os.path.dirname(os.path.realpath(__file__)))
+        OptionManager.instance()["--database"] = "sqlite:///" + os.path.join(PathFinder.get_module_path(), "test/output", mod_name + ".sqlite")
+        OptionManager.instance()["--directory"] = PathFinder.get_module_path()
         OptionManager.instance()["--clear-history"] = False
         os.chdir(OptionManager.instance()["--directory"])
         OptionManager.instance()["--toolwrapper-log"] = False
