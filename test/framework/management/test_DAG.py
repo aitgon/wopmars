@@ -97,6 +97,7 @@ class TestDAG(TestCase):
                             self.__set_tool.difference(set([self.__toolwrapper_fourth])))
 
     def tearDown(self):
+        SQLManager.instance().get_session().close() 
         SQLManager.instance().drop_all()
         OptionManager._drop()
         PathFinder.silentremove("test/output/output_File1.txt")

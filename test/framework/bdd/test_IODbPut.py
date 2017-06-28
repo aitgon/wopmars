@@ -35,6 +35,7 @@ class TestIODbPut(TestCase):
         self.__io_base_existing3.set_table(FooBase2)
 
     def tearDown(self):
+        SQLManager.instance().get_session().close()
         SQLManager.instance().drop_all()
         PathFinder.dir_content_remove(os.path.join(self.s_root_path, "test/output"))
         OptionManager._drop()

@@ -196,6 +196,7 @@ class TestToolThread(TestCase):
         tt6.join()
 
     def tearDown(self):
+        SQLManager.instance().get_session().close()
         SQLManager.instance().drop_all()
         PathFinder.silentremove("test/output/")
 

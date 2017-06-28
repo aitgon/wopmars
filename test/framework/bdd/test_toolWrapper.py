@@ -374,6 +374,7 @@ class TestToolWrapper(TestCase):
         # self.assertFalse(toolwrapper2.is_output_ok()) # TODO AG: Ask LG. Where is the is_output_ok function?
 
     def tearDown(self):
+        SQLManager.instance().get_session().close()
         SQLManager.instance().drop_all()
         PathFinder.dir_content_remove(os.path.join(self.s_root_path, "test/output"))
         OptionManager._drop()

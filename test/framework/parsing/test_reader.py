@@ -78,6 +78,7 @@ class TestReader(TestCase):
             self.__reader.load_definition_file("Not existing file.")
 
     def tearDown(self):
+        SQLManager.instance().get_session().close()
         s_root_path = PathFinder.get_module_path()
         SQLManager.instance().drop_all()
         PathFinder.dir_content_remove(os.path.join(s_root_path, "test/output"))

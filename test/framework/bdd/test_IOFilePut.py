@@ -34,6 +34,7 @@ class TestIOFilePut(TestCase):
         self.assertNotEqual(self.__io_file_existing, self.__io_file_not_existing)
 
     def tearDown(self):
+        SQLManager.instance().get_session().close()
         SQLManager.instance().drop_all()
         PathFinder.dir_content_remove(os.path.join(self.s_root_path, "test/output"))
         OptionManager._drop()

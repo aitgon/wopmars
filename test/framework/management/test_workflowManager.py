@@ -27,6 +27,7 @@ class TestWorkflowManager(TestCase):
         pass
 
     def tearDown(self):
+        SQLManager.instance().get_session().close()
         SQLManager.instance().drop_all()
         PathFinder.dir_content_remove("test/output")
         OptionManager._drop()

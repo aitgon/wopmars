@@ -60,6 +60,7 @@ class TestSQLManager(TestCase):
         self.assertTrue(len(self.__local_session.query(FooBase).filter(FooBase.name.like('string %')).all()) == 3000)
 
     def tearDown(self):
+        SQLManager.instance().get_session().close()
         SQLManager.instance().drop_all()
         OptionManager._drop()
         SQLManager._drop()
