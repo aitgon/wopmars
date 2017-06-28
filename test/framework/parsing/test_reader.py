@@ -10,7 +10,6 @@ from test.resource.wrapper.FooWrapper7 import FooWrapper7
 from test.resource.wrapper.FooWrapper8 import FooWrapper8
 from test.resource.wrapper.FooWrapper9 import FooWrapper9
 from test.resource.wrapper.fooPackage.FooWrapperPackaged import FooWrapperPackaged
-from wopmars import TEST_WOPFILE_PATH
 from wopmars.framework.bdd.SQLManager import SQLManager
 from wopmars.framework.bdd.tables.IODbPut import IODbPut
 from wopmars.framework.bdd.tables.IOFilePut import IOFilePut
@@ -39,8 +38,8 @@ class TestReader(TestCase):
 
         # The good -------------------------------:
 
-        self.__s_example_definition_file = os.path.join(TEST_WOPFILE_PATH, "example_def_file.yml")
-        self.__s_example_definition_file2 = os.path.join(TEST_WOPFILE_PATH, "example_def_file3.yml")
+        self.__s_example_definition_file = os.path.join(self.__s_root_path, "test/resource/wopfile/example_def_file.yml")
+        self.__s_example_definition_file2 = os.path.join(self.__s_root_path, "test/resource/wopfile/example_def_file3.yml")
 
         # The ugly (malformed file) --------------------:
 
