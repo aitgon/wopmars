@@ -23,7 +23,7 @@ class TestWorkflowManager(TestCase):
 
 
     def test_erase_output(self):
-        #todo
+        #todo LG
         pass
 
     def tearDown(self):

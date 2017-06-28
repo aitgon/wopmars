@@ -51,7 +51,7 @@ class TestWopMars(TestCase):
             WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 1)
 
-    # def test_run_sourcerule_succeed(self): # TODO Must be fixed
+    # def test_run_sourcerule_succeed(self): # TODO AG Must be fixed
     #     cmd_line = ["python", "-D", self.__db_url, "-w", self.__right_def_file, "-d", PathFinder.get_module_path(), "-vv", "-p", "--sourcerule", "rule6"]
     #     with self.assertRaises(SystemExit) as se:
     #         WopMars().run(cmd_line)
@@ -145,7 +145,7 @@ class TestWopMars(TestCase):
             WopMars().run(cmd_line)
         self.assertEqual(SE.exception.code, 2)
     
-    def test_run_packaged_wrappers(self): # TODO Fix this test
+    def test_run_packaged_wrappers(self):
         cmd_line = ["python", "-D", self.__db_url, "-w", self.__right_def_file2, "-vv", "-p", "-d",
                     PathFinder.get_module_path()]
         with self.assertRaises(SystemExit) as se:
@@ -161,7 +161,7 @@ class TestWopMars(TestCase):
             WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 0)
     
-    # def test_core(self): # TODO Fix this test
+    # def test_core(self): # TODO AG Fix this test
     #     cmd_line = ["python", "tool", "test.resource.wrapper.FooWrapperCore",
     #               "-o", "{'table': {'FooBase': 'test.resource.model.FooBase'}}",
     #               "-vv", "-p", "-D", self.__db_url, "-d", PathFinder.get_module_path()]

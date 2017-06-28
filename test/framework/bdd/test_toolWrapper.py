@@ -222,7 +222,7 @@ class TestToolWrapper(TestCase):
 
         s_root_path = PathFinder.get_module_path()
 
-        s_path_to_example_file_that_exists = s_root_path + "test/resource/input_files/input_File1.txt"
+        s_path_to_example_file_that_exists = os.path.join(s_root_path, "test/resource/input_files/input_File1.txt")
 
         f1 = IOFilePut(name="input1", path=s_path_to_example_file_that_exists)
         f1.type = self.input_entry
@@ -263,7 +263,7 @@ class TestToolWrapper(TestCase):
         self.assertFalse(self.__toolwrapper_first.follows(self.__toolwrapper_second))
 
     def test_are_inputs_ready(self):
-        # self.assertTrue(self.__toolwrapper_ready.are_inputs_ready()) # TODO Fix this test is not passing
+        self.assertTrue(self.__toolwrapper_ready.are_inputs_ready())
         self.assertFalse(self.__toolwrapper_not_ready.are_inputs_ready())
 
         SQLManager.instance().get_session().add_all([FooBase(name="test_bak " + str(i)) for i in range(5)])
@@ -370,8 +370,8 @@ class TestToolWrapper(TestCase):
         toolwrapper2.files.append(f1)
         toolwrapper2.tables.append(t1)
 
-        # self.assertTrue(toolwrapper1.is_output_ok()) # TODO Fix this test is not passing
-        # self.assertFalse(toolwrapper2.is_output_ok()) # TODO Fix this test is not passing
+        # self.assertTrue(toolwrapper1.is_output_ok()) # TODO AG: Ask LG. Where is the is_output_ok function?
+        # self.assertFalse(toolwrapper2.is_output_ok()) # TODO AG: Ask LG. Where is the is_output_ok function?
 
     def tearDown(self):
         SQLManager.instance().drop_all()
