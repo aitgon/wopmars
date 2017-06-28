@@ -51,16 +51,9 @@ from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder
 from wopmars.utils.exceptions.WopMarsException import WopMarsException
 
-from wopmars.utils.PathFinder import PathFinder
-
 # todo combinatoire pour les rules
 # todo option pour reset les resultats (supprimer le contenu de la bdd) / fresh run
 # todo ajouter un flag NOT_FINISHED aux executions
-
-# Define global variables
-MODULE_PATH=PathFinder.get_module_path()
-TEST_WOPFILE_PATH=os.path.join(MODULE_PATH, "test/resource/wopfile")
-#
 
 
 class WopMars:
