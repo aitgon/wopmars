@@ -5,7 +5,7 @@ import os
 import time
 
 from FooBase2 import FooBase2
-from wopmars.main.tagc.framework.bdd.tables.ToolWrapper import ToolWrapper
+from wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
 
 class FooWrapper7(ToolWrapper):
     """

@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer
 
-from wopmars.main.tagc.framework.bdd.Base import Base
+from wopmars.framework.bdd.Base import Base
 
 
 class Failure(Base):

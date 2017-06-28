@@ -2,8 +2,8 @@ import os
 import unittest
 from unittest import TestCase
 
-from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager
-from wopmars.main.tagc.utils.PathFinder import PathFinder
+from wopmars.framework.bdd.SQLManager import SQLManager
+from wopmars.utils.PathFinder import PathFinder
 from wopmars import WopMars
 
 # TODO: Fix remaining tests
@@ -91,7 +91,7 @@ class TestWopMars(TestCase):
     #     SQLManager.instance().drop_all()
     #     OptionManager._drop()
     #     SQLManager._drop()
-    #     PathFinder.silentremove("resources/outputs/output_File1.txt")
+    #     PathFinder.silentremove("test/output/output_File1.txt")
     #
     #     start = time.time()
     #     with self.assertRaises(SystemExit):
@@ -113,7 +113,7 @@ class TestWopMars(TestCase):
         with self.assertRaises(SystemExit):
            WopMars().run(cmd_line)
     
-        PathFinder.silentremove("resources/outputs/output_File7.txt")
+        PathFinder.silentremove("test/output/output_File7.txt")
     
         with self.assertRaises(SystemExit):
            WopMars().run(cmd_line + ["-n"])
@@ -137,7 +137,7 @@ class TestWopMars(TestCase):
     #     SQLManager.instance().drop_all()
     #     OptionManager._drop()
     #     SQLManager._drop()
-    #     PathFinder.silentremove("resources/outputs/output_File1.txt")
+    #     PathFinder.silentremove("test/output/output_File1.txt")
     #     start = time.time()
     #     with self.assertRaises(SystemExit):
     #        WopMars().run(cmd_line)
@@ -170,7 +170,7 @@ class TestWopMars(TestCase):
     # def test_run_one_tool(self):
     #     cmd_line = ["python", "tool", "FooWrapper4",
     #               "-i", "{'file': {'input1': 'resources/input_File1.txt'}}",
-    #               "-o", "{'file': {'output1': 'resources/outputs/output1.txt'}}", "-D", self.__db_url, "-vv", "-p", "-d",
+    #               "-o", "{'file': {'output1': 'test/output/output1.txt'}}", "-D", self.__db_url, "-vv", "-p", "-d",
     #               PathFinder.get_module_path(os.path.realpath(__file__))]
     #     with self.assertRaises(SystemExit) as se:
     #        WopMars().run(cmd_line)
@@ -225,9 +225,9 @@ class TestWopMars(TestCase):
     
     # def test_run_sourcerule_succeed(self):
     #     SQLManager.instance().create_all()
-    #     subprocess.Popen(["touch", "resources/outputs/output_File1.txt"])
-    #     subprocess.Popen(["touch", "resources/outputs/output_File4.txt"])
-    #     subprocess.Popen(["touch", "resources/outputs/output_File5.txt"])
+    #     subprocess.Popen(["touch", "test/output/output_File1.txt"])
+    #     subprocess.Popen(["touch", "test/output/output_File4.txt"])
+    #     subprocess.Popen(["touch", "test/output/output_File5.txt"])
     #     for i in range(10):
     #        f = FooBase2(name="testwopmars " + str(i))
     #        SQLManager.instance().get_session().add(f)
@@ -264,7 +264,7 @@ class TestWopMars(TestCase):
     #     SQLManager.instance().drop_all()
     #     OptionManager._drop()
     #     SQLManager._drop()
-    #     PathFinder.silentremove("resources/outputs/output_File1.txt")
+    #     PathFinder.silentremove("test/output/output_File1.txt")
     #
     #     start = time.time()
     #     with self.assertRaises(SystemExit):
@@ -286,7 +286,7 @@ class TestWopMars(TestCase):
         with self.assertRaises(SystemExit):
            WopMars().run(cmd_line)
     
-        PathFinder.silentremove("resources/outputs/output_File7.txt")
+        PathFinder.silentremove("test/output/output_File7.txt")
     
         with self.assertRaises(SystemExit):
            WopMars().run(cmd_line + ["-n"])
@@ -310,7 +310,7 @@ class TestWopMars(TestCase):
     #     SQLManager.instance().drop_all()
     #     OptionManager._drop()
     #     SQLManager._drop()
-    #     PathFinder.silentremove("resources/outputs/output_File1.txt")
+    #     PathFinder.silentremove("test/output/output_File1.txt")
     #     start = time.time()
     #     with self.assertRaises(SystemExit):
     #        WopMars().run(cmd_line)
@@ -338,7 +338,7 @@ class TestWopMars(TestCase):
     # def test_run_one_tool(self):
     #     cmd_line = ["python", "tool", "FooWrapper4",
     #               "-i", "{'file': {'input1': 'resources/input_File1.txt'}}",
-    #               "-o", "{'file': {'output1': 'resources/outputs/output1.txt'}}", "-D", self.__db_url, "-vv", "-p", "-d",
+    #               "-o", "{'file': {'output1': 'test/output/output1.txt'}}", "-D", self.__db_url, "-vv", "-p", "-d",
     #               PathFinder.get_module_path(os.path.realpath(__file__))]
     #     with self.assertRaises(SystemExit) as se:
     #        WopMars().run(cmd_line)

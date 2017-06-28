@@ -2,7 +2,7 @@
 Module containing the FooWrapper1 class
 """
 
-from wopmars.main.tagc.framework.bdd.tables.ToolWrapper import ToolWrapper
+from wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
 
 
 class FooWrapperNoTable(ToolWrapper):

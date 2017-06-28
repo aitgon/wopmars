@@ -37,7 +37,7 @@ Here is an example of the declaration of a class called ``SparePartsManufacturer
 
 .. code-block:: python
 
-    from wopmars.main.tagc.framework.bdd.tables.ToolWrapper import ToolWrapper
+    from wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
 
 
     class SparePartsManufacturer(ToolWrapper):
@@ -300,7 +300,7 @@ With this model, there is an other `Toolwrapper` provided in the example: ``AddD
     import time, datetime
     import random
 
-    from wopmars.main.tagc.framework.bdd.tables.ToolWrapper import ToolWrapper
+    from wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
 
 
     class AddDateToPiece(ToolWrapper):

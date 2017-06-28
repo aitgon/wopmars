@@ -6,8 +6,8 @@ import time
 
 from matplotlib.compat import subprocess
 
-from wopmars.main.tagc.framework.bdd.tables.ToolWrapper import ToolWrapper
-from wopmars.main.tagc.utils.Logger import Logger
+from wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
+from wopmars.utils.Logger import Logger
 
 class FooWrapper8(ToolWrapper):
     """

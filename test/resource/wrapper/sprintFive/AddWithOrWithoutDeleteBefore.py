@@ -1,4 +1,4 @@
-from wopmars.main.tagc.framework.bdd.tables.ToolWrapper import ToolWrapper
+from wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
 
 
 class AddWithOrWithoutDeleteBefore(ToolWrapper):

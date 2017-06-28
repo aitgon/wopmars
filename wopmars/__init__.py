@@ -42,19 +42,19 @@ import time
 from docopt import docopt, DocoptExit
 from schema import Schema, And, Or, Use, SchemaError
 
-from wopmars.main.tagc.example.ExampleBuilder import ExampleBuilder
-from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager
-from wopmars.main.tagc.framework.management.WorkflowManager import WorkflowManager
-from wopmars.main.tagc.utils.DictUtils import DictUtils
-from wopmars.main.tagc.utils.Logger import Logger
-from wopmars.main.tagc.utils.OptionManager import OptionManager
-from wopmars.main.tagc.utils.PathFinder import PathFinder
-from wopmars.main.tagc.utils.exceptions.WopMarsException import WopMarsException
-
+from wopmars.example.ExampleBuilder import ExampleBuilder
+from wopmars.framework.bdd.SQLManager import SQLManager
+from wopmars.framework.management.WorkflowManager import WorkflowManager
+from wopmars.utils.DictUtils import DictUtils
+from wopmars.utils.Logger import Logger
+from wopmars.utils.OptionManager import OptionManager
+from wopmars.utils.PathFinder import PathFinder
+from wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 # todo combinatoire pour les rules
 # todo option pour reset les resultats (supprimer le contenu de la bdd) / fresh run
 # todo ajouter un flag NOT_FINISHED aux executions
+
 
 class WopMars:
 
@@ -159,10 +159,7 @@ def run():
     if not os.path.isdir(home_wopmars):
         os.makedirs(home_wopmars)
 
-    l = ["python",  "/home/luc/Documents/WORK/wopmars/wopmars/resources/example_def_file.yml", "--dot", "~/.wopmars/wopmars.dot",
-         "-p", "-vvvv", "-d", "/home/luc/Documents/WORK/wopmars/wopmars"]
     WopMars().run(sys.argv)
-    # WopMars().run(l)
 
 if __name__ == "__main__":
     run()
