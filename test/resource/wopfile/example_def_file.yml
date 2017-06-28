@@ -5,16 +5,16 @@ rule rule1:
             input1: "resources/input_File1.txt"
     output:
         file:
-            output1: "resources/outputs/output_File1.txt"
+            output1: "test/output/output_File1.txt"
 
 rule rule2:
     tool: test.resource.wrapper.FooWrapper5
     input:
         file:
-            input1: "resources/outputs/output_File1.txt"
+            input1: "test/output/output_File1.txt"
     output:
         file:
-            output1: "resources/outputs/output_File2.txt"
+            output1: "test/output/output_File2.txt"
         table:
             FooBase: test.resource.model.FooBase2
 #
@@ -23,11 +23,11 @@ rule rule3:
     tool: test.resource.wrapper.FooWrapper6
     input:
         file:
-            input1: "resources/outputs/output_File1.txt"
+            input1: "test/output/output_File1.txt"
     output:
         file:
-            output1: "resources/outputs/output_File3.txt"
-            output2: "resources/outputs/output_File4.txt"
+            output1: "test/output/output_File3.txt"
+            output2: "test/output/output_File4.txt"
 
 rule rule4:
     tool: test.resource.wrapper.FooWrapper7
@@ -42,30 +42,30 @@ rule rule5:
     tool: test.resource.wrapper.FooWrapper8
     input:
         file:
-            input1: "resources/outputs/output_File3.txt"
-            input2: "resources/outputs/output_File2.txt"
+            input1: "test/output/output_File3.txt"
+            input2: "test/output/output_File2.txt"
     output:
         file:
-            output1: "resources/outputs/output_File5.txt"
+            output1: "test/output/output_File5.txt"
 
 rule rule6:
     tool: test.resource.wrapper.FooWrapper9
     input:
         file:
-            input1: "resources/outputs/output_File4.txt"
+            input1: "test/output/output_File4.txt"
         table:
             FooBase2: test.resource.model.FooBase2
     output:
         file:
-            output1: "resources/outputs/output_File6.txt"
+            output1: "test/output/output_File6.txt"
 
 rule rule7:
     tool: test.resource.wrapper.FooWrapper10
     input:
         file:
-            input1: "resources/outputs/output_File1.txt"
-            input2: "resources/outputs/output_File5.txt"
-            input3: "resources/outputs/output_File6.txt"
+            input1: "test/output/output_File1.txt"
+            input2: "test/output/output_File5.txt"
+            input3: "test/output/output_File6.txt"
     output:
         file:
-            output1: "resources/outputs/output_File7.txt"
+            output1: "test/output/output_File7.txt"

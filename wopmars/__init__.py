@@ -159,10 +159,7 @@ def run():
     if not os.path.isdir(home_wopmars):
         os.makedirs(home_wopmars)
 
-    l = ["python",  "/home/luc/Documents/WORK/wopmars/wopmars/resources/example_def_file.yml", "--dot", "~/.wopmars/wopmars.dot",
-         "-p", "-vvvv", "-d", "/home/luc/Documents/WORK/wopmars/wopmars"]
     WopMars().run(sys.argv)
-    # WopMars().run(l)
 
 if __name__ == "__main__":
     run()

@@ -99,7 +99,7 @@ class TestDAG(TestCase):
     def tearDown(self):
         SQLManager.instance().drop_all()
         OptionManager._drop()
-        PathFinder.silentremove("resources/outputs/output_File1.txt")
+        PathFinder.silentremove("test/output/output_File1.txt")
         SQLManager._drop()
 
     def test_init(self):

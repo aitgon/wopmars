@@ -35,7 +35,7 @@ class TestToolThread(TestCase):
         f1 = IOFilePut(name="input1", path="resources/input_File1.txt")
         f1.type = input_entry
 
-        f2 = IOFilePut(name="output1", path="resources/outputs/output_File1.txt")
+        f2 = IOFilePut(name="output1", path="test/output/output_File1.txt")
         f2.type = output_entry
 
         t1 = IODbPut(model="FooBase", tablename="FooBase")
@@ -51,7 +51,7 @@ class TestToolThread(TestCase):
         f12 = IOFilePut(name="input1", path="resources/input_File1.txt")
         f12.type = input_entry
 
-        f22 = IOFilePut(name="output1", path="resources/outputs/output_File1.txt")
+        f22 = IOFilePut(name="output1", path="test/output/output_File1.txt")
         f22.type = output_entry
 
         t12 = IODbPut(model="FooBase", tablename="FooBase")
@@ -68,7 +68,7 @@ class TestToolThread(TestCase):
         f13 = IOFilePut(name="input1", path="resources/input_File1.txt")
         f13.type = input_entry
 
-        f23 = IOFilePut(name="output1", path="resources/outputs/output_File1.txt")
+        f23 = IOFilePut(name="output1", path="test/output/output_File1.txt")
         f23.type = output_entry
 
         t13 = IODbPut(model="FooBase", tablename="FooBase")
@@ -197,7 +197,7 @@ class TestToolThread(TestCase):
 
     def tearDown(self):
         SQLManager.instance().drop_all()
-        PathFinder.silentremove("resources/outputs/")
+        PathFinder.silentremove("test/output/")
 
 if __name__ == '__main__':
     unittest.main()
