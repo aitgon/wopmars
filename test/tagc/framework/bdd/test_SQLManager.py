@@ -1,6 +1,6 @@
-from unittest import TestCase
-import unittest
 import threading
+import unittest
+from unittest import TestCase
 
 from test.resource.model.FooBase import FooBase
 from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager

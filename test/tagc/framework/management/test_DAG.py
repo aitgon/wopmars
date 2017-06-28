@@ -5,7 +5,6 @@ from test.resource.wrapper.FooWrapper2 import FooWrapper2
 from test.resource.wrapper.FooWrapper8 import FooWrapper8
 from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager
 from wopmars.main.tagc.framework.bdd.tables.IOFilePut import IOFilePut
-
 from wopmars.main.tagc.framework.bdd.tables.ToolWrapper import ToolWrapper
 from wopmars.main.tagc.framework.bdd.tables.Type import Type
 from wopmars.main.tagc.framework.management.DAG import DAG

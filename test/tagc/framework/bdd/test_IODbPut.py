@@ -2,8 +2,8 @@ import os
 import unittest
 from unittest import TestCase
 
-from test.resource.model.FooBase2 import FooBase2
 from test.resource.model.FooBase import FooBase
+from test.resource.model.FooBase2 import FooBase2
 from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager
 from wopmars.main.tagc.framework.bdd.tables.IODbPut import IODbPut
 from wopmars.main.tagc.utils.OptionManager import OptionManager

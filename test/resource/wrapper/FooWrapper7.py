@@ -1,7 +1,6 @@
 """
 Module containing the FooWrapper1 class
 """
-import os
 import time
 
 from test.resource.model.FooBase2 import FooBase2

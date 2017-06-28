@@ -8,8 +8,6 @@ from unittest import TestCase
 from test.resource.model.FooBase import FooBase
 from test.resource.wrapper.FooWrapper2 import FooWrapper2
 from test.resource.wrapper.FooWrapper3 import FooWrapper3
-
-
 from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager
 from wopmars.main.tagc.framework.bdd.tables.IODbPut import IODbPut
 from wopmars.main.tagc.framework.bdd.tables.IOFilePut import IOFilePut
@@ -20,6 +18,7 @@ from wopmars.main.tagc.framework.bdd.tables.Type import Type
 from wopmars.main.tagc.utils.OptionManager import OptionManager
 from wopmars.main.tagc.utils.PathFinder import PathFinder
 from wopmars.main.tagc.utils.exceptions.WopMarsException import WopMarsException
+
 
 class TestToolWrapper(TestCase):
     def setUp(self):

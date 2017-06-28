@@ -10,11 +10,9 @@ from test.resource.wrapper.FooWrapper7 import FooWrapper7
 from test.resource.wrapper.FooWrapper8 import FooWrapper8
 from test.resource.wrapper.FooWrapper9 import FooWrapper9
 from test.resource.wrapper.fooPackage.FooWrapperPackaged import FooWrapperPackaged
-
 from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager
 from wopmars.main.tagc.framework.bdd.tables.IODbPut import IODbPut
 from wopmars.main.tagc.framework.bdd.tables.IOFilePut import IOFilePut
-
 from wopmars.main.tagc.framework.bdd.tables.ToolWrapper import ToolWrapper
 from wopmars.main.tagc.framework.bdd.tables.Type import Type
 from wopmars.main.tagc.framework.parsing.Reader import Reader
