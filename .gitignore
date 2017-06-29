@@ -16,7 +16,7 @@ nosetests.xml
 
 wopmars.log
 
-doc/*
+docs/_build
 log/*
 
 

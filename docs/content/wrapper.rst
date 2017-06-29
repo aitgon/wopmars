@@ -1,20 +1,13 @@
-ToolWrapper development
+The tool wrappers
 =======================
 
-This manual aims to explain with simple words how to write the `Toolwrappers` in order to allow a fresh Python developer to configure his own analysis workflow. This manual refers to the :doc:`User Manual </use>` so I recommand you to keep it open in case of blackout.
+This manual aims to explain with simple words how to write the `tool wrappers` in order to allow a fresh Python developer to configure his own analysis workflow. This manual refers to the :doc:`User Manual </use>` so I recommand you to keep it open in case of blackout.
 
-This starting guide will allow you to understand the main mecanisms which rule **WoPMaRS**. It means the way WoPMaRS talks with the `Toolwrappers` you are using to understand their role in the workflow in terms of input and output parameters.
+This starting guide will allow you to understand the main mecanisms which rule **WoPMaRS**. It means the way WoPMaRS talks with the `tool wrappers` you are using to understand their role in the workflow in terms of input and output parameters.
 
 To illustrate the necessary conditions to build a correct `Toolwrapper`, we will use some kind of *TO DO* task list to prevent forgetting steps. The order doesn't matter but, I insist, each step is essential.
 
-Table of Content
-................
-
-.. toctree::
-
-   dev_wrapper
-
-Developing basic `Toolwrappers`
+Developing basic `tool wrappers`
 ...............................
 
 Declaring your class
@@ -28,7 +21,7 @@ To define a `Toolwrapper` we will use an important concept of the *Object Orient
     
 A `Toolwrapper` compatible with **WoPMaRS** have to be a subclass of the abstract class, prepare yourself, ``Toolwrapper``! For WoPMaRS, every `Toolwrapper` is a subclass of ``Toolwrapper`` and if you ask it to work with a class which do not satisfy this simple condition, you'll obtain an error. The reason for that is simple: if your `Toolwrapper` inherit from ``Toolwrapper``, then it is certain that it contains some methods and attributes familiar to WoPMaRS. Otherwise, there are no guarantees.
 
-An other important thing necessary to work with WoPMaRS is to provide the static class attribute ``__mapper_args__`` to your `Toolwrapper`. This attribute is a dictionnary which should have ``polymorphic_identity`` as key and the full name of the class (contained in a String) as value. This information is necessary to WoPMaRS because when it will store the `Toolwrappers` informations into the database, WoPMaRS will be able to keep track of the inheritance between your `Toolwrapper` and the ``Toolwrapper`` class.
+An other important thing necessary to work with WoPMaRS is to provide the static class attribute ``__mapper_args__`` to your `Toolwrapper`. This attribute is a dictionnary which should have ``polymorphic_identity`` as key and the full name of the class (contained in a String) as value. This information is necessary to WoPMaRS because when it will store the `tool wrappers` informations into the database, WoPMaRS will be able to keep track of the inheritance between your `Toolwrapper` and the ``Toolwrapper`` class.
 
 .. note::
     A static class attribute is an attribute associated with a class and not with a specific object of this class. Modifying this kind of attribute in an object of a given class is somehow similar to modifying this attribute in every object of the class (those that already exist and those future).
@@ -51,7 +44,7 @@ You have now created your first `Toolwrapper`, but the aims to use abstract clas
 `Toolwrapper` specifying methods
 ++++++++++++++++++++++++++++++++
 
-A good way to see a `Toolwrapper` is to see it as an independant software. Meaning that it has a well defined role which is to generate a specific output in terms of a specific kinf of input with some options to parametrize its behavior. Anyway, this is the way WoPMaRS is "watching" to the `Toolwrappers`. The link between a `Toolwrapper` and WoPMaRS is done thanks to inherited methods from ``Toolwrapper`` which have to be re-wrote by the `Toolwrapper` developer.
+A good way to see a `Toolwrapper` is to see it as an independant software. Meaning that it has a well defined role which is to generate a specific output in terms of a specific kinf of input with some options to parametrize its behavior. Anyway, this is the way WoPMaRS is "watching" to the `tool wrappers`. The link between a `Toolwrapper` and WoPMaRS is done thanks to inherited methods from ``Toolwrapper`` which have to be re-wrote by the `Toolwrapper` developer.
 
 Describing files: ``specify_input_file`` and ``specif_output_file``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -78,7 +71,7 @@ The class ``SparePartsManufacturer`` takes a file in input but doesn't produce a
 Describing tables: ``specify_input_table`` and ``specify_output_table``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**WoPMaRS** makes its `Toolwrapper` able to read and write entries in a database. Like for the files, the `Toolwrappers` have to specify in which table of the database they will read (input tables) and in which they will write (output tables). So, the ``Toolwrapper`` class implements the methods ``specify_input_table`` and ``specify_output_table``. However, this time, the Strings contained in the returned list are associated with both the variables containing the table models and the name of the tables itself.
+**WoPMaRS** makes its `Toolwrapper` able to read and write entries in a database. Like for the files, the `tool wrappers` have to specify in which table of the database they will read (input tables) and in which they will write (output tables). So, the ``Toolwrapper`` class implements the methods ``specify_input_table`` and ``specify_output_table``. However, this time, the Strings contained in the returned list are associated with both the variables containing the table models and the name of the tables itself.
 
 The final user have to write the same table names as keys in the `table` part of the definition file (see :doc:`User Manual </use>`) and the path to the models associated with those tables as the values to specify which one the `Toolwrapper` should use. Usually, a `Toolwrapper` is closely related to a specific model but we can imagine that if two models are similar for a given `Toolwrapper`, it could use one or the other independantly (for example, if a model B inherit from the model A, then every `Toolwrapper` able to use A should be able to use B too).
 
@@ -104,7 +97,7 @@ Here is the rest of the `Toolwrapper` ``SparePartsManufacturer`` which writes it
 Describing paramaters: ``specify_params``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-An other feature offered by the `Toolwrappers` is to allow you to specify some parameters for the processing of the wrapper. Usually, those parameters will be associated with the options allowed by the analysis tool itself. They may also correspond to options used by the `toolwrappers` to offer flexibility for the pre and post processing of the data.
+An other feature offered by the `tool wrappers` is to allow you to specify some parameters for the processing of the wrapper. Usually, those parameters will be associated with the options allowed by the analysis tool itself. They may also correspond to options used by the `toolwrappers` to offer flexibility for the pre and post processing of the data.
 
 To specify which options a `Toolwrapper` is able to understand, it implements a method ``specify_params``. This method returns a dictionnary in which each key correspond to the name of the option which will be used in the definition file (see :doc:`User Manual </use>`) and each value, a String representing its type. The availables types are the following (to memorize them, just think about the different Python data types):
 - ``int``
@@ -184,27 +177,10 @@ If you are using **WoPMaRS**, it is probably for the database access. Now, you k
     - The transaction is a series of operations which are closely related (for example: ``SELECT``, compute then ``INSERT``). When a transaction finishes, the state of the database is checked, if every thing seems right and well ordered, the transaction is validated (``COMMIT``), if not, the whole transaction is canceled (``ROLLBACK``) in order to return to a stable state.
     - The session is a series of transactions which are independant. In other words, when you want to work with the database, you open a session and it says "I'm gonna work with you, database, are you ok?". Then, every operations you will perform will be associated with __your__ session before being ``COMMITED`` or ``ROLLBACKED``.
 
-
-
-Declaring a model
------------------
-
-.. note::
-
-    A data model is an abstract representation of data. In the field of the OOP and the work with a relational database, we can consider a model like a class which represent a data type in the database (usually a row in a table). The model have to describe the types of each field and their relations with the other tables (meanning other models).
-    
-For the rest of this section, I assume that you have read and understood the secion `"Declare a Mapping" <http://docs.sqlalchemy.org/en/latest/orm/tutorial.html#declare-a-mapping>`_ of the SQLAlchemy tutorial.
-
-A model have to be associated with a database. This is why the models used in WoPMaRS have to inherit from the class ``Base``. ``Base`` is a class which will be associated itself with a SQLite database (a file) and which contains every information related: the tables, the relations, etc..
-
-To declare a model, even before specifying fiels, it is necessary that you give a name to the table thanks to the static attribute ``__tablename__``. the content of this variable is extremely important because this is the name which will be returned by the methods ``specify_input_table`` and ``specify_output_table`` of your `Toolwrappers` and which will be used by the final user to referencing the table in the definition file.
-
-Most of the functionnalities described in the SQLAlchemy tutorial are also available in WoPMaRS models, especially the foreign key and relationship system between models. If ever, you find a missing functionnality, do not hesitate and send us an issue. This is also important to notive that the foreign key constraints have been enforced for WoPMaRS, meaning that if you do not respect those constraints in your `Toolwrapper`, you'll get an error.
-
-Developing Advanced `Toolwrappers`
+Developing Advanced `tool wrappers`
 ..................................
 
-Now that you understand the basics of the development of the `Toolwrappers` you may want to do more advanced tricks to deal with **WoPMaRS**. 
+Now that you understand the basics of the development of the `tool wrappers` you may want to do more advanced tricks to deal with **WoPMaRS**. 
 
 Parametrize inputs and outputs
 ------------------------------

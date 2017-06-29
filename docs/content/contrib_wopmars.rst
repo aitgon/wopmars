@@ -1,14 +1,7 @@
-Software Documentation
+Contributing to WoPMaRs
 ======================
 
 This manual is dedicated to the developers who want to improve **WoPMaRS** by adding new features or correcting bugs.
-
-Table of Content
-----------------
-
-.. toctree::
-
-   dev_wop
 
 Setting up WoPMaRS development environment
 ------------------------------------------

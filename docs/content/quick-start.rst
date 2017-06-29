@@ -1,61 +1,5 @@
-Introduction
-============
-
-The connection between the results of a tool and their insertion into the database is done thanks to Python classes called *wrappers* compatible with WoPMaRS. These wrapper classes are able to both wrap the execution command line of an analysis tool and perform *pre* or *post* data processing (like, for example, gather data from the database or insert them).
-
-Here comes two use-cases which are:
-
-- **develop** wrapper classes also called *Toolwrappers*
-- **use** these *Toolwrappers* to perform an analysis workflow
-
-Table of Content
-----------------
-
-.. toctree::
-
-   intro 
-
-Prerequisites
--------------
-
-Using WoPMaRS
-*************
-
-- Basic knowledge on relational databases
-- Basic knowledge on command line use
-
-Developing *ToolWrappers*
-*************************
-
-- Basic knowledge on Python (controling structures `if/else/elif`, loops `while/for`, declaring and using variables and exception handling)
-- More advanced knowledge in relational databases (data types, selecting and modificating rows, primary keys and foreign keys)
-- Understanding Object Oriented Programming in Python is recommended
-- Basic knowledge on the use of SQLAlchemy
-
-Installation
-------------
-
-To install wopmars, you have to get the sources on the git repository and then go to the source directory and type::
-
-    pip install .
-
-.. warning::
-
-    There could be some issues regarding the `pygraphviz` package. 
-
-    - If you do not have permission for the ``sudo``, you should use the command line ::
-
-        python3 setup.py install --no-pygraphviz
-
-    But you won't be able to run the ``--dot`` option on WoPMaRS.
-
-    - Else, install `graphviz-dev` and `libcgraph6`::
-    
-        sudo apt-get install graphviz-dev libcgraph6
-
-
-Basic Usage
------------
+Quick Start
+===========
 
 Now you should be able to run WoPMaRS for the first time and we have prepared a simple example of workflow to introduce you to the basics of WoPMaRS.
 
@@ -197,49 +141,5 @@ The preceding workflow had two steps:
     V9968T5YOX|1788.63
     W8LPW24SXR|1772.77
 
-Pros and Cons
--------------
-
-- Pros:
-
-   - Formatting your results in order to make them easy to analyze 
-   - Using `SQL` to improve analysis performance
-   - Keeping track of your analyzes and enrich your database over time
-   - Make your results reproducible
-
-- Cons:
-
-   - Read and writes in the database has a cost in time. #todo benchmarking
-   - Knowledge in `Python` and `SQL` is more than suitable for an optimum use of WoPMaRS
-
-
-Go further
-----------
-
-Now that you should understand the basics of WoPMaRS, I recommand you learn :doc:`how to use WoPMaRS </use>` before go to the :doc:`build of ToolWrappers </dev_wrapper>`.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Now that you have run a working example you can go to the Wopfile, wrapper or model sections to develop your own Wopmars workflow.
 
