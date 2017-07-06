@@ -114,7 +114,7 @@ CREATE TRIGGER IF NOT EXISTS modification_%(tablename)s_%(statement)s AFTER %(st
                         sql_trigger = """
 CREATE OR REPLACE FUNCTION modification_%(statement)s_%(tablename)s() RETURNS TRIGGER AS $modification_%(statement)s_%(tablename)s$
 BEGIN
-UPDATE wom_modification_table SET date = CURRENT_TIMESTAMP WHERE table_name = "%(tablename)s";
+UPDATE wom_modification_table SET date = CURRENT_TIMESTAMP WHERE table_name = '%(tablename)s';
 RETURN NULL; -- result is ignored since this is an AFTER trigger
 END;
 $modification_%(statement)s_%(tablename)s$ LANGUAGE plpgsql;
