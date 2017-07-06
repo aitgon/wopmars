@@ -28,3 +28,4 @@ wopmars.egg-info/*
 test/output
 
 wopmars/test_bak.ps
+out
