@@ -5,6 +5,10 @@ To install wopmars, you have to get the sources on the git repository and then g
 
     pip install .
 
+To use wopmars with the MariaDB/MySQL database engine, you need to install the python MySQL client
+
+    pip install mysqlclient
+
 .. warning::
 
     There could be some issues regarding the `pygraphviz` package. 
