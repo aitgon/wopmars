@@ -20,15 +20,24 @@ Then, install the dependencies from the ``spec-file`` and ``requirements.txt`` f
     pip install -r requirements.txt
 
     
-Some modules should be accessible to your python interpreter in order to perform the tests. The called modules are the test `ToolWrappers` and `Models`. You should then add their location to the python path:
+The database engine for the test is passed using an environment variable. For instance, **SQLite**:
 
 .. code-block:: bash
 
-    export PYTHONPATH="$PWD/wopmars/test/tagc/base:$PYTHONPATH"
-    export PYTHONPATH="$PWD/wopmars/test/tagc/toolwrappers:$PYTHONPATH"
+    mkdir -p out && export DB_URL="sqlite:///out/db.sqlite"
 
-    
-    
+**MySQL**:
+
+.. code-block:: bash
+
+    export DB_URL="mysql://wopuser:mypass@localhost/wopdb"
+
+or **PostgreSQL**:
+
+.. code-block:: bash
+
+    export DB_URL="postgresql://wopuser:mypass@localhost/wopdb"
+
 You are now ready to perform unittests then stay in the source folder and run:
 
 .. code-block:: bash

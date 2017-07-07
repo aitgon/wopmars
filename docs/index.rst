@@ -37,7 +37,7 @@ Table of Contents
    content/usage
    content/wrapper
    content/model
-   content/contrib_wopmars
+   content/developer
 
        intro 
        use
