@@ -111,7 +111,7 @@ The DAG
 
 Now that you understand how to specify the rules of your workflow, you may be able to see the different steps of the workflow as the different nodes of a **Directed Acyclic Graph**. The *dependency relation* between those nodes are given thanks to the state of `input` and `output` of the files and tables: if one input of a rule A is in the outputs of an other rule B, then rule A is a direct successor of rule B.
 
-.. figure::  images/workflow.png
+.. figure::  ../images/workflow.png
    :align:   center
    
    *You can easily see the graph on this representation of a workflow*

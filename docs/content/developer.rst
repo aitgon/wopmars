@@ -87,28 +87,28 @@ wopmars
 
 The sources of the project are stored here. There is three sub-directories which have self-explaining names. The ``main`` sub-package contains the actual sources of **WopMars** whereas the ``test`` one contains functional and unit tests. Both hierarchies of files follow the same pattern.
 
-wopmars.tagc.example
+wopmars.example
 ++++++++++++++++++++
 
 This package contains the examples for **WopMars**. They are ready to use examples necessary for the tutorial.
 
-wopmars.tagc.framework
+wopmars.framework
 ++++++++++++++++++++++
 
-The main classes involved in **WopMars** are stored here. They are spliited into three categories.
+The main classes involved in **WopMars** are stored here. They are splited into three categories.
 
-wopmars.tagc.framework.bdd
+wopmars.framework.database
 ..........................
 
 All the processing related to the database is done here. Every objects that should exist in order to work with the database is stored here:
-the :class:`~.wopmars.framework.bdd.SQLManager.SQLManager` which is used to perform synchronized operations against the database, the :class:`~.wopmars.framework.bdd.WopMarsSession.WopMarsSession` which is used to bind the Toolwrappers to the database,  the :class:`~.wopmars.framework.bdd.WopMarsQuery.WopMarsQuery` which is used to create queries that use the WopMaRS machinery There is a package ``tables`` which contains the models related to the history_ of **WopMars**. Among them, the :class:`~.wopmars.framework.bdd.tables.ToolWrapper.ToolWrapper` class.
+the :class:`~.wopmars.framework.database.SQLManager.SQLManager` which is used to perform synchronized operations against the database, the :class:`~.wopmars.framework.database.WopMarsSession.WopMarsSession` which is used to bind the Toolwrappers to the database,  the :class:`~.wopmars.framework.database.WopMarsQuery.WopMarsQuery` which is used to create queries that use the WopMaRS machinery There is a package ``tables`` which contains the models related to the history_ of **WopMars**. Among them, the :class:`~.wopmars.framework.database.tables.ToolWrapper.ToolWrapper` class.
 
-wopmars.tagc.framework.management
+wopmars.framework.management
 .................................
 
 Here are the classes involved in the actual management of the workflow. Which means the building of the :class:`~.wopmars.framework.management.DAG.DAG` and the walk through it thanks to the :class:`~.wopmars.framework.management.WorkflowManager.WorkflowManager`. Also, the class responsible of the actual execution of the ToolWrappers, :class:`~.wopmars.framework.management.ToolThread.ToolThread` is stored here.
 
-wopmars.tagc.framework.parsing
+wopmars.framework.parsing
 ..............................
 
 Here are the classes involved in the parsing of the workflow definition file. Among them, the :class:`~.wopmars.framework.parsing.Parser.Parser` is a pivot between the :class:`~.wopmars.framework.parsing.Reader.Reader` and the core functioning of **WopMars**.
@@ -127,15 +127,15 @@ Numerous calls to those tables are done during all the process of the parsing of
 
 	The execution DAG is the directed acyclic graph representing the workflow about to be executed
 
-Here is a list of the tables used for history. All of the associated models are stored under ``wopmars.framework.bdd.tables``. If you want more informations about the models themselves, you should follow the links to get the code documentation:
+Here is a list of the tables used for history. All of the associated models are stored under ``wopmars.framework.database.tables``. If you want more informations about the models themselves, you should follow the links to get the code documentation:
 
-- ``wom_execution`` represented by the model :class:`~.wopmars.framework.bdd.tables.Execution.Execution`
-- ``wom_rule`` represented by the model :class:`~.wopmars.framework.bdd.tables.ToolWrapper.ToolWrapper`
-- ``wom_type`` represented by the model :class:`~.wopmars.framework.bdd.tables.Type.Type`
-- ``wom_file`` represented by the model :class:`~.wopmars.framework.bdd.tables.IOFilePut.IOFilePut`
-- ``wom_table`` represented by the model :class:`~.wopmars.framework.bdd.tables.IODbPut.IODbPut`
-- ``wom_modification_table`` represented by the model :class:`~.wopmars.framework.bdd.tables.ModificationTable.ModificationTable`
-- ``wom_option`` represented by the model :class:`~.wopmars.framework.bdd.tables.Option.Option`
+- ``wom_execution`` represented by the model :class:`~.wopmars.framework.database.tables.Execution.Execution`
+- ``wom_rule`` represented by the model :class:`~.wopmars.framework.database.tables.ToolWrapper.ToolWrapper`
+- ``wom_type`` represented by the model :class:`~.wopmars.framework.database.tables.Type.Type`
+- ``wom_file`` represented by the model :class:`~.wopmars.framework.database.tables.IOFilePut.IOFilePut`
+- ``wom_table`` represented by the model :class:`~.wopmars.framework.database.tables.IODbPut.IODbPut`
+- ``wom_modification_table`` represented by the model :class:`~.wopmars.framework.database.tables.ModificationTable.ModificationTable`
+- ``wom_option`` represented by the model :class:`~.wopmars.framework.database.tables.Option.Option`
 
 .. figure:: images/mcd.png
    :align: center
@@ -151,7 +151,7 @@ The class responsible of the parsing of the workflow definition file (and the ``
 
 Once all informations regarding the workflow definition file have been stored in the database, the options ``--targetrule`` and ``--sourcerule`` are parsed in order to get only the rules that are intended to be executed by the user (see `Options and Arguments <use.html#options-and-arguments>`__ of WopMars).
 
-To build the DAG itself, a class :class:`~.wopmars.framework.management.DAG.DAG` which inherit from ``networkx.DiGraph`` has been written. This class takes a set of nodes as argument and build itself by determining which nodes are following which others. Since the nodes are actually :class:`~.wopmars.framework.bdd.tables.ToolWrapper.ToolWrapper`, a node follows an other node if one output of the former is in the list of inputs of the last. This information is given by the method :meth:`~.wopmars.framework.bdd.tables.ToolWrapper.ToolWrapper.follows` of :class:`~.wopmars.framework.bdd.tables.ToolWrapper.ToolWrapper`.
+To build the DAG itself, a class :class:`~.wopmars.framework.management.DAG.DAG` which inherit from ``networkx.DiGraph`` has been written. This class takes a set of nodes as argument and build itself by determining which nodes are following which others. Since the nodes are actually :class:`~.wopmars.framework.database.tables.ToolWrapper.ToolWrapper`, a node follows an other node if one output of the former is in the list of inputs of the last. This information is given by the method :meth:`~.wopmars.framework.database.tables.ToolWrapper.ToolWrapper.follows` of :class:`~.wopmars.framework.database.tables.ToolWrapper.ToolWrapper`.
 
 
 Executing the DAG
@@ -162,7 +162,7 @@ It is the :class:`~.wopmars.framework.management.WorkflowManager.WorkflowManager
 Managing the DataBase
 ---------------------
 
-The main class responsible of managing the database is the :class:`~.wopmars.framework.bdd.SQLManager.SQLManager`. This class is represented in **WopMars** as a synchronized :class:`~.wopmars.utils.Singleton.SingletonMixin`. To access the Singleton instance, all you need to to is ``SQLManager.instance()``
+The main class responsible of managing the database is the :class:`~.wopmars.framework.database.SQLManager.SQLManager`. This class is represented in **WopMars** as a synchronized :class:`~.wopmars.utils.Singleton.SingletonMixin`. To access the Singleton instance, all you need to to is ``SQLManager.instance()``
 
 .. note::
 
@@ -170,7 +170,7 @@ The main class responsible of managing the database is the :class:`~.wopmars.fra
 
 The constructor of the ``SQLManager`` create the actual database and enable the foreign key support (https://www.sqlite.org/foreignkeys.html#fk_enable) in order to let the user benefit from this constraint.
 
-To get a :class:`~.wopmars.bdd.WopMarsSession.WopMarsSession` associated with this SQLManager, you just need to call :meth:`~wopmars.framework.bdd.SQLManager.SQLManager.get_session()`` and you can use the session anywhere, in any thread and at any time. Everything is already synchronized.
+To get a :class:`~.wopmars.database.WopMarsSession.WopMarsSession` associated with this SQLManager, you just need to call :meth:`~wopmars.framework.database.SQLManager.SQLManager.get_session()`` and you can use the session anywhere, in any thread and at any time. Everything is already synchronized.
 
 
 ----
@@ -180,47 +180,47 @@ To get a :class:`~.wopmars.bdd.WopMarsSession.WopMarsSession` associated with th
 
 ----
 
-.. autoclass:: wopmars.framework.bdd.tables.Execution.Execution
+.. autoclass:: wopmars.framework.database.tables.Execution.Execution
    :members:    
 
 ----
 
-.. autoclass:: wopmars.framework.bdd.tables.ToolWrapper.ToolWrapper
+.. autoclass:: wopmars.framework.database.tables.ToolWrapper.ToolWrapper
    :members:
 
 ----
 
-.. autoclass:: wopmars.framework.bdd.tables.IOFilePut.IOFilePut
+.. autoclass:: wopmars.framework.database.tables.IOFilePut.IOFilePut
    :members:
 
 ----
 
-.. autoclass:: wopmars.framework.bdd.tables.IODbPut.IODbPut
+.. autoclass:: wopmars.framework.database.tables.IODbPut.IODbPut
    :members:
 
 ----
 
-.. autoclass:: wopmars.framework.bdd.tables.Type.Type
+.. autoclass:: wopmars.framework.database.tables.Type.Type
    :members:
 
 ----
 
-.. autoclass:: wopmars.framework.bdd.SQLManager.SQLManager
-   :members:
-      
-----
-
-.. autoclass:: wopmars.framework.bdd.WopMarsSession.WopMarsSession
+.. autoclass:: wopmars.framework.database.SQLManager.SQLManager
    :members:
       
 ----
 
-.. autoclass:: wopmars.framework.bdd.WopMarsQuery.WopMarsQuery
+.. autoclass:: wopmars.framework.database.WopMarsSession.WopMarsSession
+   :members:
+      
+----
+
+.. autoclass:: wopmars.framework.database.WopMarsQuery.WopMarsQuery
    :members:
 
 ----
 
-.. autoclass:: wopmars.framework.bdd.tables.Option.Option
+.. autoclass:: wopmars.framework.database.tables.Option.Option
    :members:
 
 ----

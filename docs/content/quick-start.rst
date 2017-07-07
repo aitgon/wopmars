@@ -1,4 +1,4 @@
-Quick Start
+Quick start
 ===========
 
 Now you should be able to run WopMars for the first time and we have prepared a simple example of workflow to introduce you to the basics of WopMars.
@@ -74,7 +74,7 @@ It came time to start your first workflow!
 
 .. code-block:: python
 
-    wopmars -w Wopfile -D output/wopmars.sqlite -v -p
+    wopmars -w Wopfile -D "sqlite:///output/wopmars.sqlite" -v -p
 
 You will see a little bit of output in the console thanks to the ``-p`` coupled with the ``-v`` option which describes the work processed by WopMars. The ``-D`` option allows to specify the path to the database file and, you have probably realized, the ``-w`` option allows to specify the path to the **Workflow Definition File**.
 
