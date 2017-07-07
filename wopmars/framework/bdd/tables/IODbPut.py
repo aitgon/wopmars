@@ -24,10 +24,10 @@ class IODbPut(IOPut, Base):
     following fields:
 
     - id: INTEGER - primary key - autoincrement - arbitrary ID
-    - tablename: VARCHAR(255) - foreign key to the associated table: :class:`wopmars.framework.bdd.tables.ModificationTable.ModificationTable` - the name of the referenced table
+    - tablename: VARCHAR(255) - foreign key to the associated table: :class:`wopmars.framework.database.tables.ModificationTable.ModificationTable` - the name of the referenced table
     - model: VARCHAR(255) - the path to the model (in python notation)
-    - rule_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.framework.bdd.tables.ToolWrapper.ToolWrapper`
-    - type_id: INTEGER - foreign key to the associated type ID: :class:`wopmars.framework.bdd.tables.Type.Type`
+    - rule_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.framework.database.tables.ToolWrapper.ToolWrapper`
+    - type_id: INTEGER - foreign key to the associated type ID: :class:`wopmars.framework.database.tables.Type.Type`
     - used_at: DATE - date at which the table have been used
     """
     __tablename__ = "wom_table"

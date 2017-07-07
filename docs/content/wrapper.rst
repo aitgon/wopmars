@@ -3,7 +3,7 @@ The tool wrappers
 
 This manual aims to explain with simple words how to write the `tool wrappers` in order to allow a fresh Python developer to configure his own analysis workflow. This manual refers to the :doc:`User Manual </use>` so I recommand you to keep it open in case of blackout.
 
-This starting guide will allow you to understand the main mecanisms which rule **WoPMaRS**. It means the way WoPMaRS talks with the `tool wrappers` you are using to understand their role in the workflow in terms of input and output parameters.
+This starting guide will allow you to understand the main mecanisms which rule **WopMars**. It means the way WopMars talks with the `tool wrappers` you are using to understand their role in the workflow in terms of input and output parameters.
 
 To illustrate the necessary conditions to build a correct `Toolwrapper`, we will use some kind of *TO DO* task list to prevent forgetting steps. The order doesn't matter but, I insist, each step is essential.
 
@@ -19,9 +19,9 @@ To define a `Toolwrapper` we will use an important concept of the *Object Orient
 
     An abstract class is a class which represent a concept and, consequently, which is not supposed to be instantiated. For example, the bird concept: a bird flies and sings: an abstract class ``Bird`` would have methods like ``fly`` and  ``sing`` with nothing inside. Actually, there are no species called "bird", however, there are ducks and eagles. A duck is a realization of the concept of "bird". In OOP, the class ``Duck`` would inherit from ``Bird`` and would overide the methods ``fly`` and ``sing`` to specialize them in order to fit with the duck characteristics. Here, ``Duck`` is a subclass of ``Bird``.
     
-A `Toolwrapper` compatible with **WoPMaRS** have to be a subclass of the abstract class, prepare yourself, ``Toolwrapper``! For WoPMaRS, every `Toolwrapper` is a subclass of ``Toolwrapper`` and if you ask it to work with a class which do not satisfy this simple condition, you'll obtain an error. The reason for that is simple: if your `Toolwrapper` inherit from ``Toolwrapper``, then it is certain that it contains some methods and attributes familiar to WoPMaRS. Otherwise, there are no guarantees.
+A `Toolwrapper` compatible with **WopMars** have to be a subclass of the abstract class, prepare yourself, ``Toolwrapper``! For WopMars, every `Toolwrapper` is a subclass of ``Toolwrapper`` and if you ask it to work with a class which do not satisfy this simple condition, you'll obtain an error. The reason for that is simple: if your `Toolwrapper` inherit from ``Toolwrapper``, then it is certain that it contains some methods and attributes familiar to WopMars. Otherwise, there are no guarantees.
 
-An other important thing necessary to work with WoPMaRS is to provide the static class attribute ``__mapper_args__`` to your `Toolwrapper`. This attribute is a dictionnary which should have ``polymorphic_identity`` as key and the full name of the class (contained in a String) as value. This information is necessary to WoPMaRS because when it will store the `tool wrappers` informations into the database, WoPMaRS will be able to keep track of the inheritance between your `Toolwrapper` and the ``Toolwrapper`` class.
+An other important thing necessary to work with WopMars is to provide the static class attribute ``__mapper_args__`` to your `Toolwrapper`. This attribute is a dictionnary which should have ``polymorphic_identity`` as key and the full name of the class (contained in a String) as value. This information is necessary to WopMars because when it will store the `tool wrappers` informations into the database, WopMars will be able to keep track of the inheritance between your `Toolwrapper` and the ``Toolwrapper`` class.
 
 .. note::
     A static class attribute is an attribute associated with a class and not with a specific object of this class. Modifying this kind of attribute in an object of a given class is somehow similar to modifying this attribute in every object of the class (those that already exist and those future).
@@ -39,17 +39,17 @@ Here is an example of the declaration of a class called ``SparePartsManufacturer
         }
         pass
 
-You have now created your first `Toolwrapper`, but the aims to use abstract class inheritance is to guarantee to **WoPMaRS** that each ``Toolwrapper`` implements some methods which describe its role.
+You have now created your first `Toolwrapper`, but the aims to use abstract class inheritance is to guarantee to **WopMars** that each ``Toolwrapper`` implements some methods which describe its role.
 
 `Toolwrapper` specifying methods
 ++++++++++++++++++++++++++++++++
 
-A good way to see a `Toolwrapper` is to see it as an independant software. Meaning that it has a well defined role which is to generate a specific output in terms of a specific kinf of input with some options to parametrize its behavior. Anyway, this is the way WoPMaRS is "watching" to the `tool wrappers`. The link between a `Toolwrapper` and WoPMaRS is done thanks to inherited methods from ``Toolwrapper`` which have to be re-wrote by the `Toolwrapper` developer.
+A good way to see a `Toolwrapper` is to see it as an independant software. Meaning that it has a well defined role which is to generate a specific output in terms of a specific kinf of input with some options to parametrize its behavior. Anyway, this is the way WopMars is "watching" to the `tool wrappers`. The link between a `Toolwrapper` and WopMars is done thanks to inherited methods from ``Toolwrapper`` which have to be re-wrote by the `Toolwrapper` developer.
 
 Describing files: ``specify_input_file`` and ``specif_output_file``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The files called *input files* and *output files* are, on the one hand, the necessary files for the tool to work and, on the other hand, the files generated by the tool. A `Toolwrapper` doesn't rely on a specific file on the machine: it shouldn't access a file in a hard-coded way but should use some kind of variable containing the path to the given file. It is for the `Toolwrapper` developer to specify those variable names and they have to be respected in the workflow definition file (see :doc:`User Manual </use>`). Those variable names are known by WoPMaRS thanks to the methods ``specify_input_file`` (for the variable names associated with inputs) and ``specify_output_file`` (for the variable names associated with outputs). Those methods have to return each one a list containing the Strings containing the variable names accepted by the `Toolwrapper`.
+The files called *input files* and *output files* are, on the one hand, the necessary files for the tool to work and, on the other hand, the files generated by the tool. A `Toolwrapper` doesn't rely on a specific file on the machine: it shouldn't access a file in a hard-coded way but should use some kind of variable containing the path to the given file. It is for the `Toolwrapper` developer to specify those variable names and they have to be respected in the workflow definition file (see :doc:`User Manual </use>`). Those variable names are known by WopMars thanks to the methods ``specify_input_file`` (for the variable names associated with inputs) and ``specify_output_file`` (for the variable names associated with outputs). Those methods have to return each one a list containing the Strings containing the variable names accepted by the `Toolwrapper`.
 
 .. warning::
 
@@ -71,7 +71,7 @@ The class ``SparePartsManufacturer`` takes a file in input but doesn't produce a
 Describing tables: ``specify_input_table`` and ``specify_output_table``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**WoPMaRS** makes its `Toolwrapper` able to read and write entries in a database. Like for the files, the `tool wrappers` have to specify in which table of the database they will read (input tables) and in which they will write (output tables). So, the ``Toolwrapper`` class implements the methods ``specify_input_table`` and ``specify_output_table``. However, this time, the Strings contained in the returned list are associated with both the variables containing the table models and the name of the tables itself.
+**WopMars** makes its `Toolwrapper` able to read and write entries in a database. Like for the files, the `tool wrappers` have to specify in which table of the database they will read (input tables) and in which they will write (output tables). So, the ``Toolwrapper`` class implements the methods ``specify_input_table`` and ``specify_output_table``. However, this time, the Strings contained in the returned list are associated with both the variables containing the table models and the name of the tables itself.
 
 The final user have to write the same table names as keys in the `table` part of the definition file (see :doc:`User Manual </use>`) and the path to the models associated with those tables as the values to specify which one the `Toolwrapper` should use. Usually, a `Toolwrapper` is closely related to a specific model but we can imagine that if two models are similar for a given `Toolwrapper`, it could use one or the other independantly (for example, if a model B inherit from the model A, then every `Toolwrapper` able to use A should be able to use B too).
 
@@ -167,7 +167,7 @@ We can access the model ``Piece`` with the following statement::
 Session and accessing the database
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you are using **WoPMaRS**, it is probably for the database access. Now, you know how to call the models from your method ``run`` but you probably doesn't know what to do with them. This section aims to explain how you should use your models and a session to access the database.
+If you are using **WopMars**, it is probably for the database access. Now, you know how to call the models from your method ``run`` but you probably doesn't know what to do with them. This section aims to explain how you should use your models and a session to access the database.
 
 .. note:: 
 
@@ -180,12 +180,12 @@ If you are using **WoPMaRS**, it is probably for the database access. Now, you k
 Developing Advanced `tool wrappers`
 ..................................
 
-Now that you understand the basics of the development of the `tool wrappers` you may want to do more advanced tricks to deal with **WoPMaRS**. 
+Now that you understand the basics of the development of the `tool wrappers` you may want to do more advanced tricks to deal with **WopMars**. 
 
 Parametrize inputs and outputs
 ------------------------------
 
-During the parsing of the configuration file, WoPMaRS check first the validity of the parameters and then look at the inputs and outputs. This behavior allow you to parametrize which input and output your `Toolwrapper` is supposed to take depending on the used parameters. In this example, the parameter ``to_file`` is a ``boolean`` and if it is ``True``, the result is written in a file instead of the database.
+During the parsing of the configuration file, WopMars check first the validity of the parameters and then look at the inputs and outputs. This behavior allow you to parametrize which input and output your `Toolwrapper` is supposed to take depending on the used parameters. In this example, the parameter ``to_file`` is a ``boolean`` and if it is ``True``, the result is written in a file instead of the database.
 
 .. code-block:: python
 
@@ -247,12 +247,12 @@ And there, the definition file (``Wopfile2`` in the example directory) look like
 Inherit models
 --------------
 
-During the conception of your workflows, you may want to make multiple rules write in the same table in a specific order (for example, one rule create entries and the other add informations in the fields). Basically, you would do like ever, playing with inputs and outputs in order to fit your needs but this way, you will be stuck with a logic problem where WoPMaRS won't be able to say "this rule should be run before this one", like in the following schema:
+During the conception of your workflows, you may want to make multiple rules write in the same table in a specific order (for example, one rule create entries and the other add informations in the fields). Basically, you would do like ever, playing with inputs and outputs in order to fit your needs but this way, you will be stuck with a logic problem where WopMars won't be able to say "this rule should be run before this one", like in the following schema:
 
 .. figure::  images/model_inheritance.png
    :align:   center
    
-   *If you want the rules to be run in this specific order, WoPMaRS can't understand if `rule 2` is supposed to run before `rule 4` on the basis of the table names*
+   *If you want the rules to be run in this specific order, WopMars can't understand if `rule 2` is supposed to run before `rule 4` on the basis of the table names*
 
 You can bypass this issue using *model inheritance*. With the model inheritance, you can build a model which inherit from a former model and add it some new attributes.
 

@@ -75,7 +75,7 @@ class Parser:
     @staticmethod
     def get_set_toolwrappers():
         """
-        Ask the bdd for toolwrappers of the current execution.
+        Ask the database for toolwrappers of the current execution.
 
         The current execution is defined as the one with the highest id (it is auto_incrementing)
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# WoPMaRS documentation build configuration file, created by
+# WopMars documentation build configuration file, created by
 # sphinx-quickstart on Wed Jul 27 13:45:18 2016.
 #
 # This file is execfile()d with the current directory set to its
@@ -51,7 +51,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'WoPMaRS'
+project = 'WopMars'
 copyright = '2016, Luc Giffon, Aitor Gonzalez, Lionel Spinelli'
 author = 'Luc Giffon, Aitor Gonzalez, Lionel Spinelli'
 
@@ -136,7 +136,7 @@ html_theme = 'alabaster'
 # The name for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.
 #
-# html_title = 'WoPMaRS v1.1.1'
+# html_title = 'WopMars v1.1.1'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #
@@ -236,7 +236,7 @@ html_show_sourcelink = False
 # html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'WoPMaRSdoc'
+htmlhelp_basename = 'WopMarsdoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -262,7 +262,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'WoPMaRS.tex', 'WoPMaRS Documentation',
+    (master_doc, 'WopMars.tex', 'WopMars Documentation',
      'Luc Giffon, Aitor Gonzalez, Lionel Spinelli', 'manual'),
 ]
 
@@ -304,7 +304,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'wopmars', 'WoPMaRS Documentation',
+    (master_doc, 'wopmars', 'WopMars Documentation',
      [author], 1)
 ]
 
@@ -319,8 +319,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'WoPMaRS', 'WoPMaRS Documentation',
-     author, 'WoPMaRS', 'One line description of project.',
+    (master_doc, 'WopMars', 'WopMars Documentation',
+     author, 'WopMars', 'One line description of project.',
      'Miscellaneous'),
 ]
 

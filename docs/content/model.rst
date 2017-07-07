@@ -7,9 +7,9 @@ The models
     
 For the rest of this section, I assume that you have read and understood the secion `"Declare a Mapping" <http://docs.sqlalchemy.org/en/latest/orm/tutorial.html#declare-a-mapping>`_ of the SQLAlchemy tutorial.
 
-A model have to be associated with a database. This is why the models used in WoPMaRS have to inherit from the class ``Base``. ``Base`` is a class which will be associated itself with a SQLite database (a file) and which contains every information related: the tables, the relations, etc..
+A model have to be associated with a database. This is why the models used in WopMars have to inherit from the class ``Base``. ``Base`` is a class which will be associated itself with a SQLite database (a file) and which contains every information related: the tables, the relations, etc..
 
 To declare a model, even before specifying fiels, it is necessary that you give a name to the table thanks to the static attribute ``__tablename__``. the content of this variable is extremely important because this is the name which will be returned by the methods ``specify_input_table`` and ``specify_output_table`` of your `Toolwrappers` and which will be used by the final user to referencing the table in the definition file.
 
-Most of the functionnalities described in the SQLAlchemy tutorial are also available in WoPMaRS models, especially the foreign key and relationship system between models. If ever, you find a missing functionnality, do not hesitate and send us an issue. This is also important to notive that the foreign key constraints have been enforced for WoPMaRS, meaning that if you do not respect those constraints in your `Toolwrapper`, you'll get an error.
+Most of the functionnalities described in the SQLAlchemy tutorial are also available in WopMars models, especially the foreign key and relationship system between models. If ever, you find a missing functionnality, do not hesitate and send us an issue. This is also important to notive that the foreign key constraints have been enforced for WopMars, meaning that if you do not respect those constraints in your `Toolwrapper`, you'll get an error.
 

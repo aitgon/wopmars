@@ -11,7 +11,7 @@ from wopmars.utils.SetUtils import SetUtils
 class DAG(nx.DiGraph):
     """
     This class inherits from networkx.DiGraph class and is able to represent a DAG of tool nodes. It takes a set of
-    :class:`~.wopmars.framework.bdd.tables.ToolWrapper` and analyse it to extract dependencies between them.
+    :class:`~.wopmars.framework.database.tables.ToolWrapper` and analyse it to extract dependencies between them.
     """    
     def __init__(self, set_tools=None):
         """
@@ -69,7 +69,7 @@ class DAG(nx.DiGraph):
         The method is overwhelmed because if a node is None, then, the root nodes are returned.
 
         :param node: a node of the DAG or None.
-        :type node: :class:`~.wopmars.framework.bdd.tables.ToolWrapper.ToolWrapper`
+        :type node: :class:`~.wopmars.framework.database.tables.ToolWrapper.ToolWrapper`
         :return: [node]:  the successors of the given node or the node at the root of the DAG.
         """
         if not node:
@@ -85,7 +85,7 @@ class DAG(nx.DiGraph):
         Return the set of all successors nodes from a given node in the DAG (node included).
 
         :param node: a node of the DAG or None.
-        :type node: :class:`~.wopmars.framework.bdd.tables.ToolWrapper.ToolWrapper`
+        :type node: :class:`~.wopmars.framework.database.tables.ToolWrapper.ToolWrapper`
 
         :return: set(node): all the successors of a given node.
         """
@@ -99,7 +99,7 @@ class DAG(nx.DiGraph):
         Return the set of all predecessors nodes from a given node in the DAG (node included).
 
         :param node: a node of the DAG or None.
-        :type node: :class:`~.wopmars.framework.bdd.tables.ToolWrapper.ToolWrapper`
+        :type node: :class:`~.wopmars.framework.database.tables.ToolWrapper.ToolWrapper`
 
         :return: set(node): all the predecessors of a given node.
         """

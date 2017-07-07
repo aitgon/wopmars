@@ -184,7 +184,7 @@ class WorkflowManager(ToolWrapperObserver):
         A trace of the already_runned ToolWrapper objects is kept in order to avoid duplicate execution.
 
         :param node: A node of the DAG or None, if it needs to be executed from the root.
-        :type node: :class:`~.wopmars.framework.bdd.tables.ToolWrapper.ToolWrapper`
+        :type node: :class:`~.wopmars.framework.database.tables.ToolWrapper.ToolWrapper`
         :return: void
         """
         # the first list will be the root nodes
@@ -331,7 +331,7 @@ class WorkflowManager(ToolWrapperObserver):
         Check if all the predecessors of the given toolwrapper have yet been executed in this workflow.
 
         :param tw: Node of the DAG
-        :type tw: :class:`~.wopmars.main.framework.bdd.tables.ToolWrapper.ToolWrapper`
+        :type tw: :class:`~.wopmars.main.framework.database.tables.ToolWrapper.ToolWrapper`
         :return: Bool
         """
         return bool(self.__dag_to_exec.get_all_predecessors(tw).difference(set([tw])).issubset(set(self.__already_runned)))
@@ -342,13 +342,13 @@ class WorkflowManager(ToolWrapperObserver):
         Return True if conditions for saying "The output of this ToolWrapper are already available" are filled.
 
         The conditions are:
-            - The ToolWrapper exist in bdd (named = tw_old)
+            - The ToolWrapper exist in database (named = tw_old)
             - The tw_old param are the same than the same which is about to start
             - the tw_old inputs are the same
             - the tw_old outputs exists with the same name and are more recent than inputs
 
         :param tw: The Toolwrapper to test_bak
-        :type tw: :class:`~.wopmars.main.framework.bdd.tables.ToolWrapper.ToolWrapper`
+        :type tw: :class:`~.wopmars.main.framework.database.tables.ToolWrapper.ToolWrapper`
         """
         session = SQLManager.instance().get_session()
         list_same_toolwrappers = session.query(ToolWrapper).filter(ToolWrapper.toolwrapper == tw.toolwrapper)\

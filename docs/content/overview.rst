@@ -22,7 +22,7 @@ The *wopfile* defines the rules to convert inputs into outputs based on a tool:
             table:
                 piece: 'wopexample.models.Piece'
 
-The value of the tool field are python paths to classes called *wrappers* compatible with WoPMaRS. These wrapper classes are able to process inputs and outputs.
+The value of the tool field are python paths to classes called *wrappers* compatible with WopMars. These wrapper classes are able to process inputs and outputs.
 
 .. code-block:: python
 
@@ -104,6 +104,6 @@ After defining wrappers and modes in a dedicated python package and installing i
 
 wopmars ....
 
-Now that you should understand the basics of WoPMaRS, I recommand you to go to the quick start section to try a working example.
+Now that you should understand the basics of WopMars, I recommand you to go to the quick start section to try a working example.
 
 

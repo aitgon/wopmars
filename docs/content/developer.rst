@@ -1,12 +1,12 @@
 Contributing to WoPMaRs
 ======================
 
-This manual is dedicated to the developers who want to improve **WoPMaRS** by adding new features or correcting bugs.
+This manual is dedicated to the developers who want to improve **WopMars** by adding new features or correcting bugs.
 
-Setting up WoPMaRS development environment
+Setting up WopMars development environment
 ------------------------------------------
 
-Once you have downloaded **WoPMaRS** from git, you should want to process the `unittests` in order to make sure that everything is ok. It is best to create a conda environment to isolate your development.
+Once you have downloaded **WopMars** from git, you should want to process the `unittests` in order to make sure that everything is ok. It is best to create a conda environment to isolate your development.
 
 .. code-block:: bash
 
@@ -26,7 +26,7 @@ The database engine for the test is passed using an environment variable. For in
 
     mkdir -p out && export DB_URL="sqlite:///out/db.sqlite"
 
-**MySQL**:
+**MariaDB/MySQL**:
 
 .. code-block:: bash
 
@@ -44,12 +44,12 @@ You are now ready to perform unittests then stay in the source folder and run:
 
     python3 -m unittest discover
 
-And the tests should start and be ok. You are now ready to start improving **WoPMaRS**
+And the tests should start and be ok. You are now ready to start improving **WopMars**
 
-Contributing to WoPMaRS documentation
+Contributing to WopMars documentation
 -------------------------------------
 
-The WoPMaRS documentation has been done thanks to `Sphinx <http://www.sphinx-doc.org/en/stable/>`_. The documentation has been written according to the `rST format <http://docutils.sourceforge.net/rst.html>`_. There is two type of documentation in **WoPMaRS**:
+The WopMars documentation has been done thanks to `Sphinx <http://www.sphinx-doc.org/en/stable/>`_. The documentation has been written according to the `rST format <http://docutils.sourceforge.net/rst.html>`_. There is two type of documentation in **WopMars**:
 
 - ``docstring`` in the source code
 - rST files in the ``docs`` folder. Images are stored under the ``docs/images`` folder.
@@ -70,38 +70,38 @@ The result will be stored in the ``docs/_build/html``.
 Sub-packages descriptions
 -------------------------
 
-In this section, we will see what are the main sub-packages / folders of **WoPMaRS** and what is inside.
+In this section, we will see what are the main sub-packages / folders of **WopMars** and what is inside.
 
 bin
 ~~~
 
-Basically, the executable of **WoPMaRS** if you want to run ``wopmars``, ``bin/wopmars`` is the file you should execute.
+Basically, the executable of **WopMars** if you want to run ``wopmars``, ``bin/wopmars`` is the file you should execute.
 
 docs
 ~~~~
 
-This is the folder containing the **WoPMaRS** documentation, written in rst. This folder contains an ``images`` folder which contains graphs and images used for the documentation.
+This is the folder containing the **WopMars** documentation, written in rst. This folder contains an ``images`` folder which contains graphs and images used for the documentation.
 
 wopmars
 ~~~~~~~
 
-The sources of the project are stored here. There is three sub-directories which have self-explaining names. The ``main`` sub-package contains the actual sources of **WoPMaRS** whereas the ``test`` one contains functional and unit tests. Both hierarchies of files follow the same pattern.
+The sources of the project are stored here. There is three sub-directories which have self-explaining names. The ``main`` sub-package contains the actual sources of **WopMars** whereas the ``test`` one contains functional and unit tests. Both hierarchies of files follow the same pattern.
 
 wopmars.tagc.example
 ++++++++++++++++++++
 
-This package contains the examples for **WoPMaRS**. They are ready to use examples necessary for the tutorial.
+This package contains the examples for **WopMars**. They are ready to use examples necessary for the tutorial.
 
 wopmars.tagc.framework
 ++++++++++++++++++++++
 
-The main classes involved in **WoPMaRS** are stored here. They are spliited into three categories.
+The main classes involved in **WopMars** are stored here. They are spliited into three categories.
 
 wopmars.tagc.framework.bdd
 ..........................
 
 All the processing related to the database is done here. Every objects that should exist in order to work with the database is stored here:
-the :class:`~.wopmars.framework.bdd.SQLManager.SQLManager` which is used to perform synchronized operations against the database, the :class:`~.wopmars.framework.bdd.WopMarsSession.WopMarsSession` which is used to bind the Toolwrappers to the database,  the :class:`~.wopmars.framework.bdd.WopMarsQuery.WopMarsQuery` which is used to create queries that use the WopMaRS machinery There is a package ``tables`` which contains the models related to the history_ of **WoPMaRS**. Among them, the :class:`~.wopmars.framework.bdd.tables.ToolWrapper.ToolWrapper` class.
+the :class:`~.wopmars.framework.bdd.SQLManager.SQLManager` which is used to perform synchronized operations against the database, the :class:`~.wopmars.framework.bdd.WopMarsSession.WopMarsSession` which is used to bind the Toolwrappers to the database,  the :class:`~.wopmars.framework.bdd.WopMarsQuery.WopMarsQuery` which is used to create queries that use the WopMaRS machinery There is a package ``tables`` which contains the models related to the history_ of **WopMars**. Among them, the :class:`~.wopmars.framework.bdd.tables.ToolWrapper.ToolWrapper` class.
 
 wopmars.tagc.framework.management
 .................................
@@ -111,15 +111,15 @@ Here are the classes involved in the actual management of the workflow. Which me
 wopmars.tagc.framework.parsing
 ..............................
 
-Here are the classes involved in the parsing of the workflow definition file. Among them, the :class:`~.wopmars.framework.parsing.Parser.Parser` is a pivot between the :class:`~.wopmars.framework.parsing.Reader.Reader` and the core functioning of **WoPMaRS**.
+Here are the classes involved in the parsing of the workflow definition file. Among them, the :class:`~.wopmars.framework.parsing.Parser.Parser` is a pivot between the :class:`~.wopmars.framework.parsing.Reader.Reader` and the core functioning of **WopMars**.
 
 
 .. _history:
 
-The history of WoPMaRS executions
+The history of WopMars executions
 ---------------------------------
 
-**WoPMaRS** keeps track of what has been done thanks to an history stored in database with the prefix ``wom`` in table names.
+**WopMars** keeps track of what has been done thanks to an history stored in database with the prefix ``wom`` in table names.
 
 Numerous calls to those tables are done during all the process of the parsing of the definition file and the building of the execution DAG.
 
@@ -149,7 +149,7 @@ The workflow DAG is built from the workflow definition file. However, there is a
 
 The class responsible of the parsing of the workflow definition file (and the ``tool`` command) is :class:`wopmars.framework.parsing.Reader.Reader`. The class :class:`~.wopmars.framework.parsing.Reader.Reader` aims to fill the database with the informations relatives to the workflow.
 
-Once all informations regarding the workflow definition file have been stored in the database, the options ``--targetrule`` and ``--sourcerule`` are parsed in order to get only the rules that are intended to be executed by the user (see `Options and Arguments <use.html#options-and-arguments>`__ of WoPMaRS).
+Once all informations regarding the workflow definition file have been stored in the database, the options ``--targetrule`` and ``--sourcerule`` are parsed in order to get only the rules that are intended to be executed by the user (see `Options and Arguments <use.html#options-and-arguments>`__ of WopMars).
 
 To build the DAG itself, a class :class:`~.wopmars.framework.management.DAG.DAG` which inherit from ``networkx.DiGraph`` has been written. This class takes a set of nodes as argument and build itself by determining which nodes are following which others. Since the nodes are actually :class:`~.wopmars.framework.bdd.tables.ToolWrapper.ToolWrapper`, a node follows an other node if one output of the former is in the list of inputs of the last. This information is given by the method :meth:`~.wopmars.framework.bdd.tables.ToolWrapper.ToolWrapper.follows` of :class:`~.wopmars.framework.bdd.tables.ToolWrapper.ToolWrapper`.
 
@@ -162,7 +162,7 @@ It is the :class:`~.wopmars.framework.management.WorkflowManager.WorkflowManager
 Managing the DataBase
 ---------------------
 
-The main class responsible of managing the database is the :class:`~.wopmars.framework.bdd.SQLManager.SQLManager`. This class is represented in **WoPMaRS** as a synchronized :class:`~.wopmars.utils.Singleton.SingletonMixin`. To access the Singleton instance, all you need to to is ``SQLManager.instance()``
+The main class responsible of managing the database is the :class:`~.wopmars.framework.bdd.SQLManager.SQLManager`. This class is represented in **WopMars** as a synchronized :class:`~.wopmars.utils.Singleton.SingletonMixin`. To access the Singleton instance, all you need to to is ``SQLManager.instance()``
 
 .. note::
 

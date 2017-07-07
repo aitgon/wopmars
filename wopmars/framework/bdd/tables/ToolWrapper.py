@@ -93,9 +93,9 @@ class ToolWrapper(Base):
 
         Call of the methods:
 
-        - :meth:`~.wopmars.framework.bdd.ToolWrapper.ToolWrapper.is_options_respected`
-        - :meth:`~.wopmars.framework.bdd.ToolWrapper.ToolWrapper.is_input_respected`
-        - :meth:`~.wopmars.framework.bdd.ToolWrapper.ToolWrapper.is_output_respected`
+        - :meth:`~.wopmars.framework.database.ToolWrapper.ToolWrapper.is_options_respected`
+        - :meth:`~.wopmars.framework.database.ToolWrapper.ToolWrapper.is_input_respected`
+        - :meth:`~.wopmars.framework.database.ToolWrapper.ToolWrapper.is_output_respected`
         """
         # the options have to be checked first because they can alter the behavior of the is_input_respected and
         # is_output_respected methods
@@ -112,7 +112,7 @@ class ToolWrapper(Base):
 
         It checks if the input variable names exists or not. If not, throws a WopMarsParsingException.
 
-        This method calls the :meth:`~.wopmars.framework.bdd.ToolWrapper.ToolWrapper.specify_input_file` method
+        This method calls the :meth:`~.wopmars.framework.database.ToolWrapper.ToolWrapper.specify_input_file` method
         which have been written by the toolwrapper developer.
 
         :raise WopMarsException: The input are not respected by the user.
@@ -375,7 +375,7 @@ class ToolWrapper(Base):
             - The file have the same name, the same lastm mdoficiation datetime and the same size
 
         :param other: an other Toolwrapper which maybe as the same inputs
-        :type other: :class:`~.wopmars.framework.bdd.tables.ToolWrapper.ToolWrapper`
+        :type other: :class:`~.wopmars.framework.database.tables.ToolWrapper.ToolWrapper`
 
         :return: bool
         """

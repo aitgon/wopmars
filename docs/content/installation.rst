@@ -17,7 +17,7 @@ To use wopmars with the MariaDB/MySQL database engine, you need to install the p
 
         python3 setup.py install --no-pygraphviz
 
-    But you won't be able to run the ``--dot`` option on WoPMaRS.
+    But you won't be able to run the ``--dot`` option on WopMars.
 
     - Else, install `graphviz-dev` and `libcgraph6`::
     

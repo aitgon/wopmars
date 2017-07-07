@@ -1,7 +1,7 @@
 Quick Start
 ===========
 
-Now you should be able to run WoPMaRS for the first time and we have prepared a simple example of workflow to introduce you to the basics of WoPMaRS.
+Now you should be able to run WopMars for the first time and we have prepared a simple example of workflow to introduce you to the basics of WopMars.
 
 To build the workflow files architecture, go to any directory and type the following command::
     
@@ -33,7 +33,7 @@ Move to `wopmars_example` directory and install the package *wopexample*::
     pip install .
 
 .. note::
-    You have just installed your first **WoPMaRS Package**, congratulations! Every *Toolwrapper* for WoPMaRS is supposed to be built in a package in order to be easily installed.
+    You have just installed your first **WopMars Package**, congratulations! Every *Toolwrapper* for WopMars is supposed to be built in a package in order to be easily installed.
 
 
 Now, let's look in the `Wopfile`
@@ -76,7 +76,7 @@ It came time to start your first workflow!
 
     wopmars -w Wopfile -D output/wopmars.sqlite -v -p
 
-You will see a little bit of output in the console thanks to the ``-p`` coupled with the ``-v`` option which describes the work processed by WoPMaRS. The ``-D`` option allows to specify the path to the database file and, you have probably realized, the ``-w`` option allows to specify the path to the **Workflow Definition File**.
+You will see a little bit of output in the console thanks to the ``-p`` coupled with the ``-v`` option which describes the work processed by WopMars. The ``-D`` option allows to specify the path to the database file and, you have probably realized, the ``-w`` option allows to specify the path to the **Workflow Definition File**.
 
 Looking at results
 ******************

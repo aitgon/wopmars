@@ -17,8 +17,8 @@ class IOFilePut(IOPut, Base):
     - id: INTEGER - primary key - autoincrement - arbitrary ID
     - name: VARCHAR(255) - the name of the reference to the file
     - path: VARCHAR(255) - the path to the file
-    - rule_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.framework.bdd.tables.ToolWrapper.ToolWrapper`
-    - type_id: INTEGER - foreign key to the associated type ID: :class:`wopmars.framework.bdd.tables.Type.Type`
+    - rule_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.framework.database.tables.ToolWrapper.ToolWrapper`
+    - type_id: INTEGER - foreign key to the associated type ID: :class:`wopmars.framework.database.tables.Type.Type`
     - used_at: DATE - date at which the table have been used
     - size: INTEGER - the size of the file
     """

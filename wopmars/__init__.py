@@ -52,7 +52,7 @@ from wopmars.utils.PathFinder import PathFinder
 from wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 # todo combinatoire pour les rules
-# todo option pour reset les resultats (supprimer le contenu de la bdd) / fresh run
+# todo option pour reset les resultats (supprimer le contenu de la database) / fresh run
 # todo ajouter un flag NOT_FINISHED aux executions
 
 
