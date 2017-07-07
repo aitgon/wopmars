@@ -24,6 +24,8 @@ class DAG(nx.DiGraph):
         """
         # the DAG is a DiGraph
         super().__init__()
+        # A nx digraph to store the dot graph
+        self.dot_digraph = nx.DiGraph()
         Logger.instance().info("Building the execution DAG...")
         if set_tools:
             # for each tool
@@ -34,7 +36,15 @@ class DAG(nx.DiGraph):
                     # is there a dependency between tool1 and tool2?
                     if tool1.follows(tool2):
                         self.add_edge(tool2, tool1)
-
+        if set_tools:
+            # for each tool
+            for tool1 in set_tools:
+                self.dot_digraph.add_node(tool1.dot_label())
+                # for each other tool
+                for tool2 in set_tools.difference(set([tool1])):
+                    # is there a dependency between tool1 and tool2?
+                    if tool1.follows(tool2):
+                        self.dot_digraph.add_edge(tool2.dot_label(), tool1.dot_label())
         Logger.instance().debug("DAG built.")
 
     def write_dot(self, path):
@@ -44,8 +54,8 @@ class DAG(nx.DiGraph):
         The .ps can be built from the dot file with the command line: "dot -Tps {filename}.dot - o {filename}.ps"
         """
         # To build .ps : dot -Tps {filename}.dot - o {filename}.ps
-        nx.draw(self)
-        write_dot(self, path)
+        nx.draw(self.dot_digraph)
+        write_dot(self.dot_digraph, path)
         # building the openable file:
         list_popen = ["dot", "-Tps", path, "-o", path.rsplit("/", 1)[0] + "/" + path.rsplit("/", 1)[1].split(".")[-2] + ".ps"]
         Logger.instance().debug("SubProcess command line for .ps file: " + str(list_popen))

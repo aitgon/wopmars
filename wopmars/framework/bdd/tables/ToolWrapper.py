@@ -577,7 +577,7 @@ class ToolWrapper(Base):
         :return: String representing the toolwrapper
         """
         s = "\""
-        s += self.name
+        s += "Rule " + self.name
         s += "\\n"
         s += "tool: " + self.__class__.__name__
         s += "\\n"
@@ -593,12 +593,25 @@ class ToolWrapper(Base):
         s += "\""
         return s
 
+    def dot_label(self):
+        """Label for the dot dag"""
+        inputs_list_str = [str(i).replace(":", "") for i in self.files + self.tables if i.type.name == "input"]
+        outputs_list_str = [str(o).replace(":", "") for o in self.files + self.tables if o.type.name == "output"]
+        params_list_str = [str(p).replace(":","") for p in self.options]
+        s = ""
+        s += "Rule " + self.name + "\n"
+        s += "ToolWrapper " + self.__class__.__name__ + "\n"
+        s += "Inputs\n" + "\n\t".join(inputs_list_str) + "\n"
+        s += "Outputs\n" + "\n".join(outputs_list_str) + "\n"
+        s += "Parameters\n" + "\n".join(params_list_str) + "\n"
+        return(s)
+
     def __str__(self):
         inputs_list_str = [str(i) for i in self.files + self.tables if i.type.name == "input"]
         outputs_list_str = [str(o) for o in self.files + self.tables if o.type.name == "output"]
         params_list_str = [str(p) for p in self.options]
         s = ""
-        s += "rule " + str(self.name) + ":" + "\n"
+        s += "Rule " + str(self.name) + ":" + "\n"
         s += "\ttool: " + str(self.toolwrapper) + "\n"
         if len(inputs_list_str) > 0:
             s += "\tinput:" + "\n"
