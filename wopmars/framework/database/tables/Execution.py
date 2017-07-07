@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, DateTime, Float, String
 from sqlalchemy.orm import relationship
 
-from wopmars.framework.bdd.Base import Base
+from wopmars.framework.database.Base import Base
 
 
 class Execution(Base):

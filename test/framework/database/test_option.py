@@ -1,6 +1,6 @@
 import unittest
 from unittest import TestCase
-from wopmars.framework.bdd.tables.Option import Option
+from wopmars.framework.database.tables.Option import Option
 from wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 

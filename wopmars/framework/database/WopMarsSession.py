@@ -3,7 +3,7 @@ Module containing the WopMarsSession class.
 """
 from sqlalchemy.sql.elements import ClauseElement
 
-from wopmars.framework.bdd.WopMarsQuery import WopMarsQuery
+from wopmars.framework.database.WopMarsQuery import WopMarsQuery
 from wopmars.utils.Logger import Logger
 
 

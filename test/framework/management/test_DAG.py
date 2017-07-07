@@ -3,10 +3,10 @@ from unittest import TestCase
 
 from test.resource.wrapper.FooWrapper2 import FooWrapper2
 from test.resource.wrapper.FooWrapper8 import FooWrapper8
-from wopmars.framework.bdd.SQLManager import SQLManager
-from wopmars.framework.bdd.tables.IOFilePut import IOFilePut
-from wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
-from wopmars.framework.bdd.tables.Type import Type
+from wopmars.framework.database.SQLManager import SQLManager
+from wopmars.framework.database.tables.IOFilePut import IOFilePut
+from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
+from wopmars.framework.database.tables.Type import Type
 from wopmars.framework.management.DAG import DAG
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder

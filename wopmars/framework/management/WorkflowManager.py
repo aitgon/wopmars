@@ -3,11 +3,11 @@ import sys
 
 import time
 
-from wopmars.framework.bdd.SQLManager import SQLManager
-from wopmars.framework.bdd.tables.Execution import Execution
-from wopmars.framework.bdd.tables.IODbPut import IODbPut
-from wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
-from wopmars.framework.bdd.tables.Type import Type
+from wopmars.framework.database.SQLManager import SQLManager
+from wopmars.framework.database.tables.Execution import Execution
+from wopmars.framework.database.tables.IODbPut import IODbPut
+from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
+from wopmars.framework.database.tables.Type import Type
 from wopmars.framework.management.DAG import DAG
 from wopmars.framework.management.ToolThread import ToolThread
 from wopmars.framework.management.ToolWrapperObserver import ToolWrapperObserver

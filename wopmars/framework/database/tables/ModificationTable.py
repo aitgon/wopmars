@@ -1,4 +1,4 @@
-from wopmars.framework.bdd.Base import Base
+from wopmars.framework.database.Base import Base
 from sqlalchemy import Column, String, DateTime
 from sqlalchemy.orm import relationship
 

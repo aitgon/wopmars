@@ -7,8 +7,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.schema import sort_tables
 from sqlalchemy import event
 
-from wopmars.framework.bdd.Base import Base
-from wopmars.framework.bdd.WopMarsSession import WopMarsSession
+from wopmars.framework.database.Base import Base
+from wopmars.framework.database.WopMarsSession import WopMarsSession
 from wopmars.utils.Logger import Logger
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.RWLock import RWLock

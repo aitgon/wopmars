@@ -5,7 +5,7 @@ from unittest import TestCase
 from sqlalchemy.orm.exc import MultipleResultsFound
 
 from test.resource.model.FooBase import FooBase
-from wopmars.framework.bdd.SQLManager import SQLManager
+from wopmars.framework.database.SQLManager import SQLManager
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder
 

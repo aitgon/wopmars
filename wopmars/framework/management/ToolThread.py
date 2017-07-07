@@ -8,7 +8,7 @@ import os
 import time
 import traceback
 
-from wopmars.framework.bdd.SQLManager import SQLManager
+from wopmars.framework.database.SQLManager import SQLManager
 from wopmars.framework.management.Observable import Observable
 from wopmars.utils.Logger import Logger
 from wopmars.utils.OptionManager import OptionManager

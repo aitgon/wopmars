@@ -4,8 +4,8 @@ from unittest import TestCase
 
 from test.resource.model.FooBase import FooBase
 from test.resource.model.FooBase2 import FooBase2
-from wopmars.framework.bdd.SQLManager import SQLManager
-from wopmars.framework.bdd.tables.IODbPut import IODbPut
+from wopmars.framework.database.SQLManager import SQLManager
+from wopmars.framework.database.tables.IODbPut import IODbPut
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder
 

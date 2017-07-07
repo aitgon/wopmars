@@ -6,7 +6,7 @@ from sqlalchemy import Column, Integer
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
 
-from wopmars.framework.bdd.Base import Base
+from wopmars.framework.database.Base import Base
 
 
 class FooBase4(Base):

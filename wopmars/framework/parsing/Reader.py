@@ -14,13 +14,13 @@ except ImportError:
 
 from sqlalchemy.orm.exc import NoResultFound, ObjectDeletedError
 
-from wopmars.framework.bdd.SQLManager import SQLManager
-from wopmars.framework.bdd.tables.Execution import Execution
-from wopmars.framework.bdd.tables.IODbPut import IODbPut
-from wopmars.framework.bdd.tables.IOFilePut import IOFilePut
-from wopmars.framework.bdd.tables.ModificationTable import ModificationTable
-from wopmars.framework.bdd.tables.Option import Option
-from wopmars.framework.bdd.tables.Type import Type
+from wopmars.framework.database.SQLManager import SQLManager
+from wopmars.framework.database.tables.Execution import Execution
+from wopmars.framework.database.tables.IODbPut import IODbPut
+from wopmars.framework.database.tables.IOFilePut import IOFilePut
+from wopmars.framework.database.tables.ModificationTable import ModificationTable
+from wopmars.framework.database.tables.Option import Option
+from wopmars.framework.database.tables.Type import Type
 from wopmars.utils.DictUtils import DictUtils
 
 from wopmars.utils.Logger import Logger
@@ -291,7 +291,7 @@ class Reader:
         dict_outputs = dict(eval(s_dict_outputs))
         dict_params = dict(eval(s_dict_params))
         try:
-            # The same execution entry for the whole workflow-related bdd entries.
+            # The same execution entry for the whole workflow-related database entries.
             execution = Execution(started_at=datetime.datetime.fromtimestamp(time.time()))
             # get the types that should have been created previously
             input_entry = session.query(Type).filter(Type.name == "input").one()
@@ -377,7 +377,7 @@ class Reader:
 
         # The dict_workflow_definition is assumed to be well formed
         try:
-            # The same execution entry for the whole workflow-related bdd entries.
+            # The same execution entry for the whole workflow-related database entries.
             execution = Execution(started_at=datetime.datetime.fromtimestamp(time.time()))
             # get the types database entries that should have been created previously
             input_entry = session.query(Type).filter(Type.name == "input").one()

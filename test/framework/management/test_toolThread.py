@@ -7,12 +7,12 @@ from test.resource.model.FooBase import FooBase
 from test.resource.wrapper.FooWrapper5 import FooWrapper5
 from test.resource.wrapper.sprintFive.Add import Add as tw_add
 from test.resource.wrapper.sprintFive.Query import Query as tw_query
-from wopmars.framework.bdd.SQLManager import SQLManager
-from wopmars.framework.bdd.tables.IODbPut import IODbPut
-from wopmars.framework.bdd.tables.IOFilePut import IOFilePut
-from wopmars.framework.bdd.tables.ModificationTable import ModificationTable
-from wopmars.framework.bdd.tables.Option import Option
-from wopmars.framework.bdd.tables.Type import Type
+from wopmars.framework.database.SQLManager import SQLManager
+from wopmars.framework.database.tables.IODbPut import IODbPut
+from wopmars.framework.database.tables.IOFilePut import IOFilePut
+from wopmars.framework.database.tables.ModificationTable import ModificationTable
+from wopmars.framework.database.tables.Option import Option
+from wopmars.framework.database.tables.Type import Type
 from wopmars.framework.management.ToolThread import ToolThread
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder

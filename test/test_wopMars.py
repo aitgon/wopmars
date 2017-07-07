@@ -5,8 +5,8 @@ from unittest import TestCase
 import time
 
 from wopmars import OptionManager
-from wopmars.framework.bdd.SQLManager import SQLManager
-from wopmars.framework.bdd.tables.Execution import Execution
+from wopmars.framework.database.SQLManager import SQLManager
+from wopmars.framework.database.tables.Execution import Execution
 from wopmars.utils.PathFinder import PathFinder
 from wopmars import WopMars
 

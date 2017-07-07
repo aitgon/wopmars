@@ -6,9 +6,9 @@ import sys
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql.functions import func
 
-from wopmars.framework.bdd.SQLManager import SQLManager
-from wopmars.framework.bdd.tables.Execution import Execution
-from wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
+from wopmars.framework.database.SQLManager import SQLManager
+from wopmars.framework.database.tables.Execution import Execution
+from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
 from wopmars.framework.management.DAG import DAG
 from wopmars.framework.parsing.Reader import Reader
 from wopmars.utils.Logger import Logger

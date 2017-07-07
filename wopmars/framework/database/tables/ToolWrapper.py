@@ -5,10 +5,10 @@ import time
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Float
 from sqlalchemy.orm import relationship
 
-from wopmars.framework.bdd.Base import Base
-from wopmars.framework.bdd.SQLManager import SQLManager
-from wopmars.framework.bdd.tables.Execution import Execution
-from wopmars.framework.bdd.tables.Option import Option
+from wopmars.framework.database.Base import Base
+from wopmars.framework.database.SQLManager import SQLManager
+from wopmars.framework.database.tables.Execution import Execution
+from wopmars.framework.database.tables.Option import Option
 from wopmars.utils.Logger import Logger
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.exceptions.WopMarsException import WopMarsException
@@ -356,7 +356,7 @@ class ToolWrapper(Base):
             elif type == "output" and not dry:
                 Logger.instance().debug("Output file " + str(f) + " has been created.")
         # this commit is due to a bug that i couldn't figure out: the session empty itself between the two loops...
-        # this is not good at all since it may lead to inconsistence in the bdd
+        # this is not good at all since it may lead to inconsistence in the database
         session.commit()
 
         for t in [t for t in self.tables if t.type.name == type]:

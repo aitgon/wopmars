@@ -3,8 +3,8 @@ import os
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 
-from wopmars.framework.bdd.Base import Base
-from wopmars.framework.bdd.tables.IOPut import IOPut
+from wopmars.framework.database.Base import Base
+from wopmars.framework.database.tables.IOPut import IOPut
 from wopmars.utils.Logger import Logger
 
 
