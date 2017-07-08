@@ -1,11 +1,11 @@
-Quick start
-===========
+Quick start - Car example
+======================
 
 Now you should be able to run WopMars for the first time and we have prepared a simple example of workflow to introduce you to the basics of WopMars.
 
 To build the workflow files architecture, go to any directory and type the following command::
     
-    wopmars example
+    wopmars example_car
 
 You'll get the following files architecture::
 
@@ -42,29 +42,29 @@ Now, let's look in the `Wopfile`
 
     # Rule1 use SparePartsManufacturer to insert pieces informations into the table piece
     rule Rule1:
-        tool: 'wopexample.wrappers.SparePartsManufacturer'
+        tool: 'wopexamplesnp.wrapper..SparePartsManufacturer'
         input:
             file:
                 pieces: 'input/pieces.txt'
         output:
             table:
-                piece: 'wopexample.models.Piece'
+                piece: 'wopexamplesnp.model..Piece'
 
     # CarAssembler make the combinations of all possible pieces and calculate the final price
     rule Rule2:
-        tool: 'wopexample.wrappers.CarAssembler'
+        tool: 'wopexamplesnp.wrapper..CarAssembler'
         input:
             table:
-                piece: 'wopexample.models.Piece'
+                piece: 'wopexamplesnp.model..Piece'
         output:
             table:
-                piece_car: 'wopexample.models.PieceCar'
+                piece_car: 'wopexamplesnp.model..PieceCar'
         params:
             # The price have to be under 2000!
             max_price: 2000
 
 
-There are two rules named `Rule1` and `Rule2`. It means that the workflow is composed of two steps. For each rule, the used *Toolwrapper*, its parameters (if needed), inputs and outputs are specified. If you look closely at the values of these inputs and outputs, you can notice that the output of the `Rule1` has the exact same value than the input of the `Rule2`: ``wopexample.models.Piece``. It means that the `Rule1` will write into the table associated with the Model `Piece` and the `Rule2` will read these writes. Therefore, `Rule2` won't run before `Rule1` because there is a *dependency relation* between them.
+There are two rules named `Rule1` and `Rule2`. It means that the workflow is composed of two steps. For each rule, the used *Toolwrapper*, its parameters (if needed), inputs and outputs are specified. If you look closely at the values of these inputs and outputs, you can notice that the output of the `Rule1` has the exact same value than the input of the `Rule2`: ``wopexamplesnp.model..Piece``. It means that the `Rule1` will write into the table associated with the Model `Piece` and the `Rule2` will read these writes. Therefore, `Rule2` won't run before `Rule1` because there is a *dependency relation* between them.
 
 .. note::
 

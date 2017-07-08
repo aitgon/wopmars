@@ -14,13 +14,13 @@ The *wopfile* defines the rules to convert inputs into outputs based on a tool:
 
     # Rule1 use SparePartsManufacturer to insert pieces informations into the table piece
     rule Rule1:
-        tool: 'wopexample.wrappers.SparePartsManufacturer'
+        tool: 'wopexamplesnp.wrapper..SparePartsManufacturer'
         input:
             file:
                 pieces: 'input/pieces.txt'
         output:
             table:
-                piece: 'wopexample.models.Piece'
+                piece: 'wopexamplesnp.model..Piece'
 
 The value of the tool field are python paths to classes called *wrappers* compatible with WopMars. These wrapper classes are able to process inputs and outputs.
 

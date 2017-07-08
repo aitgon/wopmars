@@ -4,6 +4,7 @@ Usage:
   wopmars [-n] [-p] [-F] [-v...] [-d DIR] [-g FILE] [-L FILE] [-f RULE | -t RULE] [-D DATABASE] [-w DEFINITION_FILE] [-c] [-l]
   wopmars tool TOOLWRAPPER [-i DICT] [-o DICT] [-P DICT] [-p] [-F] [-D DATABASE] [-v...] [-d DIR] [-L FILE] [-g FILE] [-c] [-l]
   wopmars example [-d DIR]
+  wopmars example_snp [-d DIR]
 
 Arguments:
   DEFINITION_FILE  Path to the definition file of the workflow [default: Wopfile].
@@ -90,6 +91,7 @@ class WopMars:
                 "TOOLWRAPPER": Or(None, Use(PathFinder.is_in_python_path)),
                 "tool": Use(bool),
                 "example": Use(bool),
+                "example_snp": Use(bool),
                 "--clear-history": Use(bool),
                 "--toolwrapper-log": Use(bool)
             })
@@ -123,6 +125,10 @@ class WopMars:
 
         if OptionManager.instance()["example"]:
             ExampleBuilder().build()
+            sys.exit(1)
+
+        if OptionManager.instance()["example_snp"]:
+            ExampleBuilder().build_snp()
             sys.exit(1)
 
 

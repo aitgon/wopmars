@@ -1,33 +1,33 @@
 # Rule1 use SparePartsManufacturer to insert pieces informations into the table piece
 rule Rule1:
-    tool: 'wopexample.wrappers.SparePartsManufacturer'
+    tool: 'wopexamplesnp.wrapper..SparePartsManufacturer'
     input:
         file:
             pieces: 'input/pieces.txt'
     output:
         table:
-            piece: 'wopexample.models.Piece'
+            piece: 'wopexamplesnp.model..Piece'
 
 # Intermediary rule between rule1 and rule2 which add a date of fabrication to the pieces
 rule Rule3:
-    tool: 'wopexample.wrappers.AddDateToPiece'
+    tool: 'wopexamplesnp.wrapper..AddDateToPiece'
     input:
         table:
-            piece: 'wopexample.models.Piece'
+            piece: 'wopexamplesnp.model..Piece'
     output:
         table:
-            piece: 'wopexample.models.DatedPiece'
+            piece: 'wopexamplesnp.model..DatedPiece'
 
 # CarAssembler make the combinations of all possible pieces to build cars and calculate the final price
 rule Rule2:
-    tool: 'wopexample.wrappers.CarAssembler'
+    tool: 'wopexamplesnp.wrapper..CarAssembler'
     input:
         table:
-            piece: 'wopexample.models.DatedPiece'
+            piece: 'wopexamplesnp.model..DatedPiece'
     output:
         # Here the output is written in a file
         table:
-            piece_car: 'wopexample.models.PieceCar'
+            piece_car: 'wopexamplesnp.model..PieceCar'
     params:
         # The price have to be under 2000!
         max_price: 2000
