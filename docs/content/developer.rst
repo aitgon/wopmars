@@ -137,7 +137,7 @@ Here is a list of the tables used for history. All of the associated models are 
 - ``wom_modification_table`` represented by the model :class:`~.wopmars.framework.database.tables.ModificationTable.ModificationTable`
 - ``wom_option`` represented by the model :class:`~.wopmars.framework.database.tables.Option.Option`
 
-.. figure:: images/mcd.png
+.. figure:: ../images/mcd.png
    :align: center
 
    *Here is a detailed entity-relationship model of the history in the database*

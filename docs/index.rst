@@ -8,7 +8,6 @@ Welcome to WopMars's documentation!
 
 **WopMars** is an implicity workflow manager based on a workflow definition file (wopfile) similar to `GNU Make <https://www.gnu.org/software/make/>`_ or `Snakemake <https://snakemake.readthedocs.io/en/stable/>`_ written in Python. In addition to files, WopMars takes advantages of `SQLAlchemy <https://www.sqlalchemy.org/>`_ to use database models as inputs and outputs in the workflow. It has been developed in a bioinformatics context and it is particularly useful when the analysis results must be stored in a relational database.
 
-
 Pros and Cons of WopMars
 -------------
 
@@ -35,16 +34,10 @@ Table of Contents
    content/installation
    content/quick-start
    content/quick-start-snp
-   content/usage
+   content/wopfile
    content/wrapper
    content/model
    content/developer
-
-       intro 
-       use
-       dev_wrapper
-       dev_wop
-
 
 .. Indices and tables
 .. ==================

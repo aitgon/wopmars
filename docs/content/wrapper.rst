@@ -249,7 +249,7 @@ Inherit models
 
 During the conception of your workflows, you may want to make multiple rules write in the same table in a specific order (for example, one rule create entries and the other add informations in the fields). Basically, you would do like ever, playing with inputs and outputs in order to fit your needs but this way, you will be stuck with a logic problem where WopMars won't be able to say "this rule should be run before this one", like in the following schema:
 
-.. figure::  images/model_inheritance.png
+.. figure::  ../images/model_inheritance.png
    :align:   center
    
    *If you want the rules to be run in this specific order, WopMars can't understand if `rule 2` is supposed to run before `rule 4` on the basis of the table names*
