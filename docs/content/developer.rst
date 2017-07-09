@@ -1,4 +1,4 @@
-Contributing to WoPMaRs
+Contributing to WopMars
 ======================
 
 This manual is dedicated to the developers who want to improve **WopMars** by adding new features or correcting bugs.

