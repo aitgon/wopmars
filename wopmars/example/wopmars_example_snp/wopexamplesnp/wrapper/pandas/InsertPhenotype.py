@@ -24,14 +24,19 @@ class InsertPhenotype(ToolWrapper): # inherit WopMars
         snp2phenotype_path = self.input_file(InsertPhenotype.__input_file_snp2phenotype)
         phenotype_model = self.output_table(InsertPhenotype.__output_table_phenotype)
         #
-        # read file phenotypes
-        df=pandas.read_table(snp2phenotype_path, header=None)
-        df.columns=["id", "name"] # rename columns
-        df = pandas.DataFrame(data=df.ix[:,'name']).drop_duplicates()
+        # read input file
+        input_file_df=pandas.read_table(snp2phenotype_path, header=None)
+        input_file_df.columns=["id", "name"] # rename columns
+        input_file_df=input_file_df[['name']].drop_duplicates()
+        input_file_dic_list=list(input_file_df.T.to_dict().values())
         #
-        # read db phenotypes
+        # read output db table
         sql = select([phenotype_model.name])
-        df_in_db = session.pandas_read_sql(sql=sql, con=engine)
-        df = df[~df.name.isin(df_in_db.name)] # substract objects in db
-        session.pandas_to_sql(df, tablename=phenotype_model.__dict__['__tablename__'], con=engine, if_exists='append', index=False)
+        output_table_df = session.pandas_read_sql(sql=sql, con=engine)
+        output_table_dic_list=list(output_table_df.T.to_dict().values())
+        #
+        # prepare insert df - substract table df from file objs
+        insert_dic_list=[i for i in input_file_dic_list if i not in output_table_dic_list]
+        insert_df = pandas.DataFrame(insert_dic_list, columns=['name']) # create insert df
+        session.pandas_to_sql(insert_df, tablename=phenotype_model.__dict__['__tablename__'], con=engine, if_exists='append', index=False)
 

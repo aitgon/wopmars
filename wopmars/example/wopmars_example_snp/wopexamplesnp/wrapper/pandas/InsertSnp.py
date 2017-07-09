@@ -23,16 +23,19 @@ class InsertSnp(ToolWrapper): # inherit WopMars
         #
         snp_path = self.input_file(InsertSnp.__input_file_snp)
         snp_model = self.output_table(InsertSnp.__output_table_snp)
-        # read file snps
-        df=pandas.read_table(snp_path, header=None)
-        df.columns=["chrom", "position", "rsid"] # rename columns
-        df['key']=df['chrom']+df['position'].astype(str)+df['rsid'] # create key
         #
-        # read db snps
+        # read input file
+        input_file_df=pandas.read_table(snp_path, header=None)
+        input_file_df.columns=["chrom", "position", "rsid"] # rename columns
+        input_file_dic_list=list(input_file_df.T.to_dict().values())
+        #
+        # read output db table
         sql = select([snp_model.chrom, snp_model.position, snp_model.rsid])
-        df_in_db = session.pandas_read_sql(sql=sql, con=engine)
-        df_in_db['key'] = df_in_db['chrom']+df_in_db['position'].astype(str)+df_in_db['rsid']
-        df = df[~df.key.isin(df_in_db.key)] # substract objects in db
-        df.drop('key', axis=1, inplace=True)
-        session.pandas_to_sql(df, tablename=snp_model.__dict__['__tablename__'], con=engine, if_exists='append', index=False)
-        
+        output_table_df = session.pandas_read_sql(sql=sql, con=engine)
+        output_table_dic_list=list(output_table_df.T.to_dict().values())
+        #
+        # prepare insert df - substract table df from file objs
+        insert_dic_list=[i for i in input_file_dic_list if i not in output_table_dic_list]
+        insert_df = pandas.DataFrame(insert_dic_list, columns=["chrom", "position", "rsid"]) # create insert df
+        session.pandas_to_sql(insert_df, tablename=snp_model.__dict__['__tablename__'], con=engine, if_exists='append', index=False)
+
