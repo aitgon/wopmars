@@ -3,7 +3,7 @@ from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
 # import models
 import wopexamplesnp.model.SNP
 
-from sqlalchemy import select
+import csv
 
 class InsertPhenotype(ToolWrapper): # inherit WopMars
     __mapper_args__ = {'polymorphic_identity': __name__}
@@ -24,21 +24,25 @@ class InsertPhenotype(ToolWrapper): # inherit WopMars
         snp2phenotype_path = self.input_file(InsertPhenotype.__input_file_snp2phenotype)
         phenotype_model = self.output_table(InsertPhenotype.__output_table_phenotype)
         #
-        # Phenotypes in table
-        s = select([phenotype_model.name])
-        phenotype_in_db = {row[0]: None for row in conn.execute(s)}
+        # read input file
+        input_file_obj_list = []
+        for line in csv.reader(open(snp2phenotype_path, 'r', encoding='utf-8'), delimiter="\t"):
+            phenotype_name = line[1]
+            input_file_obj = {'name': phenotype_name}
+            input_file_obj_list.append(input_file_obj)
         #
-        # Phenotypes in file
-        new_phenotype_list = []
-        with open(snp2phenotype_path, "r") as fin:
-            keys = ['name']
-            for snp2phenotype_line in fin.readlines():
-                phenotype_name = snp2phenotype_line.strip().split("\t")[1]
-                if not phenotype_name in phenotype_in_db:
-                    phenotype_dic= {'name': phenotype_name}
-                    if not phenotype_dic in new_phenotype_list:
-                        new_phenotype_list.append(phenotype_dic)
-        #
-        if not new_phenotype_list == []:
-            engine.execute(phenotype_model.__table__.insert(), new_phenotype_list)
+        # insert input_file_obj_list
+        if len(input_file_obj_list) > 0:
+            if str(engine.__dict__['url']).split("://")[0]=='sqlite':
+                engine.execute(phenotype_model.__table__.insert().prefix_with("OR IGNORE"), input_file_obj_list)
+            elif str(engine.__dict__['url']).split("://")[0]=='mysql':
+                    from warnings import filterwarnings # three lines to suppress mysql warnings
+                    import MySQLdb as Database
+                    filterwarnings('ignore', category = Database.Warning)
+                    engine.execute(phenotype_model.__table__.insert().prefix_with("IGNORE"), input_file_obj_list)
+            elif str(engine.__dict__['url']).split("://")[0]=='postgresql':
+                from sqlalchemy.dialects.postgresql import insert as pg_insert
+                engine.execute(pg_insert(phenotype_model.__table__).on_conflict_do_nothing(index_elements=['name']), input_file_obj_list)
+            else:
+                raise "Error: This engine is not implemented."
 

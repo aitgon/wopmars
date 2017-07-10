@@ -4,7 +4,9 @@ from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
 import wopexamplesnp.model.SNP2Phenotype
 
 import pandas
-from sqlalchemy import select
+from sqlalchemy import select,insert
+from sqlalchemy.sql.expression import bindparam
+import csv
 
 class InsertSNP2Phenotype(ToolWrapper): # inherit WopMars
     __mapper_args__ = {'polymorphic_identity': __name__}
@@ -35,30 +37,28 @@ class InsertSNP2Phenotype(ToolWrapper): # inherit WopMars
         snp2phenotype_model = self.output_table(InsertSNP2Phenotype.__output_table_snp2phenotype)
         snp2phenotype_df = pandas.read_table(snp2phenotype_path, header=None)
         #
-        # Get SNP ids
-        s=select([snp_model.rsid, snp_model.id]).where(snp_model.rsid.in_(snp2phenotype_df[0].unique().tolist()))
-        snp_rsid2id_dic = {row[0]: row[1] for row in conn.execute(s)}
+        # read input file
+        input_file_obj_list = []
+        for line in csv.reader(open(snp2phenotype_path, 'r', encoding='utf-8'), delimiter="\t"):
+            snp_rsid = int(line[0])
+            phenotype_name = line[1]
+            input_file_obj_list.append({'snp_rsid' : snp_rsid, 'phenotype_name' : phenotype_name})
         #
-        # Get Phenotype ids
-        s=select([phenotype_model.name, phenotype_model.id]).where(phenotype_model.name.in_(snp2phenotype_df[1].unique().tolist()))
-        phenotype_name2id_dic = {row[0]: row[1] for row in conn.execute(s)}
+        # create insert
+        snp_select = select([snp_model.id]).where(snp_model.rsid==bindparam('snp_rsid'))
+        phenotype_select = select([phenotype_model.id]).where(phenotype_model.name==bindparam('phenotype_name'))
+        output_table_insert = insert(table=snp2phenotype_model.__table__, values={'snp_id': snp_select, 'phenotype_id': phenotype_select})
         #
-        # SNP2Phenotypes in table
-        s = select([snp2phenotype_model.snp_id, snp2phenotype_model.phenotype_id])
-        snp2phenotype_in_db = [row for row in conn.execute(s)]
-        #
-        new_snp2phenotype_list = []
-        for row in snp2phenotype_df.iterrows():
-            snp_id = None
-            phenotype_id = None
-            if row[1][0] in snp_rsid2id_dic:
-                snp_id = snp_rsid2id_dic[row[1][0]]
-            if row[1][1] in phenotype_name2id_dic:
-                phenotype_id = phenotype_name2id_dic[row[1][1]]
-            if not snp_id is None and not phenotype_id is None:
-                if not (snp_id, phenotype_id) in snp2phenotype_in_db:
-                    new_snp2phenotype_list.append({'snp_id' : snp_id, 'phenotype_id' : phenotype_id})
-        #
-        if not new_snp2phenotype_list == []:
-            engine.execute(snp2phenotype_model.__table__.insert(), new_snp2phenotype_list)
+        if len(input_file_obj_list) > 0:
+            if str(engine.__dict__['url']).split("://")[0]=='sqlite':
+                engine.execute(output_table_insert.prefix_with("OR IGNORE", dialect='sqlite'), input_file_obj_list)
+            elif str(engine.__dict__['url']).split("://")[0]=='mysql':
+                    from warnings import filterwarnings # three lines to suppress mysql warnings
+                    import MySQLdb as Database
+                    filterwarnings('ignore', category = Database.Warning)
+                    engine.execute(output_table_insert.prefix_with("IGNORE", dialect='mysql'), input_file_obj_list)
+            elif str(engine.__dict__['url']).split("://")[0]=='postgresql':
+                from sqlalchemy.dialects.postgresql import insert as pg_insert
+                output_table_insert_pg = pg_insert(table=snp2phenotype_model.__table__, values={'snp_id': snp_select, 'phenotype_id': phenotype_select}).on_conflict_do_nothing(index_elements=['snp_id', 'phenotype_id'])
+                engine.execute(output_table_insert_pg, input_file_obj_list)
 

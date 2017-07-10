@@ -19,15 +19,13 @@ class InsertPhenotype(ToolWrapper): # inherit WopMars
         snp2phenotype_path = self.input_file(InsertPhenotype.__input_file_snp2phenotype)
         phenotype_model = self.output_table(InsertPhenotype.__output_table_phenotype)
         with open(snp2phenotype_path, "r") as fin:
-            keys = ['name']
             for snp2phenotype_line in fin.readlines():
                 phenotype_name = snp2phenotype_line.strip().split("\t")[1]
-                phenotype_dic= {'name': phenotype_name}
+                input_file_obj = {'name': phenotype_name}
                 try: # checks if exists Phenotype in db
-                    session.query(phenotype_model).filter_by(**phenotype_dic).one()
+                    session.query(phenotype_model).filter_by(**input_file_obj).one()
                 except: # if not, add
-                    phenotype_instance = phenotype_model(**phenotype_dic)
-                    session.add(phenotype_instance)
+                    session.add(phenotype_model(**input_file_obj))
                 session.commit()
 
 

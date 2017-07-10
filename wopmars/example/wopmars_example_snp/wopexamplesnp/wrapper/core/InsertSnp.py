@@ -3,7 +3,6 @@ from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
 # import models
 import wopexamplesnp.model.SNP
 
-from sqlalchemy import select
 import csv
 
 class InsertSnp(ToolWrapper): # inherit WopMars
@@ -32,7 +31,7 @@ class InsertSnp(ToolWrapper): # inherit WopMars
             position = int(line[1])
             rsid = int(line[2])
             input_file_obj = {'chrom': chrom, 'position': position, 'rsid': rsid}
-            input_file_obj_list.append({'chrom': chrom, 'position': position, 'rsid': rsid})
+            input_file_obj_list.append(input_file_obj)
         #
         # insert input_file_obj_list
         if len(input_file_obj_list) > 0:
