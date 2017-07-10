@@ -1,6 +1,6 @@
 from wopmars.framework.database.Base import Base
 
-from sqlalchemy import Column, String, Integer
+from sqlalchemy import Column, String, Integer, SmallInteger
 from sqlalchemy import UniqueConstraint
 
 class SNP(Base):
@@ -11,7 +11,7 @@ class SNP(Base):
             )
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    chrom = Column(String(255), nullable=False)
+    chrom = Column(SmallInteger, nullable=False)
     position = Column(Integer, nullable=False)
-    rsid = Column(String(255), nullable=False)
+    rsid = Column(Integer, nullable=False)
 

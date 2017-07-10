@@ -4,6 +4,7 @@ from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
 import wopexamplesnp.model.SNP
 
 from sqlalchemy import select
+import csv
 
 class InsertSnp(ToolWrapper): # inherit WopMars
     __mapper_args__ = {'polymorphic_identity': __name__}
@@ -24,19 +25,27 @@ class InsertSnp(ToolWrapper): # inherit WopMars
         snp_path = self.input_file(InsertSnp.__input_file_snp)
         snp_model = self.output_table(InsertSnp.__output_table_snp)
         #
-        # RSIDs in table
-        s = select([snp_model.rsid])
-        rsid_in_db = {row[0]: None for row in conn.execute(s)}
+        # read input file
+        input_file_obj_list = []
+        for line in csv.reader(open(snp_path, 'r', encoding='utf-8'), delimiter="\t"):
+            chrom = int(line[0])
+            position = int(line[1])
+            rsid = int(line[2])
+            input_file_obj = {'chrom': chrom, 'position': position, 'rsid': rsid}
+            input_file_obj_list.append({'chrom': chrom, 'position': position, 'rsid': rsid})
         #
-        # RSIDs in file
-        new_snp_list = []
-        keys = ['chrom', 'position', 'rsid']
-        with open(snp_path, "r") as fin:
-            for snp_line in fin.readlines():
-                if snp_line.strip().split("\t")[2] not in rsid_in_db:
-                    new_snp_obj_dic=dict(zip(keys, snp_line.strip().split("\t")))
-                    new_snp_list.append(new_snp_obj_dic)
-        #
-        if not new_snp_list == []:
-            engine.execute(snp_model.__table__.insert(), new_snp_list)
+        # insert input_file_obj_list
+        if len(input_file_obj_list) > 0:
+            if str(engine.__dict__['url']).split("://")[0]=='sqlite':
+                engine.execute(snp_model.__table__.insert().prefix_with("OR IGNORE"), input_file_obj_list)
+            elif str(engine.__dict__['url']).split("://")[0]=='mysql':
+                    from warnings import filterwarnings # three lines to suppress mysql warnings
+                    import MySQLdb as Database
+                    filterwarnings('ignore', category = Database.Warning)
+                    engine.execute(snp_model.__table__.insert().prefix_with("IGNORE"), input_file_obj_list)
+            elif str(engine.__dict__['url']).split("://")[0]=='postgresql':
+                from sqlalchemy.dialects.postgresql import insert as pg_insert
+                engine.execute(pg_insert(snp_model.__table__).on_conflict_do_nothing(index_elements=['rsid']), input_file_obj_list)
+            else:
+                raise "Error: This engine is not implemented."
 
