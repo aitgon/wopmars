@@ -296,6 +296,7 @@ class WorkflowManager(ToolWrapperObserver):
                 finished_at = datetime.datetime.fromtimestamp(time.time())
                 Logger.instance().info("The workflow has completed. Finished at: " + str(finished_at))
                 self.set_finishing_informations(finished_at, "FINISHED")
+                SQLManager.instance().get_session().close()
                 sys.exit(0)
             # uniquement en environnement multiThreadpredece
             elif not self.check_buffer():
