@@ -16,7 +16,7 @@ nosetests.xml
 
 wopmars.log
 
-doc/*
+docs/_build
 log/*
 
 
@@ -25,3 +25,8 @@ dist/*
 wopmars.egg-info/*
 
 *~
+test/output
+
+wopmars/test_bak.ps
+out
+wopmars_example/

@@ -26,7 +26,7 @@ if '--no-pygraphviz' in sys.argv:
 
 setup(
     name='wopmars',
-    version='1.1.2',
+    version='1.1.3',
     description='Workflow Python Manager for Reproducible Science',
     long_description=long_description,
     # todo ask aitor url home page
@@ -51,7 +51,7 @@ setup(
         'Topic :: Software Development',
     ],
     keywords='workflow manager python object-oriented reproducible science database framework',
-    packages=find_packages(exclude=['log', 'doc', '*.test.*', 'soutenance', 'rapport']),
+    packages=find_packages(exclude=['log', 'doc', '*.test_bak.*', 'soutenance', 'rapport']),
     install_requires=required,
     data_files=[],
     entry_points={

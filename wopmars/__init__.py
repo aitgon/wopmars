@@ -4,6 +4,7 @@ Usage:
   wopmars [-n] [-p] [-F] [-v...] [-d DIR] [-g FILE] [-L FILE] [-f RULE | -t RULE] [-D DATABASE] [-w DEFINITION_FILE] [-c] [-l]
   wopmars tool TOOLWRAPPER [-i DICT] [-o DICT] [-P DICT] [-p] [-F] [-D DATABASE] [-v...] [-d DIR] [-L FILE] [-g FILE] [-c] [-l]
   wopmars example [-d DIR]
+  wopmars example_snp [-d DIR]
 
 Arguments:
   DEFINITION_FILE  Path to the definition file of the workflow [default: Wopfile].
@@ -42,19 +43,19 @@ import time
 from docopt import docopt, DocoptExit
 from schema import Schema, And, Or, Use, SchemaError
 
-from wopmars.main.tagc.example.ExampleBuilder import ExampleBuilder
-from wopmars.main.tagc.framework.bdd.SQLManager import SQLManager
-from wopmars.main.tagc.framework.management.WorkflowManager import WorkflowManager
-from wopmars.main.tagc.utils.DictUtils import DictUtils
-from wopmars.main.tagc.utils.Logger import Logger
-from wopmars.main.tagc.utils.OptionManager import OptionManager
-from wopmars.main.tagc.utils.PathFinder import PathFinder
-from wopmars.main.tagc.utils.exceptions.WopMarsException import WopMarsException
-
+from wopmars.example.ExampleBuilder import ExampleBuilder
+from wopmars.framework.database.SQLManager import SQLManager
+from wopmars.framework.management.WorkflowManager import WorkflowManager
+from wopmars.utils.DictUtils import DictUtils
+from wopmars.utils.Logger import Logger
+from wopmars.utils.OptionManager import OptionManager
+from wopmars.utils.PathFinder import PathFinder
+from wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 # todo combinatoire pour les rules
-# todo option pour reset les resultats (supprimer le contenu de la bdd) / fresh run
+# todo option pour reset les resultats (supprimer le contenu de la database) / fresh run
 # todo ajouter un flag NOT_FINISHED aux executions
+
 
 class WopMars:
 
@@ -74,7 +75,7 @@ class WopMars:
         try:
             schema_option = Schema({
                 '--wopfile': Or("Wopfile", str),
-                '--database': Use(PathFinder.check_database_valid_path),
+                '--database': Use(PathFinder.check_database_valid_url),
                 '-v': Or(0, And(int, lambda n: 1 <= n <= 2)),
                 '--dot': Or(None, And(Use(PathFinder.check_valid_path), Use(PathFinder.check_pygraphviz))),
                 "--log": Use(PathFinder.check_valid_path),
@@ -90,6 +91,7 @@ class WopMars:
                 "TOOLWRAPPER": Or(None, Use(PathFinder.is_in_python_path)),
                 "tool": Use(bool),
                 "example": Use(bool),
+                "example_snp": Use(bool),
                 "--clear-history": Use(bool),
                 "--toolwrapper-log": Use(bool)
             })
@@ -123,6 +125,10 @@ class WopMars:
 
         if OptionManager.instance()["example"]:
             ExampleBuilder().build()
+            sys.exit(1)
+
+        if OptionManager.instance()["example_snp"]:
+            ExampleBuilder().build_snp()
             sys.exit(1)
 
 
@@ -159,10 +165,7 @@ def run():
     if not os.path.isdir(home_wopmars):
         os.makedirs(home_wopmars)
 
-    l = ["python",  "/home/luc/Documents/WORK/wopmars/wopmars/resources/example_def_file.yml", "--dot", "~/.wopmars/wopmars.dot",
-         "-p", "-vvvv", "-d", "/home/luc/Documents/WORK/wopmars/wopmars"]
     WopMars().run(sys.argv)
-    # WopMars().run(l)
 
 if __name__ == "__main__":
     run()

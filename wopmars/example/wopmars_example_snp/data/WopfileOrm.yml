@@ -1,0 +1,30 @@
+rule InsertSnp:
+    tool: wopexamplesnp.wrapper.orm.InsertSnp
+    input:
+        file:
+            snp: data/snp.tsv
+    output:
+        table:
+            SNP: wopexamplesnp.model.SNP
+
+rule InsertPhenotype:
+    tool: wopexamplesnp.wrapper.orm.InsertPhenotype
+    input:
+        file:
+            snp2phenotype: data/snp2phenotype.tsv
+    output:
+        table:
+            Phenotype: wopexamplesnp.model.Phenotype
+
+rule InsertSNP2Phenotype:
+    tool: wopexamplesnp.wrapper.orm.InsertSNP2Phenotype
+    input:
+        file:
+            snp2phenotype: data/snp2phenotype.tsv
+        table:
+            SNP: wopexamplesnp.model.SNP
+            Phenotype: wopexamplesnp.model.Phenotype
+    output:
+        table:
+            SNP2Phenotype: wopexamplesnp.model.SNP2Phenotype
+
