@@ -51,6 +51,7 @@ from wopmars.utils.Logger import Logger
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder
 from wopmars.utils.exceptions.WopMarsException import WopMarsException
+from wopmars.constants import home_wopmars
 
 # todo combinatoire pour les rules
 # todo option pour reset les resultats (supprimer le contenu de la database) / fresh run
@@ -160,7 +161,7 @@ def run():
     sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/toolwrappers/")
     sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/base/")
 
-    home_wopmars = os.path.join(os.path.expanduser("~"), ".wopmars/")
+
 
     if not os.path.isdir(home_wopmars):
         os.makedirs(home_wopmars)

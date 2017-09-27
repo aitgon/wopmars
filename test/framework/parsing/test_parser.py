@@ -139,12 +139,12 @@ class TestParser(TestCase):
 
         # Verify the dot file ----------------:
         OptionManager.instance()["--wopfile"] = os.path.join(self.__s_root_path, "test/resource/wopfile/example_def_file.yml")
-        dot_path = os.path.join(self.__s_root_path, "test_bak.dot")
-        OptionManager.instance()["--dot"] = dot_path
+        #dot_path = os.path.join(self.__s_root_path, "test_bak.dot")
+        #OptionManager.instance()["--dot"] = dot_path
         self.__parser.parse()
-        self.assertTrue(os.path.isfile(dot_path))
-        os.remove(dot_path)
-        os.remove(dot_path[:-4] + ".ps")
+        #self.assertTrue(os.path.isfile(dot_path))
+        #os.remove(dot_path)
+        #os.remove(dot_path[:-4] + ".ps")
 
 if __name__ == '__main__':
     unittest.main()
