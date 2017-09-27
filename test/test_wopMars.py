@@ -15,8 +15,13 @@ from wopmars import WopMars
 from test.resource.model.FooBase import FooBase
 from test.resource.model.FooBase2 import FooBase2
 
+from wopmars.constants import home_wopmars
+
+
 class TestWopMars(TestCase):
     def setUp(self):
+        if not os.path.isdir(home_wopmars):
+            os.makedirs(home_wopmars)
         #self.s_root_path = PathFinder.get_module_path(os.path.dirname(os.path.realpath(__file__)))
         self.s_root_path = PathFinder.get_module_path()
         os.chdir(self.s_root_path)
