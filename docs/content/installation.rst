@@ -1,7 +1,11 @@
 Installation
 ============
 
-To install wopmars, you have to get the sources on the git repository and then go to the source directory and type::
+To install wopmars, you have to get the sources on the git repository::
+
+    git clone git@github.com:aitgon/wopmars.git
+
+Then go to the source directory and type::
 
     pip install .
 
