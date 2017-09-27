@@ -8,6 +8,20 @@ from codecs import open
 from os import path
 import sys
 
+from setuptools.command.install import install
+class CustomInstallClass(install):
+    user_options = install.user_options + [
+        ('nopygraphviz', None, 'Local installation')
+        ]
+    def initialize_options(self):
+        self.nopygraphviz = False
+        install.initialize_options(self)
+    def finalize_options(self):
+        self.nopygraphviz = True
+        install.finalize_options(self)
+    def run(self):
+        pass
+
 here = path.abspath(path.dirname(__file__))
 
 with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
@@ -16,17 +30,18 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 with open('requirements.txt') as f:
     required = f.read().splitlines()
 
-
-if '--no-pygraphviz' in sys.argv:
+if '--nopygraphviz' in sys.argv:
     for package in required:
         if 'pygraphviz' in package:
             required.remove(package)
-            sys.argv.remove('--no-pygraphviz')
-
+            sys.argv.remove('--nopygraphviz')
 
 setup(
+    cmdclass={
+        'foo': CustomInstallClass,
+    },
     name='wopmars',
-    version='1.1.4',
+    version='1.1.5',
     description='Workflow Python Manager for Reproducible Science',
     long_description=long_description,
     # todo ask aitor url home page
@@ -60,3 +75,4 @@ setup(
     package_data={},
     include_package_data=True
 )
+

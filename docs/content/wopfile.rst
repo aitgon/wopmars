@@ -117,7 +117,7 @@ Now that you understand how to specify the rules of your workflow, you may be ab
    *You can easily see the graph on this representation of a workflow*
 
 Command line usage
-------------------
++++++++++++++++++++
 
 Like almost every software nowadays, you can get an help about *how to use WopMars* using the ``-h`` option::
 
@@ -168,7 +168,7 @@ There are three mode for running WopMars:
 3. You're supposed to have already used the ``example`` mode in the `Basics Tutorial </intro>`_ but if not, you should know that it aims to build a ready-to-run project example
 
 Database engines
-+++++++++++++++
+++++++++++++++++++
 
 WopMars has been tested with three database engines: **SQLite**, **MySQL** and **PostgreSQL**. To run a workflow with these engines you will need a valid directory path for SQLite or existing databases and user for MySQL and PostgreSQL. Then you specifed the SQLAlchemy database URL in the wopmars option `D` as here.
 

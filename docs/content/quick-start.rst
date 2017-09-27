@@ -1,5 +1,5 @@
 Quick start - Car example
-======================
+==========================
 
 Now you should be able to run WopMars for the first time and we have prepared a simple example of workflow to introduce you to the basics of WopMars.
 
