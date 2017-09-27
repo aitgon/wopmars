@@ -41,7 +41,7 @@ setup(
         'foo': CustomInstallClass,
     },
     name='wopmars',
-    version='1.1.4',
+    version='1.1.5',
     description='Workflow Python Manager for Reproducible Science',
     long_description=long_description,
     # todo ask aitor url home page
