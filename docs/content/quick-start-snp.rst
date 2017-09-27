@@ -1,5 +1,5 @@
 Quick start 2 - SNP example
-=========================
+============================
 
 This example has been used to test the performance of WopMars in our paper with different amount of data and database engine and access method (Ref). Single nucleotide polymorphismes (SNPs) are very variable position in the genome. Many SNPs have been statistically associated to diseases or phenotypes. This workflow is used to fill in a database that relates SNPs and phenotypes (Ref).
 
