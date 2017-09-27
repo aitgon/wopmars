@@ -16,7 +16,7 @@ Then, install the dependencies from the ``spec-file`` and ``requirements.txt`` f
 
 .. code-block:: bash
 
-    conda install --yes --name wopmars --file spec-files.txt
+    conda install --yes --name wopmars --file spec-file.txt
     pip install -r requirements.txt
 
     
@@ -54,10 +54,12 @@ The WopMars documentation has been done thanks to `Sphinx <http://www.sphinx-doc
 - ``docstring`` in the source code
 - rST files in the ``docs`` folder. Images are stored under the ``docs/images`` folder.
 
-To build the ``html`` documentation, go in the ``docs`` folder and type the following command:
+To build the ``html`` documentation, go to the ``docs`` folder and type the following commands:
 
 .. code-block:: bash
     
+    conda install -c anaconda sphinx
+    pip install sphinx_rtd_theme --upgrade
     make html
 
 The result will be stored in the ``docs/_build/html``.
