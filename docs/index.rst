@@ -6,15 +6,17 @@
 Welcome to WopMars's documentation!
 ===================================
 
-+---------------------+------------------------------------------------------------------------------+
-| ``master``          | .. image:: https://travis-ci.org/aitgon/wopmars.svg?branch=master            |
-|                     |     :target: https://travis-ci.org/aitgon/wopmars                            |
-+---------------------+------------------------------------------------------------------------------+
-| ``develop``         | .. image:: https://travis-ci.org/aitgon/wopmars.svg?branch=develop           |
-|                     |     :target: https://travis-ci.org/aitgon/wopmars                            |
-+---------------------+------------------------------------------------------------------------------+
+.. image:: https://travis-ci.org/aitgon/wopmars.svg?branch=master
+    :target: https://travis-ci.org/aitgon/wopmars
 
-**WopMars** is an implicity workflow manager based on a workflow definition file (wopfile) similar to `GNU Make <https://www.gnu.org/software/make/>`_ or `Snakemake <https://snakemake.readthedocs.io/en/stable/>`_ written in Python. In addition to files, WopMars takes advantages of `SQLAlchemy <https://www.sqlalchemy.org/>`_ to use database models as inputs and outputs in the workflow. It has been developed in a bioinformatics context and it is particularly useful when the analysis results must be stored in a relational database.
+.. image:: https://readthedocs.org/projects/wopmars/badge/?version=latest
+    :target: http://wopmars.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
+
+.. image:: https://img.shields.io/pypi/v/wopmars.svg
+    :target: https://pypi.python.org/pypi/wopmars
+
+**WopMars** is an implicity workflow manager based on a workflow definition file written in Python that uses file and database input/outputs to create and follow the execution direct acyclic graph (DAG). It has been developed in a bioinformatics context and it is particularly useful when the analysis results must be stored in a relational database.
 
 Pros and Cons of WopMars
 ---------------------------
@@ -28,8 +30,7 @@ Pros and Cons of WopMars
 
 - Cons:
 
-   - Performance cost of database reading and writing
-   - No parallel execution of rule
+   - No parallel execution of rules but can be integrated in a parallel workflow that access partitioned databases (Database sharding)
    - Wrapper and model class definition is required
 
 Table of Contents
