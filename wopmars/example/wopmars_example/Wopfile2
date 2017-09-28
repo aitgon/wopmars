@@ -1,19 +1,19 @@
 # Rule1 use SparePartsManufacturer to insert pieces informations into the table piece
 rule Rule1:
-    tool: 'wopexamplesnp.wrapper.SparePartsManufacturer'
+    tool: 'wopexample.wrapper.SparePartsManufacturer'
     input:
         file:
             pieces: 'input/pieces.txt'
     output:
         table:
-            piece: 'wopexamplesnp.model.Piece'
+            piece: 'wopexample.model.Piece'
 
 # CarAssembler make the combinations of all possible pieces to build cars and calculate the final price
 rule Rule2:
-    tool: 'wopexamplesnp.wrapper.CarAssembler'
+    tool: 'wopexample.wrapper.CarAssembler'
     input:
         table:
-            piece: 'wopexamplesnp.model.Piece'
+            piece: 'wopexample.model.Piece'
     output:
         # Here the output is written in a file
         file:

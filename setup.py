@@ -9,7 +9,6 @@ __license__ = "MIT"
 from codecs import open
 from os import path
 import sys
-from wopmars import version
 
 
 if sys.version_info < (3, 5):
@@ -44,6 +43,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 with open('requirements.txt') as f:
     required = f.read().splitlines()
+    print(required)
 
 if '--nopygraphviz' in sys.argv:
     for package in required:
@@ -51,12 +51,14 @@ if '--nopygraphviz' in sys.argv:
             required.remove(package)
             sys.argv.remove('--nopygraphviz')
 
+__version__='1.1.10'
+
 setup(
     cmdclass={
         'foo': CustomInstallClass,
     },
     name='wopmars',
-    version=version.__version__,
+    version=__version__,
     description='Workflow Python Manager for Reproducible Science',
     long_description=long_description,
     url='https://github.com/aitgon/wopmars',
@@ -79,7 +81,7 @@ setup(
         'Topic :: Scientific/Engineering :: Information Analysis',
         'Topic :: Software Development',
     ],
-    download_url='https://github.com/aitgon/wopmars/archive/%s.tar.gz'%version.__version__,
+    download_url='https://github.com/aitgon/wopmars/archive/%s.tar.gz'%__version__,
     keywords='workflow manager python object-oriented reproducible science database framework',
     packages=find_packages(exclude=['log', 'doc', '*.test_bak.*', 'soutenance', 'rapport']),
     install_requires=required,
