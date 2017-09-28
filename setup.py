@@ -9,7 +9,6 @@ __license__ = "MIT"
 from codecs import open
 from os import path
 import sys
-from wopmars import version
 
 
 if sys.version_info < (3, 5):
@@ -44,6 +43,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 with open('requirements.txt') as f:
     required = f.read().splitlines()
+    print(required)
 
 if '--nopygraphviz' in sys.argv:
     for package in required:
@@ -51,35 +51,37 @@ if '--nopygraphviz' in sys.argv:
             required.remove(package)
             sys.argv.remove('--nopygraphviz')
 
+__version__='1.1.11'
+
 setup(
     cmdclass={
         'foo': CustomInstallClass,
     },
     name='wopmars',
-    version=version.__version__,
+    version=__version__,
     description='Workflow Python Manager for Reproducible Science',
     long_description=long_description,
     url='https://github.com/aitgon/wopmars',
     author='Luc Giffon',
     author_email='luc.giffon@gmail.com',
-    # todo ask aitor license
     license='MIT',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
-        'Programming Language :: Python :: 3.4',
+        'Development Status :: 4 - Beta',
+        'Environment :: Console',
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
-        #todo License::
-        'Environment :: Console',
+        'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Topic :: Database :: Front-Ends',
-        'Topic :: Adaptive Technologies',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
+        'Topic :: Scientific/Engineering :: Information Analysis',
         'Topic :: Software Development',
     ],
-    download_url='https://github.com/aitgon/wopmars/archive/%s.tar.gz'%version.__version__,
+    download_url='https://github.com/aitgon/wopmars/archive/%s.tar.gz'%__version__,
     keywords='workflow manager python object-oriented reproducible science database framework',
     packages=find_packages(exclude=['log', 'doc', '*.test_bak.*', 'soutenance', 'rapport']),
     install_requires=required,

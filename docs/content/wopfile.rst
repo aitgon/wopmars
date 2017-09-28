@@ -1,4 +1,4 @@
-The Workflow definition file or wopfile
+The Wopfile or Workflow Definition File
 =======================================
 
 The workflow definition file, called `Wopfile`, is the entry point for WopMars. It is very similar to `snakemake <https://bitbucket.org/snakemake/snakemake/wiki/Home>`_ or `GNU make <https://www.gnu.org/software/make/>`_ since the aim of those tools are very similar. 
@@ -163,9 +163,9 @@ Execution modes
 
 There are three mode for running WopMars:
 
-1. The main mode is by default, you have already used it in the `Basics Tutorial </intro>`_ and it allows to execute a workflow from the `Wopfile`
+1. The main mode is by default, you have already used it in the :doc:`Quick Start section </content/quick-start>` and it allows to execute a workflow from the `Wopfile`
 2. The ``tool`` mode aims to execute only one `Toolwrapper`. It is usually used for debugging purposes while the `Toolwrapper` developer is actually developing the wrapper
-3. You're supposed to have already used the ``example`` mode in the `Basics Tutorial </intro>`_ but if not, you should know that it aims to build a ready-to-run project example
+3. You're supposed to have already used the ``example`` mode in the :doc:`Quick Start section </content/quick-start>` but if not, you should know that it aims to build a ready-to-run project example
 
 Database engines
 ++++++++++++++++++

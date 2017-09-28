@@ -1,31 +1,32 @@
-Quick start - Car example
+Quick Start - Car Example
 ==========================
 
 Now you should be able to run WopMars for the first time and we have prepared a simple example of workflow to introduce you to the basics of WopMars.
 
 To build the workflow files architecture, go to any directory and type the following command::
     
-    wopmars example_car
+    wopmars example
 
 You'll get the following files architecture::
 
-    .
-    └── wopmars_example
-        ├── input
-        │   └── pieces.txt
-        ├── output
-        ├── setup.py
-        ├── wopexample
-        │   ├── __init__.py
-        │   ├── models
-        │   │   ├── __init__.py
-        │   │   ├── PieceCar.py
-        │   │   └── Piece.py
-        │   └── wrappers
-        │       ├── CarAssembler.py
-        │       ├── __init__.py
-        │       └── SparePartsManufacturer.py
-        └── Wopfile
+    $ tree wopmars_example/ |grep -v __init__
+    wopmars_example/
+    ├── input
+    │   └── pieces.txt
+    ├── output
+    ├── setup.py
+    ├── wopexample
+    │   ├── models
+    │   │   ├── DatedPiece.py
+    │   │   ├── PieceCar.py
+    │   │   └── Piece.py
+    │   └── wrappers
+    │       ├── AddDateToPiece.py
+    │       ├── CarAssembler.py
+    │       └── SparePartsManufacturer.py
+    ├── Wopfile
+    ├── Wopfile2
+    └── Wopfile3
 
 Move to `wopmars_example` directory and install the package *wopexample*::
 
@@ -42,23 +43,23 @@ Now, let's look in the `Wopfile`
 
     # Rule1 use SparePartsManufacturer to insert pieces informations into the table piece
     rule Rule1:
-        tool: 'wopexamplesnp.wrapper..SparePartsManufacturer'
+        tool: 'wopexample.wrapper.SparePartsManufacturer'
         input:
             file:
                 pieces: 'input/pieces.txt'
         output:
             table:
-                piece: 'wopexamplesnp.model..Piece'
+                piece: 'wopexample.model.Piece'
 
-    # CarAssembler make the combinations of all possible pieces and calculate the final price
+    # CarAssembler make the combinations of all possible pieces to build cars and calculate the final price
     rule Rule2:
-        tool: 'wopexamplesnp.wrapper..CarAssembler'
+        tool: 'wopexample.wrapper.CarAssembler'
         input:
             table:
-                piece: 'wopexamplesnp.model..Piece'
+                piece: 'wopexample.model.Piece'
         output:
             table:
-                piece_car: 'wopexamplesnp.model..PieceCar'
+                piece_car: 'wopexample.model.PieceCar'
         params:
             # The price have to be under 2000!
             max_price: 2000
@@ -78,8 +79,8 @@ It came time to start your first workflow!
 
 You will see a little bit of output in the console thanks to the ``-p`` coupled with the ``-v`` option which describes the work processed by WopMars. The ``-D`` option allows to specify the path to the database file and, you have probably realized, the ``-w`` option allows to specify the path to the **Workflow Definition File**.
 
-Looking at results
-******************
+Looking at the Results
+*************************
 
 Now, I'll show you a brief overview of what you can do with the database. First, make sure you have installed `sqlite3` on your machine::
 
@@ -141,5 +142,5 @@ The preceding workflow had two steps:
     V9968T5YOX|1788.63
     W8LPW24SXR|1772.77
 
-Now that you have run a working example you can go to the Wopfile, wrapper or model sections to develop your own Wopmars workflow.
+Now that you have run a working example you can go to the :doc:`Wopfile </content/wopfile>`, :doc:`Wrapper </content/wrapper>`, or :doc:`Model </content/model>` sections to develop your own Wopmars workflow. In the next section, you have a bioinformatics example.
 
