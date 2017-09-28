@@ -1,12 +1,27 @@
-"""A setuptools based setup module of WopMars
+# -*- coding: UTF-8 -*-
 
-See:
-"""
+__author__ = "Luc Giffon"
+__copyright__ = "Copyright 2017, Luc Giffon"
+__email__ = "luc.giffon@gmail.com"
+__license__ = "MIT"
 
-from setuptools import setup, find_packages
+
 from codecs import open
 from os import path
 import sys
+from wopmars import version
+
+
+if sys.version_info < (3, 5):
+    print("At least Python 3.5 is required.\n", file=sys.stderr)
+    exit(1)
+
+try:
+    from setuptools import setup, find_packages
+except ImportError:
+    print("Please install setuptools before installing snakemake.",
+          file=sys.stderr)
+    exit(1)
 
 from setuptools.command.install import install
 class CustomInstallClass(install):
@@ -41,15 +56,14 @@ setup(
         'foo': CustomInstallClass,
     },
     name='wopmars',
-    version='1.1.9',
+    version=version.__version__,
     description='Workflow Python Manager for Reproducible Science',
     long_description=long_description,
-    # todo ask aitor url home page
-    url='',
-    author='Luc Giffon - TAGC',
+    url='https://github.com/aitgon/wopmars',
+    author='Luc Giffon',
     author_email='luc.giffon@gmail.com',
     # todo ask aitor license
-    license='',
+    license='MIT',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Programming Language :: Python :: 3.4',
@@ -59,12 +73,13 @@ setup(
         'Environment :: Console',
         'Natural Language :: English',
         'Operating System :: POSIX :: Linux',
-        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Topic :: Database :: Front-Ends',
         'Topic :: Adaptive Technologies',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
         'Topic :: Software Development',
     ],
+    download_url='https://github.com/aitgon/wopmars/archive/%s.tar.gz'%version.__version__,
     keywords='workflow manager python object-oriented reproducible science database framework',
     packages=find_packages(exclude=['log', 'doc', '*.test_bak.*', 'soutenance', 'rapport']),
     install_requires=required,
