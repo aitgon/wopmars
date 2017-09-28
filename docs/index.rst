@@ -11,7 +11,6 @@ Welcome to WopMars's documentation!
 
 .. image:: https://readthedocs.org/projects/wopmars/badge/?version=latest
     :target: http://wopmars.readthedocs.io/en/latest/?badge=latest
-    :alt: Documentation Status
 
 .. image:: https://img.shields.io/pypi/v/wopmars.svg
     :target: https://pypi.python.org/pypi/wopmars
