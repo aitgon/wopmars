@@ -10,16 +10,14 @@ Once you have downloaded **WopMars** from git, you should want to process the `u
 
 .. code-block:: bash
 
-    conda create --name wopmars python=3
+    conda create --name wopmars python=3.5
 
-Then, install the dependencies from the ``spec-file`` and ``requirements.txt`` file in your virtual environment.
+Then, install WopMars in development mode
 
 .. code-block:: bash
 
-    conda install --yes --name wopmars --file spec-file.txt
-    pip install -r requirements.txt
+    pip install -e .
 
-    
 The database engine for the test is passed using an environment variable. For instance, **SQLite**:
 
 .. code-block:: bash
@@ -58,11 +56,10 @@ To build the ``html`` documentation, go to the ``docs`` folder and type the foll
 
 .. code-block:: bash
     
-    conda install -c anaconda sphinx
-    pip install sphinx_rtd_theme --upgrade
+    pip install sphinx sphinx_rtd_theme --upgrade
     make html
 
-The result will be stored in the ``docs/_build/html``.
+Open ``docs/_build/html/index.html`` in a browser.
 
 .. note::
 

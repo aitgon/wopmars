@@ -5,27 +5,28 @@ Now you should be able to run WopMars for the first time and we have prepared a 
 
 To build the workflow files architecture, go to any directory and type the following command::
     
-    wopmars example_car
+    wopmars example
 
 You'll get the following files architecture::
 
-    .
-    └── wopmars_example
-        ├── input
-        │   └── pieces.txt
-        ├── output
-        ├── setup.py
-        ├── wopexample
-        │   ├── __init__.py
-        │   ├── models
-        │   │   ├── __init__.py
-        │   │   ├── PieceCar.py
-        │   │   └── Piece.py
-        │   └── wrappers
-        │       ├── CarAssembler.py
-        │       ├── __init__.py
-        │       └── SparePartsManufacturer.py
-        └── Wopfile
+    $ tree wopmars_example/ |grep -v __init__
+    wopmars_example/
+    ├── input
+    │   └── pieces.txt
+    ├── output
+    ├── setup.py
+    ├── wopexample
+    │   ├── models
+    │   │   ├── DatedPiece.py
+    │   │   ├── PieceCar.py
+    │   │   └── Piece.py
+    │   └── wrappers
+    │       ├── AddDateToPiece.py
+    │       ├── CarAssembler.py
+    │       └── SparePartsManufacturer.py
+    ├── Wopfile
+    ├── Wopfile2
+    └── Wopfile3
 
 Move to `wopmars_example` directory and install the package *wopexample*::
 
@@ -42,23 +43,23 @@ Now, let's look in the `Wopfile`
 
     # Rule1 use SparePartsManufacturer to insert pieces informations into the table piece
     rule Rule1:
-        tool: 'wopexamplesnp.wrapper..SparePartsManufacturer'
+        tool: 'wopexample.wrapper.SparePartsManufacturer'
         input:
             file:
                 pieces: 'input/pieces.txt'
         output:
             table:
-                piece: 'wopexamplesnp.model..Piece'
+                piece: 'wopexample.model.Piece'
 
-    # CarAssembler make the combinations of all possible pieces and calculate the final price
+    # CarAssembler make the combinations of all possible pieces to build cars and calculate the final price
     rule Rule2:
-        tool: 'wopexamplesnp.wrapper..CarAssembler'
+        tool: 'wopexample.wrapper.CarAssembler'
         input:
             table:
-                piece: 'wopexamplesnp.model..Piece'
+                piece: 'wopexample.model.Piece'
         output:
             table:
-                piece_car: 'wopexamplesnp.model..PieceCar'
+                piece_car: 'wopexample.model.PieceCar'
         params:
             # The price have to be under 2000!
             max_price: 2000
