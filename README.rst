@@ -4,6 +4,9 @@ WopMars: A database-driven workflow manager
 .. image:: https://travis-ci.org/aitgon/wopmars.svg?branch=master
     :target: https://travis-ci.org/aitgon/wopmars
 
+.. image:: https://img.shields.io/pypi/pyversions/wopmars.svg
+    :target: https://www.python.org
+
 .. image:: https://readthedocs.org/projects/wopmars/badge/?version=latest
     :target: http://wopmars.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status

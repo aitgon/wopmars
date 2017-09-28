@@ -62,15 +62,13 @@ setup(
     url='https://github.com/aitgon/wopmars',
     author='Luc Giffon',
     author_email='luc.giffon@gmail.com',
-    # todo ask aitor license
     license='MIT',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
-        'Programming Language :: Python :: 3.4',
+        'Development Status :: 4 - Beta',
+        'Environment :: Console',
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
-        #todo License::
-        'Environment :: Console',
+        'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python :: 3.5',
