@@ -1,16 +1,12 @@
 Installation
 ============
 
-WopMars can be installed using pip::
-
-    pip install wopmars
-
 We recomend to use a `Miniconda <https://conda.io/miniconda.html>`_ environment
 
 .. code-block:: bash
 
-    conda create --name wopmars python=3.5 # create environment
-    pip install wopmars
+    conda create --name wopmarsenv python=3.5 # create environment
+    source activate wopmarsenv
 
 Or a `Virtualenv <https://virtualenv.pypa.io>`_ environment
 
@@ -18,7 +14,12 @@ Or a `Virtualenv <https://virtualenv.pypa.io>`_ environment
 
     virtualenv --python=/usr/bin/python3.5 wopmarsenv
     source wopmarsenv/bin/activate
-    pip install . # install wopmars
+
+Then you can install WopMars with pip
+
+.. code-block:: bash
+
+    pip install wopmars 
 
 Installation with MariaDB/MySQL
 ------------------------------------------
