@@ -1,4 +1,4 @@
-The tool wrappers
+The Tool Wrappers
 =======================
 
 This manual aims to explain with simple words how to write the `tool wrappers` in order to allow a fresh Python developer to configure his own analysis workflow. This manual often refers to the Wopfile  so I recommand you to keep the :doc:`Wopfile </content/wopfile>` section open in case of blackout.

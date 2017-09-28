@@ -1,4 +1,4 @@
-Quick start 2 - SNP example
+Quick Start 2 - SNP Example
 ============================
 
 This example has been used to test the performance of WopMars in our paper with different amount of data and database engine and access method (Ref). Single nucleotide polymorphismes (SNPs) are very variable position in the genome. Many SNPs have been statistically associated to diseases or phenotypes. This workflow is used to fill in a database that relates SNPs and phenotypes (Ref).
@@ -11,7 +11,8 @@ To build the workflow files architecture, go to any directory and type the follo
 
 You'll get the following files architecture::
 
-    .
+    $ tree wopmars_example_snp |grep -v __init__
+    wopmars_example_snp
     ├── data
     │   ├── snp2phenotype.tsv
     │   ├── snp.tsv
@@ -19,29 +20,22 @@ You'll get the following files architecture::
     │   ├── WopfileOrm.yml
     │   └── WopfilePandas.yml
     ├── output
-    │   └── db.sqlite
     ├── setup.py
     └── wopexamplesnp
-        ├── __init__.py
         ├── model
-        │   ├── __init__.py
         │   ├── Phenotype.py
         │   ├── SNP2Phenotype.py
         │   └── SNP.py
         └── wrapper
             ├── core
-            │   ├── __init__.py
             │   ├── InsertPhenotype.py
             │   ├── InsertSNP2Phenotype.py
             │   └── InsertSnp.py
-            ├── __init__.py
             ├── orm
-            │   ├── __init__.py
             │   ├── InsertPhenotype.py
             │   ├── InsertSNP2Phenotype.py
             │   └── InsertSnp.py
             └── pandas
-                ├── __init__.py
                 ├── InsertPhenotype.py
                 ├── InsertSNP2Phenotype.py
                 └── InsertSnp.py
@@ -82,4 +76,24 @@ To run the workflow with the **PostgreSQL** database engine, you must first crea
 .. code-block:: bash
 
     wopmars -w $WOPFILE -D "postgresql://wopuser:mypass@localhost/wopdb" -d $PWD -v -p
+
+Now you can show the database tables using
+
+.. code-block:: bash
+
+    $ sqlite3 output/db.sqlite '.table'
+    Phenotype               wom_file                wom_table             
+    SNP                     wom_modification_table  wom_type              
+    SNP2Phenotype           wom_option            
+    wom_execution           wom_rule
+
+And then check the content of some table with
+
+.. code-block:: bash
+
+    $ sqlite3 output/db.sqlite 'select * from SNP'
+    1|1|209815925|642961
+    2|17|56699594|227727
+
+You can now develop your Wopmars workflow with the help of the following :doc:`Wopfile </content/wopfile>`, :doc:`Wrapper </content/wrapper>` and :doc:`Model </content/model>` sections.
 

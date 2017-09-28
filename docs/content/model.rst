@@ -1,4 +1,4 @@
-The models
+The Models
 -----------------
 
 .. note::

@@ -1,4 +1,4 @@
-Quick start - Car example
+Quick Start - Car Example
 ==========================
 
 Now you should be able to run WopMars for the first time and we have prepared a simple example of workflow to introduce you to the basics of WopMars.
@@ -79,8 +79,8 @@ It came time to start your first workflow!
 
 You will see a little bit of output in the console thanks to the ``-p`` coupled with the ``-v`` option which describes the work processed by WopMars. The ``-D`` option allows to specify the path to the database file and, you have probably realized, the ``-w`` option allows to specify the path to the **Workflow Definition File**.
 
-Looking at results
-******************
+Looking at the Results
+*************************
 
 Now, I'll show you a brief overview of what you can do with the database. First, make sure you have installed `sqlite3` on your machine::
 
@@ -142,5 +142,5 @@ The preceding workflow had two steps:
     V9968T5YOX|1788.63
     W8LPW24SXR|1772.77
 
-Now that you have run a working example you can go to the Wopfile, wrapper or model sections to develop your own Wopmars workflow.
+Now that you have run a working example you can go to the :doc:`Wopfile </content/wopfile>`, :doc:`Wrapper </content/wrapper>`, or :doc:`Model </content/model>` sections to develop your own Wopmars workflow. In the next section, you have a bioinformatics example.
 
