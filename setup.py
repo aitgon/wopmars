@@ -71,7 +71,7 @@ if '--nopygraphviz' in sys.argv:
             required.remove(package)
             sys.argv.remove('--nopygraphviz')
 
-__version__='1.1.17'
+__version__='1.1.18'
 
 setup(
     cmdclass={
