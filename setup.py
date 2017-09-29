@@ -41,13 +41,33 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
-with open('requirements.txt') as f:
-    required = f.read().splitlines()
-    print(required)
+
+required = [
+        'cycler==0.10.0',
+        'decorator==4.0.10',
+        'docopt==0.6.2',
+        'Jinja2==2.8',
+        'MarkupSafe==1.0',
+        'matplotlib==1.5.3',
+        'networkx==1.11',
+        'numpy==1.13.1',
+        'pandas==0.20.2',
+        'psycopg2==2.7.1',
+        'pydotplus==2.0.2',
+        'pygraphviz==1.3.1',
+        'pyparsing==2.1.4',
+        'python-dateutil==2.5.3',
+        'pytz==2016.7',
+        'PyYAML==3.12',
+        'schema==0.6.5',
+        'six==1.10.0',
+        'SQLAlchemy==1.1.11',
+        'termcolor==1.1.0'
+    ]
 
 if '--nopygraphviz' in sys.argv:
     for package in required:
-        if 'pygraphviz' in package:
+        if 'pygraphviz==1.3.1' in package:
             required.remove(package)
             sys.argv.remove('--nopygraphviz')
 
@@ -83,7 +103,7 @@ setup(
     download_url='https://github.com/aitgon/wopmars/archive/%s.tar.gz'%__version__,
     keywords='workflow manager python object-oriented reproducible science database framework',
     packages=find_packages(exclude=['log', 'doc', '*.test_bak.*', 'soutenance', 'rapport']),
-    install_requires=required,
+    install_requires = required,
     data_files=[],
     entry_points={
         'console_scripts':['wopmars=wopmars:run']
