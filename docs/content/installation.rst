@@ -34,6 +34,7 @@ Issues with PyGraphviz
 If you do not have permission for the ``sudo``, you can clone WopMars from the repository and install it with this command line ::
 
     git clone git@github.com:aitgon/wopmars.git
+    cd wopmars
     python3 setup.py install --nopygraphviz
 
 But you won't be able to run the ``--dot`` option on WopMars.
