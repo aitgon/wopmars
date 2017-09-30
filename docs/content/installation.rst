@@ -31,9 +31,10 @@ To use wopmars with the MariaDB/MySQL database engine, you need to install the p
 Issues with PyGraphviz
 ------------------------------------------
 
-If you do not have permission for the ``sudo``, you should use the command line ::
+If you do not have permission for the ``sudo``, you can clone WopMars from the repository and install it with this command line ::
 
-    python3 setup.py install --no-pygraphviz
+    git clone git@github.com:aitgon/wopmars.git
+    python3 setup.py install --nopygraphviz
 
 But you won't be able to run the ``--dot`` option on WopMars.
 
