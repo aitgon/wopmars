@@ -1,6 +1,6 @@
 import os
 
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy import Column, BigInteger, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 
 from wopmars.framework.database.Base import Base
@@ -30,7 +30,7 @@ class IOFilePut(IOPut, Base):
     rule_id = Column(Integer, ForeignKey("wom_rule.id"))
     type_id = Column(Integer, ForeignKey("wom_type.id"))
     used_at = Column(DateTime, nullable=True)
-    size = Column(Integer, nullable=True)
+    size = Column(BigInteger, nullable=True)
 
     # One file is in Many rule_file and is in Many rule
     rule = relationship("ToolWrapper", back_populates="files", enable_typechecks=False)

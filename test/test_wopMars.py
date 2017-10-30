@@ -168,7 +168,7 @@ class TestWopMars(TestCase):
 
     def test_core(self):
         cmd_line = ["python", "tool", "test.resource.wrapper.FooWrapperCore",
-                  "-o", "{'table': {'FooBase': 'test.resource.model.FooBase'}}",
+                  "-o", "{'table': {'FooBase7': 'test.resource.model.FooBase7'}}",
                   "-vv", "-p", "-D", self.__db_url, "-d", PathFinder.get_module_path()]
         with self.assertRaises(SystemExit) as se:
            WopMars().run(cmd_line)
