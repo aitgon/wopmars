@@ -14,10 +14,10 @@ class FooWrapperCore(ToolWrapper):
     __mapper_args__ = {'polymorphic_identity': "FooWrapperCore"}
 
     def specify_output_table(self):
-        return ["FooBase"]
+        return ["FooBase7"]
 
     def run(self):
-        foobase = self.output_table("FooBase").__table__
+        foobase = self.output_table("FooBase7").__table__
         inserted_list = []
         for i in range(10000):
             inserted_list.append({'id': i, 'name': "FooWrapperCore " + str(i)})
