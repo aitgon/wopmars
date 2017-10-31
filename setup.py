@@ -18,7 +18,7 @@ if sys.version_info < (3, 5):
 try:
     from setuptools import setup, find_packages
 except ImportError:
-    print("Please install setuptools before installing snakemake.",
+    print("Please install setuptools before installing wopmars.",
           file=sys.stderr)
     exit(1)
 
@@ -71,7 +71,7 @@ if '--nopygraphviz' in sys.argv:
             required.remove(package)
             sys.argv.remove('--nopygraphviz')
 
-__version__='1.1.23'
+__version__='1.1.24'
 
 setup(
     cmdclass={
