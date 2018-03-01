@@ -140,7 +140,7 @@ The path to the files given by the final user are manipulated thanks to the meth
 .. code-block:: yaml
 
     rule Rule1:
-        tool: 'wopexamplesnp.wrapper..SparePartsManufacturer'
+        tool: 'wopexamplesnp.wrapper.SparePartsManufacturer'
         input:
             file:
                 pieces: 'input/pieces.txt'
@@ -158,7 +158,7 @@ The models given by the user can be accessed thanks to the methodes ``self.input
 
         output:
             table:
-                piece: 'wopexamplesnp.model..Piece'
+                piece: 'wopexamplesnp.model.Piece'
 
 We can access the model ``Piece`` with the following statement::
 
@@ -173,7 +173,7 @@ If you are using **WopMars**, it is probably for the database access. Now, you k
 
     When you are working with databases, there is three level of hierarchy of the work you are performing on it: the session, the transaction and the operation:
     
-    - The operation corresponds to each single task you are asking the database to do (``SELECT``, ``INSERT``, ``UPDATE``, ``DELETE``, etc..)
+    - The operation corresponds to each single task you are asking the database to do (``SELECT``, ``INSERT``, ``UPDATE``, ``DELETE``, etc.)
     - The transaction is a series of operations which are closely related (for example: ``SELECT``, compute then ``INSERT``). When a transaction finishes, the state of the database is checked, if every thing seems right and well ordered, the transaction is validated (``COMMIT``), if not, the whole transaction is canceled (``ROLLBACK``) in order to return to a stable state.
     - The session is a series of transactions which are independant. In other words, when you want to work with the database, you open a session and it says "I'm gonna work with you, database, are you ok?". Then, every operations you will perform will be associated with __your__ session before being ``COMMITED`` or ``ROLLBACKED``.
 
@@ -221,20 +221,20 @@ And there, the definition file (``Wopfile2`` in the example directory) look like
 
     # Rule1 use SparePartsManufacturer to insert pieces informations into the table piece
     rule Rule1:
-        tool: 'wopexamplesnp.wrapper..SparePartsManufacturer'
+        tool: 'wopexamplesnp.wrapper.SparePartsManufacturer'
         input:
             file:
                 pieces: 'input/pieces.txt'
         output:
             table:
-                piece: 'wopexamplesnp.model..Piece'
+                piece: 'wopexamplesnp.model.Piece'
 
     # CarAssembler make the combinations of all possible pieces to build cars and calculate the final price
     rule Rule2:
-        tool: 'wopexamplesnp.wrapper..CarAssembler'
+        tool: 'wopexamplesnp.wrapper.CarAssembler'
         input:
             table:
-                piece: 'wopexamplesnp.model..Piece'
+                piece: 'wopexamplesnp.model.Piece'
         output:
             # Here the output is written in a file
             file:
@@ -263,7 +263,7 @@ Taking back our model example ``Piece``, we need an other model which add the fi
     from sqlalchemy.sql.sqltypes import Date
     from sqlalchemy import Column
 
-    from wopexamplesnp.model..Piece import Piece
+    from wopexamplesnp.model.Piece import Piece
 
 
     class DatedPiece(Piece):

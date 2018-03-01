@@ -12,9 +12,6 @@ from wopmars.framework.database.tables.Execution import Execution
 from wopmars.utils.PathFinder import PathFinder
 from wopmars import WopMars
 
-from test.resource.model.FooBase import FooBase
-from test.resource.model.FooBase2 import FooBase2
-
 from wopmars.constants import home_wopmars
 
 
@@ -30,9 +27,9 @@ class TestWopMars(TestCase):
         else:
             self.__db_url = os.environ['DB_URL']
         self.__right_def_file = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file.yml")
-        # self.__right_def_file2 = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file4.yml")
-        # self.__right_def_file_only_files = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file2.yml")
-        # self.__def_file_never_ready = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file_toolwrapper_never_ready.yml")
+        self.__right_def_file2 = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file4.yml")
+        self.__right_def_file_only_files = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file2.yml")
+        self.__def_file_never_ready = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file_toolwrapper_never_ready.yml")
 
     def test_01run(self):
         cmd_line = ["python", "-l", "-D", self.__db_url, "-w", self.__right_def_file, "-v", "-p", "-d", PathFinder.get_module_path()]
@@ -75,7 +72,7 @@ class TestWopMars(TestCase):
             WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 0)
 
-    def test_05run_skiping_steps_time_check(self):
+    def test_06run_skiping_steps_time_check(self):
         cmd_line = ["python", "-D", self.__db_url, "-w", self.__right_def_file_only_files, "-vv", "-p"]
         start = time.time()
         with self.assertRaises(SystemExit):
@@ -92,7 +89,7 @@ class TestWopMars(TestCase):
         self.assertGreater(runtime1 * 1.5, runtime2)
         PathFinder.silentremove("test/output/output_File1.txt")
 
-    def test_06dry_drun_skipping(self):
+    def test_07dry_drun_skipping(self):
         cmd_line = ["python", "-D", self.__db_url, "-w", self.__right_def_file_only_files, "-vv", "-p"]
         with self.assertRaises(SystemExit):
            WopMars().run(cmd_line)
@@ -100,7 +97,7 @@ class TestWopMars(TestCase):
         with self.assertRaises(SystemExit):
            WopMars().run(cmd_line + ["-n"])
 
-    def test_dry_drun_skipping_all_but_one(self):
+    def test_08dry_drun_skipping_all_but_one(self):
         cmd_line = ["python", "-D", self.__db_url, "-w", self.__right_def_file, "-vv", "-p"]
         with self.assertRaises(SystemExit):
            WopMars().run(cmd_line)
@@ -110,7 +107,7 @@ class TestWopMars(TestCase):
         with self.assertRaises(SystemExit):
            WopMars().run(cmd_line + ["-n"])
 
-    def test_run6(self):
+    def test_09run6(self):
         cmd_line = ["python", "-D", self.__db_url, "-w", self.__right_def_file, "-p", "-vv"]
         start = time.time()
         with self.assertRaises(SystemExit):
@@ -139,7 +136,7 @@ class TestWopMars(TestCase):
         average_rule_time = full_exec_time / rule_count
         return 1 + (maximum_ratio * average_rule_time / (1.5 + average_rule_time))
 
-    def test_run_error_in_command_line(self):
+    def test_10run_error_in_command_line(self):
         cmd_line = ["python", "-D", self.__db_url, "-w", self.__right_def_file, "--dot", "/usr/"]
         with self.assertRaises(SystemExit) as SE:
             WopMars().run(cmd_line)
@@ -184,15 +181,15 @@ class TestWopMars(TestCase):
         session = SQLManager.instance().get_session()
         self.assertEqual(session.query(Execution).count(), 1)
 
-    def test_pandas(self):
-        cmd_line = ["python", "tool", "test.resource.wrapper.FooWrapperDataframe",
-                    "-o", "{'table': {'FooBase': 'test.resource.model.FooBase'}}",
-                    "-vv", "-p", "-D", self.__db_url, "-d", PathFinder.get_module_path()]
-
-        with self.assertRaises(SystemExit) as se:
-            WopMars().run(cmd_line)
-
-        self.assertEqual(se.exception.code, 1)
+    # def test_pandas(self):
+    #     cmd_line = ["python", "tool", "test.resource.wrapper.FooWrapperDataframe",
+    #                 "-o", "{'table': {'FooBase': 'test.resource.model.FooBase'}}",
+    #                 "-vv", "-p", "-D", self.__db_url, "-d", PathFinder.get_module_path()]
+    #
+    #     with self.assertRaises(SystemExit) as se:
+    #         WopMars().run(cmd_line)
+    #
+    #     self.assertEqual(se.exception.code, 1)
 
     def test_run_target_rule(self):
         # SQLManager.instance().create_all()

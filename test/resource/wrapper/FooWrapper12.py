@@ -1,10 +1,6 @@
 """
 Module containing the FooWrapper1 class
 """
-import os
-import time
-
-from matplotlib.compat import subprocess
 
 from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
 

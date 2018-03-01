@@ -1,7 +1,7 @@
 """
 Module containing the FooWrapper1 class
 """
-from matplotlib.compat import subprocess
+import subprocess
 
 from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
 
