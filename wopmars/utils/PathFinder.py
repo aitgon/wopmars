@@ -48,15 +48,16 @@ class PathFinder:
         """
         db_connection = url.split("://")[0]
         if db_connection == "sqlite":
-            path = url.split(":///")[1]
-            path_dir = os.path.dirname(path)
+            sqlite_db_path=url.replace("sqlite:///", "")
+            if not os.path.isabs(sqlite_db_path):
+                sqlite_db_path = os.path.join(os.getcwd(), sqlite_db_path)
             try:
-                os.makedirs(path_dir)
+                os.makedirs(os.path.dirname(sqlite_db_path))
             except OSError as exception:
                 if exception.errno != errno.EEXIST:
                     raise
-            if path is None or os.access(os.path.dirname(os.path.abspath(os.path.expanduser(path))), os.W_OK) or path[0] == "$":
-                return path
+            if sqlite_db_path is None or os.access(os.path.dirname(os.path.abspath(os.path.expanduser(sqlite_db_path))), os.W_OK) or sqlite_db_path[0] == "$":
+                return sqlite_db_path
             else:
                 raise FileNotFoundError
 

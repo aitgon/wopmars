@@ -61,7 +61,7 @@ class SQLManager(SingletonMixin):
         self.d_database_config = {'db_connection': None, 'db_database': None, 'db_url': s_database_url}
         self.d_database_config['db_connection'] = s_database_url.split("://")[0]
         if self.d_database_config['db_connection'] == "sqlite":
-            self.d_database_config['db_database'] = s_database_url.split(":///")[1]
+            self.d_database_config['db_database'] = s_database_url.replace("sqlite:///", "")
         # echo=False mute the log of database
         # connect_args have been necessary because of the accession of the same objects in different Threads.
         if self.d_database_config['db_connection']=="sqlite":
