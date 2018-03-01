@@ -94,7 +94,7 @@ class Logger(SingletonMixin):
         self.__stream_handler.setFormatter(formatter_stream)
         self.__stream_handler_err.setFormatter(formatter_stream)
 
-        self.__logger.error(msg)
+        self.__logger.error(msg.encode('utf-8'))
 
     def warning(self, msg):
         formatter_stream = logging.Formatter(ColorPrint.magenta('%(levelname)s :: %(asctime)s :: %(message)s'))

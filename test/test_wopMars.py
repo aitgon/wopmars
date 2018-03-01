@@ -30,9 +30,9 @@ class TestWopMars(TestCase):
         else:
             self.__db_url = os.environ['DB_URL']
         self.__right_def_file = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file.yml")
-        self.__right_def_file2 = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file4.yml")
-        self.__right_def_file_only_files = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file2.yml")
-        self.__def_file_never_ready = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file_toolwrapper_never_ready.yml")
+        # self.__right_def_file2 = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file4.yml")
+        # self.__right_def_file_only_files = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file2.yml")
+        # self.__def_file_never_ready = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file_toolwrapper_never_ready.yml")
 
     def test_01run(self):
         cmd_line = ["python", "-l", "-D", self.__db_url, "-w", self.__right_def_file, "-v", "-p", "-d", PathFinder.get_module_path()]

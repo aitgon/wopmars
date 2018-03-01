@@ -1,6 +1,6 @@
 import datetime
 import importlib
-import jinja2
+#import jinja2
 import re
 import time
 import os
@@ -65,7 +65,7 @@ class Reader:
                 # The workflow definition file is loaded as-it in memory by the pyyaml library
                 Logger.instance().info("Reading the Wopfile: " + str(s_definition_file))
                 # Replace jinja2 variables with environment variable values
-                s_def_file_content = jinja2.Environment().from_string(s_def_file_content).render(os.environ)
+                #s_def_file_content = jinja2.Environment().from_string(s_def_file_content).render(os.environ)
                 # Parse the file to find duplicates rule names (it is a double check with the following step)
                 Reader.check_duplicate_rules(s_def_file_content)
                 # Allows to raise an exception if duplicate keys are found on the same document hirearchy level.

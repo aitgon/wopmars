@@ -1,7 +1,7 @@
 """
 Module containing the SQLManager class.
 """
-import pandas
+# import pandas
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import create_engine
 from sqlalchemy.schema import sort_tables
@@ -303,37 +303,37 @@ class SQLManager(SingletonMixin):
                 "SQLManager.drop_table_content_list(" + str(list_str_table) + "): drop table content " + str(t.name))
             self.execute(session._session(), t.delete())
 
-    def pandas_to_sql(self, df, *args, **kwargs):
-        """
-        Execute the `DataFrame.to_sql <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.to_sql.html>`_ function from pandas.DataFrame.
-
-        :param df: The DataFrame to insert in database.
-        :type df: `pandas.DataFrame <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html>`_
-        :param args: The conventional arguments for the pandas.to_sql function.
-        :param kwargs: The conventional key arguments for the pandas.to_sql function.
-        """
-        try:
-            self.__lock.acquire_write()
-            df.to_sql(*args, **kwargs)
-            Logger.instance().debug("SQLManager.pandas_to_sql: Adding dataframe to database")
-        finally:
-            self.__lock.release()
-
-    def pandas_read_sql(self, *args, **kwargs):
-        """
-        Execute the `pandas.read_sql <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.read_sql.html?highlight=sql>`_ function
-
-        :param args: The conventional arguments for the pandas.read_sql function.
-        :param kwargs: The conventional key arguments for the pandas.read_sql function.
-        :return DataFrame: The dataframe containing the results of the query.
-        """
-        try:
-            self.__lock.acquire_read()
-            df = pandas.read_sql(*args, **kwargs)
-            Logger.instance().debug("SQLManager.read_sql: Reading database using pandas")
-        finally:
-            self.__lock.release()
-        return df
+    # def pandas_to_sql(self, df, *args, **kwargs):
+    #     """
+    #     Execute the `DataFrame.to_sql <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.to_sql.html>`_ function from pandas.DataFrame.
+    #
+    #     :param df: The DataFrame to insert in database.
+    #     :type df: `pandas.DataFrame <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html>`_
+    #     :param args: The conventional arguments for the pandas.to_sql function.
+    #     :param kwargs: The conventional key arguments for the pandas.to_sql function.
+    #     """
+    #     try:
+    #         self.__lock.acquire_write()
+    #         df.to_sql(*args, **kwargs)
+    #         Logger.instance().debug("SQLManager.pandas_to_sql: Adding dataframe to database")
+    #     finally:
+    #         self.__lock.release()
+    #
+    # def pandas_read_sql(self, *args, **kwargs):
+    #     """
+    #     Execute the `pandas.read_sql <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.read_sql.html?highlight=sql>`_ function
+    #
+    #     :param args: The conventional arguments for the pandas.read_sql function.
+    #     :param kwargs: The conventional key arguments for the pandas.read_sql function.
+    #     :return DataFrame: The dataframe containing the results of the query.
+    #     """
+    #     try:
+    #         self.__lock.acquire_read()
+    #         df = pandas.read_sql(*args, **kwargs)
+    #         Logger.instance().debug("SQLManager.read_sql: Reading database using pandas")
+    #     finally:
+    #         self.__lock.release()
+    #     return df
 
     def create_trigger(self, table, ddl):
         """
