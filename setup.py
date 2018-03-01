@@ -61,7 +61,7 @@ setup(name='wopmars',
     keywords='workflow manager python object-oriented reproducible science database framework',
     packages=find_packages(exclude=['log', 'doc', '*.test_bak.*', 'soutenance', 'rapport']),
     install_requires = ["SQLAlchemy>=1.1.11", "docopt>=0.6.2", "schema>=0.6.5", "termcolor>=1.1.0", "PyYAML>=3.12", "networkx==1.11"],
-    extras_require={'all': ['pygraphviz',]},
+    extras_require={'pygraphviz': ['pygraphviz',]},
     data_files=[],
     entry_points={
         'console_scripts':['wopmars=wopmars:run']

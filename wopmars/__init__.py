@@ -17,7 +17,7 @@ Arguments:
 Options:
   -h --help                    Show this help.
   -v                           Set verbosity level.
-  -g FILE --dot=FILE           Write dot representing the workflow in the FILE file (with .dot extension).
+  -g FILE --dot=FILE           Write dot representing the workflow in the FILE file (with .dot extension). This option needs to install WopMars with pygraphviz (pip install wopmars[pygraphviz])
   -L FILE --log=FILE           Write logs in FILE file [default: $HOME/.wopmars/wopmars.log].
   -p --printtools              Write logs in standard output.
   -f RULE --sourcerule=RULE    Execute the workflow from the given RULE.
@@ -105,8 +105,8 @@ class WopMars:
             match_open_def = re.match(r"^open\('(.[^\)]+)'\)", str(schema_msg))
             match_dot_def = re.match(r"^check_valid_path\(('.[^\)]+')\)", str(schema_msg))
             match_wrong_key = re.match(r"^Wrong keys ('.[^\)]+')", str(schema_msg))
-            match_pygraphviz = re.match(r".*pygraphviz.*", str(schema_msg))
-
+            match_pygraphviz = re.match(r".*dot.*", str(schema_msg))
+            print(match_pygraphviz)
             # Check the different regex..
             if match_open_def:
                 Logger.instance().error("The file " + match_open_def.group(1) + " cannot be opened. It may not exist.")
@@ -116,7 +116,7 @@ class WopMars:
                 # Normally never reach
                 Logger.instance().error("The option key " + match_wrong_key.group(1) + " is not known.")
             elif match_pygraphviz:
-                Logger.instance().error("The pygraphviz module is not installed, try installing WoPMaRS again without the 'no-pygraphviz' option.\n\t python3 setup.py install")
+                Logger.instance().error("The dot file path is not valid or the pygraphviz module is not installed. In the second case, install wopmars with pygraphviz: pip install wopmars[pygraphviz]")
             else:
                 # Normally never reach
                 Logger.instance().error("An unknown error has occured. Message: " + str(schema_msg))
