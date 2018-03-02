@@ -75,7 +75,7 @@ It came time to start your first workflow!
 
 .. code-block:: python
 
-    wopmars -w Wopfile -D "sqlite:///output/wopmars.sqlite" -v -p
+    wopmars -w Wopfile -D "sqlite:///db.sqlite" -v -p
 
 You will see a little bit of output in the console thanks to the ``-p`` coupled with the ``-v`` option which describes the work processed by WopMars. The ``-D`` option allows to specify the path to the database file and, you have probably realized, the ``-w`` option allows to specify the path to the **Workflow Definition File**.
 
@@ -88,12 +88,11 @@ Now, I'll show you a brief overview of what you can do with the database. First,
 
 Then, open the database using sqlite::
 
-    cd output
-    sqlite3 wopmars.sqlite
+    sqlite3 db.sqlite
 
 .. warning::
 
-    If you get an error `Unable to open database "wopmars.sqlite": file is encrypted or is not a database`. Make sure to use `sqlite3` instead of `sqlite`.
+    If you get an error `Unable to open database "db.sqlite": file is encrypted or is not a database`. Make sure to use `sqlite3` instead of `sqlite`.
 
 The preceding workflow had two steps:
 

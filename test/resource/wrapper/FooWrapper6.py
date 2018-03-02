@@ -3,7 +3,7 @@ Module containing the FooWrapper1 class
 """
 import time
 
-from matplotlib.compat import subprocess
+import subprocess
 
 from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
 
@@ -21,7 +21,7 @@ class FooWrapper6(ToolWrapper):
         return ["output1", "output2"]
 
     def run(self):
-        print(self.__class__.__name__ + " en cours d'exécution.")
+        print(self.__class__.__name__ + " is running...")
         p1 = subprocess.Popen(["touch", self.output_file('output1')])
         p2 = subprocess.Popen(["touch", self.output_file('output2')])
         p1.wait()
