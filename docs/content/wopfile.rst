@@ -33,23 +33,23 @@ Since one picture says more than one thousand words, here is a self-explaining e
 
     # Rule1 use SparePartsManufacturer to insert pieces informations into the table piece
     rule Rule1:
-        tool: 'wopexamplesnp.wrapper..SparePartsManufacturer'
+        tool: 'wopexamplesnp.wrapper.SparePartsManufacturer'
         input:
             file:
                 pieces: 'input/pieces.txt'
         output:
             table:
-                piece: 'wopexamplesnp.model..Piece'
+                piece: 'wopexamplesnp.model.Piece'
 
     # CarAssembler make the combinations of all possible pieces and calculate the final price
     rule Rule2:
-        tool: 'wopexamplesnp.wrapper..CarAssembler'
+        tool: 'wopexamplesnp.wrapper.CarAssembler'
         input:
             table:
-                piece: 'wopexamplesnp.model..Piece'
+                piece: 'wopexamplesnp.model.Piece'
         output:
             table:
-                piece_car: 'wopexamplesnp.model..PieceCar'
+                piece_car: 'wopexamplesnp.model.PieceCar'
         params:
             # The price have to be under 2000!
             max_price: 2000
@@ -73,7 +73,7 @@ Like it has been said previously, the ``tool`` must be specified with its "full 
 
    *Example*::
 
-       wopexamplesnp.wrapper..SparePartsManufacturer
+       wopexamplesnp.wrapper.SparePartsManufacturer
 
    It is used for a package named 'wopexample' which itself contains an other package named 'wrappers' which itself contains the module of interest 'SparePartsManufacturer' (which contains the `Toolwrapper` `SparePartsManufacturer`).
 
@@ -95,7 +95,7 @@ Like files, each `table` is **required** and specified with a value associated t
 
    *Example*::
 
-       wopexamplesnp.model..Piece
+       wopexamplesnp.model.Piece
 
    It is used for a package named 'wopexample' which itself contains an other package named 'models' which itself contains the module of interest 'Piece' (which contains the `model` `Piece`).
 

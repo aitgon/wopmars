@@ -22,7 +22,7 @@ The database engine for the test is passed using an environment variable. For in
 
 .. code-block:: bash
 
-    mkdir -p out && export DB_URL="sqlite:///out/db.sqlite"
+    export DB_URL="sqlite:///db.sqlite"
 
 **MariaDB/MySQL**:
 

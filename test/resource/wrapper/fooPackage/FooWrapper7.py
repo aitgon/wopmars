@@ -20,7 +20,7 @@ class FooWrapper7(ToolWrapper):
         return ["FooBase2P"]
 
     def run(self):
-        print(self.__class__.__name__ + " en cours d'exécution.")
+        print(self.__class__.__name__ + " is running...")
         inputs = self.session().query(self.input_table("FooBaseP")).all()
         self.session().delete_content(self.output_table("FooBase2P"))
         for i in inputs:

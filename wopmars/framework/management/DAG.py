@@ -75,7 +75,7 @@ class DAG(nx.DiGraph):
         if not node:
             # in_degree is the number of incoming edges to a node. If the degree is 0, then the node is at the root
             # of the DAG.
-            return [n for n, d in self.in_degree().items() if d == 0]
+            return [n for n, d in list(self.in_degree()) if d == 0]
         else:
             s = super().successors(node)
             return s
