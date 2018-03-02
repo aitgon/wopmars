@@ -23,6 +23,10 @@ To install wopmars, you have to get the sources on the git repository and then g
 
     pip install .
 
+To install wopmars with the --dot option to generate workflow schemes::
+
+    pip install .[pygraphviz]
+
 Documentation
 ----------------
 
