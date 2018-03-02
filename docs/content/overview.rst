@@ -107,7 +107,7 @@ As shown in the next section (Quick start) After defining wrappers and modes in 
 
 .. code-block:: shell
 
-    wopmars -w Wopfile -D "sqlite:///output/wopmars.sqlite" -v -p
+    wopmars -w Wopfile -D "sqlite:///db.sqlite" -v -p
 
 Now that you should understand the basics components of WopMars, I recommend you to go to the quick start section to try a working example.
 

@@ -8,7 +8,7 @@ Usage:
 
 Arguments:
   DEFINITION_FILE  Path to the definition file of the workflow [default: Wopfile].
-  DATABASE         Path to the sqlite database file [default: wopmars.sqlite].
+  DATABASE         Path to the sqlite database file [default: db.sqlite].
   FILE             Path to a file.
   RULE             Name of a rule in the workflow definition file.
   TOOLWRAPPER      Path the the toolwrapper
@@ -25,8 +25,8 @@ Options:
   -F --forceall                Force the execution of the workflow, without checking for previous executions.
   -n --dry-run                 Only display what would have been done.
   -d --directory=DIR           Set the current working directory. Usefull for working with relative poths [default: $CWD].
-  -D --database=DATABASE       Set the path to the database [default: $CWD/Wopfile].
-  -w --wopfile=DEFINITION_FILE Set the path to the definition file [default: $CWD/wopmars.sqlite].
+  -D --database=DATABASE       Set the path to the database [default: sqlite:///db.sqlite].
+  -w --wopfile=DEFINITION_FILE Set the path to the definition file [default: Wopmars].
   -i --input=DICT              Set the input of the toolwrapper you want to use in the dictionnary format.
   -o --output=DICT             Set the output of the toolwrapper you want to use in the dictionnary format.
   -P --params=DICT             Set the parameters of the toolwrapper you want to use in the dictionnary format.

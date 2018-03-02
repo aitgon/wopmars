@@ -72,7 +72,7 @@ class OptionManager(dict, SingletonMixin):
         if self["--database"]:
             self["--database"] = os.path.expanduser(self["--database"])
         else:
-            self["--database"] = os.path.join(self["--directory"], "wopmars.sqlite")
+            self["--database"] = os.path.join(self["--directory"], "sqlite:///db.sqlite")
 
     def validate_dot(self):
         if self["--dot"]:
