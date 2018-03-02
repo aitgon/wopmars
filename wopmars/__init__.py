@@ -18,7 +18,7 @@ Options:
   -D --database=DATABASE       REQUIRED: Set the path to the database, e.g -D sqlite:///db.sqlite
   -w --wopfile=DEFINITION_FILE REQUIRED: Set the path to the definition file.
   -c --clear-history           Clear WoPMaRS history. Should be used in case of bug which seem to be related to the history. Be carefull, clearing history will result in a re-execution of the whole workflow.
-  -d --directory=DIR           Set the current working directory. Useful for working with relative paths [default: $PWD].
+  -d --directory=DIR           Set the current working directory. Useful for working with relative paths [default: $CWD].
   -F --forceall                Force the execution of the workflow, without checking for previous executions.
   -f RULE --sourcerule=RULE    Execute the workflow from the given RULE.
   -g FILE --dot=FILE           Write dot representing the workflow in the FILE file (with .dot extension). This option needs to install WopMars with pygraphviz (pip install wopmars[pygraphviz])

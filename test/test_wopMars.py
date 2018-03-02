@@ -193,7 +193,7 @@ class TestWopMars(TestCase):
 
     def test_run_target_rule(self):
         # SQLManager.instance().create_all()
-        cmd_line = ["python", "-D", self.__db_url, "-w", self.__right_def_file, "-vv", "-p", "-d", PathFinder.get_module_path(), "--targetrule", "rule3"]
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__right_def_file, "-vv", "-p", "--targetrule", "rule3"]
         with self.assertRaises(SystemExit) as se:
            WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 0)
