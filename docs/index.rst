@@ -49,6 +49,7 @@ Table of Contents
    content/wrapper
    content/model
    content/developer
+   content/cheatsheet
 
 .. Indices and tables
 .. ==================
