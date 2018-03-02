@@ -21,7 +21,7 @@ class FooWrapper4(ToolWrapper):
         return ["output1"]
 
     def run(self):
-        print(self.__class__.__name__.encode('utf-8') + " en cours d'exécution.".encode('utf-8'))
+        print(self.__class__.__name__ + " is running...")
         p = subprocess.Popen(["touch", self.output_file("output1")])
         p.wait()
         time.sleep(1)

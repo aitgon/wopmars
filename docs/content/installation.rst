@@ -19,7 +19,7 @@ Then you can install WopMars with pip
 
 .. code-block:: bash
 
-    pip install wopmars 
+    pip install wopmars
 
 Installation with MariaDB/MySQL
 ------------------------------------------
@@ -28,10 +28,25 @@ To use wopmars with the MariaDB/MySQL database engine, you need to install the p
 
     pip install mysqlclient
 
+Ubuntu users also need the following package, which is not installed by default::
+
+    sudo apt-get install libmysqlclient-dev
+
+Installation with PostgreSQL
+------------------------------------------
+
+To use wopmars with the PostgreSQL database engine, you need to install the python PostgreSQL client::
+
+    pip install psycopg2==2.7.4
+
 Installation with PyGraphviz
 ------------------------------------------
 
-If you want to install WopMars with pygraphviz to generate workflow images, then you need to install with:
+If you want to use the "--dot" argument to generate workflow images with pygraphviz, then you need either to add pygraphviz to the WopMars base installation::
+
+    pip install pygraphviz==1.3.1
+
+or install WopMars with the pygraphviz package::
 
     pip install wopmars[pygraphviz]
 

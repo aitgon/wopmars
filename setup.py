@@ -60,7 +60,7 @@ setup(name='wopmars',
     download_url='https://github.com/aitgon/wopmars/archive/%s.tar.gz'%__version__,
     keywords='workflow manager python object-oriented reproducible science database framework',
     packages=find_packages(exclude=['log', 'doc', '*.test_bak.*', 'soutenance', 'rapport']),
-    install_requires = ["SQLAlchemy>=1.1.11", "docopt>=0.6.2", "schema>=0.6.5", "termcolor>=1.1.0", "PyYAML>=3.12", "networkx==1.11"],
+    install_requires = ["SQLAlchemy>=1.1.11", "docopt>=0.6.2", "schema>=0.6.5", "termcolor>=1.1.0", "PyYAML>=3.12", "networkx>=1.11"],
     extras_require={'pygraphviz': ['pygraphviz',]},
     data_files=[],
     entry_points={

@@ -23,7 +23,7 @@ class FooWrapper5(ToolWrapper):
         return ["FooBase"]
 
     def run(self):
-        print(self.__class__.__name__ + " en cours d'exécution.")
+        print(self.__class__.__name__ + " is running...")
         p = subprocess.Popen(["touch", self.output_file("output1")])
         p.wait()
         # self.session().delete_content(self.output_table("FooBase"))
