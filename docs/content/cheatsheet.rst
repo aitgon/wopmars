@@ -4,79 +4,101 @@ Cheat Sheet
 SQLAlchemy URLs
 -----------------
 
-Sqlite:
+Sqlite, MariaDB/MySQL or PostgreSQL
 
 .. code-block:: bash
 
     sqlite:///db.sqlite
-
-MariaDB/MySQL:
-
-.. code-block:: bash
-
     mysql://wopuser:mypass@localhost/wopdb
-
-PostgreSQL:
-
-.. code-block:: bash
-
     postgresql://wopuser:mypass@localhost/wopdb
+
 
 Wopfile or definition file example
 ----------------------------------
 
 .. code-block:: python
 
-    # Rule1 use SparePartsManufacturer to insert pieces informations into the table piece
-    rule Rule1:
-        tool: 'wopexample.wrapper.SparePartsManufacturer'
+
+    rule Rule2:
+        tool: 'wopexample.wrapper.CarAssembler'
         input:
-            file:
-                pieces: 'input/pieces.txt'
-        output:
             table:
                 piece: 'wopexample.model.Piece'
+        output:
+            table:
+                piece_car: 'wopexample.model.PieceCar'
+        params:
+            # The price have to be under 2000!
+            max_price: 2000
 
 Wrapper file example
 --------------------
 
+For the complete code, go to the github repository
+
 .. code-block:: python
 
-   from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
+    from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
+    ...
 
-
-    class SparePartsManufacturer(ToolWrapper):
+    class CarAssembler(ToolWrapper):
         __mapper_args__ = {
-            "polymorphic_identity": "wopmars.example.SparePartsManufacturer"
+            "polymorphic_identity": "wopmars.example.CarAssembler"
         }
 
-        def specify_input_file(self):
-            return ["pieces"]
+        def specify_output_file(self):
+            if not self.option("to_file"): # field depends on boolean par
+                return []
+            else:
+                return ["piece_car"]
+
+        def specify_input_table(self):
+            return ["piece"]
 
         def specify_output_table(self):
-            return ["piece"]
+            if self.option("to_file"):
+                return []
+            else:
+                return ["piece_car"]
 
         def specify_params(self):
             return {
-                "max_price": int
+                "to_file": "bool",
+                "max_price": "int",
             }
 
         def run(self):
             session = self.session()
-            Piece = self.output_table("piece")
+            Piece = self.input_table("piece")
+            if not self.option("to_file"):
+                Piece_car = self.output_table("piece_car")
 
-            with open(self.input_file("pieces")) as wr:
-                lines = wr.readlines()
+            max_price = self.option("max_price") # price threshold
 
-            for line in lines:
-                splitted_line = line.split(";")
-                piece_serial_number = splitted_line[0]
-                piece_type = splitted_line[1]
-                piece_price = float(splitted_line[2])
-                if (self.option("max_price") and self.option("max_price" >= piece_price))                         or self.option("max_price") is None:
-                    session.add(Piece(serial_number=piece_serial_number, price=piece_price, type=piece_type))
+            wheels = session.query(Piece).filter(Piece.type == "wheel").all()
+            ...
 
-            session.commit()
+            s = "car_serial_number, bodywork_serial_number, engine_serial_number, wheel_serial_number, price\n"
+
+            for w in wheels:
+                ...
+                                session.add(Piece_car(car_serial_number=car_serial_number,
+                                                      bodywork_serial_number=b.serial_number,
+                                                      engine_serial_number=e.serial_number,
+                                                      wheel_serial_number=w.serial_number,
+                                                      price=price))
+                            s += ";".join([car_serial_number,
+                                           b.serial_number,
+                                           e.serial_number,
+                                           w.serial_number,
+                                           str(price)]) + "\n"
+
+            if self.option("to_file"):
+                file_to_write = open(self.output_file("piece_car"), 'w')
+                ...
+            else:
+                session.commit()
+    ...
 
 Model file example
 --------------------
@@ -95,4 +117,25 @@ Model file example
         serial_number = Column(String, unique=True)
         type = Column(String)
         price = Column(Float)
+
+Database access examples
+--------------------------
+
+ORM query and insert
+
+.. code-block:: python
+
+    session = self.session()
+    engine = session._WopMarsSession__session.bind
+    conn = engine.connect()
+    mytable_model = self.output_table(MyWrapper.__output_table_mytable)
+    myobj = {'atr1': 'val1'}
+    try:  # checks if exists myobj in db
+        session.query(mytable_model).filter_by(**myobj).one()
+    except:  # if not, add
+        session.add(mytable_model(**myobj))
+    session.commit()
+
+
+
 
