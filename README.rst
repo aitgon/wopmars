@@ -28,9 +28,7 @@ To install wopmars with the --dot option to generate workflow schemes::
     pip install .[pygraphviz]
 
 Documentation
-----------------
+-------------
 
-Go to the **docs** folder and type::
-
-    make html
-
+The `WopMars documentation <http://wopmars.readthedocs.org/>`_ with user guide and
+API reference is hosted at Read The Docs.
