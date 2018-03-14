@@ -72,12 +72,13 @@ class DAG(nx.DiGraph):
         :type node: :class:`~.wopmars.framework.database.tables.ToolWrapper.ToolWrapper`
         :return: [node]:  the successors of the given node or the node at the root of the DAG.
         """
-        if not node:
+        if node is None:
             # in_degree is the number of incoming edges to a node. If the degree is 0, then the node is at the root
             # of the DAG.
+            # return [n for n, d in self.in_degree().items() if d == 0]
             return [n for n, d in list(self.in_degree()) if d == 0]
         else:
-            s = super().successors(node)
+            s = list(super().successors(node))
             return s
 
     def get_all_successors(self, node):
