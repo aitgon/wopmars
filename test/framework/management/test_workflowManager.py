@@ -16,8 +16,8 @@ class TestWorkflowManager(TestCase):
         SQLManager.instance().create_all()
         s_root_path = PathFinder.get_module_path()
 
-        self.__s_path_to_example_definition_file_finishing = os.path.join(s_root_path, "test/resource/wopfile/example_def_file.yml")
-        self.__s_path_to_example_definition_file_that_end_with_error = os.path.join(s_root_path, "test/resource/wopfile/example_def_file_toolwrapper_never_ready.yml")
+        self.__s_path_to_example_definition_file_finishing = os.path.join(s_root_path, "test/resource/wopfile/example_def_file1.yml")
+        self.__s_path_to_example_definition_file_that_end_with_error = os.path.join(s_root_path, "test/resource/wopfile/example_def_file5_never_ready.yml")
 
         self.__wm = WorkflowManager()
 

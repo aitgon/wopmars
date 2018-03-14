@@ -38,7 +38,7 @@ class TestReader(TestCase):
 
         # The good -------------------------------:
 
-        self.__s_example_definition_file = os.path.join(self.__s_root_path, "test/resource/wopfile/example_def_file.yml")
+        self.__s_example_definition_file = os.path.join(self.__s_root_path, "test/resource/wopfile/example_def_file1.yml")
         self.__s_example_definition_file2 = os.path.join(self.__s_root_path, "test/resource/wopfile/example_def_file3.yml")
 
         # The ugly (malformed file) --------------------:

@@ -128,7 +128,7 @@ class TestParser(TestCase):
         OptionManager.instance()["--dot"] = None
 
         dag_expected = DAG(set_toolwrappers)
-        OptionManager.instance()["--wopfile"] = os.path.join(self.__s_root_path, "test/resource/wopfile/example_def_file.yml")
+        OptionManager.instance()["--wopfile"] = os.path.join(self.__s_root_path, "test/resource/wopfile/example_def_file1.yml")
         dag_obtained = self.__parser.parse()
 
         self.assertEqual(dag_expected, dag_obtained)
@@ -138,7 +138,7 @@ class TestParser(TestCase):
             self.__parser.parse()
 
         # Verify the dot file ----------------:
-        OptionManager.instance()["--wopfile"] = os.path.join(self.__s_root_path, "test/resource/wopfile/example_def_file.yml")
+        OptionManager.instance()["--wopfile"] = os.path.join(self.__s_root_path, "test/resource/wopfile/example_def_file1.yml")
         #dot_path = os.path.join(self.__s_root_path, "test_bak.dot")
         #OptionManager.instance()["--dot"] = dot_path
         self.__parser.parse()

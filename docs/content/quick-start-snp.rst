@@ -3,7 +3,7 @@ Quick Start 2 - SNP Example
 
 This example has been used to test the performance of WopMars in our paper with different amount of data and database engine and access method (Ref). Single nucleotide polymorphismes (SNPs) are very variable position in the genome. Many SNPs have been statistically associated to diseases or phenotypes. This workflow is used to fill in a database that relates SNPs and phenotypes (Ref).
 
-The database access methods are: **SQLAlchemy ORM**, **core** and **pandas read_sql** and **to_sql**. We have defined three different wopfiles using different wrappers for each of these methods.
+The database access methods are: **SQLAlchemy ORM** and **core**. We have defined three different wopfiles using different wrappers for each of these methods.
 
 To build the workflow files architecture, go to any directory and type the following command::
     
@@ -18,7 +18,6 @@ You'll get the following files architecture::
     │   ├── snp.tsv
     │   ├── WopfileCore.yml
     │   ├── WopfileOrm.yml
-    │   └── WopfilePandas.yml
     ├── output
     ├── setup.py
     └── wopexamplesnp
@@ -35,10 +34,6 @@ You'll get the following files architecture::
             │   ├── InsertPhenotype.py
             │   ├── InsertSNP2Phenotype.py
             │   └── InsertSnp.py
-            └── pandas
-                ├── InsertPhenotype.py
-                ├── InsertSNP2Phenotype.py
-                └── InsertSnp.py
 
 Move to `wopmars_example_snp` directory and install the package *wopexample*::
 
@@ -54,10 +49,6 @@ Go to console and select one of the wopfiles:
 .. code-block:: bash
 
     export WOPFILE=$PWD/data/WopfileCore.yml
-
-.. code-block:: bash
-
-    export WOPFILE=$PWD/data/WopfilePandas.yml
 
 With this code you can run the workflow using the **SQLite** database engine.
 
