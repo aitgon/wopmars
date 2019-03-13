@@ -31,6 +31,7 @@ class TestWopMars(TestCase):
         self.__example_def_file4 = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file4.yml")
         self.__example_def_file2_only_files = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file2_only_files.yml")
         self.__example_def_file5_never_ready = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file5_never_ready.yml")
+        self.__example_def_file_input_not_ready = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file_input_not_ready.yml")
 
     def test_01run(self):
         cmd_line = ["python", "-l", "-D", self.__db_url, "-w", self.__example_def_file1, "-v", "-p", "-d", PathFinder.get_module_path()]
@@ -197,6 +198,13 @@ class TestWopMars(TestCase):
         with self.assertRaises(SystemExit) as se:
            WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 0)
+
+    def test_run_input_file_not_ready(self):
+        # SQLManager.instance().create_all()
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file_input_not_ready, "-vv", "-p"]
+        with self.assertRaises(SystemExit) as se:
+           WopMars().run(cmd_line)
+        self.assertEqual(se.exception.code, 1)
 
     def tearDown(self):
         SQLManager.instance().get_session().close()
