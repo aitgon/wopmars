@@ -1,10 +1,9 @@
-import os
-import unittest
 from unittest import TestCase
 
-import time
-
+import os
 import subprocess
+import time
+import unittest
 
 from wopmars import OptionManager
 from wopmars.framework.database.SQLManager import SQLManager
@@ -16,6 +15,8 @@ from wopmars.constants import home_wopmars
 
 
 class TestWopMars(TestCase):
+
+
     def setUp(self):
         if not os.path.isdir(home_wopmars):
             os.makedirs(home_wopmars)
