@@ -118,7 +118,7 @@ Here are the classes involved in the parsing of the workflow definition file. Am
 The history of WopMars executions
 ---------------------------------
 
-**WopMars** keeps track of what has been done thanks to an history stored in database with the prefix ``wom`` in table names.
+**WopMars** keeps track of what has been done thanks to an history stored in database with the prefix ``wom_`` in table names.
 
 Numerous calls to those tables are done during all the process of the parsing of the definition file and the building of the execution DAG.
 
@@ -140,6 +140,22 @@ Here is a list of the tables used for history. All of the associated models are 
    :align: center
 
    *Here is a detailed entity-relationship model of the history in the database*
+
+The table ``wom_execution``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The table ``wom_execution`` stores run information in a per rule basis:
+
+- name: Name of the wrapper in the rule, e.g. *rule1*
+- toolwrapper: Class name of the wrapper in the rule, e.g. *FooWrapper1*
+- execution_id: 
+- started_id: 
+- finished_id:
+- time: Walltime of the execution
+- status: Execution status of the rule. It takes one of these values
+    * NOT_PLANNED: Not requested by the user
+    * EXECUTED: Requested by the user and executed
+    * ALREADY_EXECUTED: Requested by the user but not executed because already executed
 
 Building the execution DAG
 --------------------------
@@ -170,7 +186,6 @@ The main class responsible of managing the database is the :class:`~.wopmars.fra
 The constructor of the ``SQLManager`` create the actual database and enable the foreign key support (https://www.sqlite.org/foreignkeys.html#fk_enable) in order to let the user benefit from this constraint.
 
 To get a :class:`~.wopmars.database.WopMarsSession.WopMarsSession` associated with this SQLManager, you just need to call :meth:`~wopmars.framework.database.SQLManager.SQLManager.get_session()`` and you can use the session anywhere, in any thread and at any time. Everything is already synchronized.
-
 
 ----
 

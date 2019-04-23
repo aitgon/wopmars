@@ -106,7 +106,7 @@ class TestReader(TestCase):
         input_entry = Type(name="input")
         output_entry = Type(name="output")
 
-        f1 = IOFilePut(name="input1", path="test/resource/input_files/input_File1.txt")
+        f1 = IOFilePut(name="input1", path="test/resource/input_files/input_file1.txt")
         f1.type = input_entry
 
         f2 = IOFilePut(name="output1", path="test/output/output_File1.txt")
@@ -129,7 +129,7 @@ class TestReader(TestCase):
         input_entry = Type(name="input")
         output_entry = Type(name="output")
 
-        f1 = IOFilePut(name="input1", path="test/resource/input_files/input_File1.txt")
+        f1 = IOFilePut(name="input1", path="test/resource/input_files/input_file1.txt")
         f1.type = input_entry
 
         f2 = IOFilePut(name="output1", path="test/output/output_File1.txt")

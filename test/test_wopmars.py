@@ -158,7 +158,7 @@ class TestWopMars(TestCase):
 
     def test_run_one_tool(self):
         cmd_line = ["python", "tool", "test.resource.wrapper.FooWrapper4",
-                  "-i", "{'file': {'input1': 'test/resource/input_files/input_File1.txt'}}",
+                  "-i", "{'file': {'input1': 'test/resource/input_files/input_file1.txt'}}",
                   "-o", "{'file': {'output1': 'test/output/output1.txt'}}", "-D", self.__db_url, "-vv", "-p", "-d",
                   PathFinder.get_module_path()]
         with self.assertRaises(SystemExit) as se:
