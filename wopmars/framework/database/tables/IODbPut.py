@@ -98,12 +98,7 @@ class IODbPut(IOPut, Base):
                 for s in stmt:
                     data={"statement": str(s), "tablename": str(tablename)} 
                     if SQLManager.instance().__dict__['d_database_config']['db_connection'] == 'sqlite':
-                        sql_trigger = """
-CREATE TRIGGER IF NOT EXISTS modification_%(tablename)s AFTER %(statement)s ON %(tablename)s
-BEGIN
-UPDATE wom_modification_table SET date = CURRENT_TIMESTAMP WHERE table_name = '%(tablename)s';
-END;
-    """%data
+                        sql_trigger = """CREATE TRIGGER IF NOT EXISTS trigger_modif_%(tablename)s_%(statement)s AFTER %(statement)s ON %(tablename)s BEGIN UPDATE wom_modification_table SET date = CURRENT_TIMESTAMP WHERE table_name = '%(tablename)s'; END;"""%data
                     elif SQLManager.instance().__dict__['d_database_config']['db_connection'] == 'mysql':
                         sql_trigger = """
 CREATE TRIGGER IF NOT EXISTS modification_%(tablename)s_%(statement)s AFTER %(statement)s ON %(tablename)s for each row UPDATE wom_modification_table SET date = CURRENT_TIMESTAMP WHERE table_name = '%(tablename)s';
@@ -121,8 +116,9 @@ $modification_%(statement)s_%(tablename)s$ LANGUAGE plpgsql;
 DROP TRIGGER IF EXISTS modification_%(statement)s_%(tablename)s ON "%(tablename)s";
 CREATE TRIGGER modification_%(statement)s_%(tablename)s AFTER INSERT ON "%(tablename)s" FOR EACH ROW EXECUTE PROCEDURE modification_%(statement)s_%(tablename)s();
     """%data
-                        obj_ddl = DDL(sql_trigger)
-                        SQLManager.instance().create_trigger(Base.metadata.tables[tablename], obj_ddl)
+                    # import pdb; pdb.set_trace()
+                    obj_ddl = DDL(sql_trigger)
+                    SQLManager.instance().create_trigger(Base.metadata.tables[tablename], obj_ddl)
 
 
     @staticmethod

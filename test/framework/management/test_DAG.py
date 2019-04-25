@@ -100,7 +100,7 @@ class TestDAG(TestCase):
         SQLManager.instance().get_session().close() 
         SQLManager.instance().drop_all()
         OptionManager._drop()
-        PathFinder.silentremove("test/output/output_File1.txt")
+        PathFinder.silentremove("test/output/output_file1.txt")
         SQLManager._drop()
 
     def test_init(self):

@@ -2,67 +2,67 @@ rule rule1:
     tool: FooWrapper11
     input:
         file:
-            input1: "test/resource/input_files/input_File1.txt"
+            input1: "test/resource/input_files/input_file1.txt"
     output:
         file:
-            output1: "test/output/output_File1.txt"
-            output2: "test/output/output_File2.txt"
-            output3: "test/output/output_File3.txt"
+            output1: "test/output/output_file1.txt"
+            output2: "test/output/output_file2.txt"
+            output3: "test/output/output_file3.txt"
 
 rule rule2:
     tool: FooWrapper6
     input:
         file:
-            input1: "test/output/output_File1.txt"
+            input1: "test/output/output_file1.txt"
     output:
         file:
-            output1: "test/output/output_File4.txt"
-            output2: "test/output/output_File5.txt"
+            output1: "test/output/output_file4.txt"
+            output2: "test/output/output_file5.txt"
 
 rule rule3:
     tool: FooWrapper2
     input:
         file:
-            input1: "test/output/output_File4.txt"
+            input1: "test/output/output_file4.txt"
     output:
         file:
-            output1: "test/output/output_File6.txt"
+            output1: "test/output/output_file6.txt"
 
 rule rule4:
     tool: FooWrapper10
     input:
         file:
-            input1: "test/output/output_File6.txt"
-            input2: "test/output/output_File7.txt"
-            input3: "test/output/output_File9.txt"
+            input1: "test/output/output_file6.txt"
+            input2: "test/output/output_file7.txt"
+            input3: "test/output/output_file9.txt"
     output:
         file:
-            output1: "test/output/output_File10.txt"
+            output1: "test/output/output_file10.txt"
 
 rule rule5:
     tool: FooWrapper8
     input:
         file:
-            input1: "test/output/output_File5.txt"
-            input2: "test/output/output_File2.txt"
+            input1: "test/output/output_file5.txt"
+            input2: "test/output/output_file2.txt"
     output:
         file:
-            output1: "test/output/output_File7.txt"
+            output1: "test/output/output_file7.txt"
 
 rule rule6:
     tool: FooWrapper2
     input:
         file:
-            input1: "test/output/output_File3.txt"
+            input1: "test/output/output_file3.txt"
     output:
         file:
-            output1: "test/output/output_File8.txt"
+            output1: "test/output/output_file8.txt"
 
 rule rule7:
     tool: FooWrapper2
     input:
         file:
-            input1: "test/output/output_File8.txt"
+            input1: "test/output/output_file8.txt"
     output:
         file:
-            output1: "test/output/output_File9.txt"
+            output1: "test/output/output_file9.txt"

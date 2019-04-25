@@ -2,7 +2,7 @@ rule rule4:
     tool: FooWrapper4
     input:
         file:
-            input1: "input_File1.txt"
+            input1: "input_file1.txt"
     output:
         file:
             output1: "aFile2.txt"
@@ -23,5 +23,5 @@ rule rule6:
             input1: "aFile2.txt"
     output:
         file:
-            output1: "input_File1.txt"
+            output1: "input_file1.txt"
 
