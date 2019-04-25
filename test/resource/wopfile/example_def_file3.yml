@@ -7,5 +7,5 @@ rule rule1:
             FooBasePackaged: test.resource.wrapper.fooPackage.FooBasePackaged
     output:
         file:
-            output1: "test/output/output_File1.txt"
+            output1: "test/output/output_file1.txt"
 

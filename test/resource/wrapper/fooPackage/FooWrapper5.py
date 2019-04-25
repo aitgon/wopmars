@@ -3,9 +3,8 @@ Module containing the FooWrapper1 class
 """
 import time
 
-from matplotlib.compat import subprocess
+import subprocess
 
-from FooBase import FooBase
 from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
 
 class FooWrapper5(ToolWrapper):
@@ -28,7 +27,6 @@ class FooWrapper5(ToolWrapper):
         print(self.__class__.__name__ + " is running...")
         p = subprocess.Popen(["touch", self.output_file("output1")])
         p.wait()
-        # self.session().delete_content(self.output_table("FooBase"))
         for i in range(10):
             f = self.output_table("FooBaseP")(name="Foowrapper5 - " + str(i))
             self.session().add(f)

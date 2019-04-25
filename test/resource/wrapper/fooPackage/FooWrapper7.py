@@ -4,8 +4,8 @@ Module containing the FooWrapper1 class
 import os
 import time
 
-from FooBase2 import FooBase2
 from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
+
 
 class FooWrapper7(ToolWrapper):
     """
@@ -26,5 +26,5 @@ class FooWrapper7(ToolWrapper):
         for i in inputs:
             entry = self.output_table("FooBase2P")(name=i.name)
             self.session().add(entry)
-        print(self.session().query(FooBase2).all())
+        print(self.session().query(self.output_table("FooBase2P")).all())
         time.sleep(1)
