@@ -286,6 +286,19 @@ class ToolWrapper(Base):
 
     ### Workflow Manager methods
 
+    def get_input_files_not_ready(self):
+        """
+        Check if inputs are ready
+
+        :return: bool - True if inputs are ready.
+        """
+        input_files_not_ready = []
+        input_files = [f for f in self.files if f.type.name == "input"]
+        for i in input_files:
+            if not i.is_ready():
+                input_files_not_ready.append(i)
+        return input_files_not_ready
+
     def are_inputs_ready(self):
         """
         Check if inputs are ready

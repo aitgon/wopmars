@@ -1,0 +1,8 @@
+rule rule1:
+    tool: test.resource.wrapper.FooWrapper4
+    input:
+        file:
+            input1: "test/resource/input_files/input_File_coucou.txt"
+    output:
+        file:
+            output1: "test/output/output_file1.txt"

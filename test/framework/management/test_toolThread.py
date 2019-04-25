@@ -32,10 +32,10 @@ class TestToolThread(TestCase):
         input_entry = Type(name="input")
         output_entry = Type(name="output")
 
-        f1 = IOFilePut(name="input1", path="test/resource/input_files/input_File1.txt")
+        f1 = IOFilePut(name="input1", path="test/resource/input_files/input_file1.txt")
         f1.type = input_entry
 
-        f2 = IOFilePut(name="output1", path="test/output/output_File1.txt")
+        f2 = IOFilePut(name="output1", path="test/output/output_file1.txt")
         f2.type = output_entry
 
         t1 = IODbPut(model="FooBase", tablename="FooBase")
@@ -48,10 +48,10 @@ class TestToolThread(TestCase):
         tw1.files.extend([f1, f2])
         tw1.tables.append(t1)
 
-        f12 = IOFilePut(name="input1", path="test/resource/input_files/input_File1.txt")
+        f12 = IOFilePut(name="input1", path="test/resource/input_files/input_file1.txt")
         f12.type = input_entry
 
-        f22 = IOFilePut(name="output1", path="test/output/output_File1.txt")
+        f22 = IOFilePut(name="output1", path="test/output/output_file1.txt")
         f22.type = output_entry
 
         t12 = IODbPut(model="FooBase", tablename="FooBase")
@@ -65,10 +65,10 @@ class TestToolThread(TestCase):
         tw2.files.extend([f12, f22])
         tw2.tables.append(t12)
 
-        f13 = IOFilePut(name="input1", path="test/resource/input_files/input_File1.txt")
+        f13 = IOFilePut(name="input1", path="test/resource/input_files/input_file1.txt")
         f13.type = input_entry
 
-        f23 = IOFilePut(name="output1", path="test/output/output_File1.txt")
+        f23 = IOFilePut(name="output1", path="test/output/output_file1.txt")
         f23.type = output_entry
 
         t13 = IODbPut(model="FooBase", tablename="FooBase")
@@ -100,7 +100,7 @@ class TestToolThread(TestCase):
         input_entry = Type(name="input")
         output_entry = Type(name="output")
 
-        f1 = IOFilePut(name="input1", path="test/resource/input_files/input_File1.txt")
+        f1 = IOFilePut(name="input1", path="test/resource/input_files/input_file1.txt")
         f1.type = input_entry
 
         t1 = IODbPut(model="FooBase", tablename="FooBase")
@@ -116,7 +116,7 @@ class TestToolThread(TestCase):
         tw1.tables.append(t1)
         tw1.options.append(o1)
 
-        f12 = IOFilePut(name="input1", path="test/resource/input_files/input_File1.txt")
+        f12 = IOFilePut(name="input1", path="test/resource/input_files/input_file1.txt")
         f12.type = input_entry
 
         t12 = IODbPut(model="FooBase", tablename="FooBase")
@@ -133,7 +133,7 @@ class TestToolThread(TestCase):
         tw12.tables.append(t12)
         tw12.options.append(o12)
 
-        f13 = IOFilePut(name="input1", path="test/resource/input_files/input_File1.txt")
+        f13 = IOFilePut(name="input1", path="test/resource/input_files/input_file1.txt")
         f13.type = input_entry
 
         t13 = IODbPut(model="FooBase", tablename="FooBase")

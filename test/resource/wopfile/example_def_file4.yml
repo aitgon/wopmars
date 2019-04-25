@@ -2,69 +2,69 @@ rule rule1:
     tool: test.resource.wrapper.fooPackage.FooWrapper4
     input:
         file:
-            input1: "test/resource/input_files/input_File1.txt"
+            input1: "test/resource/input_files/input_file1.txt"
     output:
         file:
-            output1: "test/output/output_File1.txt"
+            output1: "test/output/output_file1.txt"
 
-#rule rule2:
-#    tool: test.resource.wrapper.fooPackage.FooWrapper5
-#    input:
-#        file:
-#            input1: "test/output/output_File1.txt"
-#    output:
-#        file:
-#            output1: "test/output/output_File2.txt"
-#        table:
-#            FooBase: test.resource.wrapper.fooPackage.FooBaseP
+rule rule2:
+    tool: test.resource.wrapper.fooPackage.FooWrapper5
+    input:
+        file:
+            input1: "test/output/output_file1.txt"
+    output:
+        file:
+            output1: "test/output/output_file2.txt"
+        table:
+            FooBaseP: test.resource.wrapper.fooPackage.FooBaseP
 
-#rule rule3:
-#    tool: test.resource.wrapper.fooPackage.FooWrapper6
-#    input:
-#        file:
-#            input1: "test/output/output_File1.txt"
-#    output:
-#        file:
-#            output1: "test/output/output_File3.txt"
-#            output2: "test/output/output_File4.txt"
-#
-#rule rule4:
-#    tool: test.resource.wrapper.fooPackage.FooWrapper7
-#    input:
-#        table:
-#            FooBaseP: "test.resource.wrapper.fooPackage.FooBaseP"
-#    output:
-#        table:
-#            FooBase2P: "test.resource.wrapper.fooPackage.FooBase2P"
-#
-#rule rule5:
-#    tool: test.resource.wrapper.fooPackage.FooWrapper8
-#    input:
-#        file:
-#            input1: "test/output/output_File3.txt"
-#            input2: "test/output/output_File2.txt"
-#    output:
-#        file:
-#            output1: "test/output/output_File5.txt"
-#
-#rule rule6:
-#    tool: test.resource.wrapper.fooPackage.FooWrapper9
-#    input:
-#        file:
-#            input1: "test/output/output_File4.txt"
-#        table:
-#            FooBase2P: "test.resource.wrapper.fooPackage.FooBase2P"
-#    output:
-#        file:
-#            output1: "test/output/output_File6.txt"
-#
-#rule rule7:
-#    tool: test.resource.wrapper.fooPackage.FooWrapper10
-#    input:
-#        file:
-#            input1: "test/output/output_File1.txt"
-#            input2: "test/output/output_File5.txt"
-#            input3: "test/output/output_File6.txt"
-#    output:
-#        file:
-#            output1: "test/output/output_File7.txt"
+rule rule3:
+    tool: test.resource.wrapper.fooPackage.FooWrapper6
+    input:
+        file:
+            input1: "test/output/output_file1.txt"
+    output:
+        file:
+            output1: "test/output/output_file3.txt"
+            output2: "test/output/output_file4.txt"
+
+rule rule4:
+    tool: test.resource.wrapper.fooPackage.FooWrapper7
+    input:
+        table:
+            FooBaseP: "test.resource.wrapper.fooPackage.FooBaseP"
+    output:
+        table:
+            FooBase2P: "test.resource.wrapper.fooPackage.FooBase2P"
+
+rule rule5:
+    tool: test.resource.wrapper.fooPackage.FooWrapper8
+    input:
+        file:
+            input1: "test/output/output_file3.txt"
+            input2: "test/output/output_file2.txt"
+    output:
+        file:
+            output1: "test/output/output_file5.txt"
+
+rule rule6:
+    tool: test.resource.wrapper.fooPackage.FooWrapper9
+    input:
+        file:
+            input1: "test/output/output_file4.txt"
+        table:
+            FooBase2P: "test.resource.wrapper.fooPackage.FooBase2P"
+    output:
+        file:
+            output1: "test/output/output_file6.txt"
+
+rule rule7:
+    tool: test.resource.wrapper.fooPackage.FooWrapper10
+    input:
+        file:
+            input1: "test/output/output_file1.txt"
+            input2: "test/output/output_file5.txt"
+            input3: "test/output/output_file6.txt"
+    output:
+        file:
+            output1: "test/output/output_file7.txt"

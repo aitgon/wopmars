@@ -222,7 +222,7 @@ class TestToolWrapper(TestCase):
 
         s_root_path = PathFinder.get_module_path()
 
-        s_path_to_example_file_that_exists = os.path.join(s_root_path, "test/resource/input_files/input_File1.txt")
+        s_path_to_example_file_that_exists = os.path.join(s_root_path, "test/resource/input_files/input_file1.txt")
 
         f1 = IOFilePut(name="input1", path=s_path_to_example_file_that_exists)
         f1.type = self.input_entry

@@ -302,12 +302,16 @@ class WorkflowManager(ToolWrapperObserver):
             elif not self.check_buffer():
                 # If there is no tool being executed but there is that are waiting something, the workflow has an issue
                 finished_at = datetime.datetime.fromtimestamp(time.time())
-                self.set_finishing_informations(finished_at, "ERROR")
-                raise WopMarsException("The workflow has failed.",
-                                       "The inputs are not ready for the remaining tools: " +
-                                       ", \n".join([t.get_toolwrapper().toolwrapper +
-                                                  " -> rule: " +
-                                                  t.get_toolwrapper().name for t in self.__list_queue_buffer]) + ". ")
+                tw_list = [t.get_toolwrapper() for t in self.__list_queue_buffer]
+                if len(tw_list) > 0:
+                    input_files_not_ready = tw_list[0].get_input_files_not_ready()
+                    self.set_finishing_informations(finished_at, "ERROR")
+                    raise WopMarsException("The workflow has failed.",
+                                           "The inputs '{}' have failed for this tool '{}'".format(input_files_not_ready[0], tw_list[0].name))
+                                           # "The inputs are not ready for thisto: " +
+                                           # ", \n".join([t.get_toolwrapper().toolwrapper +
+                                           #            " -> rule: " +
+                                           #            t.get_toolwrapper().name for t in self.__list_queue_buffer]) + ". ")
             # If there is one tool that is ready, it means that it is in queue because ressources weren't available.
 
     def set_finishing_informations(self, finished_at, status):

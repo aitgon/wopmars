@@ -2,10 +2,10 @@ rule rule1:
     tool: test.resource.wrapper.fooPackage.FooWrapperPackaged
     input:
         file:
-            input1: "test/resource/input_files/input_File1.txt"
+            input1: "test/resource/input_files/input_file1.txt"
         table:
             FooBasePackaged: test.resource.wrapper.fooPackage.FooBasePackaged
     output:
         file:
-            output1: "test/output/output_File1.txt"
+            output1: "test/output/output_file1.txt"
 

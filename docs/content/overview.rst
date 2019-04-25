@@ -7,7 +7,6 @@ A Wopmars workflow requires the definition of three types of files:
 - The tool wrappers
 - The models
 
-
 The *wopfile* defines the rules to convert inputs into outputs based on a tool:
 
 .. code-block:: yaml
