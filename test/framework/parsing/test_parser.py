@@ -130,7 +130,6 @@ class TestParser(TestCase):
         dag_expected = DAG(set_toolwrappers)
         OptionManager.instance()["--wopfile"] = os.path.join(self.__s_root_path, "test/resource/wopfile/example_def_file1.yml")
         dag_obtained = self.__parser.parse()
-
         self.assertEqual(dag_expected, dag_obtained)
 
         OptionManager.instance()["--wopfile"] = os.path.join(self.__s_root_path, "test/resource/wopfile/example_def_file_not_a_dag.yml")
