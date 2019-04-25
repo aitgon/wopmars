@@ -34,7 +34,7 @@ class TestWopMars(TestCase):
         self.__example_def_file_input_not_ready = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file_input_not_ready.yml")
 
     def test_01run(self):
-        cmd_line = ["python", "-l", "-D", self.__db_url, "-w", self.__example_def_file1, "-v", "-p", "-d", PathFinder.get_module_path(), "--targetrule", "rule2", "-F"]
+        cmd_line = ["python", "-l", "-D", self.__db_url, "-w", self.__example_def_file1, "-v", "-p", "-d", PathFinder.get_module_path()]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
         self.assertTrue(os.path.exists(os.path.join(self.s_root_path, 'test/output/output_file1.txt')))
@@ -206,12 +206,12 @@ class TestWopMars(TestCase):
            WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 1)
 
-    # def tearDown(self):
-    #     SQLManager.instance().get_session().close()
-    #     SQLManager.instance().drop_all()
-    #     PathFinder.dir_content_remove(os.path.join(self.s_root_path, "test/output"))
-    #     OptionManager._drop()
-    #     SQLManager._drop()
+    def tearDown(self):
+        SQLManager.instance().get_session().close()
+        SQLManager.instance().drop_all()
+        PathFinder.dir_content_remove(os.path.join(self.s_root_path, "test/output"))
+        OptionManager._drop()
+        SQLManager._drop()
 
 if __name__ == "__main__":
     unittest.main()
