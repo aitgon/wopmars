@@ -5,7 +5,7 @@ __copyright__ = "Copyright 2017, Luc Giffon"
 __email__ = "luc.giffon@gmail.com"
 __license__ = "MIT"
 
-
+import wopmars
 from codecs import open
 from os import path
 import sys
@@ -27,7 +27,9 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
-__version__='0.0.1'
+
+
+__version__=str(wopmars.__version__)
 
 here = path.abspath(path.dirname(__file__))
 
