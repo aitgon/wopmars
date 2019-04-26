@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import pandas
+import wopmars
 
 # WopMars documentation build configuration file, created by
 # sphinx-quickstart on Wed Jul 27 13:45:18 2016.
