@@ -60,7 +60,7 @@ class TestReader(TestCase):
 
         self.__list_s_to_exception_read = [
             os.path.join(self.__s_root_path, s_path) for s_path in [
-                "test/resource/wopfile/example_def_file_wrong_content.yml",
+                "test/resource/wopfile/example_def_file1.yml",
                 "test/resource/wopfile/example_def_file_wrong_content2.yml",
                 "test/resource/wopfile/example_def_file_wrong_content3.yml",
                 "test/resource/wopfile/example_def_file_wrong_content4.yml",
@@ -71,19 +71,12 @@ class TestReader(TestCase):
         ]
 
     def test_load_definition_file(self):
-        [self.assertRaises(WopMarsException, self.__reader.load_definition_file, file) for file in self.__list_f_to_exception_init]
-
+        for file in self.__list_f_to_exception_init:
+            with self.assertRaises(WopMarsException):
+                self.__reader.load_definition_file(file)
         # Not existing file
         with self.assertRaises(WopMarsException):
             self.__reader.load_definition_file("Not existing file.")
-
-    def tearDown(self):
-        SQLManager.instance().get_session().close()
-        s_root_path = PathFinder.get_module_path()
-        SQLManager.instance().drop_all()
-        PathFinder.dir_content_remove(os.path.join(s_root_path, "test/output"))
-        OptionManager._drop()
-        SQLManager._drop()
 
     def test_check_duplicate_rule(self):
         with open(self.__s_example_definition_file_duplicate_rule) as file_duplicate_rule:
@@ -218,6 +211,14 @@ class TestReader(TestCase):
         [self.assertRaises(WopMarsException, self.__reader.read, file) for file in self.__list_s_to_exception_read]
 
         SQLManager.instance().get_session().rollback()
+
+    def tearDown(self):
+        SQLManager.instance().get_session().close()
+        s_root_path = PathFinder.get_module_path()
+        SQLManager.instance().drop_all()
+        PathFinder.dir_content_remove(os.path.join(s_root_path, "test/output"))
+        OptionManager._drop()
+        SQLManager._drop()
 
 
 if __name__ == "__main__":
