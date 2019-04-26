@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to WopMars's documentation!
-===================================
+WopMars: Workflow Python Manager for Reproducible Science
+======================================================================
 
 .. image:: https://travis-ci.org/aitgon/wopmars.svg?branch=master
     :target: https://travis-ci.org/aitgon/wopmars
