@@ -27,7 +27,7 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
-__version__='1.1.30'
+__version__='0.0.1'
 
 here = path.abspath(path.dirname(__file__))
 
