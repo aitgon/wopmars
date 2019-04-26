@@ -60,7 +60,7 @@ class TestReader(TestCase):
 
         self.__list_s_to_exception_read = [
             os.path.join(self.__s_root_path, s_path) for s_path in [
-                "test/resource/wopfile/example_def_file_wrong_content.yml",
+                "test/resource/wopfile/example_def_file1.yml",
                 "test/resource/wopfile/example_def_file_wrong_content2.yml",
                 "test/resource/wopfile/example_def_file_wrong_content3.yml",
                 "test/resource/wopfile/example_def_file_wrong_content4.yml",
@@ -71,8 +71,9 @@ class TestReader(TestCase):
         ]
 
     def test_load_definition_file(self):
-        [self.assertRaises(WopMarsException, self.__reader.load_definition_file, file) for file in self.__list_f_to_exception_init]
-
+        for file in self.__list_f_to_exception_init:
+            with self.assertRaises(WopMarsException):
+                self.__reader.load_definition_file(file)
         # Not existing file
         with self.assertRaises(WopMarsException):
             self.__reader.load_definition_file("Not existing file.")
