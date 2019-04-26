@@ -64,7 +64,7 @@ from wopmars.constants import home_wopmars
 # todo option pour reset les resultats (supprimer le contenu de la database) / fresh run
 # todo ajouter un flag NOT_FINISHED aux executions
 
-__version__='0.0.1'
+__version__='0.0.2'
 
 class WopMars:
 
