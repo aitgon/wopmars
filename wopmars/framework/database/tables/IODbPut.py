@@ -1,5 +1,4 @@
 import importlib
-import datetime
 import time
 
 from sqlalchemy.exc import OperationalError
@@ -37,7 +36,7 @@ class IODbPut(IOPut, Base):
     model = Column(String(255))
     rule_id = Column(Integer, ForeignKey("wom_rule.id"))
     type_id = Column(Integer, ForeignKey("wom_type.id"))
-    used_at = Column(DateTime, nullable=True)
+    used_at = Column(Integer, nullable=True)
 
     # One table is in one rule
     rule = relationship("ToolWrapper", back_populates="tables", enable_typechecks=False)
@@ -116,7 +115,6 @@ $modification_%(statement)s_%(tablename)s$ LANGUAGE plpgsql;
 DROP TRIGGER IF EXISTS modification_%(statement)s_%(tablename)s ON "%(tablename)s";
 CREATE TRIGGER modification_%(statement)s_%(tablename)s AFTER INSERT ON "%(tablename)s" FOR EACH ROW EXECUTE PROCEDURE modification_%(statement)s_%(tablename)s();
     """%data
-                    # import pdb; pdb.set_trace()
                     obj_ddl = DDL(sql_trigger)
                     SQLManager.instance().create_trigger(Base.metadata.tables[tablename], obj_ddl)
 

@@ -1,4 +1,3 @@
-import datetime
 import os
 
 import time
@@ -40,8 +39,8 @@ class ToolWrapper(Base):
     name = Column(String(255))
     toolwrapper = Column(String(255))
     execution_id = Column(Integer, ForeignKey("wom_execution.id"))
-    started_at = Column(DateTime, nullable=True)
-    finished_at = Column(DateTime, nullable=True)
+    started_at = Column(Integer, nullable=True)
+    finished_at = Column(Integer, nullable=True)
     time = Column(Float, nullable=True)
     status = Column(String(255), nullable=True, default="NOT_EXECUTED")
 
@@ -71,7 +70,7 @@ class ToolWrapper(Base):
         self.__state is the state given to the Toolwrapper to let the
         :class:`~.wopmars.framework.management.WorflowManager.WorkflowManager` knows if the Toolwrapper is
         able to be executed or not.
-
+datetime
         self.__session is the session (WopMarsSession) associated with the Toolwrapper and which will be used in the run method.
         self.__state is an integer which says the actual state of the TooLWrapper: ``NEW``, ``READY``, ``NOT_READY``
 
@@ -346,7 +345,7 @@ class ToolWrapper(Base):
         session = SQLManager.instance().get_session()
         for f in [f for f in self.files if f.type.name == type]:
             try:
-                date = datetime.datetime.fromtimestamp(os.path.getmtime(f.path))
+                date = os.path.getmtime(f.path)
                 size = os.path.getsize(f.path)
             except FileNotFoundError as FE:
                 # todo ask lionel sans ce rollback, ca bug, pourquoi? la session est vide... comme si la query etait bloquante
@@ -427,9 +426,9 @@ class ToolWrapper(Base):
 
         :return: Bool: True if the output is actually more recent than input
         """
-        most_recent_input = max([datetime.datetime.fromtimestamp(os.path.getmtime(f.path)) for f in self.files if f.type.name == "input"] +
+        most_recent_input = max([os.path.getmtime(f.path) for f in self.files if f.type.name == "input"] +
                                 [t.modification.date for t in self.tables if t.type.name == "input"])
-        oldest_output = min([datetime.datetime.fromtimestamp(os.path.getmtime(f.path)) for f in self.files if f.type.name == "output"] +
+        oldest_output = min([os.path.getmtime(f.path) for f in self.files if f.type.name == "output"] +
                             [t.modification.date for t in self.tables if t.type.name == "output"])
         # in seconds since the begining of time (computer), the oldest thing has a lower number of seconds
         return most_recent_input < oldest_output
@@ -498,7 +497,8 @@ class ToolWrapper(Base):
         if stop is not None:
             self.finished_at = stop
         if self.started_at is not None and self.finished_at is not None:
-            self.time = (self.finished_at - self.started_at).total_seconds()
+            #self.time = (self.finished_at - self.started_at).total_seconds()
+            self.time = self.finished_at - self.started_at
         if status is not None:
             self.status = status
 

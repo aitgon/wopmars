@@ -1,4 +1,3 @@
-import datetime
 import importlib
 #import jinja2
 import re
@@ -292,7 +291,7 @@ class Reader:
         dict_params = dict(eval(s_dict_params))
         try:
             # The same execution entry for the whole workflow-related database entries.
-            execution = Execution(started_at=datetime.datetime.fromtimestamp(time.time()))
+            execution = Execution(started_at=time.time())
             # get the types that should have been created previously
             input_entry = session.query(Type).filter(Type.name == "input").one()
             output_entry = session.query(Type).filter(Type.name == "output").one()
@@ -378,7 +377,7 @@ class Reader:
         # The dict_workflow_definition is assumed to be well formed
         try:
             # The same execution entry for the whole workflow-related database entries.
-            execution = Execution(started_at=datetime.datetime.fromtimestamp(time.time()))
+            execution = Execution(started_at=time.time())
             # get the types database entries that should have been created previously
             input_entry = session.query(Type).filter(Type.name == "input").one()
             output_entry = session.query(Type).filter(Type.name == "output").one()
@@ -551,8 +550,7 @@ class Reader:
                     # insert in the database the date of last modification of a developper-side table
                     modification_table_entry, created = session.get_or_create(ModificationTable,
                                                                               defaults={
-                                                                                  "date": datetime.datetime.fromtimestamp(
-                                                                                      time.time())},
+                                                                                  "date": time.time()},
                                                                               table_name=input_t)
                     iodbput_entry.modification = modification_table_entry
                     iodbput_entry.type = input_entry
@@ -581,8 +579,7 @@ class Reader:
                     iodbput_entry = dict_dict_dict_elm["dict_output"][elm][output_t]
                     modification_table_entry, created = session.get_or_create(ModificationTable,
                                                                               defaults={
-                                                                                  "date": datetime.datetime.fromtimestamp(
-                                                                                      time.time())},
+                                                                                  "date": time.time()},
                                                                               table_name=output_t)
                     iodbput_entry.modification = modification_table_entry
                     iodbput_entry.type = output_entry

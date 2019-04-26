@@ -1,4 +1,3 @@
-import datetime
 import time
 import unittest
 from unittest import TestCase
@@ -41,7 +40,7 @@ class TestToolThread(TestCase):
         t1 = IODbPut(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
         t1.type = output_entry
-        modification_table_entry = ModificationTable(date=datetime.datetime.fromtimestamp(time.time()), table_name=t1.tablename)
+        modification_table_entry = ModificationTable(date=time.time(), table_name=t1.tablename)
         t1.modification = modification_table_entry
 
         tw1 = FooWrapper5(rule_name="rule1")
@@ -58,7 +57,7 @@ class TestToolThread(TestCase):
         t12.set_table(FooBase)
         t12.type = output_entry
         modification_table_entry = ModificationTable(
-            date=datetime.datetime.fromtimestamp(time.time()), table_name=t12.tablename)
+            date=time.time(), table_name=t12.tablename)
         t12.modification = modification_table_entry
 
         tw2 = FooWrapper5(rule_name="rule2")
@@ -75,7 +74,7 @@ class TestToolThread(TestCase):
         t13.set_table(FooBase)
         t13.type = output_entry
         modification_table_entry = ModificationTable(
-            date=datetime.datetime.fromtimestamp(time.time()), table_name=t13.tablename)
+            date=time.time(), table_name=t13.tablename)
         t13.modification = modification_table_entry
 
         tw3 = FooWrapper5(rule_name="rule3")
@@ -106,7 +105,7 @@ class TestToolThread(TestCase):
         t1 = IODbPut(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
         t1.type = output_entry
-        modification_table_entry = ModificationTable(date=datetime.datetime.fromtimestamp(time.time()), table_name=t1.tablename)
+        modification_table_entry = ModificationTable(date=time.time(), table_name=t1.tablename)
         t1.modification = modification_table_entry
 
         o1 = Option(name="rows", value="1000")
@@ -122,7 +121,7 @@ class TestToolThread(TestCase):
         t12 = IODbPut(model="FooBase", tablename="FooBase")
         t12.set_table(FooBase)
         t12.type = output_entry
-        modification_table_entry = ModificationTable(date=datetime.datetime.fromtimestamp(time.time()),
+        modification_table_entry = ModificationTable(date=time.time(),
                                                      table_name=t12.tablename)
         t12.modification = modification_table_entry
 
@@ -139,7 +138,7 @@ class TestToolThread(TestCase):
         t13 = IODbPut(model="FooBase", tablename="FooBase")
         t13.set_table(FooBase)
         t13.type = output_entry
-        modification_table_entry = ModificationTable(date=datetime.datetime.fromtimestamp(time.time()),
+        modification_table_entry = ModificationTable(date=time.time(),
                                                      table_name=t13.tablename)
         t13.modification = modification_table_entry
 

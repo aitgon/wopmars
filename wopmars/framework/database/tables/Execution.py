@@ -25,8 +25,8 @@ class Execution(Base):
     __tablename__ = "wom_execution"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    started_at = Column(DateTime, nullable=True)
-    finished_at = Column(DateTime, nullable=True)
+    started_at = Column(Integer, nullable=True)
+    finished_at = Column(Integer, nullable=True)
     time = Column(Float, nullable=True)
     status = Column(String(255), nullable=True)
 
