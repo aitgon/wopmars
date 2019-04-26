@@ -10,6 +10,11 @@ from codecs import open
 from os import path
 import sys
 
+def get_version():
+    """Return package version from setup.cfg."""
+    config = RawConfigParser()
+    config.read(os.path.join('.', 'setup.cfg'))
+    return config.get('metadata', 'version')
 
 if sys.version_info < (3, 3):
     print("At least Python 3.3 is required.\n", file=sys.stderr)
@@ -27,17 +32,13 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
-
-
-__version__=str(wopmars.__version__)
-
 here = path.abspath(path.dirname(__file__))
 
 with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(name='wopmars',
-    version=__version__,
+    version=str(get_version()),
     description='Workflow Python Manager for Reproducible Science',
     long_description=long_description,
     url='https://github.com/aitgon/wopmars',
