@@ -9,11 +9,12 @@ import wopmars
 from codecs import open
 from os import path
 import sys
+import configparser
 
 def get_version():
     """Return package version from setup.cfg."""
-    config = RawConfigParser()
-    config.read(os.path.join('.', 'setup.cfg'))
+    rawconfigparser = config.parser.RawConfigParser()
+    rawconfigparser.read(os.path.join('..', 'setup.cfg'))
     return config.get('metadata', 'version')
 
 if sys.version_info < (3, 3):

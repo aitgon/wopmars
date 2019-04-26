@@ -16,15 +16,16 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+
+import configparser
 import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
-from configparser import RawConfigParser
 
 def get_version():
     """Return package version from setup.cfg."""
-    config = RawConfigParser()
-    config.read(os.path.join('..', 'setup.cfg'))
+    rawconfigparser = config.parser.RawConfigParser()
+    rawconfigparser.read(os.path.join('..', 'setup.cfg'))
     return config.get('metadata', 'version')
 
 # -- General configuration ------------------------------------------------
