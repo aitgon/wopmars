@@ -25,7 +25,7 @@ import os
 def get_version():
     """Return package version from setup.cfg."""
     config = RawConfigParser()
-    config.read(os.path.join('.', 'setup.cfg'))
+    config.read(os.path.join('..', 'setup.cfg'))
     return config.get('metadata', 'version')
 
 # -- General configuration ------------------------------------------------
