@@ -78,14 +78,6 @@ class TestReader(TestCase):
         with self.assertRaises(WopMarsException):
             self.__reader.load_definition_file("Not existing file.")
 
-    def tearDown(self):
-        SQLManager.instance().get_session().close()
-        s_root_path = PathFinder.get_module_path()
-        SQLManager.instance().drop_all()
-        PathFinder.dir_content_remove(os.path.join(s_root_path, "test/output"))
-        OptionManager._drop()
-        SQLManager._drop()
-
     def test_check_duplicate_rule(self):
         with open(self.__s_example_definition_file_duplicate_rule) as file_duplicate_rule:
             with self.assertRaises(WopMarsException):
@@ -219,6 +211,14 @@ class TestReader(TestCase):
         [self.assertRaises(WopMarsException, self.__reader.read, file) for file in self.__list_s_to_exception_read]
 
         SQLManager.instance().get_session().rollback()
+
+    def tearDown(self):
+        SQLManager.instance().get_session().close()
+        s_root_path = PathFinder.get_module_path()
+        SQLManager.instance().drop_all()
+        PathFinder.dir_content_remove(os.path.join(s_root_path, "test/output"))
+        OptionManager._drop()
+        SQLManager._drop()
 
 
 if __name__ == "__main__":
