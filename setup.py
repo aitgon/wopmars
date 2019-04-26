@@ -9,12 +9,14 @@ import wopmars
 from codecs import open
 from os import path
 import sys
-import configparser
+import os
+from configparser import RawConfigParser
+
 
 def get_version():
     """Return package version from setup.cfg."""
-    rawconfigparser = config.parser.RawConfigParser()
-    rawconfigparser.read(os.path.join('..', 'setup.cfg'))
+    config = RawConfigParser()
+    config.read(os.path.join('.', 'setup.cfg'))
     return config.get('metadata', 'version')
 
 if sys.version_info < (3, 3):
@@ -63,7 +65,7 @@ setup(name='wopmars',
         'Topic :: Scientific/Engineering :: Information Analysis',
         'Topic :: Software Development',
     ],
-    download_url='https://github.com/aitgon/wopmars/archive/%s.tar.gz'%__version__,
+    download_url='https://github.com/aitgon/wopmars/archive/%s.tar.gz'%str(get_version()),
     keywords='workflow manager python object-oriented reproducible science database framework',
     packages=find_packages(exclude=['log', 'doc', '*.test_bak.*', 'soutenance', 'rapport']),
     install_requires = ["SQLAlchemy>=1.1.11", "docopt>=0.6.2", "schema>=0.6.5", "termcolor>=1.1.0", "PyYAML>=3.12", "networkx>=2.1"],

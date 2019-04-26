@@ -17,16 +17,16 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 
-import configparser
+from configparser import RawConfigParser
 import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
 def get_version():
     """Return package version from setup.cfg."""
-    rawconfigparser = config.parser.RawConfigParser()
-    rawconfigparser.read(os.path.join('..', 'setup.cfg'))
-    return config.get('metadata', 'version')
+    config = RawConfigParser()
+    config.read(os.path.join('.', 'setup.cfg'))
+    return config.get('metadata', 'version'
 
 # -- General configuration ------------------------------------------------
 
