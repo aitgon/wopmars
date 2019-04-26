@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
 
-__author__ = "Luc Giffon"
-__copyright__ = "Copyright 2017, Luc Giffon"
-__email__ = "luc.giffon@gmail.com"
+__author__ = "Luc Giffon, Lionel Spinelli, Aitor Gonzalez"
+__copyright__ = "Since copyright 2017, Luc Giffon, Lionel Spinelli, Aitor Gonzalez"
+__email__ = "aitor.gonzalez@univ-amu.fr"
 __license__ = "MIT"
 
 import wopmars
@@ -29,11 +29,6 @@ except ImportError:
     print("Please install setuptools before installing wopmars.",
           file=sys.stderr)
     exit(1)
-
-here = path.abspath(path.dirname(__file__))
-
-with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
-    long_description = f.read()
 
 here = path.abspath(path.dirname(__file__))
 
