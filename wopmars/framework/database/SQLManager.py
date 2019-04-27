@@ -58,6 +58,7 @@ class SQLManager(SingletonMixin):
         to assess the access to the databse without using the queue of SQLite, bound at 4 sec wait before error.
         """
         s_database_url = OptionManager.instance()["--database"]
+
         self.d_database_config = {'db_connection': None, 'db_database': None, 'db_url': s_database_url}
         self.d_database_config['db_connection'] = s_database_url.split("://")[0]
         if self.d_database_config['db_connection'] == "sqlite":
@@ -263,7 +264,7 @@ class SQLManager(SingletonMixin):
             self.__lock.acquire_write()
             # todo tabling
             Logger.instance().debug("SQLManager.drop(" + str(tablename) + "): drop table " + str(tablename))
-            Base.metadata.tables[tablename.split(".")[-1]].drop(self.__engine, checkfirst=True)
+            Base.metadata.tables[tablename.split(".")[-1]].drop(self.get_engine(), checkfirst=True)
         finally:
             # Always release the lock
             self.__lock.release()

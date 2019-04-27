@@ -547,10 +547,10 @@ class Reader:
                     iodbput_entry = dict_dict_dict_elm["dict_input"][elm][input_t]
                     # the user-side tables are created during the reading of the definition file
                     # table_entry = IODbPut(name=dict_dict_dict_elm["dict_input"][elm][input_t], tablename=input_t)
-                    # insert in the database the date of last modification of a developper-side table
+                    # insert in the database the time of last modification of a developper-side table
                     modification_table_entry, created = session.get_or_create(ModificationTable,
                                                                               defaults={
-                                                                                  "date": time.time()},
+                                                                                  "time": time.time()},
                                                                               table_name=input_t)
                     iodbput_entry.modification = modification_table_entry
                     iodbput_entry.type = input_entry
@@ -579,7 +579,7 @@ class Reader:
                     iodbput_entry = dict_dict_dict_elm["dict_output"][elm][output_t]
                     modification_table_entry, created = session.get_or_create(ModificationTable,
                                                                               defaults={
-                                                                                  "date": time.time()},
+                                                                                  "time": time.time()},
                                                                               table_name=output_t)
                     iodbput_entry.modification = modification_table_entry
                     iodbput_entry.type = output_entry
