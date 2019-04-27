@@ -1,4 +1,3 @@
-import datetime
 import os
 
 import time
@@ -23,8 +22,8 @@ class ToolWrapper(Base):
     - name: VARCHAR(255) - the name of the rule
     - toolwrapper: VARCHAR(255) - the name of the Toolwrapper
     - execution_id: INTEGER - foreign key to the table ``wom_execution`` - the associated execution
-    - started_at: DATE - date at wich the toolwrapper started its execution
-    - finished_at: DATE - date at wich the toolwrapper finished its execution
+    - started_at: INTEGER - unix time at wich the toolwrapper started its execution
+    - finished_at: INTEGER - unix time at wich the toolwrapper finished its execution
     - time: FLOAT - the total time toolwrapper execution
     - status: VARCHAR(255) - the final status of the Toolwrapper. it can be:
 
@@ -40,8 +39,8 @@ class ToolWrapper(Base):
     name = Column(String(255))
     toolwrapper = Column(String(255))
     execution_id = Column(Integer, ForeignKey("wom_execution.id"))
-    started_at = Column(DateTime, nullable=True)
-    finished_at = Column(DateTime, nullable=True)
+    started_at = Column(Integer, nullable=True)
+    finished_at = Column(Integer, nullable=True)
     time = Column(Float, nullable=True)
     status = Column(String(255), nullable=True, default="NOT_EXECUTED")
 
@@ -71,7 +70,6 @@ class ToolWrapper(Base):
         self.__state is the state given to the Toolwrapper to let the
         :class:`~.wopmars.framework.management.WorflowManager.WorkflowManager` knows if the Toolwrapper is
         able to be executed or not.
-
         self.__session is the session (WopMarsSession) associated with the Toolwrapper and which will be used in the run method.
         self.__state is an integer which says the actual state of the TooLWrapper: ``NEW``, ``READY``, ``NOT_READY``
 
@@ -326,15 +324,15 @@ class ToolWrapper(Base):
         self.__state = ToolWrapper.READY
         return True
 
-    def set_args_date_and_size(self, type, dry=False):
+    def set_args_time_and_size(self, type, dry=False):
         """
         WorkflowManager method:
 
-        The date and the size of the files are set according to the actual date of last modification and size of the system files
+        The time and the size of the files are set according to the actual time of last modification and size of the system files
 
-        The date of the tables are set according to the date of last modification notified in the modification_table table
-        If the type of IOPut is "output" and the execution is "not dry", the date in modification_table is set to the
-        current time.time() datetime.
+        The time of the tables are set according to the time of last modification notified in the modification_table table
+        If the type of IOPut is "output" and the execution is "not dry", the time in modification_table is set to the
+        current time.time().
 
         # todo modify it to take commits into account isntead of the status of 'output' of a table
 
@@ -346,7 +344,7 @@ class ToolWrapper(Base):
         session = SQLManager.instance().get_session()
         for f in [f for f in self.files if f.type.name == type]:
             try:
-                date = datetime.datetime.fromtimestamp(os.path.getmtime(f.path))
+                time = os.path.getmtime(f.path)
                 size = os.path.getsize(f.path)
             except FileNotFoundError as FE:
                 # todo ask lionel sans ce rollback, ca bug, pourquoi? la session est vide... comme si la query etait bloquante
@@ -357,9 +355,9 @@ class ToolWrapper(Base):
                                            " doesn't exist")
                 else:
                     # in dry-run mode, input/output files might not exist
-                    date = None
+                    time = None
                     size = None
-            f.used_at = date
+            f.used_at = time
             f.size = size
             session.add(f)
             if type == "input":
@@ -373,7 +371,7 @@ class ToolWrapper(Base):
         session.commit()
 
         for t in [t for t in self.tables if t.type.name == type]:
-            t.used_at = t.modification.date
+            t.used_at = t.modification.time
             session.add(t)
         session.commit()
 
@@ -384,8 +382,8 @@ class ToolWrapper(Base):
         Check if the other ToolWrapper have the same input than self.
 
         The input are say "the same" if:
-            - The table have the same name and the same last modifcation datetime
-            - The file have the same name, the same lastm mdoficiation datetime and the same size
+            - The table have the same name and the same last modification time
+            - The file have the same name, the same lastm modification time and the same size
 
         :param other: an other Toolwrapper which maybe as the same inputs
         :type other: :class:`~.wopmars.framework.database.tables.ToolWrapper.ToolWrapper`
@@ -395,7 +393,7 @@ class ToolWrapper(Base):
         for t in [t for t in self.tables if t.type.name == "input"]:
             is_same = False
             for t2 in [t2 for t2 in other.tables if t2.type.name == "input"]:
-                # two tables are the same if they have the same model/tablename/modfication date
+                # two tables are the same if they have the same model/tablename/modification time
                 if (t.model == t2.model and
                     t.tablename == t2.tablename and
                        t.used_at == t2.used_at):
@@ -407,7 +405,7 @@ class ToolWrapper(Base):
         for f in [f for f in self.files if f.type.name == "input"]:
             is_same = False
             for f2 in [f2 for f2 in other.files if f2.type.name == "input"]:
-                # two files are the same if they have the same name, path, size and modficiation date
+                # two files are the same if they have the same name, path, size and modification time
                 if (f.name == f2.name and
                         f.path == f2.path and
                         f.used_at == f2.used_at and
@@ -427,10 +425,10 @@ class ToolWrapper(Base):
 
         :return: Bool: True if the output is actually more recent than input
         """
-        most_recent_input = max([datetime.datetime.fromtimestamp(os.path.getmtime(f.path)) for f in self.files if f.type.name == "input"] +
-                                [t.modification.date for t in self.tables if t.type.name == "input"])
-        oldest_output = min([datetime.datetime.fromtimestamp(os.path.getmtime(f.path)) for f in self.files if f.type.name == "output"] +
-                            [t.modification.date for t in self.tables if t.type.name == "output"])
+        most_recent_input = max([os.path.getmtime(f.path) for f in self.files if f.type.name == "input"] +
+                                [t.modification.time for t in self.tables if t.type.name == "input"])
+        oldest_output = min([os.path.getmtime(f.path) for f in self.files if f.type.name == "output"] +
+                            [t.modification.time for t in self.tables if t.type.name == "output"])
         # in seconds since the begining of time (computer), the oldest thing has a lower number of seconds
         return most_recent_input < oldest_output
 
@@ -489,8 +487,8 @@ class ToolWrapper(Base):
         """
         Generic method to set the informations relatives to the execution of the ToolWrapper.
 
-        :param start: The date of start of the Toolwrapper
-        :param stop: The date of end of the Toolwrapper
+        :param start: The time of start of the Toolwrapper
+        :param stop: The time of end of the Toolwrapper
         :param status: The status of the Toolwrapper
         """
         if start is not None:
@@ -498,7 +496,8 @@ class ToolWrapper(Base):
         if stop is not None:
             self.finished_at = stop
         if self.started_at is not None and self.finished_at is not None:
-            self.time = (self.finished_at - self.started_at).total_seconds()
+            #self.time = (self.finished_at - self.started_at).total_seconds()
+            self.time = self.finished_at - self.started_at
         if status is not None:
             self.status = status
 

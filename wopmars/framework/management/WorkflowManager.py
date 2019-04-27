@@ -1,4 +1,3 @@
-import datetime
 import sys
 
 import time
@@ -242,7 +241,7 @@ class WorkflowManager(ToolWrapperObserver):
             # for running, either the inputs have to be ready or the dry-run mode is enabled
             elif tw.are_inputs_ready() or OptionManager.instance()["--dry-run"]:
                 # the state of inputs (table and file) are set in the db here.
-                tw.set_args_date_and_size("input")
+                tw.set_args_time_and_size("input")
                 Logger.instance().debug("ToolWrapper ready: " + tw.toolwrapper)
                 dry = False
                 # if forceall option, then the tool is reexecuted anyway
@@ -293,7 +292,7 @@ class WorkflowManager(ToolWrapperObserver):
             # Is there some tools that weren't ready?
             if len(self.__list_queue_buffer) == 0:
                 # If there is no tool waiting and no tool being executed, the workflow has finished.
-                finished_at = datetime.datetime.fromtimestamp(time.time())
+                finished_at = time.time()
                 Logger.instance().info("The workflow has completed. Finished at: " + str(finished_at))
                 self.set_finishing_informations(finished_at, "FINISHED")
                 SQLManager.instance().get_session().close()
@@ -301,7 +300,7 @@ class WorkflowManager(ToolWrapperObserver):
             # uniquement en environnement multiThreadpredece
             elif not self.check_buffer():
                 # If there is no tool being executed but there is that are waiting something, the workflow has an issue
-                finished_at = datetime.datetime.fromtimestamp(time.time())
+                finished_at = time.time()
                 tw_list = [t.get_toolwrapper() for t in self.__list_queue_buffer]
                 if len(tw_list) > 0:
                     input_files_not_ready = tw_list[0].get_input_files_not_ready()
@@ -318,15 +317,16 @@ class WorkflowManager(ToolWrapperObserver):
         """
         Set the finsihing information of the whole workflow.
 
-        :param finished_at: The finishing date of the workflow
-        :type finished_at: datetime.datetime
+        :param finished_at: The finishing time of the workflow
+        :type finished_at: integer unix time
         :param status: The final status of the workflow
         :type status: str
         """
         modify_exec = self.__session.query(Execution).order_by(Execution.id.desc()).first()
         if modify_exec is not None:
             modify_exec.finished_at = finished_at
-            modify_exec.time = (modify_exec.finished_at - modify_exec.started_at).total_seconds()
+            #modify_exec.time = (modify_exec.finished_at - modify_exec.started_at).total_seconds()
+            modify_exec.time = modify_exec.finished_at - modify_exec.started_at
             modify_exec.status = status
             self.__session.add(modify_exec)
             self.__session.commit()
@@ -398,7 +398,7 @@ class WorkflowManager(ToolWrapperObserver):
 
         dry_status = thread_toolwrapper.get_dry()
         # if not OptionManager.instance()["--dry-run"]:
-        #     thread_toolwrapper.get_toolwrapper().set_args_date_and_size("output", dry_status)
+        #     thread_toolwrapper.get_toolwrapper().set_args_time_and_size("output", dry_status)
         if dry_status is False and not OptionManager.instance()["--dry-run"]:
             Logger.instance().info("Rule " + str(thread_toolwrapper.get_toolwrapper().name) + " -> " + str(thread_toolwrapper.get_toolwrapper().__class__.__name__) + " has succeed.")
         # Continue the dag execution from the toolwrapper that just finished.

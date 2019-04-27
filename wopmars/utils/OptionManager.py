@@ -115,7 +115,14 @@ class OptionManager(dict, SingletonMixin):
         OptionManager.instance()["--forceall"] = None
         OptionManager.instance()["--dry-run"] = None
         OptionManager.instance()["tool"] = None
-        OptionManager.instance()["--database"] = "sqlite:///" + os.path.join(PathFinder.get_module_path(), "test/output", mod_name + ".sqlite")
+        OptionManager.instance()["--database"] = "sqlite:///" + os.path.join(PathFinder.get_module_path(),
+                                                                             "test/output", mod_name + ".sqlite")
+        #
+        # If DB set in environment variable, for instance for MySQL, then override default database value
+        #
+        if 'DB_URL' in os.environ:
+            OptionManager.instance()["--database"] = os.environ['DB_URL']
+        #
         OptionManager.instance()["--directory"] = PathFinder.get_module_path()
         OptionManager.instance()["--clear-history"] = False
         os.chdir(OptionManager.instance()["--directory"])

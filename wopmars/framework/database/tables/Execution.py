@@ -12,8 +12,8 @@ class Execution(Base):
     The table ``wom_execution`` contains the following fields:
 
     - id: INTEGER: primary key - auto increment - arbitrary iD
-    - started_at: DATE - date at wich the execution started
-    - finished_at: DATE - date at wich the execution finished
+    - started_at: INTEGER - unix time at wich the execution started
+    - finished_at: INTEGER - unix time at wich the execution finished
     - time: FLOAT - the total time of execution
     - status: VARCHAR(255) - the final status of the Execution. it can be:
 
@@ -25,8 +25,8 @@ class Execution(Base):
     __tablename__ = "wom_execution"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    started_at = Column(DateTime, nullable=True)
-    finished_at = Column(DateTime, nullable=True)
+    started_at = Column(Integer, nullable=True)
+    finished_at = Column(Integer, nullable=True)
     time = Column(Float, nullable=True)
     status = Column(String(255), nullable=True)
 

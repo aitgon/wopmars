@@ -1,5 +1,5 @@
 WopMars: Workflow Python Manager for Reproducible Science
----------------------------------------------
+---------------------------------------------------------------
 
 .. image:: https://travis-ci.org/aitgon/wopmars.svg?branch=master
     :target: https://travis-ci.org/aitgon/wopmars

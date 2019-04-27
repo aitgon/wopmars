@@ -1,7 +1,6 @@
 """
 Module containing the ToolThread class.
 """
-import datetime
 import errno
 import threading
 import os
@@ -54,7 +53,7 @@ class ToolThread(threading.Thread, Observable):
         """
 
         session_tw = SQLManager.instance().get_session()
-        start = datetime.datetime.fromtimestamp(time.time())
+        start = time.time()
         try:
             self.__toolwrapper.set_session(session_tw)
             # if the tool need to be executed because its output doesn't exist
@@ -77,16 +76,16 @@ class ToolThread(threading.Thread, Observable):
                     # end of mkdir -p output dir
                     self.__toolwrapper.run()
                     session_tw.commit()
-                    self.__toolwrapper.set_execution_infos(start, datetime.datetime.fromtimestamp(time.time()), "EXECUTED")
+                    self.__toolwrapper.set_execution_infos(start, time.time(), "EXECUTED")
                 else:
                     Logger.instance().debug("Dry-run mode enabled. Execution skiped.")
                     self.__toolwrapper.set_execution_infos(status="DRY")
             else:
                 Logger.instance().info("Rule: " + str(self.__toolwrapper.name) + " -> " + self.__toolwrapper.__class__.__name__ + " skiped.")
-                self.__toolwrapper.set_execution_infos(start, datetime.datetime.fromtimestamp(time.time()), "ALREADY_EXECUTED")
+                self.__toolwrapper.set_execution_infos(start, time.time(), "ALREADY_EXECUTED")
         except Exception as e:
             session_tw.rollback()
-            self.__toolwrapper.set_execution_infos(start, datetime.datetime.fromtimestamp(time.time()), "EXECUTION_ERROR")
+            self.__toolwrapper.set_execution_infos(start, time.time(), "EXECUTION_ERROR")
             raise WopMarsException("Error while executing rule " + self.__toolwrapper.name +
                                    " (ToolWrapper " + self.__toolwrapper.toolwrapper + ")",
                                    "Full stack trace: \n" + str(traceback.format_exc()))

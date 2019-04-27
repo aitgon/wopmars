@@ -97,5 +97,4 @@ class PathFinder:
 
     @staticmethod
     def is_in_python_path(name):
-        print("dfsdfqsfsqfsqfqsdf")
         importlib.import_module(name)
