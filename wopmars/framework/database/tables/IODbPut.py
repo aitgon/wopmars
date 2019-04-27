@@ -1,5 +1,4 @@
 import importlib
-import datetime
 import time
 
 from sqlalchemy.exc import OperationalError
@@ -28,7 +27,7 @@ class IODbPut(IOPut, Base):
     - model: VARCHAR(255) - the path to the model (in python notation)
     - rule_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.framework.database.tables.ToolWrapper.ToolWrapper`
     - type_id: INTEGER - foreign key to the associated type ID: :class:`wopmars.framework.database.tables.Type.Type`
-    - used_at: DATE - date at which the table have been used
+    - used_at: INTEGER - unix time at which the table have been used
     """
     __tablename__ = "wom_table"
 
@@ -37,7 +36,7 @@ class IODbPut(IOPut, Base):
     model = Column(String(255))
     rule_id = Column(Integer, ForeignKey("wom_rule.id"))
     type_id = Column(Integer, ForeignKey("wom_type.id"))
-    used_at = Column(DateTime, nullable=True)
+    used_at = Column(Integer, nullable=True)
 
     # One table is in one rule
     rule = relationship("ToolWrapper", back_populates="tables", enable_typechecks=False)
@@ -90,36 +89,38 @@ class IODbPut(IOPut, Base):
     @staticmethod
     def create_triggers():
         """
-        Create an INSERT, UPDATE, DELETE trigger on the tables created by the user in order to store the modifications date.
+        Create an INSERT, UPDATE, DELETE trigger on the tables created by the user in order to store the modifications time.
         """
         stmt = ["INSERT", "UPDATE", "DELETE"]
         for tablename in Base.metadata.tables:
             if tablename[:4] != "wom_":
                 for s in stmt:
-                    data={"statement": str(s), "tablename": str(tablename)} 
+                    data={"statement": str(s), "tablename": str(tablename)}
                     if SQLManager.instance().__dict__['d_database_config']['db_connection'] == 'sqlite':
-                        sql_trigger = """CREATE TRIGGER IF NOT EXISTS trigger_modif_%(tablename)s_%(statement)s AFTER %(statement)s ON %(tablename)s BEGIN UPDATE wom_modification_table SET date = CURRENT_TIMESTAMP WHERE table_name = '%(tablename)s'; END;"""%data
+                        # import pdb; pdb.set_trace()
+                        sql_trigger = "CREATE TRIGGER IF NOT EXISTS {tablename}_{statement} " \
+                              "AFTER {statement} ON {tablename} BEGIN UPDATE wom_modification_table " \
+                              "SET time = strftime('%%s', 'now') WHERE table_name = '{tablename}'; END;".format(**data)
                     elif SQLManager.instance().__dict__['d_database_config']['db_connection'] == 'mysql':
-                        sql_trigger = """
-CREATE TRIGGER IF NOT EXISTS modification_%(tablename)s_%(statement)s AFTER %(statement)s ON %(tablename)s for each row UPDATE wom_modification_table SET date = CURRENT_TIMESTAMP WHERE table_name = '%(tablename)s';
-    """%data
+                        sql_trigger = "CREATE TRIGGER IF NOT EXISTS {tablename}_{statement} AFTER {statement} " \
+                          "ON {tablename} for each row UPDATE wom_modification_table SET time = UNIX_TIMESTAMP() " \
+                          "WHERE table_name = '{tablename}';".format(**data)
                         obj_ddl = DDL(sql_trigger)
                         SQLManager.instance().create_trigger(Base.metadata.tables[tablename], obj_ddl)
                     elif SQLManager.instance().__dict__['d_database_config']['db_connection'] == 'postgresql':
                         sql_trigger = """
-CREATE OR REPLACE FUNCTION modification_%(statement)s_%(tablename)s() RETURNS TRIGGER AS $modification_%(statement)s_%(tablename)s$
-BEGIN
-UPDATE wom_modification_table SET date = CURRENT_TIMESTAMP WHERE table_name = '%(tablename)s';
-RETURN NULL; -- result is ignored since this is an AFTER trigger
-END;
-$modification_%(statement)s_%(tablename)s$ LANGUAGE plpgsql;
-DROP TRIGGER IF EXISTS modification_%(statement)s_%(tablename)s ON "%(tablename)s";
-CREATE TRIGGER modification_%(statement)s_%(tablename)s AFTER INSERT ON "%(tablename)s" FOR EACH ROW EXECUTE PROCEDURE modification_%(statement)s_%(tablename)s();
-    """%data
-                    # import pdb; pdb.set_trace()
+                            CREATE OR REPLACE FUNCTION {tablename}_{statement}() RETURNS TRIGGER AS ${tablename}_{statement}$
+                            BEGIN
+                            UPDATE wom_modification_table SET time = extract(epoch from now()) WHERE table_name = '{tablename}';
+                            RETURN NULL; -- result is ignored since this is an AFTER trigger
+                            END;
+                            ${tablename}_{statement}$ LANGUAGE plpgsql;
+                            DROP TRIGGER IF EXISTS {tablename}_{statement} ON "{tablename}";
+                            CREATE TRIGGER {tablename}_{statement} AFTER INSERT ON "{tablename}"
+                            FOR EACH ROW EXECUTE PROCEDURE {tablename}_{statement}();
+                            """.format(**data)
                     obj_ddl = DDL(sql_trigger)
                     SQLManager.instance().create_trigger(Base.metadata.tables[tablename], obj_ddl)
-
 
     @staticmethod
     def set_tables_properties(tables):

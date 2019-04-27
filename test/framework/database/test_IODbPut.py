@@ -14,8 +14,6 @@ class TestIODbPut(TestCase):
     def setUp(self):
         self.s_root_path = PathFinder.get_module_path()
         OptionManager.initial_test_setup()
-        print(OptionManager.instance()["--log"])
-
         SQLManager.instance().create_all()
         self.__local_session = SQLManager.instance().get_session()
         try:

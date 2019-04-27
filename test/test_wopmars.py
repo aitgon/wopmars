@@ -22,9 +22,12 @@ class TestWopMars(TestCase):
             os.makedirs(home_wopmars)
         self.s_root_path = PathFinder.get_module_path()
         os.chdir(self.s_root_path)
-        if 'DB_URL' not in os.environ:
-            self.__db_url = "sqlite:///" + os.path.join(self.s_root_path, "test/output/db.sqlite")
-        else:
+        #
+        # Intial test options
+        #
+        OptionManager.initial_test_setup()
+        self.__db_url = OptionManager.instance()["--database"]
+        if 'DB_URL' in os.environ:
             self.__db_url = os.environ['DB_URL']
         #
         self.__example_def_file1 = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file1.yml")
@@ -122,16 +125,13 @@ class TestWopMars(TestCase):
         end = time.time()
         runtime2 = end - start
         self.assertGreater(runtime1 * 1.5, runtime2)
-        # SQLManager.instance().drop_all()
-        # OptionManager._drop()
-        # SQLManager._drop()
-        # PathFinder.silentremove("test/output/output_file1.txt")
-        # start = time.time()
-        # with self.assertRaises(SystemExit):
-        #    WopMars().run(cmd_line)
-        # end = time.time()
-        # runtime2 = end - start
-        # self.assertTrue(runtime1 * 0.4 <= runtime2 <= runtime1 * 1.4)
+        PathFinder.silentremove("test/output/output_file1.txt")
+        start = time.time()
+        with self.assertRaises(SystemExit):
+           WopMars().run(cmd_line)
+        end = time.time()
+        runtime2 = end - start
+        self.assertTrue(runtime1 * 0.4 <= runtime2 <= runtime1 * 1.4)
 
     def get_best_factor(self, full_exec_time, rule_count, maximum_ratio=1):
         average_rule_time = full_exec_time / rule_count

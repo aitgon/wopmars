@@ -149,7 +149,7 @@ class WopMars:
             Logger.instance().error(str(WE))
             session = SQLManager.instance().get_session()
             try:
-                finished_at = datetime.datetime.fromtimestamp(time.time())
+                finished_at = time.time()
                 Logger.instance().error("The workflow has encountered an error at: " + str(finished_at))
                 wm.set_finishing_informations(finished_at, "ERROR")
             except AttributeError:
