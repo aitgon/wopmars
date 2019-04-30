@@ -9,7 +9,7 @@ class ModificationTable(Base):
     ``wom_modification_table`` contains the following fields:
 
     - table_name: VARCHAR(255) - primary key - the name of the table
-    - time: INTEGER - unix time of last modification of the table
+    - time: INTEGER - unix time [ms] of last modification of the table
     """
 
     __tablename__ = "wom_modification_table"

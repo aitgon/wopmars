@@ -1,7 +1,6 @@
 import sys
 
 import datetime
-import time
 
 from wopmars.framework.database.SQLManager import SQLManager
 from wopmars.framework.database.tables.Execution import Execution
@@ -17,6 +16,7 @@ from wopmars.utils.Logger import Logger
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.UniqueQueue import UniqueQueue
 from wopmars.utils.exceptions.WopMarsException import WopMarsException
+from wopmars.utils.various import time_unix_ms
 
 
 class WorkflowManager(ToolWrapperObserver):
@@ -293,7 +293,8 @@ class WorkflowManager(ToolWrapperObserver):
             # Is there some tools that weren't ready?
             if len(self.__list_queue_buffer) == 0:
                 # If there is no tool waiting and no tool being executed, the workflow has finished.
-                finished_at_strftime = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+                finished_at = time_unix_ms()
+                finished_at_strftime = datetime.datetime.fromtimestamp(finished_at/1000).strftime('%Y-%m-%d %H:%M:%S')
                 Logger.instance().info("The workflow has completed. Finished at: " + finished_at_strftime)
                 self.set_finishing_informations(finished_at, "FINISHED")
                 SQLManager.instance().get_session().close()
@@ -301,7 +302,7 @@ class WorkflowManager(ToolWrapperObserver):
             # uniquement en environnement multiThreadpredece
             elif not self.check_buffer():
                 # If there is no tool being executed but there is that are waiting something, the workflow has an issue
-                finished_at = time.time()
+                finished_at = time_unix_ms()
                 tw_list = [t.get_toolwrapper() for t in self.__list_queue_buffer]
                 if len(tw_list) > 0:
                     input_files_not_ready = tw_list[0].get_input_files_not_ready()

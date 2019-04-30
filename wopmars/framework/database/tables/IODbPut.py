@@ -100,7 +100,7 @@ class IODbPut(IOPut, Base):
                         # import pdb; pdb.set_trace()
                         sql_trigger = "CREATE TRIGGER IF NOT EXISTS {tablename}_{statement} " \
                               "AFTER {statement} ON {tablename} BEGIN UPDATE wom_modification_table " \
-                              "SET time = strftime('%%s', 'now') WHERE table_name = '{tablename}'; END;".format(**data)
+                              "SET time = CAST((julianday('now') - 2440587.5)*86400000 AS INTEGER) WHERE table_name = '{tablename}'; END;".format(**data)
                     elif SQLManager.instance().__dict__['d_database_config']['db_connection'] == 'mysql':
                         sql_trigger = "CREATE TRIGGER IF NOT EXISTS {tablename}_{statement} AFTER {statement} " \
                           "ON {tablename} for each row UPDATE wom_modification_table SET time = UNIX_TIMESTAMP() " \
