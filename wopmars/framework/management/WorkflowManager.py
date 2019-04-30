@@ -1,5 +1,6 @@
 import sys
 
+import datetime
 import time
 
 from wopmars.framework.database.SQLManager import SQLManager
@@ -293,7 +294,8 @@ class WorkflowManager(ToolWrapperObserver):
             if len(self.__list_queue_buffer) == 0:
                 # If there is no tool waiting and no tool being executed, the workflow has finished.
                 finished_at = time.time()
-                Logger.instance().info("The workflow has completed. Finished at: " + str(finished_at))
+                
+                Logger.instance().info("The workflow has completed. Finished at: " + datetime.datetime.utcfromtimestamp(finished_at).strftime('%Y-%m-%d %H:%M:%S'))
                 self.set_finishing_informations(finished_at, "FINISHED")
                 SQLManager.instance().get_session().close()
                 sys.exit(0)
