@@ -1,7 +1,7 @@
 import os
 
 import time
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Float
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Float, BigInteger
 from sqlalchemy.orm import relationship
 
 from wopmars.framework.database.Base import Base
@@ -40,8 +40,8 @@ class ToolWrapper(Base):
     name = Column(String(255))
     toolwrapper = Column(String(255))
     execution_id = Column(Integer, ForeignKey("wom_execution.id"))
-    started_at = Column(Integer, nullable=True)
-    finished_at = Column(Integer, nullable=True)
+    started_at = Column(BigInteger, nullable=True)
+    finished_at = Column(BigInteger, nullable=True)
     time = Column(Float, nullable=True)
     status = Column(String(255), nullable=True, default="NOT_EXECUTED")
 
