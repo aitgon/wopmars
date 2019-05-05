@@ -15,6 +15,7 @@ from wopmars.framework.database.tables.Type import Type
 from wopmars.framework.management.ToolThread import ToolThread
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder
+from wopmars.utils.various import time_unix_ms
 
 
 class TestToolThread(TestCase):
@@ -40,7 +41,7 @@ class TestToolThread(TestCase):
         t1 = IODbPut(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
         t1.type = output_entry
-        modification_table_entry = ModificationTable(time=time.time(), table_name=t1.tablename)
+        modification_table_entry = ModificationTable(time=time_unix_ms(), table_name=t1.tablename)
         t1.modification = modification_table_entry
 
         tw1 = FooWrapper5(rule_name="rule1")
@@ -57,7 +58,7 @@ class TestToolThread(TestCase):
         t12.set_table(FooBase)
         t12.type = output_entry
         modification_table_entry = ModificationTable(
-            time=time.time(), table_name=t12.tablename)
+            time=time_unix_ms(), table_name=t12.tablename)
         t12.modification = modification_table_entry
 
         tw2 = FooWrapper5(rule_name="rule2")
@@ -74,7 +75,7 @@ class TestToolThread(TestCase):
         t13.set_table(FooBase)
         t13.type = output_entry
         modification_table_entry = ModificationTable(
-            time=time.time(), table_name=t13.tablename)
+            time=time_unix_ms(), table_name=t13.tablename)
         t13.modification = modification_table_entry
 
         tw3 = FooWrapper5(rule_name="rule3")
@@ -107,7 +108,7 @@ class TestToolThread(TestCase):
             t1 = IODbPut(model="FooBase", tablename="FooBase")
             t1.set_table(FooBase)
             t1.type = output_entry
-            modification_table_entry = ModificationTable(time=time.time(), table_name=t1.tablename)
+            modification_table_entry = ModificationTable(time=time_unix_ms(), table_name=t1.tablename)
             t1.modification = modification_table_entry
 
             o1 = Option(name="rows", value="1000")
@@ -123,7 +124,7 @@ class TestToolThread(TestCase):
             t12 = IODbPut(model="FooBase", tablename="FooBase")
             t12.set_table(FooBase)
             t12.type = output_entry
-            modification_table_entry = ModificationTable(time=time.time(),
+            modification_table_entry = ModificationTable(time=time_unix_ms(),
                                                          table_name=t12.tablename)
             t12.modification = modification_table_entry
 
@@ -140,7 +141,7 @@ class TestToolThread(TestCase):
             t13 = IODbPut(model="FooBase", tablename="FooBase")
             t13.set_table(FooBase)
             t13.type = output_entry
-            modification_table_entry = ModificationTable(time=time.time(),
+            modification_table_entry = ModificationTable(time=time_unix_ms(),
                                                          table_name=t13.tablename)
             t13.modification = modification_table_entry
 

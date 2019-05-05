@@ -29,7 +29,7 @@ class IOFilePut(IOPut, Base):
     path = Column(String(255))
     rule_id = Column(Integer, ForeignKey("wom_rule.id"))
     type_id = Column(Integer, ForeignKey("wom_type.id"))
-    used_at = Column(Integer, nullable=True)
+    used_at = Column(BigInteger, nullable=True)
     size = Column(BigInteger, nullable=True)
 
     # One file is in Many rule_file and is in Many rule

@@ -5,7 +5,7 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy.sql.ddl import DDL
 
 from wopmars.framework.database.Base import Base
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, BigInteger
 from sqlalchemy.orm import relationship, reconstructor
 
 from wopmars.framework.database.SQLManager import SQLManager
@@ -36,7 +36,7 @@ class IODbPut(IOPut, Base):
     model = Column(String(255))
     rule_id = Column(Integer, ForeignKey("wom_rule.id"))
     type_id = Column(Integer, ForeignKey("wom_type.id"))
-    used_at = Column(Integer, nullable=True)
+    used_at = Column(BigInteger, nullable=True)
 
     # One table is in one rule
     rule = relationship("ToolWrapper", back_populates="tables", enable_typechecks=False)
@@ -100,10 +100,11 @@ class IODbPut(IOPut, Base):
                         # import pdb; pdb.set_trace()
                         sql_trigger = "CREATE TRIGGER IF NOT EXISTS {tablename}_{statement} " \
                               "AFTER {statement} ON {tablename} BEGIN UPDATE wom_modification_table " \
-                              "SET time = strftime('%%s', 'now') WHERE table_name = '{tablename}'; END;".format(**data)
+                              "SET time = CAST((julianday('now') - 2440587.5)*86400000 AS INTEGER) WHERE table_name = '{tablename}'; END;".format(**data)
                     elif SQLManager.instance().__dict__['d_database_config']['db_connection'] == 'mysql':
                         sql_trigger = "CREATE TRIGGER IF NOT EXISTS {tablename}_{statement} AFTER {statement} " \
-                          "ON {tablename} for each row UPDATE wom_modification_table SET time = UNIX_TIMESTAMP() " \
+                          "ON {tablename} for each row UPDATE wom_modification_table SET " \
+                                      "time = ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) " \
                           "WHERE table_name = '{tablename}';".format(**data)
                         obj_ddl = DDL(sql_trigger)
                         SQLManager.instance().create_trigger(Base.metadata.tables[tablename], obj_ddl)
@@ -111,7 +112,7 @@ class IODbPut(IOPut, Base):
                         sql_trigger = """
                             CREATE OR REPLACE FUNCTION {tablename}_{statement}() RETURNS TRIGGER AS ${tablename}_{statement}$
                             BEGIN
-                            UPDATE wom_modification_table SET time = extract(epoch from now()) WHERE table_name = '{tablename}';
+                            UPDATE wom_modification_table SET time = extract(epoch from now())*1000 WHERE table_name = '{tablename}';
                             RETURN NULL; -- result is ignored since this is an AFTER trigger
                             END;
                             ${tablename}_{statement}$ LANGUAGE plpgsql;

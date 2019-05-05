@@ -1,7 +1,7 @@
 import os
 
 import time
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Float
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Float, BigInteger
 from sqlalchemy.orm import relationship
 
 from wopmars.framework.database.Base import Base
@@ -11,6 +11,7 @@ from wopmars.framework.database.tables.Option import Option
 from wopmars.utils.Logger import Logger
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.exceptions.WopMarsException import WopMarsException
+from wopmars.utils.various import os_path_getmtime_ms
 
 
 class ToolWrapper(Base):
@@ -22,9 +23,9 @@ class ToolWrapper(Base):
     - name: VARCHAR(255) - the name of the rule
     - toolwrapper: VARCHAR(255) - the name of the Toolwrapper
     - execution_id: INTEGER - foreign key to the table ``wom_execution`` - the associated execution
-    - started_at: INTEGER - unix time at wich the toolwrapper started its execution
-    - finished_at: INTEGER - unix time at wich the toolwrapper finished its execution
-    - time: FLOAT - the total time toolwrapper execution
+    - started_at: INTEGER - unix time [ms] at wich the toolwrapper started its execution
+    - finished_at: INTEGER - unix time [ms] at wich the toolwrapper finished its execution
+    - time: FLOAT - the total time [ms] toolwrapper execution
     - status: VARCHAR(255) - the final status of the Toolwrapper. it can be:
 
        - NOT PLANNED: the toolwrapper execution wasn't evene xpected by the user
@@ -39,8 +40,8 @@ class ToolWrapper(Base):
     name = Column(String(255))
     toolwrapper = Column(String(255))
     execution_id = Column(Integer, ForeignKey("wom_execution.id"))
-    started_at = Column(Integer, nullable=True)
-    finished_at = Column(Integer, nullable=True)
+    started_at = Column(BigInteger, nullable=True)
+    finished_at = Column(BigInteger, nullable=True)
     time = Column(Float, nullable=True)
     status = Column(String(255), nullable=True, default="NOT_EXECUTED")
 
@@ -344,7 +345,7 @@ class ToolWrapper(Base):
         session = SQLManager.instance().get_session()
         for f in [f for f in self.files if f.type.name == type]:
             try:
-                time = os.path.getmtime(f.path)
+                time = os_path_getmtime_ms(f.path)
                 size = os.path.getsize(f.path)
             except FileNotFoundError as FE:
                 # todo ask lionel sans ce rollback, ca bug, pourquoi? la session est vide... comme si la query etait bloquante
@@ -425,9 +426,9 @@ class ToolWrapper(Base):
 
         :return: Bool: True if the output is actually more recent than input
         """
-        most_recent_input = max([os.path.getmtime(f.path) for f in self.files if f.type.name == "input"] +
+        most_recent_input = max([os_path_getmtime_ms(f.path) for f in self.files if f.type.name == "input"] +
                                 [t.modification.time for t in self.tables if t.type.name == "input"])
-        oldest_output = min([os.path.getmtime(f.path) for f in self.files if f.type.name == "output"] +
+        oldest_output = min([os_path_getmtime_ms(f.path) for f in self.files if f.type.name == "output"] +
                             [t.modification.time for t in self.tables if t.type.name == "output"])
         # in seconds since the begining of time (computer), the oldest thing has a lower number of seconds
         return most_recent_input < oldest_output

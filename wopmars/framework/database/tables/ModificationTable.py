@@ -1,5 +1,5 @@
 from wopmars.framework.database.Base import Base
-from sqlalchemy import Column, String, DateTime, Integer
+from sqlalchemy import Column, String, DateTime, Integer, BigInteger
 from sqlalchemy.orm import relationship
 
 
@@ -9,13 +9,13 @@ class ModificationTable(Base):
     ``wom_modification_table`` contains the following fields:
 
     - table_name: VARCHAR(255) - primary key - the name of the table
-    - time: INTEGER - unix time of last modification of the table
+    - time: INTEGER - unix time [ms] of last modification of the table
     """
 
     __tablename__ = "wom_modification_table"
 
     table_name = Column(String(255), primary_key=True)
-    time = Column(Integer, nullable=False)
+    time = Column(BigInteger, nullable=False)
 
     tables = relationship("IODbPut", back_populates="modification")
 
