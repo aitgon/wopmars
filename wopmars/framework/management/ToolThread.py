@@ -4,7 +4,6 @@ Module containing the ToolThread class.
 import errno
 import threading
 import os
-import time
 import traceback
 
 from wopmars.framework.database.SQLManager import SQLManager
@@ -12,6 +11,7 @@ from wopmars.framework.management.Observable import Observable
 from wopmars.utils.Logger import Logger
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.exceptions.WopMarsException import WopMarsException
+from wopmars.utils.various import time_unix_ms
 
 
 class ToolThread(threading.Thread, Observable):
@@ -53,7 +53,7 @@ class ToolThread(threading.Thread, Observable):
         """
 
         session_tw = SQLManager.instance().get_session()
-        start = time.time()
+        start = time_unix_ms()
         try:
             self.__toolwrapper.set_session(session_tw)
             # if the tool need to be executed because its output doesn't exist
@@ -76,16 +76,16 @@ class ToolThread(threading.Thread, Observable):
                     # end of mkdir -p output dir
                     self.__toolwrapper.run()
                     session_tw.commit()
-                    self.__toolwrapper.set_execution_infos(start, time.time(), "EXECUTED")
+                    self.__toolwrapper.set_execution_infos(start, time_unix_ms(), "EXECUTED")
                 else:
                     Logger.instance().debug("Dry-run mode enabled. Execution skiped.")
                     self.__toolwrapper.set_execution_infos(status="DRY")
             else:
                 Logger.instance().info("Rule: " + str(self.__toolwrapper.name) + " -> " + self.__toolwrapper.__class__.__name__ + " skiped.")
-                self.__toolwrapper.set_execution_infos(start, time.time(), "ALREADY_EXECUTED")
+                self.__toolwrapper.set_execution_infos(start, time_unix_ms(), "ALREADY_EXECUTED")
         except Exception as e:
             session_tw.rollback()
-            self.__toolwrapper.set_execution_infos(start, time.time(), "EXECUTION_ERROR")
+            self.__toolwrapper.set_execution_infos(start, time_unix_ms(), "EXECUTION_ERROR")
             raise WopMarsException("Error while executing rule " + self.__toolwrapper.name +
                                    " (ToolWrapper " + self.__toolwrapper.toolwrapper + ")",
                                    "Full stack trace: \n" + str(traceback.format_exc()))

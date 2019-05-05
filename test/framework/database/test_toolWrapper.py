@@ -17,7 +17,8 @@ from wopmars.framework.database.tables.Type import Type
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder
 from wopmars.utils.exceptions.WopMarsException import WopMarsException
-
+from wopmars.utils.various import time_unix_ms
+from wopmars.utils.various import os_path_getmtime_ms
 
 class TestToolWrapper(TestCase):
     def setUp(self):
@@ -283,7 +284,7 @@ class TestToolWrapper(TestCase):
 
     def test_same_input_than(self):
 
-        moment = time.time()
+        moment = time_unix_ms()
 
         t1 = IODbPut(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
@@ -317,7 +318,7 @@ class TestToolWrapper(TestCase):
         modif = ModificationTable(table_name="FooBase", time=moment)
         modif.tables.append(t3)
 
-        f3 = IOFilePut(name="input1", path="path1", used_at=time.time(), size=0)
+        f3 = IOFilePut(name="input1", path="path1", used_at=time_unix_ms(), size=0)
         f3.type = self.input_entry
 
         toolwrapper3 = FooWrapper2(rule_name="rule1")
@@ -329,7 +330,7 @@ class TestToolWrapper(TestCase):
 
     def test_is_output_ok(self):
 
-        moment = time.time()
+        moment = time_unix_ms()
         t1 = IODbPut(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
         t1.type = self.input_entry
@@ -343,7 +344,7 @@ class TestToolWrapper(TestCase):
         p = subprocess.Popen(["touch", path_f1])
         p.wait()
 
-        f1 = IOFilePut(name="input1", path=path_f1, used_at=os.path.getmtime(path_f1),
+        f1 = IOFilePut(name="input1", path=path_f1, used_at=os_path_getmtime_ms(path_f1),
                        size=os.path.getsize(path_f1))
         f1.type = self.output_entry
 
@@ -352,12 +353,12 @@ class TestToolWrapper(TestCase):
         toolwrapper1.tables.append(t1)
 
 
-        f1 = IOFilePut(name="input1", path=path_f1, used_at=os.path.getmtime(path_f1),
+        f1 = IOFilePut(name="input1", path=path_f1, used_at=os_path_getmtime_ms(path_f1),
                        size=os.path.getsize(path_f1))
 
         f1.type = self.output_entry
 
-        moment = time.time()
+        moment = time_unix_ms()
         t1 = IODbPut(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
         t1.type = self.input_entry

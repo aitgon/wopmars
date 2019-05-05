@@ -1,11 +1,12 @@
 import importlib
-#import jinja2
 import re
-import time
 import os
 
 import yaml
 from yaml.constructor import ConstructorError
+
+from wopmars.utils.various import time_unix_ms
+
 try:
     from yaml import CLoader as Loader
 except ImportError:
@@ -291,7 +292,7 @@ class Reader:
         dict_params = dict(eval(s_dict_params))
         try:
             # The same execution entry for the whole workflow-related database entries.
-            execution = Execution(started_at=time.time())
+            execution = Execution(started_at=time_unix_ms())
             # get the types that should have been created previously
             input_entry = session.query(Type).filter(Type.name == "input").one()
             output_entry = session.query(Type).filter(Type.name == "output").one()
@@ -377,7 +378,7 @@ class Reader:
         # The dict_workflow_definition is assumed to be well formed
         try:
             # The same execution entry for the whole workflow-related database entries.
-            execution = Execution(started_at=time.time())
+            execution = Execution(started_at=time_unix_ms())
             # get the types database entries that should have been created previously
             input_entry = session.query(Type).filter(Type.name == "input").one()
             output_entry = session.query(Type).filter(Type.name == "output").one()
@@ -550,7 +551,7 @@ class Reader:
                     # insert in the database the time of last modification of a developper-side table
                     modification_table_entry, created = session.get_or_create(ModificationTable,
                                                                               defaults={
-                                                                                  "time": time.time()},
+                                                                                  "time": time_unix_ms()},
                                                                               table_name=input_t)
                     iodbput_entry.modification = modification_table_entry
                     iodbput_entry.type = input_entry
@@ -579,7 +580,7 @@ class Reader:
                     iodbput_entry = dict_dict_dict_elm["dict_output"][elm][output_t]
                     modification_table_entry, created = session.get_or_create(ModificationTable,
                                                                               defaults={
-                                                                                  "time": time.time()},
+                                                                                  "time": time_unix_ms()},
                                                                               table_name=output_t)
                     iodbput_entry.modification = modification_table_entry
                     iodbput_entry.type = output_entry

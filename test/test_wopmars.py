@@ -2,7 +2,6 @@ from unittest import TestCase
 
 import os
 import subprocess
-import time
 import unittest
 
 from wopmars import OptionManager
@@ -12,7 +11,7 @@ from wopmars.utils.PathFinder import PathFinder
 from wopmars import WopMars
 
 from wopmars.constants import home_wopmars
-
+from wopmars.utils.various import time_unix_ms
 
 class TestWopMars(TestCase):
 
@@ -35,6 +34,13 @@ class TestWopMars(TestCase):
         self.__example_def_file2_only_files = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file2_only_files.yml")
         self.__example_def_file5_never_ready = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file5_never_ready.yml")
         self.__example_def_file_input_not_ready = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file_input_not_ready.yml")
+
+    def tearDown(self):
+        SQLManager.instance().get_session().close()
+        SQLManager.instance().drop_all()
+        PathFinder.dir_content_remove(os.path.join(self.s_root_path, "test/output"))
+        OptionManager._drop()
+        SQLManager._drop()
 
     def test_01run(self):
         cmd_line = ["python", "-l", "-D", self.__db_url, "-w", self.__example_def_file1, "-v", "-p", "-d", PathFinder.get_module_path()]
@@ -83,15 +89,15 @@ class TestWopMars(TestCase):
 
     def test_06run_skipping_steps_time_check(self):
         cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file2_only_files, "-vv", "-p"]
-        start = time.time()
+        start = time_unix_ms()
         with self.assertRaises(SystemExit):
            WopMars().run(cmd_line)
-        end = time.time()
+        end = time_unix_ms()
         runtime1 = end - start
-        start = time.time()
+        start = time_unix_ms()
         with self.assertRaises(SystemExit):
            WopMars().run(cmd_line)
-        end = time.time()
+        end = time_unix_ms()
         runtime2 = end - start
         self.assertGreater(runtime1 * 1.5, runtime2)
         PathFinder.silentremove("test/output/output_file1.txt")
@@ -114,22 +120,22 @@ class TestWopMars(TestCase):
 
     def test_09run6(self):
         cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-p", "-vv"]
-        start = time.time()
+        start = time_unix_ms()
         with self.assertRaises(SystemExit):
            WopMars().run(cmd_line)
-        end = time.time()
+        end = time_unix_ms()
         runtime1 = end - start
-        start = time.time()
+        start = time_unix_ms()
         with self.assertRaises(SystemExit):
            WopMars().run(cmd_line)
-        end = time.time()
+        end = time_unix_ms()
         runtime2 = end - start
         self.assertGreater(runtime1 * 1.5, runtime2)
         PathFinder.silentremove("test/output/output_file1.txt")
-        start = time.time()
+        start = time_unix_ms()
         with self.assertRaises(SystemExit):
            WopMars().run(cmd_line)
-        end = time.time()
+        end = time_unix_ms()
         runtime2 = end - start
         self.assertTrue(runtime1 * 0.4 <= runtime2 <= runtime1 * 1.4)
 
@@ -182,16 +188,6 @@ class TestWopMars(TestCase):
         session = SQLManager.instance().get_session()
         self.assertEqual(session.query(Execution).count(), 1)
 
-    # def test_pandas(self):
-    #     cmd_line = ["python", "tool", "test.resource.wrapper.FooWrapperDataframe",
-    #                 "-o", "{'table': {'FooBase': 'test.resource.model.FooBase'}}",
-    #                 "-vv", "-p", "-D", self.__db_url, "-d", PathFinder.get_module_path()]
-    #
-    #     with self.assertRaises(SystemExit) as se:
-    #         WopMars().run(cmd_line)
-    #
-    #     self.assertEqual(se.exception.code, 1)
-
     def test_run_target_rule(self):
         # SQLManager.instance().create_all()
         cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-p", "--targetrule", "rule3"]
@@ -205,13 +201,6 @@ class TestWopMars(TestCase):
         with self.assertRaises(SystemExit) as se:
            WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 1)
-
-    def tearDown(self):
-        SQLManager.instance().get_session().close()
-        SQLManager.instance().drop_all()
-        PathFinder.dir_content_remove(os.path.join(self.s_root_path, "test/output"))
-        OptionManager._drop()
-        SQLManager._drop()
 
 if __name__ == "__main__":
     unittest.main()

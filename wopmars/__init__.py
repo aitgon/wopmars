@@ -59,6 +59,7 @@ from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder
 from wopmars.utils.exceptions.WopMarsException import WopMarsException
 from wopmars.constants import home_wopmars
+from wopmars.utils.various import time_unix_ms
 
 # todo combinatorices pour les rules
 # todo option pour reset les resultats (supprimer le contenu de la database) / fresh run
@@ -149,7 +150,7 @@ class WopMars:
             Logger.instance().error(str(WE))
             session = SQLManager.instance().get_session()
             try:
-                finished_at = time.time()
+                finished_at = time_unix_ms()
                 Logger.instance().error("The workflow has encountered an error at: " + str(finished_at))
                 wm.set_finishing_informations(finished_at, "ERROR")
             except AttributeError:
