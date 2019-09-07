@@ -5,7 +5,7 @@ __copyright__ = "Since copyright 2017, Luc Giffon, Lionel Spinelli, Aitor Gonzal
 __email__ = "aitor.gonzalez@univ-amu.fr"
 __license__ = "MIT"
 
-import wopmars
+#import wopmars
 from codecs import open
 from os import path
 import sys

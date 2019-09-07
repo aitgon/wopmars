@@ -1,3 +1,8 @@
+CHANGES IN VERSION 0.0.7 (Sept 7, 2019)
+-------------------------
+
+- BUG: setup.py
+
 CHANGES IN VERSION 0.0.6 (May 5, 2019)
 -------------------------
 
