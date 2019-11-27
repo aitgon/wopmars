@@ -11,7 +11,7 @@ from wopmars.Observable import Observable
 from wopmars.utils.Logger import Logger
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.exceptions.WopMarsException import WopMarsException
-from wopmars.utils.various import time_unix_ms
+from wopmars.utils.various import get_mtime, get_current_time
 
 
 class RuleThread(threading.Thread, Observable):
@@ -52,10 +52,11 @@ class RuleThread(threading.Thread, Observable):
         :return:
         """
 
-        session_tw = SQLManager.instance().get_session()
-        start = time_unix_ms()
+        wopmars_session = SQLManager.instance().get_session()
+        time_unix_ms, time_human = get_current_time()
+        start = time_human
         try:
-            self.__toolwrapper.set_session(session_tw)
+            self.__toolwrapper.set_session(wopmars_session)
             # if the tool need to be executed because its output doesn't exist
             if not self.__dry:
                 Logger.instance().info(
@@ -75,8 +76,9 @@ class RuleThread(threading.Thread, Observable):
                                 raise
                     # end of mkdir -p output dir
                     self.__toolwrapper.run()
-                    session_tw.commit()
-                    self.__toolwrapper.set_execution_infos(start, time_unix_ms(), "EXECUTED")
+                    wopmars_session.commit()
+                    time_unix_ms, time_human = get_current_time()
+                    self.__toolwrapper.set_execution_infos(start, time_human, "EXECUTED")
                 else:
                     Logger.instance().debug("Dry-run mode enabled. Execution skiped.")
                     self.__toolwrapper.set_execution_infos(status="DRY")
@@ -84,8 +86,8 @@ class RuleThread(threading.Thread, Observable):
                 Logger.instance().info("Rule: " + str(self.__toolwrapper.name) + " -> " + self.__toolwrapper.__class__.__name__ + " skiped.")
                 self.__toolwrapper.set_execution_infos(start, time_unix_ms(), "ALREADY_EXECUTED")
         except Exception as e:
-            session_tw.rollback()
-            self.__toolwrapper.set_execution_infos(start, time_unix_ms(), "EXECUTION_ERROR")
+            wopmars_session.rollback()
+            self.__toolwrapper.set_execution_infos(start, time_unix_ms, "EXECUTION_ERROR")
             raise WopMarsException("Error while executing rule " + self.__toolwrapper.name +
                                    " (Rule " + self.__toolwrapper.toolwrapper + ")",
                                    "Full stack trace: \n" + str(traceback.format_exc()))

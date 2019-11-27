@@ -16,7 +16,7 @@ from wopmars.utils.Logger import Logger
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.UniqueQueue import UniqueQueue
 from wopmars.utils.exceptions.WopMarsException import WopMarsException
-from wopmars.utils.various import time_unix_ms
+from wopmars.utils.various import get_mtime, get_current_time
 
 
 class WorkflowManager(RuleObserver):
@@ -291,22 +291,23 @@ class WorkflowManager(RuleObserver):
         # Is there some tools that are currently being executed?
         if self.__count_exec == 0:
             # Is there some tools that weren't ready?
+            finish_epoch_millis_unix_ms, finish_epoch_millis_datetime = get_current_time()
             if len(self.__list_queue_buffer) == 0:
                 # If there is no tool waiting and no tool being executed, the workflow has finished.
-                finished_at = time_unix_ms()
-                finished_at_strftime = datetime.datetime.fromtimestamp(finished_at/1000).strftime('%Y-%m-%d %H:%M:%S')
-                Logger.instance().info("The workflow has completed. Finished at: " + finished_at_strftime)
-                self.set_finishing_informations(finished_at, "FINISHED")
+                # finished_at = finish_epoch_millis_unix_ms
+                # finished_at_strftime = datetime.datetime.fromtimestamp(finished_at/1000).strftime('%Y-%m-%d %H:%M:%S')
+                Logger.instance().info("The workflow has completed. Finished at: {}".format(finish_epoch_millis_datetime))
+                self.set_finishing_informations(finish_epoch_millis_datetime, "FINISHED")
                 SQLManager.instance().get_session().close()
                 sys.exit(0)
             # uniquement en environnement multiThreadpredece
             elif not self.check_buffer():
                 # If there is no tool being executed but there is that are waiting something, the workflow has an issue
-                finished_at = time_unix_ms()
+                # finished_at = time_unix_ms()
                 tw_list = [t.get_toolwrapper() for t in self.__list_queue_buffer]
                 if len(tw_list) > 0:
                     input_files_not_ready = tw_list[0].get_input_files_not_ready()
-                    self.set_finishing_informations(finished_at, "ERROR")
+                    self.set_finishing_informations(finish_epoch_millis_datetime, "ERROR")
                     raise WopMarsException("The workflow has failed.",
                                            "The inputs '{}' have failed for this tool '{}'".format(input_files_not_ready[0], tw_list[0].name))
                                            # "The inputs are not ready for thisto: " +
@@ -315,20 +316,21 @@ class WorkflowManager(RuleObserver):
                                            #            t.get_toolwrapper().name for t in self.__list_queue_buffer]) + ". ")
             # If there is one tool that is ready, it means that it is in queue because ressources weren't available.
 
-    def set_finishing_informations(self, finished_at, status):
+    def set_finishing_informations(self, finish_epoch_millis, status):
         """
         Set the finsihing information of the whole workflow.
 
-        :param finished_at: The finishing time of the workflow
-        :type finished_at: integer unix time
+        :param finish_epoch_millis: The finishing time of the workflow
+        :type finish_epoch_millis: integer unix time
         :param status: The final status of the workflow
         :type status: str
         """
         modify_exec = self.__session.query(Execution).order_by(Execution.id.desc()).first()
         if modify_exec is not None:
-            modify_exec.finished_at = finished_at
-            #modify_exec.time = (modify_exec.finished_at - modify_exec.started_at).total_seconds()
-            modify_exec.time = modify_exec.finished_at - modify_exec.started_at
+            modify_exec.finish_epoch_millis = finish_epoch_millis
+            #modify_exec.time = (modify_exec.finish_epoch_millis - modify_exec.started_epoch_millis).total_seconds()
+            # modify_exec.time = modify_exec.finished_at - modify_exec.started_at
+            modify_exec.time = int((modify_exec.finish_epoch_millis - modify_exec.started_epoch_millis).total_seconds())
             modify_exec.status = status
             self.__session.add(modify_exec)
             self.__session.commit()

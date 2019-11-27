@@ -1,6 +1,6 @@
 import os
 
-from sqlalchemy import Column, Integer, String, ForeignKey, Float, BigInteger
+from sqlalchemy import Column, Integer, String, ForeignKey, Float, BigInteger, DateTime
 from sqlalchemy.orm import relationship
 
 from wopmars.Base import Base
@@ -9,7 +9,7 @@ from wopmars.models.Option import Option
 from wopmars.utils.Logger import Logger
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.exceptions.WopMarsException import WopMarsException
-from wopmars.utils.various import os_path_getmtime_ms
+from wopmars.utils.various import get_mtime
 
 
 class Rule(Base):
@@ -21,8 +21,8 @@ class Rule(Base):
     - name: VARCHAR(255) - the name of the rule
     - toolwrapper: VARCHAR(255) - the name of the Toolwrapper
     - execution_id: INTEGER - foreign key to the table ``wom_execution`` - the associated execution
-    - started_at: INTEGER - unix time [ms] at wich the toolwrapper started its execution
-    - finished_at: INTEGER - unix time [ms] at wich the toolwrapper finished its execution
+    - started_epoch_millis: INTEGER - unix time [ms] at wich the toolwrapper started its execution
+    - finish_epoch_millis: INTEGER - unix time [ms] at wich the toolwrapper finished its execution
     - time: FLOAT - the total time [ms] toolwrapper execution
     - status: VARCHAR(255) - the final status of the Toolwrapper. it can be:
 
@@ -38,9 +38,9 @@ class Rule(Base):
     name = Column(String(255))
     toolwrapper = Column(String(255))
     execution_id = Column(Integer, ForeignKey("wom_execution.id"))
-    started_at = Column(BigInteger, nullable=True)
-    finished_at = Column(BigInteger, nullable=True)
-    time = Column(Float, nullable=True)
+    started_epoch_millis = Column(DateTime, nullable=True)
+    finish_epoch_millis = Column(DateTime, nullable=True)
+    delta_epoch_millis = Column(BigInteger, nullable=True)
     status = Column(String(255), nullable=True, default="NOT_EXECUTED")
 
     # One rule has Many table
@@ -343,7 +343,11 @@ class Rule(Base):
         session = SQLManager.instance().get_session()
         for f in [f for f in self.files if f.type.name == type]:
             try:
-                time = os_path_getmtime_ms(f.path)
+                mtime_epoch_millis, mtime_human = get_mtime(f.path)
+                f.mtime_human = mtime_human
+                f.mtime_epoch_millis = mtime_epoch_millis
+                size = os.path.getsize(f.path)
+                f.size = size
                 size = os.path.getsize(f.path)
             except FileNotFoundError as FE:
                 # todo ask lionel sans ce rollback, ca bug, pourquoi? la session est vide... comme si la query etait bloquante
@@ -354,9 +358,9 @@ class Rule(Base):
                                            " doesn't exist")
                 else:
                     # in dry-run mode, input/output files might not exist
-                    time = None
+                    mtime_epoch_millis = None
                     size = None
-            f.used_at = time
+            f.used_at = mtime_epoch_millis
             f.size = size
             session.add(f)
             if type == "input":
@@ -495,7 +499,7 @@ class Rule(Base):
         if stop is not None:
             self.finished_at = stop
         if self.started_at is not None and self.finished_at is not None:
-            #self.time = (self.finished_at - self.started_at).total_seconds()
+            #self.time = (self.finish_epoch_millis - self.started_epoch_millis).total_seconds()
             self.time = self.finished_at - self.started_at
         if status is not None:
             self.status = status
