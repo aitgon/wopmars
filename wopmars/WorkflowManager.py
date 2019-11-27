@@ -5,11 +5,11 @@ import datetime
 from wopmars.SQLManager import SQLManager
 from wopmars.models.Execution import Execution
 from wopmars.models.TableInputOutputInformation import TableInputOutputInformation
-from wopmars.models.ToolWrapper import ToolWrapper
+from wopmars.models.Rule import Rule
 from wopmars.models.TypeInputOrOutput import TypeInputOrOutput
 from wopmars.DAG import DAG
-from wopmars.ToolThread import ToolThread
-from wopmars.ToolWrapperObserver import ToolWrapperObserver
+from wopmars.RuleThread import RuleThread
+from wopmars.RuleObserver import RuleObserver
 from wopmars.Parser import Parser
 from wopmars.utils.PathFinder import PathFinder
 from wopmars.utils.Logger import Logger
@@ -19,7 +19,7 @@ from wopmars.utils.exceptions.WopMarsException import WopMarsException
 from wopmars.utils.various import time_unix_ms
 
 
-class WorkflowManager(ToolWrapperObserver):
+class WorkflowManager(RuleObserver):
     """
     The WorkflowManager class manage all the workflow execution.
 
@@ -30,14 +30,14 @@ class WorkflowManager(ToolWrapperObserver):
     2- The method :meth:`~.wopmars.framework.management.WorkflowManager.WorkflowManager.execute_from` is call without argument, meaning that the execution begin at the top of the dag
     (the root of the tree).
     3- The nodes are gathered thanks to the :meth:`~.wopmars.framework.management.DAG.DAG.successors` method of the :class:`wopmars.framework.management.DAG.DAG`
-    4- Each node is wrapped inside a :class:`~.wopmars.framework.management.ToolThread.ToolThread` object which will be added to the queue.
-    5- Each ToolThread is executed (ordered) as follows:
+    4- Each node is wrapped inside a :class:`~.wopmars.framework.management.RuleThread.RuleThread` object which will be added to the queue.
+    5- Each RuleThread is executed (ordered) as follows:
 
       a- If the inputs are ready: they are executed.
       b- If not, they are put in the buffer.
 
-    6- When the :class:`~.wopmars.framework.management.ToolThread.ToolThread` has finished its execution, a notification of success is sent.
-    7- The method :meth:`~wopmars.framework.management.WorkflowManager.WorkflowManager.execute_from` is called again with the succeeded ToolWrapper as argument.
+    6- When the :class:`~.wopmars.framework.management.RuleThread.RuleThread` has finished its execution, a notification of success is sent.
+    7- The method :meth:`~wopmars.framework.management.WorkflowManager.WorkflowManager.execute_from` is called again with the succeeded Rule as argument.
     8- Loop to the 3rd step
     9- When the DAG is finished, the software exits
 
@@ -181,10 +181,10 @@ class WorkflowManager(ToolWrapperObserver):
         The next nodes are taken thanks to the "successors()" method of the DAG and are put into the queue.
         The "run_queue()" is then called.
 
-        A trace of the already_runned ToolWrapper objects is kept in order to avoid duplicate execution.
+        A trace of the already_runned Rule objects is kept in order to avoid duplicate execution.
 
         :param node: A node of the DAG or None, if it needs to be executed from the root.
-        :type node: :class:`~.wopmars.framework.database.models.ToolWrapper.ToolWrapper`
+        :type node: :class:`~.wopmars.framework.database.models.Rule.Rule`
         :return: void
         """
         # the first list will be the root nodes
@@ -194,8 +194,8 @@ class WorkflowManager(ToolWrapperObserver):
         for tw in list_tw:
             # every rule should be executed once and only once
             if tw not in self.__already_runned:
-                # ToolThread object is a thread ready to start
-                self.__queue_exec.put(ToolThread(tw))
+                # RuleThread object is a thread ready to start
+                self.__queue_exec.put(RuleThread(tw))
             else:
                 Logger.instance().debug("Rule: " + tw.name +
                                         " -> " + tw.toolwrapper +
@@ -210,7 +210,7 @@ class WorkflowManager(ToolWrapperObserver):
         If not, they are put in a buffer list of "not ready tools" or "ready but has not necessary ressources available
         tools".
 
-        The start method is called with a dry argument, if it appears that the input of the ToolWrapper are the same
+        The start method is called with a dry argument, if it appears that the input of the Rule are the same
         than in a previous execution, and that the output are already ready. The dry parameter is set to True and the
         start method will only simulate the execution.
 
@@ -243,7 +243,7 @@ class WorkflowManager(ToolWrapperObserver):
             elif tw.are_inputs_ready() or OptionManager.instance()["--dry-run"]:
                 # the state of inputs (table and file) are set in the db here.
                 tw.set_args_time_and_size("input")
-                Logger.instance().debug("ToolWrapper ready: " + tw.toolwrapper)
+                Logger.instance().debug("Rule ready: " + tw.toolwrapper)
                 dry = False
                 # if forceall option, then the tool is reexecuted anyway
                 # check if the actual execution of the toolwrapper is necessary
@@ -279,7 +279,7 @@ class WorkflowManager(ToolWrapperObserver):
                         self.__session.commit()
                     raise e
             else:
-                Logger.instance().debug("ToolWrapper not ready: rule: " + tw.name + " -> " + str(tw.toolwrapper))
+                Logger.instance().debug("Rule not ready: rule: " + tw.name + " -> " + str(tw.toolwrapper))
                 # The buffer contains the ToolWrappers that have inputs which are not ready yet.
                 self.__list_queue_buffer.append(thread_tw)
 
@@ -287,7 +287,7 @@ class WorkflowManager(ToolWrapperObserver):
                                                   t.get_toolwrapper().toolwrapper for t in self.__list_queue_buffer]))
         Logger.instance().debug("Running rules: " + str(self.__count_exec))
 
-        # There is no more ToolWrapper that are waiting to be executed.
+        # There is no more Rule that are waiting to be executed.
         # Is there some tools that are currently being executed?
         if self.__count_exec == 0:
             # Is there some tools that weren't ready?
@@ -338,7 +338,7 @@ class WorkflowManager(ToolWrapperObserver):
         Check if all the predecessors of the given toolwrapper have yet been executed in this workflow.
 
         :param tw: Node of the DAG
-        :type tw: :class:`~.wopmars.main.framework.database.models.ToolWrapper.ToolWrapper`
+        :type tw: :class:`~.wopmars.main.framework.database.models.Rule.Rule`
         :return: Bool
         """
         return bool(self.__dag_to_exec.get_all_predecessors(tw).difference(set([tw])).issubset(set(self.__already_runned)))
@@ -346,20 +346,20 @@ class WorkflowManager(ToolWrapperObserver):
     @staticmethod
     def is_this_tool_already_done(tw):
         """
-        Return True if conditions for saying "The output of this ToolWrapper are already available" are filled.
+        Return True if conditions for saying "The output of this Rule are already available" are filled.
 
         The conditions are:
-            - The ToolWrapper exist in database (named = tw_old)
+            - The Rule exist in database (named = tw_old)
             - The tw_old param are the same than the same which is about to start
             - the tw_old inputs are the same
             - the tw_old outputs exists with the same name and are more recent than inputs
 
         :param tw: The Toolwrapper to test_bak
-        :type tw: :class:`~.wopmars.main.framework.database.models.ToolWrapper.ToolWrapper`
+        :type tw: :class:`~.wopmars.main.framework.database.models.Rule.Rule`
         """
         session = SQLManager.instance().get_session()
-        list_same_toolwrappers = session.query(ToolWrapper).filter(ToolWrapper.toolwrapper == tw.toolwrapper)\
-            .filter(ToolWrapper.execution_id != tw.execution_id).all()
+        list_same_toolwrappers = session.query(Rule).filter(Rule.toolwrapper == tw.toolwrapper)\
+            .filter(Rule.execution_id != tw.execution_id).all()
         i = 0
         while i < len(list_same_toolwrappers):
             same = False
@@ -379,12 +379,12 @@ class WorkflowManager(ToolWrapperObserver):
 
     def check_buffer(self):
         """
-        Check if the buffer contains ToolWrapper that are ready.
+        Check if the buffer contains Rule that are ready.
 
         :return: bool: True if there is at least one toolwrapper that is READY in the buffer.
         """
         for tw in self.__list_queue_buffer:
-            if tw.get_toolwrapper().get_state() == ToolWrapper.READY:
+            if tw.get_toolwrapper().get_state() == Rule.READY:
                 return True
         return False
 
@@ -392,8 +392,8 @@ class WorkflowManager(ToolWrapperObserver):
         """
         Handle thread_toolwrapper success by continuing the dag.
 
-        :param thread_toolwrapper: ToolWrapper thread that just succeed
-        :type thread_toolwrapper: :class:`~.wopmars.management.ToolThread.ToolThread`
+        :param thread_toolwrapper: Rule thread that just succeed
+        :type thread_toolwrapper: :class:`~.wopmars.management.RuleThread.RuleThread`
         """
         self.__session.add(thread_toolwrapper.get_toolwrapper())
         self.__session.commit()
@@ -422,7 +422,7 @@ class WorkflowManager(ToolWrapperObserver):
         """
         Handle thread_toolwrapper failure by re-puting it in the queue.
 
-        :param thread_toolwrapper: ToolWrapper thread that just failed
+        :param thread_toolwrapper: Rule thread that just failed
         :return:
         """
         pass

@@ -1,5 +1,5 @@
 """
-Module containing the ToolThread class.
+Module containing the RuleThread class.
 """
 import errno
 import threading
@@ -14,9 +14,9 @@ from wopmars.utils.exceptions.WopMarsException import WopMarsException
 from wopmars.utils.various import time_unix_ms
 
 
-class ToolThread(threading.Thread, Observable):
+class RuleThread(threading.Thread, Observable):
     """
-    The class ToolThread is a wrapper for executing toolwrappers.
+    The class RuleThread is a wrapper for executing toolwrappers.
 
     It has been designed in order to implement the multithreading, this is why it inherit from threading.Thread.
     """
@@ -64,9 +64,9 @@ class ToolThread(threading.Thread, Observable):
                 if not OptionManager.instance()["--dry-run"]:
                     Logger.instance().info("Rule: " + str(self.__toolwrapper.name) + " -> " + self.__toolwrapper.__class__.__name__ + " started.")
                     # mkdir -p output dir: before running we need output dir
-                    output_file_fields = self._ToolThread__toolwrapper.specify_output_file()
+                    output_file_fields = self.__toolwrapper.specify_output_file()
                     for out_field in output_file_fields:
-                        out_file_path = self._ToolThread__toolwrapper.output_file(out_field)
+                        out_file_path = self.__toolwrapper.output_file(out_field)
                         out_dir = os.path.dirname(out_file_path)
                         try:
                             os.makedirs(out_dir)
@@ -87,7 +87,7 @@ class ToolThread(threading.Thread, Observable):
             session_tw.rollback()
             self.__toolwrapper.set_execution_infos(start, time_unix_ms(), "EXECUTION_ERROR")
             raise WopMarsException("Error while executing rule " + self.__toolwrapper.name +
-                                   " (ToolWrapper " + self.__toolwrapper.toolwrapper + ")",
+                                   " (Rule " + self.__toolwrapper.toolwrapper + ")",
                                    "Full stack trace: \n" + str(traceback.format_exc()))
         finally:
             # todo twthread , fermer session

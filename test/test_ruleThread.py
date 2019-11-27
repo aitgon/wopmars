@@ -12,7 +12,7 @@ from wopmars.models import FileInputOutputInformation
 from wopmars.models import TableModificationTime
 from wopmars.models.Option import Option
 from wopmars.models.TypeInputOrOutput import TypeInputOrOutput
-from wopmars.ToolThread import ToolThread
+from wopmars.RuleThread import RuleThread
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder
 from wopmars.utils.various import time_unix_ms
@@ -82,9 +82,9 @@ class TestToolThread(TestCase):
         tw3.files.extend([f13, f23])
         tw3.tables.append(t13)
 
-        tt1 = ToolThread(tw1)
-        tt2 = ToolThread(tw2)
-        tt3 = ToolThread(tw3)
+        tt1 = RuleThread(tw1)
+        tt2 = RuleThread(tw2)
+        tt3 = RuleThread(tw3)
 
         tt1.start()
         tt2.start()
@@ -152,9 +152,9 @@ class TestToolThread(TestCase):
             tw13.tables.append(t13)
             tw13.options.append(o13)
 
-            tt1 = ToolThread(tw1)
-            tt2 = ToolThread(tw12)
-            tt3 = ToolThread(tw13)
+            tt1 = RuleThread(tw1)
+            tt2 = RuleThread(tw12)
+            tt3 = RuleThread(tw13)
 
             t21 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
             t21.set_table(FooBase)
@@ -177,9 +177,9 @@ class TestToolThread(TestCase):
             tw23 = tw_query(rule_name="rule1")
             tw23.tables.append(t23)
 
-            tt4 = ToolThread(tw21)
-            tt5 = ToolThread(tw22)
-            tt6 = ToolThread(tw23)
+            tt4 = RuleThread(tw21)
+            tt5 = RuleThread(tw22)
+            tt6 = RuleThread(tw23)
 
             tt4.start()
 

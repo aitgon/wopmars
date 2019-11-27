@@ -3,10 +3,10 @@ Module containing the FooWrapper1 class
 """
 import time
 
-from wopmars.models import ToolWrapper
+from wopmars.models import Rule
 
 
-class FooWrapper7(ToolWrapper):
+class FooWrapper7(Rule):
     """
     This class has been done for example/testing purpose.
     Modifications may lead to failure in tests.

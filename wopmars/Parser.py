@@ -6,7 +6,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql.functions import func
 
 from wopmars.SQLManager import SQLManager
-from wopmars.models.ToolWrapper import ToolWrapper
+from wopmars.models.Rule import Rule
 from wopmars.DAG import DAG
 from wopmars.Reader import Reader
 from wopmars.utils.Logger import Logger
@@ -77,15 +77,15 @@ class Parser:
 
         The current execution is defined as the one with the highest id (it is auto_incrementing)
 
-        :return: Set([ToolWrapper]) the set of toolwrappers of the current execution.
+        :return: Set([Rule]) the set of toolwrappers of the current execution.
         """
         session = SQLManager.instance().get_session()
         set_toolwrappers = set()
         try:
             # query asking the db for the highest execution id
-            execution_id = session.query(func.max(ToolWrapper.execution_id))
+            execution_id = session.query(func.max(Rule.execution_id))
             Logger.instance().debug("Getting toolwrappers of the current execution. id = " + str(execution_id.one()[0]))
-            set_toolwrappers = set(session.query(ToolWrapper).filter(ToolWrapper.execution_id == execution_id).all())
+            set_toolwrappers = set(session.query(Rule).filter(Rule.execution_id == execution_id).all())
         except NoResultFound as e:
             raise e
         return set_toolwrappers

@@ -17,7 +17,7 @@ class FileInputOutputInformation(InputOutput, Base):
     - id: INTEGER - primary key - autoincrement - arbitrary ID
     - name: VARCHAR(255) - the name of the reference to the file
     - path: VARCHAR(255) - the path to the file
-    - rule_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.framework.database.tables.ToolWrapper.ToolWrapper`
+    - rule_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.framework.database.tables.Rule.Rule`
     - type_id: INTEGER - foreign key to the associated type ID: :class:`wopmars.framework.database.tables.TypeInputOrOutput.TypeInputOrOutput`
     - used_at: INTEGER - unix time at which the table have been used
     - size: INTEGER - the size of the file
@@ -33,7 +33,7 @@ class FileInputOutputInformation(InputOutput, Base):
     size = Column(BigInteger, nullable=True)
 
     # One file is in Many rule_file and is in Many rule
-    rule = relationship("ToolWrapper", back_populates="files", enable_typechecks=False)
+    rule = relationship("Rule", back_populates="files", enable_typechecks=False)
     # One file has One type
     type = relationship("TypeInputOrOutput", back_populates="files")
 

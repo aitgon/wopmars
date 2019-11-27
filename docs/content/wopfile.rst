@@ -69,7 +69,7 @@ A rule is composed of:
 tool
 ++++
 
-Like it has been said previously, the ``tool`` must be specified with its "full name". It means that you have to write the full path to the python module containing the `ToolWrapper`. This path is written following the Python syntax (e.g. ``.`` instead of ``/``) and must be known.
+Like it has been said previously, the ``tool`` must be specified with its "full name". It means that you have to write the full path to the python module containing the `Rule`. This path is written following the Python syntax (e.g. ``.`` instead of ``/``) and must be known.
 
    *Example*::
 

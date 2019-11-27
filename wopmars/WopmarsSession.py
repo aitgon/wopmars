@@ -113,7 +113,7 @@ class WopmarsSession:
 
     def _session(self):
         """
-        Return the SQLAlchemy session shouldn't be used by the ToolWrapper Developper.
+        Return the SQLAlchemy session shouldn't be used by the Rule Developper.
         """
         return self.__session
 

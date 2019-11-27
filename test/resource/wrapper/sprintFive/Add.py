@@ -1,7 +1,7 @@
-from wopmars.models import ToolWrapper
+from wopmars.models import Rule
 
 
-class Add(ToolWrapper):
+class Add(Rule):
     __mapper_args__ = {'polymorphic_identity': "sprintFive.Add"}
 
     def specify_input_file(self):

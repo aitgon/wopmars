@@ -12,9 +12,9 @@ from wopmars.utils.exceptions.WopMarsException import WopMarsException
 from wopmars.utils.various import os_path_getmtime_ms
 
 
-class ToolWrapper(Base):
+class Rule(Base):
     """
-    The class ToolWrapper is the superclass of the wrappers which will be designed by the wrapper developers. It is the
+    The class Rule is the superclass of the wrappers which will be designed by the wrapper developers. It is the
     SQLAlchemy Model of the table ``wom_rule`` with the following fields:
 
     - id: INTEGER - primary_key - auto increment - arbitrary ID
@@ -55,7 +55,7 @@ class ToolWrapper(Base):
     # parentrules = relationship etc...
     __mapper_args__ = {
         'polymorphic_on': toolwrapper,
-        'polymorphic_identity': 'ToolWrapper'
+        'polymorphic_identity': 'Rule'
     }
 
     NEW = 1
@@ -76,7 +76,7 @@ class ToolWrapper(Base):
         :type rule_name: str
         """
         super().__init__(name=rule_name)
-        self.__state = ToolWrapper.NEW
+        self.__state = Rule.NEW
         self.__session = None
 
     ### PARSING METHODS
@@ -90,9 +90,9 @@ class ToolWrapper(Base):
 
         Call of the methods:
 
-        - :meth:`~.wopmars.framework.database.ToolWrapper.ToolWrapper.is_options_respected`
-        - :meth:`~.wopmars.framework.database.ToolWrapper.ToolWrapper.is_input_respected`
-        - :meth:`~.wopmars.framework.database.ToolWrapper.ToolWrapper.is_output_respected`
+        - :meth:`~.wopmars.framework.database.Rule.Rule.is_options_respected`
+        - :meth:`~.wopmars.framework.database.Rule.Rule.is_input_respected`
+        - :meth:`~.wopmars.framework.database.Rule.Rule.is_output_respected`
         """
         # the options have to be checked first because they can alter the behavior of the is_input_respected and
         # is_output_respected methods
@@ -109,13 +109,13 @@ class ToolWrapper(Base):
 
         It checks if the input variable names exists or not. If not, throws a WopMarsParsingException.
 
-        This method calls the :meth:`~.wopmars.framework.database.ToolWrapper.ToolWrapper.specify_input_file` method
+        This method calls the :meth:`~.wopmars.framework.database.Rule.Rule.specify_input_file` method
         which have been written by the toolwrapper developer.
 
         :raise WopMarsException: The input are not respected by the user.
         """
         set_input_file_names = set([f_input.name for f_input in self.files if f_input.type.name == "input"])
-        # check if the input file names for the ToolWrapper are coherent with the ToolWrapper specifications
+        # check if the input file names for the Rule are coherent with the Rule specifications
         if set_input_file_names != set(self.specify_input_file()):
             raise WopMarsException("The content of the definition file is not valid.",
                                    "The given input file variable names for " + self.__class__.__name__ +
@@ -129,7 +129,7 @@ class ToolWrapper(Base):
         set_input_table = set([t_input for t_input in self.tables if t_input.type.name == "input"])
         set_input_table_names = set([t_input.tablename for t_input in set_input_table])
 
-        # check if the input table names for the ToolWrapper are coherent with the ToolWrapper specifications
+        # check if the input table names for the Rule are coherent with the Rule specifications
         # this condition may be a duplicate... # todo to fix?
         if set_input_table_names != set(self.specify_input_table()):
             raise WopMarsException("The content of the definition file is not valid.",
@@ -266,7 +266,7 @@ class ToolWrapper(Base):
         * TableInputOutputInformation
         * FileInputOutputInformation
 
-        :param other: ToolWrapper that is possibly a predecessor of "self"
+        :param other: Rule that is possibly a predecessor of "self"
         :return: bool True if "self" follows "other"
         """
         for rule_f_path in [f.path for f in self.files if f.type.name == "input"]:
@@ -307,7 +307,7 @@ class ToolWrapper(Base):
         for i in input_files:
             if not i.is_ready():
                 Logger.instance().debug("Input: " + str(i.name) + " is not ready.")
-                self.__state = ToolWrapper.NOT_READY
+                self.__state = Rule.NOT_READY
                 return False
             Logger.instance().debug("Input: " + str(i.name) + " is ready.")
 
@@ -316,11 +316,11 @@ class ToolWrapper(Base):
         for i in input_tables:
             if not i.is_ready():
                 Logger.instance().debug("Input: " + str(i.tablename) + " is not ready.")
-                self.__state = ToolWrapper.NOT_READY
+                self.__state = Rule.NOT_READY
                 return False
             Logger.instance().debug("Input: " + str(i.tablename) + " is ready.")
 
-        self.__state = ToolWrapper.READY
+        self.__state = Rule.READY
         return True
 
     def set_args_time_and_size(self, type, dry=False):
@@ -378,14 +378,14 @@ class ToolWrapper(Base):
         """
         Never used.
 
-        Check if the other ToolWrapper have the same input than self.
+        Check if the other Rule have the same input than self.
 
         The input are say "the same" if:
             - The table have the same name and the same last modification time
             - The file have the same name, the same lastm modification time and the same size
 
         :param other: an other Toolwrapper which maybe as the same inputs
-        :type other: :class:`~.wopmars.framework.database.tables.ToolWrapper.ToolWrapper`
+        :type other: :class:`~.wopmars.framework.database.tables.Rule.Rule`
 
         :return: bool
         """
@@ -463,7 +463,7 @@ class ToolWrapper(Base):
 
     def does_output_exist(self):
         """
-        Check if the output of the ToolWrapper exists.
+        Check if the output of the Rule exists.
 
         For files, it means that the file exists on the system.
         For tables, it means that the table is not empty.
@@ -484,7 +484,7 @@ class ToolWrapper(Base):
 
     def set_execution_infos(self, start=None, stop=None, status=None):
         """
-        Generic method to set the informations relatives to the execution of the ToolWrapper.
+        Generic method to set the informations relatives to the execution of the Rule.
 
         :param start: The time of start of the Toolwrapper
         :param stop: The time of end of the Toolwrapper
@@ -509,7 +509,7 @@ class ToolWrapper(Base):
 
         We check if the files, tables and options are the same.
         :param other: ToolWrapper
-        :type other: ToolWrapper
+        :type other: Rule
         :return: Bool: True if the ToolWrappers are equals.
         """
         return (isinstance(other, self.__class__) and
@@ -524,7 +524,7 @@ class ToolWrapper(Base):
         Check if the files of a ToolWrapper are the same than the files of the other for a given type (input or output).
 
         :param other: ToolWrapper with which you need to compare
-        :type other: ToolWrapper
+        :type other: Rule
         :param type_name: The name of the type of file (input or output)
         :type type_name: str
         :return: Bool: True if the files are the same
@@ -542,7 +542,7 @@ class ToolWrapper(Base):
         Check if the tables of a ToolWrapper are the same than the tables of the other for a given type (input or output).
 
         :param other: ToolWrapper with which you need to compare
-        :type other: ToolWrapper
+        :type other: Rule
         :param type_name: The name of the type of table (input or output)
         :type type_name: str
         :return: Bool: True if the tables are the same
@@ -560,7 +560,7 @@ class ToolWrapper(Base):
         Check if the options of a ToolWrapper are the same the options of the other.
 
         :param other: ToolWrapper with which you need to compare.
-        :type other: ToolWrapper
+        :type other: Rule
         :return: Bool: True if the options are the same.
         """
         for opt in self.options:
@@ -573,9 +573,9 @@ class ToolWrapper(Base):
 
     def __hash__(self):
         """
-        Redefining the hash method allows ToolWrapper objects to be indexed in sets and dict.
+        Redefining the hash method allows Rule objects to be indexed in sets and dict.
 
-        Needed to use ToolWrapper as nodes of the DiGraph.
+        Needed to use Rule as nodes of the DiGraph.
 
         :return: int
         """
@@ -611,7 +611,7 @@ class ToolWrapper(Base):
         params_list_str = [str(p).replace(":","") for p in self.options]
         s = ""
         s += "Rule " + self.name + "\n"
-        s += "ToolWrapper " + self.__class__.__name__ + "\n"
+        s += "Rule " + self.__class__.__name__ + "\n"
         s += "Inputs\n" + "\n\t".join(inputs_list_str) + "\n"
         s += "Outputs\n" + "\n".join(outputs_list_str) + "\n"
         s += "Parameters\n" + "\n".join(params_list_str) + "\n"
@@ -689,11 +689,11 @@ class ToolWrapper(Base):
         """
         Should be implemented by the toolwrapper developper.
 
-        The core function of the ToolWrapper is this method. It wraps the actual execution of the tool underlying the ToolWrapper.
+        The core function of the Rule is this method. It wraps the actual execution of the tool underlying the Rule.
 
-        :raises NotImplementedError: If it doesn't have been implemented by the ToolWrapper Developer.
+        :raises NotImplementedError: If it doesn't have been implemented by the Rule Developer.
         """
-        raise NotImplementedError("The method run of the ToolWrapper " + str(self.toolwrapper) + " should be implemented")
+        raise NotImplementedError("The method run of the Rule " + str(self.toolwrapper) + " should be implemented")
 
     ### Methods availables for the tool developer
 
@@ -707,7 +707,7 @@ class ToolWrapper(Base):
         try:
             return [f.path for f in self.files if f.name == key and f.type.name == "input"][0]
         except IndexError:
-            raise WopMarsException("Error during the execution of the ToolWrapper " + str(self.toolwrapper) +
+            raise WopMarsException("Error during the execution of the Rule " + str(self.toolwrapper) +
                                    " (rule " + self.name + ").",
                                    "The input file " + str(key) + " has not been specified.")
 
@@ -721,7 +721,7 @@ class ToolWrapper(Base):
         try:
             return [t for t in self.tables if t.tablename == key and t.type.name == "input"][0].get_table()
         except IndexError:
-            raise WopMarsException("Error during the execution of the ToolWrapper " + str(self.toolwrapper) +
+            raise WopMarsException("Error during the execution of the Rule " + str(self.toolwrapper) +
                                    " (rule " + self.name + ").",
                                    "The input table " + str(key) + " has not been specified.")
 
@@ -735,7 +735,7 @@ class ToolWrapper(Base):
         try:
             return [f.path for f in self.files if f.name == key and f.type.name == "output"][0]
         except IndexError:
-            raise WopMarsException("Error during the execution of the ToolWrapper " + str(self.toolwrapper) +
+            raise WopMarsException("Error during the execution of the Rule " + str(self.toolwrapper) +
                                    " (rule " + self.name + ").",
                                    "The output file " + str(key) + " has not been specified.")
 
@@ -749,7 +749,7 @@ class ToolWrapper(Base):
         try:
             return [t for t in self.tables if t.tablename == key and t.type.name == "output"][0].get_table()
         except IndexError:
-            raise WopMarsException("Error during the execution of the ToolWrapper " + str(self.toolwrapper) +
+            raise WopMarsException("Error during the execution of the Rule " + str(self.toolwrapper) +
                                    " (rule " + self.name + ").",
                                    "The output table " + str(key) + " has not been specified.")
 
@@ -774,7 +774,7 @@ class ToolWrapper(Base):
                     break
             return value
         except IndexError as e:
-            # antipattern, this is bad, but I deleted the warning because if the ToolWrapper Developer put his call to
+            # antipattern, this is bad, but I deleted the warning because if the Rule Developer put his call to
             # option in a loop, there will be too mutch output
             pass
             return None

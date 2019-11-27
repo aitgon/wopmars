@@ -521,10 +521,10 @@ class Reader:
             else:
                 raise WopMarsException("Error while parsing the configuration file:",
                                        str_wrapper_name + " module contains an ImportError: " + str(IE))
-        # Initialize the instance of ToolWrapper
+        # Initialize the instance of Rule
         toolwrapper_wrapper = toolwrapper_class(rule_name=str_rule_name)
 
-        # associating ToolWrapper instances with their files / models
+        # associating Rule instances with their files / models
         for elm in dict_dict_dict_elm["dict_input"]:
             if elm == "file":
                 for input_f in dict_dict_dict_elm["dict_input"][elm]:

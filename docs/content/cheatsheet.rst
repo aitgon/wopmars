@@ -38,10 +38,10 @@ For the complete code, go to the github repository
 
 .. code-block:: python
 
-    from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
+    from wopmars.framework.database.tables.Rule import Rule
     ...
 
-    class CarAssembler(ToolWrapper):
+    class CarAssembler(Rule):
         __mapper_args__ = {
             "polymorphic_identity": "wopmars.example.CarAssembler"
         }

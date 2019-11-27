@@ -1,7 +1,7 @@
-from wopmars.models import ToolWrapper
+from wopmars.models import Rule
 
 
-class AddWithOrWithoutDeleteBefore(ToolWrapper):
+class AddWithOrWithoutDeleteBefore(Rule):
     __mapper_args__ = {'polymorphic_identity': "sprintFive.AddWithOrWithoutDeleteBefore"}
 
     def specify_input_file(self):

@@ -12,7 +12,7 @@ from wopmars.models import TableInputOutputInformation
 from wopmars.models import FileInputOutputInformation
 from wopmars.models import TableModificationTime
 from wopmars.models.Option import Option
-from wopmars.models import ToolWrapper
+from wopmars.models import Rule
 from wopmars.models.TypeInputOrOutput import TypeInputOrOutput
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder
@@ -41,7 +41,7 @@ class TestToolWrapper(TestCase):
         f2 = FileInputOutputInformation(name="output1", path="file2.txt")
         f2.type = self.output_entry
 
-        self.__toolwrapper1 = ToolWrapper(rule_name="rule1")
+        self.__toolwrapper1 = Rule(rule_name="rule1")
         self.__toolwrapper1.files.extend([f1, f2])
         self.__toolwrapper1.options.append(opt1)
 
@@ -53,7 +53,7 @@ class TestToolWrapper(TestCase):
         f2 = FileInputOutputInformation(name="output1", path="file2.txt")
         f2.type = self.output_entry
 
-        self.__toolwrapper2 = ToolWrapper(rule_name="rule2")
+        self.__toolwrapper2 = Rule(rule_name="rule2")
         self.__toolwrapper2.files.extend([f1, f2])
         self.__toolwrapper2.options.append(opt1)
 
@@ -65,7 +65,7 @@ class TestToolWrapper(TestCase):
         f2 = FileInputOutputInformation(name="output1", path="file2.txt")
         f2.type = self.output_entry
 
-        self.__toolwrapper3 = ToolWrapper(rule_name="rule3")
+        self.__toolwrapper3 = Rule(rule_name="rule3")
         self.__toolwrapper3.files.extend([f1, f2])
         self.__toolwrapper3.options.append(opt1)
 
