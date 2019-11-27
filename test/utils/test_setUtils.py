@@ -1,7 +1,7 @@
 import unittest
 from unittest import TestCase
 
-from wopmars.framework.database.tables.IOFilePut import IOFilePut
+from wopmars.framework.database.models.IOFilePut import IOFilePut
 from wopmars.utils.SetUtils import SetUtils
 
 

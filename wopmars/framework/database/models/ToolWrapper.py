@@ -5,7 +5,7 @@ from sqlalchemy.orm import relationship
 
 from wopmars.Base import Base
 from wopmars.SQLManager import SQLManager
-from wopmars.framework.database.tables.Option import Option
+from wopmars.framework.database.models.Option import Option
 from wopmars.utils.Logger import Logger
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.exceptions.WopMarsException import WopMarsException

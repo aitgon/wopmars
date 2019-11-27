@@ -7,11 +7,11 @@ from test.resource.wrapper.FooWrapper5 import FooWrapper5
 from test.resource.wrapper.sprintFive.Add import Add as tw_add
 from test.resource.wrapper.sprintFive.Query import Query as tw_query
 from wopmars.SQLManager import SQLManager
-from wopmars.framework.database.tables.IODbPut import IODbPut
-from wopmars.framework.database.tables.IOFilePut import IOFilePut
-from wopmars.framework.database.tables.ModificationTable import ModificationTable
-from wopmars.framework.database.tables.Option import Option
-from wopmars.framework.database.tables.Type import Type
+from wopmars.framework.database.models.IODbPut import IODbPut
+from wopmars.framework.database.models.IOFilePut import IOFilePut
+from wopmars.framework.database.models.ModificationTable import ModificationTable
+from wopmars.framework.database.models.Option import Option
+from wopmars.framework.database.models.Type import Type
 from wopmars.ToolThread import ToolThread
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder

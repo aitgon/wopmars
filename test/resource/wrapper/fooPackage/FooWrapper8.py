@@ -6,7 +6,7 @@ import time
 
 import subprocess
 
-from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
+from wopmars.framework.database.models.ToolWrapper import ToolWrapper
 from wopmars.utils.Logger import Logger
 
 class FooWrapper8(ToolWrapper):
