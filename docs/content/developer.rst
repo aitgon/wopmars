@@ -100,7 +100,7 @@ wopmars.framework.database
 ..........................
 
 All the processing related to the database is done here. Every objects that should exist in order to work with the database is stored here:
-the :class:`~.wopmars.framework.database.SQLManager.SQLManager` which is used to perform synchronized operations against the database, the :class:`~.wopmars.framework.database.WopMarsSession.WopMarsSession` which is used to bind the Toolwrappers to the database,  the :class:`~.wopmars.framework.database.WopMarsQuery.WopMarsQuery` which is used to create queries that use the WopMaRS machinery There is a package ``tables`` which contains the models related to the history_ of **WopMars**. Among them, the :class:`~.wopmars.framework.database.tables.ToolWrapper.ToolWrapper` class.
+the :class:`~.wopmars.framework.database.SQLManager.SQLManager` which is used to perform synchronized operations against the database, the :class:`~.wopmars.framework.database.WopmarsSession.WopmarsSession` which is used to bind the Toolwrappers to the database,  the :class:`~.wopmars.framework.database.WopmarsQuery.WopmarsQuery` which is used to create queries that use the WopMaRS machinery There is a package ``tables`` which contains the models related to the history_ of **WopMars**. Among them, the :class:`~.wopmars.framework.database.tables.ToolWrapper.ToolWrapper` class.
 
 wopmars.framework.management
 .................................
@@ -185,7 +185,7 @@ The main class responsible of managing the database is the :class:`~.wopmars.fra
 
 The constructor of the ``SQLManager`` create the actual database and enable the foreign key support (https://www.sqlite.org/foreignkeys.html#fk_enable) in order to let the user benefit from this constraint.
 
-To get a :class:`~.wopmars.database.WopMarsSession.WopMarsSession` associated with this SQLManager, you just need to call :meth:`~wopmars.framework.database.SQLManager.SQLManager.get_session()`` and you can use the session anywhere, in any thread and at any time. Everything is already synchronized.
+To get a :class:`~.wopmars.database.WopmarsSession.WopmarsSession` associated with this SQLManager, you just need to call :meth:`~wopmars.framework.database.SQLManager.SQLManager.get_session()`` and you can use the session anywhere, in any thread and at any time. Everything is already synchronized.
 
 ----
 
@@ -224,12 +224,12 @@ To get a :class:`~.wopmars.database.WopMarsSession.WopMarsSession` associated wi
       
 ----
 
-.. autoclass:: wopmars.framework.database.WopMarsSession.WopMarsSession
+.. autoclass:: wopmars.framework.database.WopmarsSession.WopmarsSession
    :members:
       
 ----
 
-.. autoclass:: wopmars.framework.database.WopMarsQuery.WopMarsQuery
+.. autoclass:: wopmars.framework.database.WopmarsQuery.WopmarsQuery
    :members:
 
 ----

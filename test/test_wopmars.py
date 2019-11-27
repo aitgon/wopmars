@@ -5,7 +5,7 @@ import subprocess
 import unittest
 
 from wopmars import OptionManager
-from wopmars.framework.database.SQLManager import SQLManager
+from wopmars.SQLManager import SQLManager
 from wopmars.framework.database.tables.Execution import Execution
 from wopmars.utils.PathFinder import PathFinder
 from wopmars import WopMars

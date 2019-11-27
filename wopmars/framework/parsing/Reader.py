@@ -14,7 +14,7 @@ except ImportError:
 
 from sqlalchemy.orm.exc import NoResultFound, ObjectDeletedError
 
-from wopmars.framework.database.SQLManager import SQLManager
+from wopmars.SQLManager import SQLManager
 from wopmars.framework.database.tables.Execution import Execution
 from wopmars.framework.database.tables.IODbPut import IODbPut
 from wopmars.framework.database.tables.IOFilePut import IOFilePut

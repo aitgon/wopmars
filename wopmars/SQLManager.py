@@ -7,8 +7,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.schema import sort_tables
 from sqlalchemy import event
 
-from wopmars.framework.database.Base import Base
-from wopmars.framework.database.WopMarsSession import WopMarsSession
+from wopmars.Base import Base
+from wopmars.WopmarsSession import WopmarsSession
 from wopmars.utils.Logger import Logger
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.RWLock import RWLock
@@ -23,7 +23,7 @@ class SQLManager(SingletonMixin):
     The SQLManager is a synchronized Singleton which may be accessible from any thread, at any time. This is allowed
     by the SingletonMixin superclass and a read/write lock.
 
-    Provides a WopMarsSession through the method "get_session". The session is used to perform calls to the database.
+    Provides a WopmarsSession through the method "get_session". The session is used to perform calls to the database.
     Provides the engine if necessary through "get_engine".
     Allows commiting and rollbacking operations of a given session through methods "commit" and "rollback".
     Allows querying operations from a given query: all, one, first, count, one_or_none, scalar. Through "result_factory".
@@ -97,9 +97,9 @@ class SQLManager(SingletonMixin):
         """
         Return a WopmarsSession associated with this SQLmanager.
 
-        :return: WopMarsSession
+        :return: WopmarsSession
         """
-        session = WopMarsSession(self.__Session(), self)
+        session = WopmarsSession(self.__Session(), self)
         return session
 
     def commit(self, session):
@@ -145,7 +145,7 @@ class SQLManager(SingletonMixin):
         result = None
         try:
             Logger.instance().debug("Executing query on session " + str(query.session) + ": \n" + str(query) + ";")
-            Logger.instance().debug("WopMarsQuery " + str(query.session) + " want the read-lock on SQLManager")
+            Logger.instance().debug("WopmarsQuery " + str(query.session) + " want the read-lock on SQLManager")
             self.__lock.acquire_read()
             Logger.instance().debug("\"" + str(query.session) + "\" has taken the read lock on SQLManager.")
             # switch case according to the demanded method.
