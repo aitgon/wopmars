@@ -7,9 +7,9 @@ from wopmars.framework.database.tables.Execution import Execution
 from wopmars.framework.database.tables.IODbPut import IODbPut
 from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
 from wopmars.framework.database.tables.Type import Type
-from wopmars.framework.management.DAG import DAG
-from wopmars.framework.management.ToolThread import ToolThread
-from wopmars.framework.management.ToolWrapperObserver import ToolWrapperObserver
+from wopmars.DAG import DAG
+from wopmars.ToolThread import ToolThread
+from wopmars.ToolWrapperObserver import ToolWrapperObserver
 from wopmars.Parser import Parser
 from wopmars.utils.PathFinder import PathFinder
 from wopmars.utils.Logger import Logger
