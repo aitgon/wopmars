@@ -41,17 +41,15 @@ Example:
     wopmars -w Wopfile -D "sqlite:///db.sqlite" -v -p -F
 """
 
-import datetime
 import os
 import re
 import sys
-import time
 
 from docopt import docopt, DocoptExit
 from schema import Schema, And, Or, Use, SchemaError
 
 from wopmars.example.ExampleBuilder import ExampleBuilder
-from wopmars.framework.database.SQLManager import SQLManager
+from wopmars.SQLManager import SQLManager
 from wopmars.framework.management.WorkflowManager import WorkflowManager
 from wopmars.utils.DictUtils import DictUtils
 from wopmars.utils.Logger import Logger

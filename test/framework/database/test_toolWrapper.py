@@ -7,7 +7,7 @@ from unittest import TestCase
 from test.resource.model.FooBase import FooBase
 from test.resource.wrapper.FooWrapper2 import FooWrapper2
 from test.resource.wrapper.FooWrapper3 import FooWrapper3
-from wopmars.framework.database.SQLManager import SQLManager
+from wopmars.SQLManager import SQLManager
 from wopmars.framework.database.tables.IODbPut import IODbPut
 from wopmars.framework.database.tables.IOFilePut import IOFilePut
 from wopmars.framework.database.tables.ModificationTable import ModificationTable

@@ -1,9 +1,9 @@
 import os
 
-from sqlalchemy import Column, BigInteger, Integer, String, ForeignKey, DateTime
+from sqlalchemy import Column, BigInteger, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 
-from wopmars.framework.database.Base import Base
+from wopmars.Base import Base
 from wopmars.framework.database.tables.IOPut import IOPut
 from wopmars.utils.Logger import Logger
 

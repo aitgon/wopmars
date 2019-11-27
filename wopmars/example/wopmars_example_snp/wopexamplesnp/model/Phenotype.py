@@ -1,7 +1,7 @@
-from wopmars.framework.database.Base import Base
+from wopmars.Base import Base
 
 from sqlalchemy import Column, String, Integer
-from sqlalchemy import UniqueConstraint
+
 
 class Phenotype(Base):
     __tablename__ = 'Phenotype'

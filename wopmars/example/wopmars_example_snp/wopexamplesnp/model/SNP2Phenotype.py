@@ -1,6 +1,6 @@
-from wopmars.framework.database.Base import Base
+from wopmars.Base import Base
 
-from sqlalchemy import Column, String, Integer, ForeignKey
+from sqlalchemy import Column, Integer, ForeignKey
 from sqlalchemy import UniqueConstraint
 
 class SNP2Phenotype(Base):

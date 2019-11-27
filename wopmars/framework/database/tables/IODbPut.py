@@ -1,19 +1,16 @@
 import importlib
-import time
 
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.sql.ddl import DDL
 
-from wopmars.framework.database.Base import Base
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, BigInteger
+from wopmars.Base import Base
+from sqlalchemy import Column, Integer, String, ForeignKey, BigInteger
 from sqlalchemy.orm import relationship, reconstructor
 
-from wopmars.framework.database.SQLManager import SQLManager
+from wopmars.SQLManager import SQLManager
 from wopmars.framework.database.tables.IOPut import IOPut
-from wopmars.framework.database.tables.ModificationTable import ModificationTable
 from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
 from wopmars.utils.Logger import Logger
-from wopmars.framework.database.tables.Type import Type
 from sqlalchemy.sql.functions import func
 
 class IODbPut(IOPut, Base):

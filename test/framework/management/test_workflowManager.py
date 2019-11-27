@@ -2,7 +2,7 @@ import os
 import unittest
 from unittest import TestCase
 
-from wopmars.framework.database.SQLManager import SQLManager
+from wopmars.SQLManager import SQLManager
 from wopmars.framework.management.WorkflowManager import WorkflowManager
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder

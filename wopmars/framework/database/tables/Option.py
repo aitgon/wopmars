@@ -1,4 +1,4 @@
-from wopmars.framework.database.Base import Base
+from wopmars.Base import Base
 
 from wopmars.utils.exceptions.WopMarsException import WopMarsException
 from sqlalchemy import Column, Integer, String, ForeignKey

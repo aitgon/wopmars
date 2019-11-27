@@ -1,12 +1,10 @@
 import os
 
-import time
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Float, BigInteger
+from sqlalchemy import Column, Integer, String, ForeignKey, Float, BigInteger
 from sqlalchemy.orm import relationship
 
-from wopmars.framework.database.Base import Base
-from wopmars.framework.database.SQLManager import SQLManager
-from wopmars.framework.database.tables.Execution import Execution
+from wopmars.Base import Base
+from wopmars.SQLManager import SQLManager
 from wopmars.framework.database.tables.Option import Option
 from wopmars.utils.Logger import Logger
 from wopmars.utils.OptionManager import OptionManager
@@ -71,7 +69,7 @@ class ToolWrapper(Base):
         self.__state is the state given to the Toolwrapper to let the
         :class:`~.wopmars.framework.management.WorflowManager.WorkflowManager` knows if the Toolwrapper is
         able to be executed or not.
-        self.__session is the session (WopMarsSession) associated with the Toolwrapper and which will be used in the run method.
+        self.__session is the session (WopmarsSession) associated with the Toolwrapper and which will be used in the run method.
         self.__state is an integer which says the actual state of the TooLWrapper: ``NEW``, ``READY``, ``NOT_READY``
 
         :param rule_name: the name of the rule

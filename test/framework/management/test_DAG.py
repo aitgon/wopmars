@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from test.resource.wrapper.FooWrapper2 import FooWrapper2
 from test.resource.wrapper.FooWrapper8 import FooWrapper8
-from wopmars.framework.database.SQLManager import SQLManager
+from wopmars.SQLManager import SQLManager
 from wopmars.framework.database.tables.IOFilePut import IOFilePut
 from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
 from wopmars.framework.database.tables.Type import Type

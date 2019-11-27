@@ -1,7 +1,7 @@
-from sqlalchemy import Column, Integer, DateTime, Float, String, BigInteger
+from sqlalchemy import Column, Integer, Float, String, BigInteger
 from sqlalchemy.orm import relationship
 
-from wopmars.framework.database.Base import Base
+from wopmars.Base import Base
 
 class Execution(Base):
     """

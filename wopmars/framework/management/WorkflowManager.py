@@ -2,7 +2,7 @@ import sys
 
 import datetime
 
-from wopmars.framework.database.SQLManager import SQLManager
+from wopmars.SQLManager import SQLManager
 from wopmars.framework.database.tables.Execution import Execution
 from wopmars.framework.database.tables.IODbPut import IODbPut
 from wopmars.framework.database.tables.ToolWrapper import ToolWrapper

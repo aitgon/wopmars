@@ -1,5 +1,5 @@
-from wopmars.framework.database.Base import Base
-from sqlalchemy import Column, String, DateTime, Integer, BigInteger
+from wopmars.Base import Base
+from sqlalchemy import Column, String, BigInteger
 from sqlalchemy.orm import relationship
 
 

@@ -3,7 +3,6 @@ import subprocess
 import networkx as nx
 from networkx.drawing.nx_pydot import write_dot
 
-from wopmars.framework.database.SQLManager import SQLManager
 from wopmars.utils.Logger import Logger
 from wopmars.utils.SetUtils import SetUtils
 

@@ -3,7 +3,7 @@ import unittest
 from unittest import TestCase
 
 from test.resource.model.FooBase import FooBase
-from wopmars.framework.database.SQLManager import SQLManager
+from wopmars.SQLManager import SQLManager
 from wopmars.utils.OptionManager import OptionManager
 
 

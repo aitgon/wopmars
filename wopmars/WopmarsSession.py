@@ -1,15 +1,15 @@
 """
-Module containing the WopMarsSession class.
+Module containing the WopmarsSession class.
 """
 from sqlalchemy.sql.elements import ClauseElement
 
-from wopmars.framework.database.WopMarsQuery import WopMarsQuery
+from wopmars.WopmarsQuery import WopmarsQuery
 from wopmars.utils.Logger import Logger
 
 
-class WopMarsSession:
+class WopmarsSession:
     """
-    The class WopMarsSession is used in order to allow the Toolwrapper Developer to access the database.
+    The class WopmarsSession is used in order to allow the Toolwrapper Developer to access the database.
 
     This class is a pivot between the Toolwrapper Developer and the SQLManager. Every call to the database has to pass
     through the SQLManager but the developer has only access to the session.
@@ -50,12 +50,12 @@ class WopMarsSession:
 
     def query(self, table):
         """
-        Return a WopMarsQuery used for querying database using the ORM.
+        Return a WopmarsQuery used for querying database using the ORM.
 
         :param table: The mapper object on which you want to query.
-        :return: WopMarsQuery on the desired table and bind to the current session.
+        :return: WopmarsQuery on the desired table and bind to the current session.
         """
-        return WopMarsQuery(table, session=self.__session)
+        return WopmarsQuery(table, session=self.__session)
 
     def add(self, item):
         """
@@ -100,7 +100,7 @@ class WopMarsSession:
         :param kwargs: exploded dict of values
         :return: return the result of the execution of the statement
         """
-        Logger.instance().debug("WopMarsSession.execute(" + str(statement) + ", " + str(args) + ", " + str(kwargs) + ")")
+        Logger.instance().debug("WopmarsSession.execute(" + str(statement) + ", " + str(args) + ", " + str(kwargs) + ")")
         return self.__manager.execute(self.__session, statement, *args, **kwargs)
 
     def close(self):

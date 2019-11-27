@@ -10,7 +10,7 @@ from test.resource.wrapper.FooWrapper7 import FooWrapper7
 from test.resource.wrapper.FooWrapper8 import FooWrapper8
 from test.resource.wrapper.FooWrapper9 import FooWrapper9
 from test.resource.wrapper.fooPackage.FooWrapperPackaged import FooWrapperPackaged
-from wopmars.framework.database.SQLManager import SQLManager
+from wopmars.SQLManager import SQLManager
 from wopmars.framework.database.tables.IODbPut import IODbPut
 from wopmars.framework.database.tables.IOFilePut import IOFilePut
 from wopmars.framework.database.tables.ToolWrapper import ToolWrapper

@@ -1,13 +1,11 @@
 """
 Module containing the Parser class
 """
-import sys
 
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql.functions import func
 
-from wopmars.framework.database.SQLManager import SQLManager
-from wopmars.framework.database.tables.Execution import Execution
+from wopmars.SQLManager import SQLManager
 from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
 from wopmars.framework.management.DAG import DAG
 from wopmars.framework.parsing.Reader import Reader
