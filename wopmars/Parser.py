@@ -8,7 +8,7 @@ from sqlalchemy.sql.functions import func
 from wopmars.SQLManager import SQLManager
 from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
 from wopmars.framework.management.DAG import DAG
-from wopmars.framework.parsing.Reader import Reader
+from wopmars.Reader import Reader
 from wopmars.utils.Logger import Logger
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.exceptions.WopMarsException import WopMarsException
