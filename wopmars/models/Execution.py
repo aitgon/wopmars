@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Float, String, BigInteger
+from sqlalchemy import Column, Integer, Float, String, BigInteger, DateTime
 from sqlalchemy.orm import relationship
 
 from wopmars.Base import Base
@@ -11,8 +11,8 @@ class Execution(Base):
     The table ``wom_execution`` contains the following fields:
 
     - id: INTEGER: primary key - auto increment - arbitrary iD
-    - started_at: BigInteger - unix time at wich the execution started
-    - finished_at: BigInteger - unix time at wich the execution finished
+    - started_epoch_millis: BigInteger - unix time at wich the execution started
+    - finish_epoch_millis: BigInteger - unix time at wich the execution finished
     - time: FLOAT - the total time of execution
     - status: VARCHAR(255) - the final status of the Execution. it can be:
 
@@ -24,8 +24,8 @@ class Execution(Base):
     __tablename__ = "wom_execution"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    started_at = Column(BigInteger, nullable=True)
-    finished_at = Column(BigInteger, nullable=True)
+    started_epoch_millis = Column(DateTime, nullable=True)
+    finish_epoch_millis = Column(DateTime, nullable=True)
     time = Column(Float, nullable=True)
     status = Column(String(255), nullable=True)
 

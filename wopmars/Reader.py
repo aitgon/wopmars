@@ -5,7 +5,7 @@ import os
 import yaml
 from yaml.constructor import ConstructorError
 
-from wopmars.utils.various import time_unix_ms
+from wopmars.utils.various import get_mtime, get_current_time
 
 try:
     from yaml import CLoader as Loader
@@ -292,7 +292,8 @@ class Reader:
         dict_params = dict(eval(s_dict_params))
         try:
             # The same execution entry for the whole workflow-related database entries.
-            execution = Execution(started_at=time_unix_ms())
+            time_unix_ms, time_human = get_current_time()
+            execution = Execution(started_epoch_millis=time_human)
             # get the types that should have been created previously
             input_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.name == "input").one()
             output_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.name == "output").one()
@@ -378,7 +379,8 @@ class Reader:
         # The dict_workflow_definition is assumed to be well formed
         try:
             # The same execution entry for the whole workflow-related database entries.
-            execution = Execution(started_at=time_unix_ms())
+            time_unix_ms, time_human = get_current_time()
+            execution = Execution(started_epoch_millis=time_human)
             # get the types database entries that should have been created previously
             input_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.name == "input").one()
             output_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.name == "output").one()
@@ -549,9 +551,10 @@ class Reader:
                     # the user-side models are created during the reading of the definition file
                     # table_entry = TableInputOutputInformation(name=dict_dict_dict_elm["dict_input"][elm][input_t], tablename=input_t)
                     # insert in the database the time of last modification of a developper-side table
+                    time_unix_ms, time_human = get_current_time()
                     modification_table_entry, created = session.get_or_create(TableModificationTime,
                                                                               defaults={
-                                                                                  "time": time_unix_ms()},
+                                                                                  "time": time_unix_ms},
                                                                               table_name=input_t)
                     iodbput_entry.modification = modification_table_entry
                     iodbput_entry.type = input_entry
@@ -578,9 +581,10 @@ class Reader:
                     # output_t is the table name (not the model)
                     session.commit()
                     iodbput_entry = dict_dict_dict_elm["dict_output"][elm][output_t]
+                    time_unix_ms, time_human = get_current_time()
                     modification_table_entry, created = session.get_or_create(TableModificationTime,
                                                                               defaults={
-                                                                                  "time": time_unix_ms()},
+                                                                                  "time": time_unix_ms},
                                                                               table_name=output_t)
                     iodbput_entry.modification = modification_table_entry
                     iodbput_entry.type = output_entry

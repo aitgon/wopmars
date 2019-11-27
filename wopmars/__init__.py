@@ -57,7 +57,7 @@ from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder
 from wopmars.utils.exceptions.WopMarsException import WopMarsException
 from wopmars.constants import home_wopmars
-from wopmars.utils.various import time_unix_ms
+from wopmars.utils.various import get_mtime
 
 # todo combinatorices pour les rules
 # todo option pour reset les resultats (supprimer le contenu de la database) / fresh run

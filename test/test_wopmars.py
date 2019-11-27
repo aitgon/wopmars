@@ -11,7 +11,7 @@ from wopmars.utils.PathFinder import PathFinder
 from wopmars import WopMars
 
 from wopmars.constants import home_wopmars
-from wopmars.utils.various import time_unix_ms
+from wopmars.utils.various import get_mtime
 
 class TestWopMars(TestCase):
 
