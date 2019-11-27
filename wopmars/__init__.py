@@ -50,7 +50,7 @@ from schema import Schema, And, Or, Use, SchemaError
 
 from wopmars.example.ExampleBuilder import ExampleBuilder
 from wopmars.SQLManager import SQLManager
-from wopmars.framework.management.WorkflowManager import WorkflowManager
+from wopmars.WorkflowManager import WorkflowManager
 from wopmars.utils.DictUtils import DictUtils
 from wopmars.utils.Logger import Logger
 from wopmars.utils.OptionManager import OptionManager

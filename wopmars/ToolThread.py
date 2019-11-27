@@ -7,7 +7,7 @@ import os
 import traceback
 
 from wopmars.SQLManager import SQLManager
-from wopmars.framework.management.Observable import Observable
+from wopmars.Observable import Observable
 from wopmars.utils.Logger import Logger
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.exceptions.WopMarsException import WopMarsException

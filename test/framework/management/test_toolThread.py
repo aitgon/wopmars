@@ -12,7 +12,7 @@ from wopmars.framework.database.tables.IOFilePut import IOFilePut
 from wopmars.framework.database.tables.ModificationTable import ModificationTable
 from wopmars.framework.database.tables.Option import Option
 from wopmars.framework.database.tables.Type import Type
-from wopmars.framework.management.ToolThread import ToolThread
+from wopmars.ToolThread import ToolThread
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder
 from wopmars.utils.various import time_unix_ms
