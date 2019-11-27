@@ -4,9 +4,9 @@ import datetime
 
 from wopmars.SQLManager import SQLManager
 from wopmars.models.Execution import Execution
-from wopmars.models.IODbPut import IODbPut
+from wopmars.models.TableInputOutputInformation import TableInputOutputInformation
 from wopmars.models.ToolWrapper import ToolWrapper
-from wopmars.models.Type import Type
+from wopmars.models.TypeInputOrOutput import TypeInputOrOutput
 from wopmars.DAG import DAG
 from wopmars.ToolThread import ToolThread
 from wopmars.ToolWrapperObserver import ToolWrapperObserver
@@ -84,8 +84,8 @@ class WorkflowManager(ToolWrapperObserver):
             SQLManager.instance().drop_table_content_list(SQLManager.wom_table_names)
 
         # The following lines allow to create types 'input' and 'output' in the db if they don't exist.
-        self.__session.get_or_create(Type, defaults={"id": 1}, name="input")
-        self.__session.get_or_create(Type, defaults={"id": 2}, name="output")
+        self.__session.get_or_create(TypeInputOrOutput, defaults={"id": 1}, name="input")
+        self.__session.get_or_create(TypeInputOrOutput, defaults={"id": 2}, name="output")
         self.__session.commit()
         # Get the DAG representing the whole workflow
         self.__dag_tools = self.__parser.parse()
@@ -116,7 +116,7 @@ class WorkflowManager(ToolWrapperObserver):
         Logger.instance().debug("Removed files:" + s)
 
         SQLManager.instance().drop_table_content_list(
-            set(IODbPut.tablenames).intersection(set_tables))
+            set(TableInputOutputInformation.tablenames).intersection(set_tables))
 
         s = "\n"
         s += "\n".join(set_tables)
@@ -164,7 +164,7 @@ class WorkflowManager(ToolWrapperObserver):
         # todo checkout what is going on here
         tables = []
         [tables.extend(tw.tables) for tw in self.__dag_to_exec.nodes()]
-        IODbPut.set_tables_properties(tables)
+        TableInputOutputInformation.set_tables_properties(tables)
 
         # For the tools that are in the workflow definition file but not in the executed dag, their status is set to
         # "NOT_PLANNED"

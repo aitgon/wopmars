@@ -4,11 +4,11 @@ from sqlalchemy import Column, BigInteger, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 
 from wopmars.Base import Base
-from wopmars.models.IOPut import IOPut
+from wopmars.models.InputOutput import InputOutput
 from wopmars.utils.Logger import Logger
 
 
-class IOFilePut(IOPut, Base):
+class FileInputOutputInformation(InputOutput, Base):
     """
     This class extends IOPut and is specific to the input or output files. It is the model which store the references
     to the actual files needed by the user. The table ``wom_file`` associated with this model contains the
@@ -18,7 +18,7 @@ class IOFilePut(IOPut, Base):
     - name: VARCHAR(255) - the name of the reference to the file
     - path: VARCHAR(255) - the path to the file
     - rule_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.framework.database.tables.ToolWrapper.ToolWrapper`
-    - type_id: INTEGER - foreign key to the associated type ID: :class:`wopmars.framework.database.tables.Type.Type`
+    - type_id: INTEGER - foreign key to the associated type ID: :class:`wopmars.framework.database.tables.TypeInputOrOutput.TypeInputOrOutput`
     - used_at: INTEGER - unix time at which the table have been used
     - size: INTEGER - the size of the file
     """
@@ -35,7 +35,7 @@ class IOFilePut(IOPut, Base):
     # One file is in Many rule_file and is in Many rule
     rule = relationship("ToolWrapper", back_populates="files", enable_typechecks=False)
     # One file has One type
-    type = relationship("Type", back_populates="files")
+    type = relationship("TypeInputOrOutput", back_populates="files")
 
     def is_ready(self):
         """

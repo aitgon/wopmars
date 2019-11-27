@@ -3,7 +3,7 @@ import unittest
 from unittest import TestCase
 
 from wopmars.SQLManager import SQLManager
-from wopmars.models import IOFilePut
+from wopmars.models import FileInputOutputInformation
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder
 
@@ -17,11 +17,11 @@ class TestIOFilePut(TestCase):
         s_path_to_example_existing_file2 = os.path.join(self.s_root_path, "test/resource/input_files/example_existing_file2.txt")
         s_path_to_example_not_existing_file = os.path.join(self.s_root_path, "test/resource/input_files/example_not_existing_file.txt")
 
-        self.__io_file_existing = IOFilePut(name="existing_file", path=s_path_to_example_existing_file)
-        self.__io_file_existing2 = IOFilePut(name="existing_file", path=s_path_to_example_existing_file)
-        self.__io_file_existing3 = IOFilePut(name="existing_file2", path=s_path_to_example_existing_file)
-        self.__io_file_existing4 = IOFilePut(name="existing_file", path=s_path_to_example_existing_file2)
-        self.__io_file_not_existing = IOFilePut(name="not_existing_file", path=s_path_to_example_not_existing_file)
+        self.__io_file_existing = FileInputOutputInformation(name="existing_file", path=s_path_to_example_existing_file)
+        self.__io_file_existing2 = FileInputOutputInformation(name="existing_file", path=s_path_to_example_existing_file)
+        self.__io_file_existing3 = FileInputOutputInformation(name="existing_file2", path=s_path_to_example_existing_file)
+        self.__io_file_existing4 = FileInputOutputInformation(name="existing_file", path=s_path_to_example_existing_file2)
+        self.__io_file_not_existing = FileInputOutputInformation(name="not_existing_file", path=s_path_to_example_not_existing_file)
 
     def test_is_ready(self):
         self.assertTrue(self.__io_file_existing.is_ready())

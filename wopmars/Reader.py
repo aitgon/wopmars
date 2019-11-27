@@ -16,11 +16,11 @@ from sqlalchemy.orm.exc import NoResultFound, ObjectDeletedError
 
 from wopmars.SQLManager import SQLManager
 from wopmars.models.Execution import Execution
-from wopmars.models.IODbPut import IODbPut
-from wopmars.models.IOFilePut import IOFilePut
-from wopmars.models.ModificationTable import ModificationTable
+from wopmars.models.TableInputOutputInformation import TableInputOutputInformation
+from wopmars.models.FileInputOutputInformation import FileInputOutputInformation
+from wopmars.models.TableModificationTime import TableModificationTime
 from wopmars.models.Option import Option
-from wopmars.models.Type import Type
+from wopmars.models.TypeInputOrOutput import TypeInputOrOutput
 from wopmars.utils.DictUtils import DictUtils
 
 from wopmars.utils.Logger import Logger
@@ -294,8 +294,8 @@ class Reader:
             # The same execution entry for the whole workflow-related database entries.
             execution = Execution(started_at=time_unix_ms())
             # get the types that should have been created previously
-            input_entry = session.query(Type).filter(Type.name == "input").one()
-            output_entry = session.query(Type).filter(Type.name == "output").one()
+            input_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.name == "input").one()
+            output_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.name == "output").one()
 
             Logger.instance().debug("Loading unique toolwrapper " + s_toolwrapper)
             dict_dict_dict_elm = dict(dict_input={"file": {}, "table": {}},
@@ -304,29 +304,29 @@ class Reader:
             for type in dict_inputs:
                 if type == "file":
                     for s_input in dict_inputs[type]:
-                        obj_created = IOFilePut(name=s_input,
-                                                path=os.path.abspath(os.path.join(OptionManager.instance()["--directory"],
+                        obj_created = FileInputOutputInformation(name=s_input,
+                                                                 path=os.path.abspath(os.path.join(OptionManager.instance()["--directory"],
                                                                                   dict_inputs[type][s_input])))
                         dict_dict_dict_elm["dict_input"][type][s_input] = obj_created
                         Logger.instance().debug("Object input file: " + s_input + " created.")
                 elif type == "table":
                     for s_input in dict_inputs[type]:
-                        obj_created = IODbPut(model=dict_inputs[type][s_input],
-                                              tablename=s_input)
+                        obj_created = TableInputOutputInformation(model=dict_inputs[type][s_input],
+                                                                  tablename=s_input)
                         dict_dict_dict_elm["dict_input"][type][s_input] = obj_created
                         Logger.instance().debug("Object input table: " + s_input + " created.")
             for type in dict_outputs:
                 if type == "file":
                     for s_output in dict_outputs[type]:
-                        obj_created = IOFilePut(name=s_output,
-                                                path=os.path.abspath(os.path.join(OptionManager.instance()["--directory"],
+                        obj_created = FileInputOutputInformation(name=s_output,
+                                                                 path=os.path.abspath(os.path.join(OptionManager.instance()["--directory"],
                                                                                   dict_outputs[type][s_output])))
                         dict_dict_dict_elm["dict_output"]["file"][s_output] = obj_created
                         Logger.instance().debug("Object output file: " + s_output + " created.")
                 elif type == "table":
                     for s_output in dict_outputs[type]:
-                        obj_created = IODbPut(model=dict_outputs[type][s_output],
-                                              tablename=s_output)
+                        obj_created = TableInputOutputInformation(model=dict_outputs[type][s_output],
+                                                                  tablename=s_output)
                         dict_dict_dict_elm["dict_output"]["table"][s_output] = obj_created
                         Logger.instance().debug("Object output table: " + s_output + " created.")
             for s_param in dict_params:
@@ -343,7 +343,7 @@ class Reader:
             session.add(wrapper_entry)
             session.commit()
             session.rollback()
-            IODbPut.set_tables_properties(IODbPut.get_execution_tables())
+            TableInputOutputInformation.set_tables_properties(TableInputOutputInformation.get_execution_tables())
             # commit /rollback trick to clean the session
             # todo ask lionel est-ce-que tu as deja eu ce problème à ne pas pouvoir faire des queries et des ajouts
             # dans la meme session?
@@ -352,7 +352,7 @@ class Reader:
             # This create_all will create all models that have been found in the toolwrapper
             # if not SQLManager.instance().d_database_config['db_connection'] == 'postgresql':
             # TODO: this function is not creating the triggers after the table in postgresql so I switched it off
-            IODbPut.create_triggers()
+            TableInputOutputInformation.create_triggers()
             SQLManager.instance().create_all()
             wrapper_entry.is_content_respected()
         except NoResultFound as e:
@@ -380,8 +380,8 @@ class Reader:
             # The same execution entry for the whole workflow-related database entries.
             execution = Execution(started_at=time_unix_ms())
             # get the types database entries that should have been created previously
-            input_entry = session.query(Type).filter(Type.name == "input").one()
-            output_entry = session.query(Type).filter(Type.name == "output").one()
+            input_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.name == "input").one()
+            output_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.name == "output").one()
             set_wrapper = set()
             # Encounter a rule block
             for rule in self.__dict_workflow_definition:
@@ -416,8 +416,8 @@ class Reader:
                                                                             key_second_step][
                                                                             key_third_step][
                                                                             key])
-                                        obj_created = IOFilePut(name=key,
-                                                                path=os.path.abspath(str_path_to_file))
+                                        obj_created = FileInputOutputInformation(name=key,
+                                                                                 path=os.path.abspath(str_path_to_file))
 
                                     elif key_third_step == "table":
                                         key = key_fourth_step
@@ -425,7 +425,7 @@ class Reader:
                                             key_second_step][
                                             key_third_step][
                                             key]
-                                        obj_created = IODbPut(model=modelname, tablename=key)
+                                        obj_created = TableInputOutputInformation(model=modelname, tablename=key)
 
                                         dict_dict_dict_elm["dict_" + key_second_step][
                                             key_third_step][
@@ -445,10 +445,10 @@ class Reader:
                 #     },
                 #     'dict_input': {
                 #         'file' : {
-                #             'input1': IOFilePut('input1', 'path/to/input1')
+                #             'input1': FileInputOutputInformation('input1', 'path/to/input1')
                 #         }
                 #         'table': {
-                #             'table1': IODbPut('table1', 'package.of.table1')
+                #             'table1': TableInputOutputInformation('table1', 'package.of.table1')
                 #         }
                 #     },
                 # }
@@ -464,13 +464,13 @@ class Reader:
                 session.rollback()
                 # todo set_table_properties outside the rules loop to take into account all the models at once
                 # (error if one tool has a foreign key refering to a table that is not in its I/O put
-            IODbPut.set_tables_properties(IODbPut.get_execution_tables())
+            TableInputOutputInformation.set_tables_properties(TableInputOutputInformation.get_execution_tables())
             session.commit()
             session.rollback()
             # This create_all will create all models that have been found in the toolwrapper
             # if not SQLManager.instance().d_database_config['db_connection'] == 'postgresql':
             # TODO: this function is not creating the triggers after the table in postgresql so I switched it off
-            IODbPut.create_triggers()
+            TableInputOutputInformation.create_triggers()
             SQLManager.instance().create_all()
             session.add_all(set_wrapper)
             # save all operations done so far.
@@ -499,9 +499,9 @@ class Reader:
         :param dict_dict_dict_elm: "input"s "output"s and "params" and will be used to make relations between options / input / output and the toolwrapper.
         :type dict_dict_dict_elm: dict(dict(dict()))
         :param input_entry: input entry
-        :type input_entry: :class:`wopmars.framework.bdd.models.Type.Type`
+        :type input_entry: :class:`wopmars.framework.bdd.models.TypeInputOrOutput.TypeInputOrOutput`
         :param output_entry: output entry
-        :type output_entry: :class:`wopmars.framework.bdd.models.Type.Type`
+        :type output_entry: :class:`wopmars.framework.bdd.models.TypeInputOrOutput.TypeInputOrOutput`
 
         :return: TooLWrapper instance
         """
@@ -528,7 +528,7 @@ class Reader:
         for elm in dict_dict_dict_elm["dict_input"]:
             if elm == "file":
                 for input_f in dict_dict_dict_elm["dict_input"][elm]:
-                    # set the type of IOFilePut object
+                    # set the type of FileInputOutputInformation object
                     iofileput_entry = dict_dict_dict_elm["dict_input"][elm][input_f]
                     iofileput_entry.type = input_entry
                     try:
@@ -547,9 +547,9 @@ class Reader:
                     session.commit()
                     iodbput_entry = dict_dict_dict_elm["dict_input"][elm][input_t]
                     # the user-side models are created during the reading of the definition file
-                    # table_entry = IODbPut(name=dict_dict_dict_elm["dict_input"][elm][input_t], tablename=input_t)
+                    # table_entry = TableInputOutputInformation(name=dict_dict_dict_elm["dict_input"][elm][input_t], tablename=input_t)
                     # insert in the database the time of last modification of a developper-side table
-                    modification_table_entry, created = session.get_or_create(ModificationTable,
+                    modification_table_entry, created = session.get_or_create(TableModificationTime,
                                                                               defaults={
                                                                                   "time": time_unix_ms()},
                                                                               table_name=input_t)
@@ -578,7 +578,7 @@ class Reader:
                     # output_t is the table name (not the model)
                     session.commit()
                     iodbput_entry = dict_dict_dict_elm["dict_output"][elm][output_t]
-                    modification_table_entry, created = session.get_or_create(ModificationTable,
+                    modification_table_entry, created = session.get_or_create(TableModificationTime,
                                                                               defaults={
                                                                                   "time": time_unix_ms()},
                                                                               table_name=output_t)

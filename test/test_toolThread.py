@@ -7,11 +7,11 @@ from test.resource.wrapper.FooWrapper5 import FooWrapper5
 from test.resource.wrapper.sprintFive.Add import Add as tw_add
 from test.resource.wrapper.sprintFive.Query import Query as tw_query
 from wopmars.SQLManager import SQLManager
-from wopmars.models import IODbPut
-from wopmars.models import IOFilePut
-from wopmars.models import ModificationTable
+from wopmars.models import TableInputOutputInformation
+from wopmars.models import FileInputOutputInformation
+from wopmars.models import TableModificationTime
 from wopmars.models.Option import Option
-from wopmars.models.Type import Type
+from wopmars.models.TypeInputOrOutput import TypeInputOrOutput
 from wopmars.ToolThread import ToolThread
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder
@@ -29,35 +29,35 @@ class TestToolThread(TestCase):
 
     def test_run(self):
 
-        input_entry = Type(name="input")
-        output_entry = Type(name="output")
+        input_entry = TypeInputOrOutput(name="input")
+        output_entry = TypeInputOrOutput(name="output")
 
-        f1 = IOFilePut(name="input1", path="test/resource/input_files/input_file1.txt")
+        f1 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
         f1.type = input_entry
 
-        f2 = IOFilePut(name="output1", path="test/output/output_file1.txt")
+        f2 = FileInputOutputInformation(name="output1", path="test/output/output_file1.txt")
         f2.type = output_entry
 
-        t1 = IODbPut(model="FooBase", tablename="FooBase")
+        t1 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
         t1.type = output_entry
-        modification_table_entry = ModificationTable(time=time_unix_ms(), table_name=t1.tablename)
+        modification_table_entry = TableModificationTime(time=time_unix_ms(), table_name=t1.tablename)
         t1.modification = modification_table_entry
 
         tw1 = FooWrapper5(rule_name="rule1")
         tw1.files.extend([f1, f2])
         tw1.tables.append(t1)
 
-        f12 = IOFilePut(name="input1", path="test/resource/input_files/input_file1.txt")
+        f12 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
         f12.type = input_entry
 
-        f22 = IOFilePut(name="output1", path="test/output/output_file1.txt")
+        f22 = FileInputOutputInformation(name="output1", path="test/output/output_file1.txt")
         f22.type = output_entry
 
-        t12 = IODbPut(model="FooBase", tablename="FooBase")
+        t12 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
         t12.set_table(FooBase)
         t12.type = output_entry
-        modification_table_entry = ModificationTable(
+        modification_table_entry = TableModificationTime(
             time=time_unix_ms(), table_name=t12.tablename)
         t12.modification = modification_table_entry
 
@@ -65,16 +65,16 @@ class TestToolThread(TestCase):
         tw2.files.extend([f12, f22])
         tw2.tables.append(t12)
 
-        f13 = IOFilePut(name="input1", path="test/resource/input_files/input_file1.txt")
+        f13 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
         f13.type = input_entry
 
-        f23 = IOFilePut(name="output1", path="test/output/output_file1.txt")
+        f23 = FileInputOutputInformation(name="output1", path="test/output/output_file1.txt")
         f23.type = output_entry
 
-        t13 = IODbPut(model="FooBase", tablename="FooBase")
+        t13 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
         t13.set_table(FooBase)
         t13.type = output_entry
-        modification_table_entry = ModificationTable(
+        modification_table_entry = TableModificationTime(
             time=time_unix_ms(), table_name=t13.tablename)
         t13.modification = modification_table_entry
 
@@ -99,16 +99,16 @@ class TestToolThread(TestCase):
     def test_run_commit_vs_query(self):
         # this test does not work with mysql and postgresql
         if not SQLManager.instance().get_engine().url.drivername in ['mysql', 'postgresql']:
-            input_entry = Type(name="input")
-            output_entry = Type(name="output")
+            input_entry = TypeInputOrOutput(name="input")
+            output_entry = TypeInputOrOutput(name="output")
 
-            f1 = IOFilePut(name="input1", path="test/resource/input_files/input_file1.txt")
+            f1 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
             f1.type = input_entry
 
-            t1 = IODbPut(model="FooBase", tablename="FooBase")
+            t1 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
             t1.set_table(FooBase)
             t1.type = output_entry
-            modification_table_entry = ModificationTable(time=time_unix_ms(), table_name=t1.tablename)
+            modification_table_entry = TableModificationTime(time=time_unix_ms(), table_name=t1.tablename)
             t1.modification = modification_table_entry
 
             o1 = Option(name="rows", value="1000")
@@ -118,14 +118,14 @@ class TestToolThread(TestCase):
             tw1.tables.append(t1)
             tw1.options.append(o1)
 
-            f12 = IOFilePut(name="input1", path="test/resource/input_files/input_file1.txt")
+            f12 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
             f12.type = input_entry
 
-            t12 = IODbPut(model="FooBase", tablename="FooBase")
+            t12 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
             t12.set_table(FooBase)
             t12.type = output_entry
-            modification_table_entry = ModificationTable(time=time_unix_ms(),
-                                                         table_name=t12.tablename)
+            modification_table_entry = TableModificationTime(time=time_unix_ms(),
+                                                             table_name=t12.tablename)
             t12.modification = modification_table_entry
 
             o12 = Option(name="rows", value="1000")
@@ -135,14 +135,14 @@ class TestToolThread(TestCase):
             tw12.tables.append(t12)
             tw12.options.append(o12)
 
-            f13 = IOFilePut(name="input1", path="test/resource/input_files/input_file1.txt")
+            f13 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
             f13.type = input_entry
 
-            t13 = IODbPut(model="FooBase", tablename="FooBase")
+            t13 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
             t13.set_table(FooBase)
             t13.type = output_entry
-            modification_table_entry = ModificationTable(time=time_unix_ms(),
-                                                         table_name=t13.tablename)
+            modification_table_entry = TableModificationTime(time=time_unix_ms(),
+                                                             table_name=t13.tablename)
             t13.modification = modification_table_entry
 
             o13 = Option(name="rows", value="1000")
@@ -156,21 +156,21 @@ class TestToolThread(TestCase):
             tt2 = ToolThread(tw12)
             tt3 = ToolThread(tw13)
 
-            t21 = IODbPut(model="FooBase", tablename="FooBase")
+            t21 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
             t21.set_table(FooBase)
             t21.type = input_entry
 
             tw21 = tw_query(rule_name="rule1")
             tw21.tables.append(t21)
 
-            t22 = IODbPut(model="FooBase", tablename="FooBase")
+            t22 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
             t22.set_table(FooBase)
             t22.type = input_entry
 
             tw22 = tw_query(rule_name="rule1")
             tw22.tables.append(t22)
 
-            t23 = IODbPut(model="FooBase", tablename="FooBase")
+            t23 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
             t23.set_table(FooBase)
             t23.type = input_entry
 

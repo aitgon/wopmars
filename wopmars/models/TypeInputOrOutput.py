@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from wopmars.Base import Base
 
 
-class Type(Base):
+class TypeInputOrOutput(Base):
     """
     This class is the model of the table ``wom_type``. It stores the two kind of entry named "input" and "output" which
     are associated with an ID.
@@ -20,9 +20,9 @@ class Type(Base):
     name = Column(String(255))
 
     # One type is in Many table
-    tables = relationship("IODbPut", back_populates="type")
+    tables = relationship("TableInputOutputInformation", back_populates="type")
     # One type is in Many files
-    files = relationship("IOFilePut", back_populates="type")
+    files = relationship("FileInputOutputInformation", back_populates="type")
 
     def __repr__(self):
-        return "<Type: %s>" % self.name
+        return "<TypeInputOrOutput: %s>" % self.name
