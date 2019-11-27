@@ -25,10 +25,10 @@ The value of the tool field are python paths to classes called *wrappers* compat
 
 .. code-block:: python
 
-    from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
+    from wopmars.framework.database.tables.Rule import Rule
 
 
-    class SparePartsManufacturer(ToolWrapper):
+    class SparePartsManufacturer(Rule):
         __mapper_args__ = {
             "polymorphic_identity": "wopmars.example.SparePartsManufacturer"
         }

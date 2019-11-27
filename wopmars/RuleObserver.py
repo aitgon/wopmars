@@ -1,9 +1,9 @@
 """
-Module containing the ToolWrapperObserver class
+Module containing the RuleObserver class
 """
 
 
-class ToolWrapperObserver:
+class RuleObserver:
     """
     Observers of ToolWrappers should implement this interface.
     """

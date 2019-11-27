@@ -9,7 +9,7 @@ from sqlalchemy.orm import relationship, reconstructor
 
 from wopmars.SQLManager import SQLManager
 from wopmars.models.InputOutput import InputOutput
-from wopmars.models.ToolWrapper import ToolWrapper
+from wopmars.models.Rule import Rule
 from wopmars.utils.Logger import Logger
 from sqlalchemy.sql.functions import func
 
@@ -23,7 +23,7 @@ class TableInputOutputInformation(InputOutput, Base):
     - id: INTEGER - primary key - autoincrement - arbitrary ID
     - tablename: VARCHAR(255) - foreign key to the associated table: :class:`wopmars.framework.database.tables.TableModificationTime.TableModificationTime` - the name of the referenced table
     - model: VARCHAR(255) - the path to the model (in python notation)
-    - rule_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.framework.database.tables.ToolWrapper.ToolWrapper`
+    - rule_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.framework.database.tables.Rule.Rule`
     - type_id: INTEGER - foreign key to the associated type ID: :class:`wopmars.framework.database.tables.TypeInputOrOutput.TypeInputOrOutput`
     - used_at: INTEGER - unix time at which the table have been used
     """
@@ -37,7 +37,7 @@ class TableInputOutputInformation(InputOutput, Base):
     used_at = Column(BigInteger, nullable=True)
 
     # One table is in one rule
-    rule = relationship("ToolWrapper", back_populates="tables", enable_typechecks=False)
+    rule = relationship("Rule", back_populates="tables", enable_typechecks=False)
     # One file has One type
     type = relationship("TypeInputOrOutput", back_populates="tables")
 
@@ -151,8 +151,8 @@ class TableInputOutputInformation(InputOutput, Base):
         :return: ResultSet TableInputOutputInformation objects
         """
         session = SQLManager.instance().get_session()
-        execution_id = session.query(func.max(ToolWrapper.execution_id))
-        return session.query(TableInputOutputInformation).filter(TableInputOutputInformation.rule_id == ToolWrapper.id).filter(ToolWrapper.execution_id == execution_id).all()
+        execution_id = session.query(func.max(Rule.execution_id))
+        return session.query(TableInputOutputInformation).filter(TableInputOutputInformation.rule_id == Rule.id).filter(Rule.execution_id == execution_id).all()
 
     @staticmethod
     def import_models(model_names):
