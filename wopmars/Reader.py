@@ -15,12 +15,12 @@ except ImportError:
 from sqlalchemy.orm.exc import NoResultFound, ObjectDeletedError
 
 from wopmars.SQLManager import SQLManager
-from wopmars.framework.database.tables.Execution import Execution
-from wopmars.framework.database.tables.IODbPut import IODbPut
-from wopmars.framework.database.tables.IOFilePut import IOFilePut
-from wopmars.framework.database.tables.ModificationTable import ModificationTable
-from wopmars.framework.database.tables.Option import Option
-from wopmars.framework.database.tables.Type import Type
+from wopmars.framework.database.models.Execution import Execution
+from wopmars.framework.database.models.IODbPut import IODbPut
+from wopmars.framework.database.models.IOFilePut import IOFilePut
+from wopmars.framework.database.models.ModificationTable import ModificationTable
+from wopmars.framework.database.models.Option import Option
+from wopmars.framework.database.models.Type import Type
 from wopmars.utils.DictUtils import DictUtils
 
 from wopmars.utils.Logger import Logger
@@ -164,9 +164,9 @@ class Reader:
             ni            = NEWLINE INDENT
             rule          = "rule" identifier ":" ruleparams
             ruleparams    = [ni tool] [ni input] [ni output] [ni params]
-            filesortables = (ni files|ni tables){0-2}
+            filesortables = (ni files|ni models){0-2}
             files         = "file"  ":" (ni identifier ”:” stringliteral)+
-            tables        = "table"  ":" (ni identifier ”:” stringliteral)+
+            models        = "table"  ":" (ni identifier ”:” stringliteral)+
             tool          = "tool"   ":" stringliteral
             input         = "input"  ":" ni filesortables
             output        = "output" ":" ni filesortables
@@ -349,7 +349,7 @@ class Reader:
             # dans la meme session?
             session.commit()
             session.rollback()
-            # This create_all will create all tables that have been found in the toolwrapper
+            # This create_all will create all models that have been found in the toolwrapper
             # if not SQLManager.instance().d_database_config['db_connection'] == 'postgresql':
             # TODO: this function is not creating the triggers after the table in postgresql so I switched it off
             IODbPut.create_triggers()
@@ -399,7 +399,7 @@ class Reader:
                     if type(self.__dict_workflow_definition[rule][key_second_step]) == dict:
                         # if it is a dict, then inputs, outputs or params are coming
                         for key_third_step in self.__dict_workflow_definition[rule][key_second_step]:
-                            # todo tabling modification of the indentation levels + appearance of tables in file
+                            # todo tabling modification of the indentation levels + appearance of models in file
                             if key_second_step == "params":
                                 key = key_third_step
                                 value = self.__dict_workflow_definition[rule][key_second_step][key_third_step]
@@ -462,12 +462,12 @@ class Reader:
                 # commit/rollback trick to clean the session - SQLAchemy bug suspected
                 session.commit()
                 session.rollback()
-                # todo set_table_properties outside the rules loop to take into account all the tables at once
+                # todo set_table_properties outside the rules loop to take into account all the models at once
                 # (error if one tool has a foreign key refering to a table that is not in its I/O put
             IODbPut.set_tables_properties(IODbPut.get_execution_tables())
             session.commit()
             session.rollback()
-            # This create_all will create all tables that have been found in the toolwrapper
+            # This create_all will create all models that have been found in the toolwrapper
             # if not SQLManager.instance().d_database_config['db_connection'] == 'postgresql':
             # TODO: this function is not creating the triggers after the table in postgresql so I switched it off
             IODbPut.create_triggers()
@@ -490,7 +490,7 @@ class Reader:
         The toolwrapper object is an entry of the table rule in the resulting database.
 
         If the scoped_session has current modification, they probably will be commited during this method:
-        tables are created and this can only be done with clean session.
+        models are created and this can only be done with clean session.
 
         :param str_rule_name: Contains the name of the rule in which the toolwrapper will be used.
         :type str_rule_name: str
@@ -499,9 +499,9 @@ class Reader:
         :param dict_dict_dict_elm: "input"s "output"s and "params" and will be used to make relations between options / input / output and the toolwrapper.
         :type dict_dict_dict_elm: dict(dict(dict()))
         :param input_entry: input entry
-        :type input_entry: :class:`wopmars.framework.bdd.tables.Type.Type`
+        :type input_entry: :class:`wopmars.framework.bdd.models.Type.Type`
         :param output_entry: output entry
-        :type output_entry: :class:`wopmars.framework.bdd.tables.Type.Type`
+        :type output_entry: :class:`wopmars.framework.bdd.models.Type.Type`
 
         :return: TooLWrapper instance
         """
@@ -524,7 +524,7 @@ class Reader:
         # Initialize the instance of ToolWrapper
         toolwrapper_wrapper = toolwrapper_class(rule_name=str_rule_name)
 
-        # associating ToolWrapper instances with their files / tables
+        # associating ToolWrapper instances with their files / models
         for elm in dict_dict_dict_elm["dict_input"]:
             if elm == "file":
                 for input_f in dict_dict_dict_elm["dict_input"][elm]:
@@ -546,7 +546,7 @@ class Reader:
                     # the same session
                     session.commit()
                     iodbput_entry = dict_dict_dict_elm["dict_input"][elm][input_t]
-                    # the user-side tables are created during the reading of the definition file
+                    # the user-side models are created during the reading of the definition file
                     # table_entry = IODbPut(name=dict_dict_dict_elm["dict_input"][elm][input_t], tablename=input_t)
                     # insert in the database the time of last modification of a developper-side table
                     modification_table_entry, created = session.get_or_create(ModificationTable,

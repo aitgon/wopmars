@@ -3,10 +3,10 @@ import sys
 import datetime
 
 from wopmars.SQLManager import SQLManager
-from wopmars.framework.database.tables.Execution import Execution
-from wopmars.framework.database.tables.IODbPut import IODbPut
-from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
-from wopmars.framework.database.tables.Type import Type
+from wopmars.framework.database.models.Execution import Execution
+from wopmars.framework.database.models.IODbPut import IODbPut
+from wopmars.framework.database.models.ToolWrapper import ToolWrapper
+from wopmars.framework.database.models.Type import Type
 from wopmars.DAG import DAG
 from wopmars.ToolThread import ToolThread
 from wopmars.ToolWrapperObserver import ToolWrapperObserver
@@ -69,14 +69,14 @@ class WorkflowManager(ToolWrapperObserver):
         """
         Get the dag then execute it.
 
-        The database is setUp here if workflow side tables have not been created yet.
+        The database is setUp here if workflow side models have not been created yet.
 
         The dag is taken thanks to the :meth:`~.wopmars.framework.parsing.Parser.Parser.parse` method of the parser. And then pruned by the :meth:`~.wopmars.framework.management.WorkflowManager.WorkflowManager.get_dag_to_exec` method
         which will set the right DAG to be executed.
         Then, :meth:`~.wopmars.framework.management.WorkflowManager.WorkflowManager.execute_from` is called with no argument to get the origin nodes.
         """
 
-        # This create_all is supposed to only create workflow-management side tables (called "wom_*")
+        # This create_all is supposed to only create workflow-management side models (called "wom_*")
         SQLManager.instance().create_all()
 
         if OptionManager.instance()["--clear-history"]:
@@ -104,7 +104,7 @@ class WorkflowManager(ToolWrapperObserver):
         set_files = set()
         set_tables = set()
 
-        Logger.instance().info("Forced execution implies overwrite existing output. Erasing files and tables.")
+        Logger.instance().info("Forced execution implies overwrite existing output. Erasing files and models.")
         for tw in list_tw:
            [set_files.add(f.path) for f in tw.files if f.type.name == "output"]
            [set_tables.add(t.tablename) for t in tw.tables if t.type.name == "output"]
@@ -120,9 +120,9 @@ class WorkflowManager(ToolWrapperObserver):
 
         s = "\n"
         s += "\n".join(set_tables)
-        Logger.instance().debug("Removed tables content:" + s)
+        Logger.instance().debug("Removed models content:" + s)
 
-        Logger.instance().info("Output files and tables from previous execution have been erased.")
+        Logger.instance().info("Output files and models from previous execution have been erased.")
 
     def get_dag_to_exec(self):
         """
@@ -184,7 +184,7 @@ class WorkflowManager(ToolWrapperObserver):
         A trace of the already_runned ToolWrapper objects is kept in order to avoid duplicate execution.
 
         :param node: A node of the DAG or None, if it needs to be executed from the root.
-        :type node: :class:`~.wopmars.framework.database.tables.ToolWrapper.ToolWrapper`
+        :type node: :class:`~.wopmars.framework.database.models.ToolWrapper.ToolWrapper`
         :return: void
         """
         # the first list will be the root nodes
@@ -338,7 +338,7 @@ class WorkflowManager(ToolWrapperObserver):
         Check if all the predecessors of the given toolwrapper have yet been executed in this workflow.
 
         :param tw: Node of the DAG
-        :type tw: :class:`~.wopmars.main.framework.database.tables.ToolWrapper.ToolWrapper`
+        :type tw: :class:`~.wopmars.main.framework.database.models.ToolWrapper.ToolWrapper`
         :return: Bool
         """
         return bool(self.__dag_to_exec.get_all_predecessors(tw).difference(set([tw])).issubset(set(self.__already_runned)))
@@ -355,7 +355,7 @@ class WorkflowManager(ToolWrapperObserver):
             - the tw_old outputs exists with the same name and are more recent than inputs
 
         :param tw: The Toolwrapper to test_bak
-        :type tw: :class:`~.wopmars.main.framework.database.tables.ToolWrapper.ToolWrapper`
+        :type tw: :class:`~.wopmars.main.framework.database.models.ToolWrapper.ToolWrapper`
         """
         session = SQLManager.instance().get_session()
         list_same_toolwrappers = session.query(ToolWrapper).filter(ToolWrapper.toolwrapper == tw.toolwrapper)\

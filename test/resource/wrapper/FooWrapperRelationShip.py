@@ -6,7 +6,7 @@ import time
 
 from matplotlib.compat import subprocess
 
-from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
+from wopmars.framework.database.models.ToolWrapper import ToolWrapper
 
 
 class FooWrapperRelationShip(ToolWrapper):

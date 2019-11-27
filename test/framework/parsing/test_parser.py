@@ -10,9 +10,9 @@ from test.resource.wrapper.FooWrapper7 import FooWrapper7
 from test.resource.wrapper.FooWrapper8 import FooWrapper8
 from test.resource.wrapper.FooWrapper9 import FooWrapper9
 from wopmars.SQLManager import SQLManager
-from wopmars.framework.database.tables.IODbPut import IODbPut
-from wopmars.framework.database.tables.IOFilePut import IOFilePut
-from wopmars.framework.database.tables.Type import Type
+from wopmars.framework.database.models.IODbPut import IODbPut
+from wopmars.framework.database.models.IOFilePut import IOFilePut
+from wopmars.framework.database.models.Type import Type
 from wopmars.DAG import DAG
 from wopmars.Parser import Parser
 from wopmars.utils.OptionManager import OptionManager
