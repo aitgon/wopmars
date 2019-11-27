@@ -8,22 +8,23 @@ from sqlalchemy import Column, Integer, String, ForeignKey, BigInteger
 from sqlalchemy.orm import relationship, reconstructor
 
 from wopmars.SQLManager import SQLManager
-from wopmars.models.IOPut import IOPut
+from wopmars.models.InputOutput import InputOutput
 from wopmars.models.ToolWrapper import ToolWrapper
 from wopmars.utils.Logger import Logger
 from sqlalchemy.sql.functions import func
 
-class IODbPut(IOPut, Base):
+
+class TableInputOutputInformation(InputOutput, Base):
     """
-    This class extends IOPut and is specific to the input or output tables. It is the model which store the references
+    This class extends InputOutput and is specific to the input or output tables. It is the model which store the references
     to the actual tables needed by the user. The table ``wom_table`` associated with this model contains the
     following fields:
 
     - id: INTEGER - primary key - autoincrement - arbitrary ID
-    - tablename: VARCHAR(255) - foreign key to the associated table: :class:`wopmars.framework.database.tables.ModificationTable.ModificationTable` - the name of the referenced table
+    - tablename: VARCHAR(255) - foreign key to the associated table: :class:`wopmars.framework.database.tables.TableModificationTime.TableModificationTime` - the name of the referenced table
     - model: VARCHAR(255) - the path to the model (in python notation)
     - rule_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.framework.database.tables.ToolWrapper.ToolWrapper`
-    - type_id: INTEGER - foreign key to the associated type ID: :class:`wopmars.framework.database.tables.Type.Type`
+    - type_id: INTEGER - foreign key to the associated type ID: :class:`wopmars.framework.database.tables.TypeInputOrOutput.TypeInputOrOutput`
     - used_at: INTEGER - unix time at which the table have been used
     """
     __tablename__ = "wom_table"
@@ -38,9 +39,9 @@ class IODbPut(IOPut, Base):
     # One table is in one rule
     rule = relationship("ToolWrapper", back_populates="tables", enable_typechecks=False)
     # One file has One type
-    type = relationship("Type", back_populates="tables")
+    type = relationship("TypeInputOrOutput", back_populates="tables")
 
-    modification = relationship("ModificationTable", back_populates="tables")
+    modification = relationship("TableModificationTime", back_populates="tables")
 
     # all the model names met since the begining of this instance of WopMaRS
     tablemodelnames = set()
@@ -49,7 +50,7 @@ class IODbPut(IOPut, Base):
 
     def __init__(self, model, tablename):
         """
-        self.__table is initialized to None and will contain the model of this IODbPut object.
+        self.__table is initialized to None and will contain the model of this TableInputOutputInformation object.
 
         :param model: The path to the model
         :type model: str
@@ -67,7 +68,7 @@ class IODbPut(IOPut, Base):
         This is used by SQLAlchemy to regenerate the right object when loading it from the database. Here, we need to
         get back the actual Model from the model name and store it in self.__table.
         """
-        for table in IODbPut.tablemodelnames:
+        for table in TableInputOutputInformation.tablemodelnames:
             mod = importlib.import_module(table)
             try:
                 if table == self.model:
@@ -123,35 +124,35 @@ class IODbPut(IOPut, Base):
     @staticmethod
     def set_tables_properties(tables):
         """
-        Import the models of the current execution and then associate models with IODbPut objects.
+        Import the models of the current execution and then associate models with TableInputOutputInformation objects.
 
-        :param tables: the IODbPut which need their table properties to be set.
-        :type tables: ResultSet(IODbPut)
+        :param tables: the TableInputOutputInformation which need their table properties to be set.
+        :type tables: ResultSet(TableInputOutputInformation)
         """
         # import models for avoid references errors between models when dealing with them
-        IODbPut.import_models(set([t.model for t in tables]))
+        TableInputOutputInformation.import_models(set([t.model for t in tables]))
 
         for table in tables:
-            # keep track of the models used in static variable of IODbPut
-            IODbPut.tablemodelnames.add(table.model)
-            # Associate model with the IODbPut object
+            # keep track of the models used in static variable of TableInputOutputInformation
+            TableInputOutputInformation.tablemodelnames.add(table.model)
+            # Associate model with the TableInputOutputInformation object
             mod = importlib.import_module(table.model)
             table_model = eval("mod." + table.model.split(".")[-1])
             table.set_table(table_model)
-            # keep track of table names used in static variable of IODbPut
-            IODbPut.tablenames.add(table_model.__tablename__)
+            # keep track of table names used in static variable of TableInputOutputInformation
+            TableInputOutputInformation.tablenames.add(table_model.__tablename__)
             SQLManager.instance().get_session().add(table)
 
     @staticmethod
     def get_execution_tables():
         """
-        Return all the IODbPut objects found in model IODbPut.
+        Return all the TableInputOutputInformation objects found in model TableInputOutputInformation.
 
-        :return: ResultSet IODbPut objects
+        :return: ResultSet TableInputOutputInformation objects
         """
         session = SQLManager.instance().get_session()
         execution_id = session.query(func.max(ToolWrapper.execution_id))
-        return session.query(IODbPut).filter(IODbPut.rule_id == ToolWrapper.id).filter(ToolWrapper.execution_id == execution_id).all()
+        return session.query(TableInputOutputInformation).filter(TableInputOutputInformation.rule_id == ToolWrapper.id).filter(ToolWrapper.execution_id == execution_id).all()
 
     @staticmethod
     def import_models(model_names):
@@ -162,12 +163,12 @@ class IODbPut(IOPut, Base):
         :type model_names: Iterable(String)
         """
         for t in model_names:
-            Logger.instance().debug("IODbPut.import_models: importing " + str(t))
+            Logger.instance().debug("TableInputOutputInformation.import_models: importing " + str(t))
             importlib.import_module(t)
 
     def is_ready(self):
         """
-        A IODbPut object is ready if its table exists and contains entries.
+        A TableInputOutputInformation object is ready if its table exists and contains entries.
 
         :return: bool if the table is ready
         """
@@ -188,10 +189,10 @@ class IODbPut(IOPut, Base):
 
     def __eq__(self, other):
         """
-        Two IODbPut object are equals if their table attributes belongs to the same class and if the associated table
+        Two TableInputOutputInformation object are equals if their table attributes belongs to the same class and if the associated table
         has the same content
 
-        :param other: IODbPut
+        :param other: TableInputOutputInformation
         :return: boolean: True if the table attributes are the same, False if not
         """
         session = SQLManager.instance().get_session()

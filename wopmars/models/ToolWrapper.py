@@ -44,9 +44,9 @@ class ToolWrapper(Base):
     status = Column(String(255), nullable=True, default="NOT_EXECUTED")
 
     # One rule has Many table
-    tables = relationship("IODbPut", back_populates="rule")
+    tables = relationship("TableInputOutputInformation", back_populates="rule")
     # One rule has Many file
-    files = relationship("IOFilePut", back_populates="rule")
+    files = relationship("FileInputOutputInformation", back_populates="rule")
     # One rule has Many option
     options = relationship("Option", back_populates="rule")
     # One rule has one execution
@@ -263,8 +263,8 @@ class ToolWrapper(Base):
 
         Check whether "other" has one output value in "self" possible input values.
         The output value are given from the Relationnal mapping between toolwrappers and related objects:
-        * IODbPut
-        * IOFilePut
+        * TableInputOutputInformation
+        * FileInputOutputInformation
 
         :param other: ToolWrapper that is possibly a predecessor of "self"
         :return: bool True if "self" follows "other"
@@ -330,7 +330,7 @@ class ToolWrapper(Base):
         The time and the size of the files are set according to the actual time of last modification and size of the system files
 
         The time of the tables are set according to the time of last modification notified in the modification_table table
-        If the type of IOPut is "output" and the execution is "not dry", the time in modification_table is set to the
+        If the type of InputOutput is "output" and the execution is "not dry", the time in modification_table is set to the
         current time.time().
 
         # todo modify it to take commits into account isntead of the status of 'output' of a table

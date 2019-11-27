@@ -130,10 +130,10 @@ Here is a list of the tables used for history. All of the associated models are 
 
 - ``wom_execution`` represented by the model :class:`~.wopmars.framework.database.tables.Execution.Execution`
 - ``wom_rule`` represented by the model :class:`~.wopmars.framework.database.tables.ToolWrapper.ToolWrapper`
-- ``wom_type`` represented by the model :class:`~.wopmars.framework.database.tables.Type.Type`
-- ``wom_file`` represented by the model :class:`~.wopmars.framework.database.tables.IOFilePut.IOFilePut`
-- ``wom_table`` represented by the model :class:`~.wopmars.framework.database.tables.IODbPut.IODbPut`
-- ``wom_modification_table`` represented by the model :class:`~.wopmars.framework.database.tables.ModificationTable.ModificationTable`
+- ``wom_type`` represented by the model :class:`~.wopmars.framework.database.tables.TypeInputOrOutput.TypeInputOrOutput`
+- ``wom_file`` represented by the model :class:`~.wopmars.framework.database.tables.FileInputOutputInformation.FileInputOutputInformation`
+- ``wom_table`` represented by the model :class:`~.wopmars.framework.database.tables.TableInputOutputInformation.TableInputOutputInformation`
+- ``wom_modification_table`` represented by the model :class:`~.wopmars.framework.database.tables.TableModificationTime.TableModificationTime`
 - ``wom_option`` represented by the model :class:`~.wopmars.framework.database.tables.Option.Option`
 
 .. figure:: ../images/mcd.png
@@ -204,17 +204,17 @@ To get a :class:`~.wopmars.database.WopmarsSession.WopmarsSession` associated wi
 
 ----
 
-.. autoclass:: wopmars.framework.database.tables.IOFilePut.IOFilePut
+.. autoclass:: wopmars.framework.database.tables.FileInputOutputInformation.FileInputOutputInformation
    :members:
 
 ----
 
-.. autoclass:: wopmars.framework.database.tables.IODbPut.IODbPut
+.. autoclass:: wopmars.framework.database.tables.TableInputOutputInformation.TableInputOutputInformation
    :members:
 
 ----
 
-.. autoclass:: wopmars.framework.database.tables.Type.Type
+.. autoclass:: wopmars.framework.database.tables.TypeInputOrOutput.TypeInputOrOutput
    :members:
 
 ----

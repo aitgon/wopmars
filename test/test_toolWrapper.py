@@ -8,12 +8,12 @@ from test.resource.model.FooBase import FooBase
 from test.resource.wrapper.FooWrapper2 import FooWrapper2
 from test.resource.wrapper.FooWrapper3 import FooWrapper3
 from wopmars.SQLManager import SQLManager
-from wopmars.models import IODbPut
-from wopmars.models import IOFilePut
-from wopmars.models import ModificationTable
+from wopmars.models import TableInputOutputInformation
+from wopmars.models import FileInputOutputInformation
+from wopmars.models import TableModificationTime
 from wopmars.models.Option import Option
 from wopmars.models import ToolWrapper
-from wopmars.models.Type import Type
+from wopmars.models.TypeInputOrOutput import TypeInputOrOutput
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder
 from wopmars.utils.exceptions.WopMarsException import WopMarsException
@@ -29,16 +29,16 @@ class TestToolWrapper(TestCase):
         set_tw_to_add = set()
         self.__session = SQLManager.instance().get_session()
 
-        self.input_entry = Type(name="input")
-        self.output_entry = Type(name="output")
+        self.input_entry = TypeInputOrOutput(name="input")
+        self.output_entry = TypeInputOrOutput(name="output")
 
         ### Toolwrappers for __eq__ test_bak
         opt1 = Option(name="param1", value="1")
 
-        f1 = IOFilePut(name="input1", path="file1.txt")
+        f1 = FileInputOutputInformation(name="input1", path="file1.txt")
         f1.type = self.input_entry
 
-        f2 = IOFilePut(name="output1", path="file2.txt")
+        f2 = FileInputOutputInformation(name="output1", path="file2.txt")
         f2.type = self.output_entry
 
         self.__toolwrapper1 = ToolWrapper(rule_name="rule1")
@@ -47,10 +47,10 @@ class TestToolWrapper(TestCase):
 
         opt1 = Option(name="param1", value="1")
 
-        f1 = IOFilePut(name="input1", path="file1.txt")
+        f1 = FileInputOutputInformation(name="input1", path="file1.txt")
         f1.type = self.input_entry
 
-        f2 = IOFilePut(name="output1", path="file2.txt")
+        f2 = FileInputOutputInformation(name="output1", path="file2.txt")
         f2.type = self.output_entry
 
         self.__toolwrapper2 = ToolWrapper(rule_name="rule2")
@@ -59,10 +59,10 @@ class TestToolWrapper(TestCase):
 
         opt1 = Option(name="param2", value="2")
 
-        f1 = IOFilePut(name="input1", path="file1.txt")
+        f1 = FileInputOutputInformation(name="input1", path="file1.txt")
         f1.type = self.input_entry
 
-        f2 = IOFilePut(name="output1", path="file2.txt")
+        f2 = FileInputOutputInformation(name="output1", path="file2.txt")
         f2.type = self.output_entry
 
         self.__toolwrapper3 = ToolWrapper(rule_name="rule3")
@@ -72,18 +72,18 @@ class TestToolWrapper(TestCase):
         ### ToolWrappers for content_respected
         opt1 = Option(name="param1", value="2")
 
-        f1 = IOFilePut(name="input1", path="file1.txt")
+        f1 = FileInputOutputInformation(name="input1", path="file1.txt")
         f1.type = self.input_entry
 
-        f2 = IOFilePut(name="output1", path="file2.txt")
+        f2 = FileInputOutputInformation(name="output1", path="file2.txt")
         f2.type = self.output_entry
 
-        t1 = IODbPut(model="FooBase", tablename="FooBase")
+        t1 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
         t1.table = t1
         t1.type = self.input_entry
 
-        t2 = IODbPut(model="FooBase", tablename="FooBase")
+        t2 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
         t2.set_table(FooBase)
         t2.table = t2
         t2.type = self.output_entry
@@ -95,17 +95,17 @@ class TestToolWrapper(TestCase):
 
         opt1 = Option(name="param1", value="String")
 
-        f1 = IOFilePut(name="input1", path="file1.txt")
+        f1 = FileInputOutputInformation(name="input1", path="file1.txt")
         f1.type = self.input_entry
 
-        f2 = IOFilePut(name="output1", path="file2.txt")
+        f2 = FileInputOutputInformation(name="output1", path="file2.txt")
         f2.type = self.output_entry
 
-        t1 = IODbPut(model="FooBase", tablename="FooBase")
+        t1 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
         t1.table = t1
 
-        t2 = IODbPut(model="FooBase", tablename="FooBase")
+        t2 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
         t2.set_table(FooBase)
         t2.table = t2
 
@@ -116,20 +116,20 @@ class TestToolWrapper(TestCase):
 
         opt1 = Option(name="param2", value="2")
 
-        f1 = IOFilePut(name="input1", path="file1.txt")
+        f1 = FileInputOutputInformation(name="input1", path="file1.txt")
         f1.type = self.input_entry
 
-        f2 = IOFilePut(name="output1", path="file2.txt")
+        f2 = FileInputOutputInformation(name="output1", path="file2.txt")
         f2.type = self.output_entry
 
-        f3 = IOFilePut(name="input2", path="file2.txt")
+        f3 = FileInputOutputInformation(name="input2", path="file2.txt")
         f3.type = self.input_entry
 
-        t1 = IODbPut(model="FooBase", tablename="FooBase")
+        t1 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
         t1.table = t1
 
-        t2 = IODbPut(model="FooBase", tablename="FooBase")
+        t2 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
         t2.set_table(FooBase)
         t2.table = t2
 
@@ -140,17 +140,17 @@ class TestToolWrapper(TestCase):
 
         opt1 = Option(name="param2", value="2")
 
-        f1 = IOFilePut(name="input1", path="file1.txt")
+        f1 = FileInputOutputInformation(name="input1", path="file1.txt")
         f1.type = self.input_entry
 
-        f2 = IOFilePut(name="output1", path="file2.txt")
+        f2 = FileInputOutputInformation(name="output1", path="file2.txt")
         f2.type = self.output_entry
 
-        t1 = IODbPut(model="FooBase", tablename="FooBase")
+        t1 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
         t1.table = t1
 
-        t2 = IODbPut(model="FooBase", tablename="FooBase")
+        t2 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
         t2.set_table(FooBase)
         t2.table = t2
 
@@ -161,17 +161,17 @@ class TestToolWrapper(TestCase):
 
         opt1 = Option(name="param1", value="String")
 
-        f1 = IOFilePut(name="input1", path="file1.txt")
+        f1 = FileInputOutputInformation(name="input1", path="file1.txt")
         f1.type = self.input_entry
 
-        f2 = IOFilePut(name="output1", path="file2.txt")
+        f2 = FileInputOutputInformation(name="output1", path="file2.txt")
         f2.type = self.output_entry
 
-        t1 = IODbPut(model="FooBase", tablename="FooBase")
+        t1 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
         t1.table = t1
 
-        t2 = IODbPut(model="FooBase", tablename="FooBase")
+        t2 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
         t2.set_table(FooBase)
         t2.table = t2
 
@@ -180,17 +180,17 @@ class TestToolWrapper(TestCase):
         self.__foowrapper_wrong_content4.tables.extend([t1, t2])
         self.__foowrapper_wrong_content4.options.append(opt1)
 
-        f1 = IOFilePut(name="input1", path="file1.txt")
+        f1 = FileInputOutputInformation(name="input1", path="file1.txt")
         f1.type = self.input_entry
 
-        f2 = IOFilePut(name="output1", path="file2.txt")
+        f2 = FileInputOutputInformation(name="output1", path="file2.txt")
         f2.type = self.output_entry
 
-        t1 = IODbPut(model="FooBase", tablename="FooBase")
+        t1 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
         t1.table = t1
 
-        t2 = IODbPut(model="FooBase", tablename="FooBase")
+        t2 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
         t2.set_table(FooBase)
         t2.table = t2
 
@@ -200,19 +200,19 @@ class TestToolWrapper(TestCase):
 
         ### TooLWrappers for follows
 
-        f1 = IOFilePut(name="input1", path="file1.txt")
+        f1 = FileInputOutputInformation(name="input1", path="file1.txt")
         f1.type = self.input_entry
 
-        f2 = IOFilePut(name="output1", path="file2.txt")
+        f2 = FileInputOutputInformation(name="output1", path="file2.txt")
         f2.type = self.output_entry
 
         self.__toolwrapper_first = FooWrapper2(rule_name="rule1")
         self.__toolwrapper_first.files.extend([f1, f2])
 
-        f1 = IOFilePut(name="input1", path="file2.txt")
+        f1 = FileInputOutputInformation(name="input1", path="file2.txt")
         f1.type = self.input_entry
 
-        f2 = IOFilePut(name="output1", path="file3.txt")
+        f2 = FileInputOutputInformation(name="output1", path="file3.txt")
         f2.type = self.output_entry
 
         self.__toolwrapper_second = FooWrapper2(rule_name="rule2")
@@ -224,19 +224,19 @@ class TestToolWrapper(TestCase):
 
         s_path_to_example_file_that_exists = os.path.join(s_root_path, "test/resource/input_files/input_file1.txt")
 
-        f1 = IOFilePut(name="input1", path=s_path_to_example_file_that_exists)
+        f1 = FileInputOutputInformation(name="input1", path=s_path_to_example_file_that_exists)
         f1.type = self.input_entry
 
-        f2 = IOFilePut(name="output1", path="file2.txt")
+        f2 = FileInputOutputInformation(name="output1", path="file2.txt")
         f2.type = self.output_entry
 
         self.__toolwrapper_ready = FooWrapper2(rule_name="rule2")
         self.__toolwrapper_ready.files.extend([f1, f2])
 
-        f1 = IOFilePut(name="input1", path="/not/existent/file")
+        f1 = FileInputOutputInformation(name="input1", path="/not/existent/file")
         f1.type = self.input_entry
 
-        f2 = IOFilePut(name="output1", path="file2.txt")
+        f2 = FileInputOutputInformation(name="output1", path="file2.txt")
         f2.type = self.output_entry
 
         self.__toolwrapper_not_ready = FooWrapper2(rule_name="rule2")
@@ -269,7 +269,7 @@ class TestToolWrapper(TestCase):
         SQLManager.instance().get_session().add_all([FooBase(name="test_bak " + str(i)) for i in range(5)])
         SQLManager.instance().get_session().commit()
 
-        t1 = IODbPut(model="FooBase", tablename="FooBase")
+        t1 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
 
         t1.type = self.input_entry
@@ -286,22 +286,22 @@ class TestToolWrapper(TestCase):
 
         moment = time_unix_ms()
 
-        t1 = IODbPut(model="FooBase", tablename="FooBase")
+        t1 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
         t1.type = self.input_entry
-        modif = ModificationTable(table_name="FooBase", time=moment)
+        modif = TableModificationTime(table_name="FooBase", time=moment)
         modif.tables.append(t1)
 
-        t2 = IODbPut(model="FooBase", tablename="FooBase")
+        t2 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
         t2.set_table(FooBase)
         t2.type = self.input_entry
-        modif = ModificationTable(table_name="FooBase", time=moment)
+        modif = TableModificationTime(table_name="FooBase", time=moment)
         modif.tables.append(t2)
 
-        f1 = IOFilePut(name="input1", path="path1", used_at=moment, size=0)
+        f1 = FileInputOutputInformation(name="input1", path="path1", used_at=moment, size=0)
         f1.type = self.input_entry
 
-        f2 = IOFilePut(name="input1", path="path1", used_at=moment, size=0)
+        f2 = FileInputOutputInformation(name="input1", path="path1", used_at=moment, size=0)
         f2.type = self.input_entry
 
         toolwrapper1 = FooWrapper2(rule_name="rule1")
@@ -312,13 +312,13 @@ class TestToolWrapper(TestCase):
         toolwrapper2.files.append(f2)
         toolwrapper2.tables.append(t2)
 
-        t3 = IODbPut(model="FooBase", tablename="FooBase")
+        t3 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
         t3.set_table(FooBase)
         t3.type = self.input_entry
-        modif = ModificationTable(table_name="FooBase", time=moment)
+        modif = TableModificationTime(table_name="FooBase", time=moment)
         modif.tables.append(t3)
 
-        f3 = IOFilePut(name="input1", path="path1", used_at=time_unix_ms(), size=0)
+        f3 = FileInputOutputInformation(name="input1", path="path1", used_at=time_unix_ms(), size=0)
         f3.type = self.input_entry
 
         toolwrapper3 = FooWrapper2(rule_name="rule1")
@@ -331,11 +331,11 @@ class TestToolWrapper(TestCase):
     def test_is_output_ok(self):
 
         moment = time_unix_ms()
-        t1 = IODbPut(model="FooBase", tablename="FooBase")
+        t1 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
         t1.type = self.input_entry
         t1.used_at = moment
-        modif = ModificationTable(table_name="FooBase", time=moment)
+        modif = TableModificationTime(table_name="FooBase", time=moment)
         modif.tables.append(t1)
 
         root = PathFinder.get_module_path()
@@ -344,8 +344,8 @@ class TestToolWrapper(TestCase):
         p = subprocess.Popen(["touch", path_f1])
         p.wait()
 
-        f1 = IOFilePut(name="input1", path=path_f1, used_at=os_path_getmtime_ms(path_f1),
-                       size=os.path.getsize(path_f1))
+        f1 = FileInputOutputInformation(name="input1", path=path_f1, used_at=os_path_getmtime_ms(path_f1),
+                                        size=os.path.getsize(path_f1))
         f1.type = self.output_entry
 
         toolwrapper1 = FooWrapper2(rule_name="rule1")
@@ -353,17 +353,17 @@ class TestToolWrapper(TestCase):
         toolwrapper1.tables.append(t1)
 
 
-        f1 = IOFilePut(name="input1", path=path_f1, used_at=os_path_getmtime_ms(path_f1),
-                       size=os.path.getsize(path_f1))
+        f1 = FileInputOutputInformation(name="input1", path=path_f1, used_at=os_path_getmtime_ms(path_f1),
+                                        size=os.path.getsize(path_f1))
 
         f1.type = self.output_entry
 
         moment = time_unix_ms()
-        t1 = IODbPut(model="FooBase", tablename="FooBase")
+        t1 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
         t1.type = self.input_entry
         t1.used_at = moment
-        modif = ModificationTable(table_name="FooBase", time=moment)
+        modif = TableModificationTime(table_name="FooBase", time=moment)
         modif.tables.append(t1)
 
         toolwrapper2 = FooWrapper2(rule_name="rule1")

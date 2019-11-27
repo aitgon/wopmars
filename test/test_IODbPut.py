@@ -5,7 +5,7 @@ from unittest import TestCase
 from test.resource.model.FooBase import FooBase
 from test.resource.model.FooBase2 import FooBase2
 from wopmars.SQLManager import SQLManager
-from wopmars.models import IODbPut
+from wopmars.models import TableInputOutputInformation
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder
 
@@ -25,11 +25,11 @@ class TestIODbPut(TestCase):
             self.__local_session.close()
             raise e
 
-        self.__io_base_existing = IODbPut(model="FooBase", tablename="FooBase")
+        self.__io_base_existing = TableInputOutputInformation(model="FooBase", tablename="FooBase")
         self.__io_base_existing.set_table(FooBase)
-        self.__io_base_existing2 = IODbPut(model="FooBase", tablename="FooBase")
+        self.__io_base_existing2 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
         self.__io_base_existing2.set_table(FooBase)
-        self.__io_base_existing3 = IODbPut(model="FooBase2", tablename="FooBase2")
+        self.__io_base_existing3 = TableInputOutputInformation(model="FooBase2", tablename="FooBase2")
         self.__io_base_existing3.set_table(FooBase2)
 
     def tearDown(self):

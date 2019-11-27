@@ -4,9 +4,9 @@ from unittest import TestCase
 from test.resource.wrapper.FooWrapper2 import FooWrapper2
 from test.resource.wrapper.FooWrapper8 import FooWrapper8
 from wopmars.SQLManager import SQLManager
-from wopmars.models import IOFilePut
+from wopmars.models import FileInputOutputInformation
 from wopmars.models import ToolWrapper
-from wopmars.models.Type import Type
+from wopmars.models.TypeInputOrOutput import TypeInputOrOutput
 from wopmars.DAG import DAG
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder
@@ -26,43 +26,43 @@ class TestDAG(TestCase):
 
         self.__session = SQLManager.instance().get_session()
 
-        input_entry = Type(name="input")
-        output_entry = Type(name="output")
+        input_entry = TypeInputOrOutput(name="input")
+        output_entry = TypeInputOrOutput(name="output")
 
-        f1 = IOFilePut(name="input1", path="file1.txt")
+        f1 = FileInputOutputInformation(name="input1", path="file1.txt")
         f1.type = input_entry
 
-        f2 = IOFilePut(name="output1", path="file2.txt")
+        f2 = FileInputOutputInformation(name="output1", path="file2.txt")
         f2.type = output_entry
 
         self.__toolwrapper_first = FooWrapper2(rule_name="rule1")
         self.__toolwrapper_first.files.extend([f1, f2])
 
-        f1 = IOFilePut(name="input1", path="file2.txt")
+        f1 = FileInputOutputInformation(name="input1", path="file2.txt")
         f1.type = input_entry
 
-        f2 = IOFilePut(name="output1", path="file3.txt")
+        f2 = FileInputOutputInformation(name="output1", path="file3.txt")
         f2.type = output_entry
 
         self.__toolwrapper_second = FooWrapper2(rule_name="rule2")
         self.__toolwrapper_second.files.extend([f1, f2])
 
-        f1 = IOFilePut(name="input1", path="file2.txt")
+        f1 = FileInputOutputInformation(name="input1", path="file2.txt")
         f1.type = input_entry
 
-        f2 = IOFilePut(name="output1", path="file4.txt")
+        f2 = FileInputOutputInformation(name="output1", path="file4.txt")
         f2.type = output_entry
 
         self.__toolwrapper_third = FooWrapper2(rule_name="rule3")
         self.__toolwrapper_third.files.extend([f1, f2])
 
-        f1 = IOFilePut(name="input1", path="file3.txt")
+        f1 = FileInputOutputInformation(name="input1", path="file3.txt")
         f1.type = input_entry
 
-        f2 = IOFilePut(name="input2", path="file4.txt")
+        f2 = FileInputOutputInformation(name="input2", path="file4.txt")
         f2.type = input_entry
 
-        f3 = IOFilePut(name="output1", path="file5.txt")
+        f3 = FileInputOutputInformation(name="output1", path="file5.txt")
         f3.type = output_entry
 
         self.__toolwrapper_fourth = FooWrapper8(rule_name="rule4")
