@@ -15,7 +15,7 @@ from wopmars.framework.database.tables.IODbPut import IODbPut
 from wopmars.framework.database.tables.IOFilePut import IOFilePut
 from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
 from wopmars.framework.database.tables.Type import Type
-from wopmars.framework.parsing.Reader import Reader
+from wopmars.Reader import Reader
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder
 from wopmars.utils.SetUtils import SetUtils
