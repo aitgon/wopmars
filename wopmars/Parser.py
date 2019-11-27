@@ -6,7 +6,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql.functions import func
 
 from wopmars.SQLManager import SQLManager
-from wopmars.framework.database.models.ToolWrapper import ToolWrapper
+from wopmars.models.ToolWrapper import ToolWrapper
 from wopmars.DAG import DAG
 from wopmars.Reader import Reader
 from wopmars.utils.Logger import Logger

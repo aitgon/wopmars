@@ -15,12 +15,12 @@ except ImportError:
 from sqlalchemy.orm.exc import NoResultFound, ObjectDeletedError
 
 from wopmars.SQLManager import SQLManager
-from wopmars.framework.database.models.Execution import Execution
-from wopmars.framework.database.models.IODbPut import IODbPut
-from wopmars.framework.database.models.IOFilePut import IOFilePut
-from wopmars.framework.database.models.ModificationTable import ModificationTable
-from wopmars.framework.database.models.Option import Option
-from wopmars.framework.database.models.Type import Type
+from wopmars.models.Execution import Execution
+from wopmars.models.IODbPut import IODbPut
+from wopmars.models.IOFilePut import IOFilePut
+from wopmars.models.ModificationTable import ModificationTable
+from wopmars.models.Option import Option
+from wopmars.models.Type import Type
 from wopmars.utils.DictUtils import DictUtils
 
 from wopmars.utils.Logger import Logger

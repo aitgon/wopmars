@@ -1,4 +1,4 @@
-from wopmars.framework.database.models.ToolWrapper import ToolWrapper
+from wopmars.models import ToolWrapper
 
 
 class AddWithOrWithoutDeleteBefore(ToolWrapper):

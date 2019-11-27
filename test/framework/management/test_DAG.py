@@ -4,9 +4,9 @@ from unittest import TestCase
 from test.resource.wrapper.FooWrapper2 import FooWrapper2
 from test.resource.wrapper.FooWrapper8 import FooWrapper8
 from wopmars.SQLManager import SQLManager
-from wopmars.framework.database.models.IOFilePut import IOFilePut
-from wopmars.framework.database.models.ToolWrapper import ToolWrapper
-from wopmars.framework.database.models.Type import Type
+from wopmars.models import IOFilePut
+from wopmars.models import ToolWrapper
+from wopmars.models.Type import Type
 from wopmars.DAG import DAG
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder
