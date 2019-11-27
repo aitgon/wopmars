@@ -2,7 +2,7 @@
 Module containing the FooWrapper1 class
 """
 
-from wopmars.framework.database.models.ToolWrapper import ToolWrapper
+from wopmars.models.ToolWrapper import ToolWrapper
 
 
 class FooWrapper12(ToolWrapper):

@@ -5,7 +5,7 @@ import time
 
 import subprocess
 
-from wopmars.framework.database.models.ToolWrapper import ToolWrapper
+from wopmars.models.ToolWrapper import ToolWrapper
 
 class FooWrapper8(ToolWrapper):
     """

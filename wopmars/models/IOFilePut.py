@@ -4,7 +4,7 @@ from sqlalchemy import Column, BigInteger, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 
 from wopmars.Base import Base
-from wopmars.framework.database.models.IOPut import IOPut
+from wopmars.models.IOPut import IOPut
 from wopmars.utils.Logger import Logger
 
 

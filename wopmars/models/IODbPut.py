@@ -8,8 +8,8 @@ from sqlalchemy import Column, Integer, String, ForeignKey, BigInteger
 from sqlalchemy.orm import relationship, reconstructor
 
 from wopmars.SQLManager import SQLManager
-from wopmars.framework.database.models.IOPut import IOPut
-from wopmars.framework.database.models.ToolWrapper import ToolWrapper
+from wopmars.models.IOPut import IOPut
+from wopmars.models.ToolWrapper import ToolWrapper
 from wopmars.utils.Logger import Logger
 from sqlalchemy.sql.functions import func
 

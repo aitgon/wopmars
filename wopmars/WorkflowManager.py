@@ -3,10 +3,10 @@ import sys
 import datetime
 
 from wopmars.SQLManager import SQLManager
-from wopmars.framework.database.models.Execution import Execution
-from wopmars.framework.database.models.IODbPut import IODbPut
-from wopmars.framework.database.models.ToolWrapper import ToolWrapper
-from wopmars.framework.database.models.Type import Type
+from wopmars.models.Execution import Execution
+from wopmars.models.IODbPut import IODbPut
+from wopmars.models.ToolWrapper import ToolWrapper
+from wopmars.models.Type import Type
 from wopmars.DAG import DAG
 from wopmars.ToolThread import ToolThread
 from wopmars.ToolWrapperObserver import ToolWrapperObserver
