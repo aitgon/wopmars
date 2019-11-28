@@ -19,7 +19,7 @@ class FileInputOutputInformation(InputOutput, Base):
     - path: VARCHAR(255) - the path to the file
     - rule_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.framework.database.tables.Rule.Rule`
     - is_input: INTEGER - foreign key to the associated type ID: :class:`wopmars.framework.database.tables.TypeInputOrOutput.TypeInputOrOutput`
-    - mtime_epoch_millis: INTEGER - unix time at which the table have been used
+    - mtime_epoch_millis: INTEGER - unix mtime_epoch_millis at which the table have been used
     - size: INTEGER - the size of the file
     """
     __tablename__ = "wom_file"
