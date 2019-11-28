@@ -94,16 +94,16 @@ class TestParser(TestCase):
         f15 = FileInputOutputInformation(name="output1", path="test/output/output_file7.txt")
         f15.type = output_entry
 
-        t1 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
+        t1 = TableInputOutputInformation(model_path="FooBase", tablename="FooBase")
         t1.type = output_entry
 
-        t1bis = TableInputOutputInformation(model="FooBase", tablename="FooBase")
+        t1bis = TableInputOutputInformation(model_path="FooBase", tablename="FooBase")
         t1bis.type = input_entry
 
-        t2 = TableInputOutputInformation(model="FooBase2", tablename="FooBase2")
+        t2 = TableInputOutputInformation(model_path="FooBase2", tablename="FooBase2")
         t2.type = output_entry
 
-        t2bis = TableInputOutputInformation(model="FooBase2", tablename="FooBase2")
+        t2bis = TableInputOutputInformation(model_path="FooBase2", tablename="FooBase2")
         t2bis.type = input_entry
 
         tw1 = FooWrapper4(rule_name="rule1")

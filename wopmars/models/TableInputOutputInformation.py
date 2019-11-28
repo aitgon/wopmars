@@ -31,7 +31,7 @@ class TableInputOutputInformation(InputOutput, Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     tablename = Column(String(255), ForeignKey("wom_TableModificationTime.table_name"))
-    model = Column(String(255))
+    model_py_path = Column(String(255))
     rule_id = Column(Integer, ForeignKey("wom_Rule.id"))
     is_input = Column(Boolean, ForeignKey("wom_TypeInputOrOutput.is_input"))
     mtime_human = Column(DateTime, nullable=True)
@@ -49,18 +49,18 @@ class TableInputOutputInformation(InputOutput, Base):
     # al the table names met since the begining of this instance of WopMaRS
     tablenames = set()
 
-    def __init__(self, model, tablename):
+    def __init__(self, model_py_path, tablename):
         """
         self.__table is initialized to None and will contain the model of this TableInputOutputInformation object.
 
-        :param model: The path to the model
-        :type model: str
+        :param model_py_path: The path to the model
+        :type model_py_path: str
         :param tablename: The is_input of the table associated with the model
         :type tablename: str
         """
         # The file containing the table should be in PYTHONPATH
-        Base.__init__(self, model=model, tablename=tablename)
-        Logger.instance().debug(str(model) + " model loaded. Tablename: " + str(tablename))
+        Base.__init__(self, model_py_path=model_py_path, tablename=tablename)
+        Logger.instance().debug(str(model_py_path) + " model_py_path loaded. Tablename: " + str(tablename))
         self.__table = None
 
     @reconstructor
@@ -72,12 +72,12 @@ class TableInputOutputInformation(InputOutput, Base):
         for table in TableInputOutputInformation.tablemodelnames:
             mod = importlib.import_module(table)
             try:
-                if table == self.model:
+                if table == self.model_py_path:
                     # todo tabling
-                    self.__table = eval("mod." + self.model.split(".")[-1])
+                    self.__table = eval("mod." + self.model_py_path.split(".")[-1])
             except AttributeError as e:
                 raise e
-        Logger.instance().debug(self.tablename + " table class reloaded. Model: " + self.model)
+        Logger.instance().debug(self.tablename + " table class reloaded. Model: " + self.model_py_path)
 
     def set_table(self, model):
         self.__table = model
@@ -94,14 +94,14 @@ class TableInputOutputInformation(InputOutput, Base):
         :type tables: ResultSet(TableInputOutputInformation)
         """
         # import models for avoid references errors between models when dealing with them
-        TableInputOutputInformation.import_models(set([t.model for t in tables]))
+        TableInputOutputInformation.import_models(set([t.model_py_path for t in tables]))
 
         for table in tables:
             # keep track of the models used in static variable of TableInputOutputInformation
-            TableInputOutputInformation.tablemodelnames.add(table.model)
+            TableInputOutputInformation.tablemodelnames.add(table.model_py_path)
             # Associate model with the TableInputOutputInformation object
-            mod = importlib.import_module(table.model)
-            table_model = eval("mod." + table.model.split(".")[-1])
+            mod = importlib.import_module(table.model_py_path)
+            table_model = eval("mod." + table.model_py_path.split(".")[-1])
             table.set_table(table_model)
             # keep track of table names used in static variable of TableInputOutputInformation
             TableInputOutputInformation.tablenames.add(table_model.__tablename__)
@@ -160,7 +160,7 @@ class TableInputOutputInformation(InputOutput, Base):
         :return: boolean: True if the table attributes are the same, False if not
         """
         session = SQLManager.instance().get_session()
-        if self.model != other.model or self.tablename != other.tablename:
+        if self.model_py_path != other.model_py_path or self.tablename != other.tablename:
             return False
         try:
             self_results = set(session.query(self.__table).all())
@@ -179,4 +179,4 @@ class TableInputOutputInformation(InputOutput, Base):
         return '<Table ({}):\"{}; used at:{}>"'.format(self.type.is_input, str(self.tablename), str(self.mtime_epoch_millis))
 
     def __str__(self):
-        return "<Table: " + self.tablename + "; model: " + self.model + ">"
+        return "<Table: " + self.tablename + "; model: " + self.model_py_path + ">"

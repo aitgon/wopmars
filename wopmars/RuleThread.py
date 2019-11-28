@@ -104,7 +104,7 @@ class RuleThread(threading.Thread, Observable):
         :return: The string containg the command line
         """
         list_str_inputs_files = [f.name + "': '" + f.path for f in self.__rule.files if f.type.is_input == 1]
-        list_str_inputs_tables = [t.tablename + "': '" + t.model for t in self.__rule.tables if t.type.is_input == 1]
+        list_str_inputs_tables = [t.tablename + "': '" + t.model_py_path for t in self.__rule.tables if t.type.is_input == 1]
         str_input_dict = ""
         str_input_dict_files = ""
         str_input_dict_tables = ""
@@ -117,7 +117,7 @@ class RuleThread(threading.Thread, Observable):
             str_input_dict = " -i \"{%s}\"" % (", ".join([s for s in [str_input_dict_files, str_input_dict_tables] if s != ""]))
 
         list_str_outputs_files = [f.name + "': '" + f.path for f in self.__rule.files if f.type.is_input == 0]
-        list_str_outputs_tables = [t.tablename + "': '" + t.model for t in self.__rule.tables if t.type.is_input == 0]
+        list_str_outputs_tables = [t.tablename + "': '" + t.model_py_path for t in self.__rule.tables if t.type.is_input == 0]
         str_output_dict = ""
         str_output_dict_files = ""
         str_output_dict_tables = ""
