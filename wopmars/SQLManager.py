@@ -20,7 +20,7 @@ class SQLManager(SingletonMixin):
     """
     The class SQLManager is responsible of all operations performed on the database.
 
-    The SQLManager is a synchronized Singleton which may be accessible from any thread, at any time. This is allowed
+    The SQLManager is a synchronized Singleton which may be accessible from any thread, at any mtime_epoch_millis. This is allowed
     by the SingletonMixin superclass and a read/write lock.
 
     Provides a WopmarsSession through the method "get_session". The session is used to perform calls to the database.
@@ -133,7 +133,7 @@ class SQLManager(SingletonMixin):
         Commit the current session.
 
         The SQLManager wrap the sqlite queue for commiting operations on database in order to do not trigger the error due
-        to the time-out operations.
+        to the mtime_epoch_millis-out operations.
 
         This is done thanks to a read_write_lock: sqlmanager is a synchronized singleton with synchronized methods.
 
@@ -221,7 +221,7 @@ class SQLManager(SingletonMixin):
         Rollback the given session.
 
         The SQLManager wrap the sqlite queue for rollbacking operations on database in order to do not trigger the error due
-        to the time-out operations.
+        to the mtime_epoch_millis-out operations.
 
         This is done thanks to a read_write_lock: sqlmanager is a synchronized singleton with synchronized methods.
 

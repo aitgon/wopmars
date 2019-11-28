@@ -550,11 +550,11 @@ class Reader:
                     iodbput_entry = dict_dict_dict_elm["dict_input"][elm][input_t]
                     # the user-side models are created during the reading of the definition file
                     # table_entry = TableInputOutputInformation(is_input=dict_dict_dict_elm["dict_input"][elm][input_t], tablename=input_t)
-                    # insert in the database the time of last modification of a developper-side table
+                    # insert in the database the mtime_epoch_millis of last modification of a developper-side table
                     time_unix_ms, time_human = get_current_time()
                     modification_table_entry, created = session.get_or_create(TableModificationTime,
                                                                               defaults={
-                                                                                  "time": time_unix_ms},
+                                                                                  "mtime_epoch_millis": time_unix_ms},
                                                                               table_name=input_t)
                     iodbput_entry.modification = modification_table_entry
                     iodbput_entry.type = input_entry
@@ -584,7 +584,7 @@ class Reader:
                     time_unix_ms, time_human = get_current_time()
                     modification_table_entry, created = session.get_or_create(TableModificationTime,
                                                                               defaults={
-                                                                                  "time": time_unix_ms},
+                                                                                  "mtime_epoch_millis": time_unix_ms},
                                                                               table_name=output_t)
                     iodbput_entry.modification = modification_table_entry
                     iodbput_entry.type = output_entry

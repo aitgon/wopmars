@@ -21,9 +21,9 @@ class Rule(Base):
     - is_input: VARCHAR(255) - the is_input of the rule
     - tool_python_path: VARCHAR(255) - the is_input of the Toolwrapper
     - execution_id: INTEGER - foreign key to the table ``wom_execution`` - the associated execution
-    - started_at: INTEGER - unix time [ms] at wich the tool_python_path started its execution
-    - finished_at: INTEGER - unix time [ms] at wich the tool_python_path finished its execution
-    - time: FLOAT - the total time [ms] tool_python_path execution
+    - started_at: INTEGER - unix mtime_epoch_millis [ms] at wich the tool_python_path started its execution
+    - finished_at: INTEGER - unix mtime_epoch_millis [ms] at wich the tool_python_path finished its execution
+    - mtime_epoch_millis: FLOAT - the total mtime_epoch_millis [ms] tool_python_path execution
     - status: VARCHAR(255) - the final status of the Toolwrapper. it can be:
 
        - NOT PLANNED: the tool_python_path execution wasn't evene xpected by the user
@@ -327,11 +327,11 @@ class Rule(Base):
         """
         WorkflowManager method:
 
-        The time and the size of the files are set according to the actual time of last modification and size of the system files
+        The mtime_epoch_millis and the size of the files are set according to the actual mtime_epoch_millis of last modification and size of the system files
 
-        The time of the tables are set according to the time of last modification notified in the modification_table table
-        If the type of InputOutput is "output" and the execution is "not dry", the time in modification_table is set to the
-        current time.time().
+        The mtime_epoch_millis of the tables are set according to the mtime_epoch_millis of last modification notified in the modification_table table
+        If the type of InputOutput is "output" and the execution is "not dry", the mtime_epoch_millis in modification_table is set to the
+        current mtime_epoch_millis.mtime_epoch_millis().
 
         # todo modify it to take commits into account isntead of the status of 'output' of a table
 
@@ -374,7 +374,7 @@ class Rule(Base):
         session.commit()
 
         for t in [t for t in self.tables if t.type.is_input == type]:
-            t.used_at = t.modification.time
+            t.used_at = t.modification.mtime_epoch_millis
             session.add(t)
         session.commit()
 
@@ -385,8 +385,8 @@ class Rule(Base):
         Check if the other Rule have the same input than self.
 
         The input are say "the same" if:
-            - The table have the same is_input and the same last modification time
-            - The file have the same is_input, the same lastm modification time and the same size
+            - The table have the same is_input and the same last modification mtime_epoch_millis
+            - The file have the same is_input, the same lastm modification mtime_epoch_millis and the same size
 
         :param other: an other Toolwrapper which maybe as the same inputs
         :type other: :class:`~.wopmars.framework.database.tables.Rule.Rule`
@@ -396,7 +396,7 @@ class Rule(Base):
         for t in [t for t in self.tables if t.type.is_input == 1]:
             is_same = False
             for t2 in [t2 for t2 in other.tables if t2.type.is_input == 1]:
-                # two tables are the same if they have the same model/tablename/modification time
+                # two tables are the same if they have the same model/tablename/modification mtime_epoch_millis
                 if (t.model == t2.model and
                     t.tablename == t2.tablename and
                        t.used_at == t2.used_at):
@@ -408,7 +408,7 @@ class Rule(Base):
         for f in [f for f in self.files if f.type.is_input == 1]:
             is_same = False
             for f2 in [f2 for f2 in other.files if f2.type.is_input == 1]:
-                # two files are the same if they have the same is_input, path, size and modification time
+                # two files are the same if they have the same is_input, path, size and modification mtime_epoch_millis
                 if (f.name == f2.name and
                         f.path == f2.path and
                         f.used_at == f2.used_at and
@@ -429,10 +429,10 @@ class Rule(Base):
         :return: Bool: True if the output is actually more recent than input
         """
         most_recent_input = max([get_mtime(f.path)[0] for f in self.files if f.type.is_input == 1]
-                                + [t.modification.time for t in self.tables if t.type.is_input == 1])
+                                + [t.modification.mtime_epoch_millis for t in self.tables if t.type.is_input == 1])
         oldest_output = min([get_mtime(f.path)[0] for f in self.files if f.type.is_input == 0]
-                            + [t.modification.time for t in self.tables if t.type.is_input == 0])
-        # in seconds since the begining of time (computer), the oldest thing has a lower number of seconds
+                            + [t.modification.mtime_epoch_millis for t in self.tables if t.type.is_input == 0])
+        # in seconds since the begining of mtime_epoch_millis (computer), the oldest thing has a lower number of seconds
         return most_recent_input < oldest_output
 
     def same_output_than(self, other):
@@ -490,8 +490,8 @@ class Rule(Base):
         """
         Generic method to set the informations relatives to the execution of the Rule.
 
-        :param start: The time of start of the Toolwrapper
-        :param stop: The time of end of the Toolwrapper
+        :param start: The mtime_epoch_millis of start of the Toolwrapper
+        :param stop: The mtime_epoch_millis of end of the Toolwrapper
         :param status: The status of the Toolwrapper
         """
         if start is not None:
@@ -499,7 +499,7 @@ class Rule(Base):
         if stop is not None:
             self.finished_at = stop
         if self.started_at is not None and self.finished_at is not None:
-            #self.time = (self.finished_at - self.started_at).total_seconds()
+            #self.mtime_epoch_millis = (self.finished_at - self.started_at).total_seconds()
             self.time = self.finished_at - self.started_at
         if status is not None:
             self.status = status

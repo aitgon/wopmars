@@ -25,7 +25,7 @@ class TableInputOutputInformation(InputOutput, Base):
     - model: VARCHAR(255) - the path to the model (in python notation)
     - rule_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.framework.database.tables.Rule.Rule`
     - is_input: INTEGER - foreign key to the associated type ID: :class:`wopmars.framework.database.tables.TypeInputOrOutput.TypeInputOrOutput`
-    - mtime_epoch_millis: INTEGER - unix time at which the table have been used
+    - mtime_epoch_millis: INTEGER - unix mtime_epoch_millis at which the table have been used
     """
     __tablename__ = "wom_table_io_information"
 
@@ -88,7 +88,7 @@ class TableInputOutputInformation(InputOutput, Base):
     @staticmethod
     def create_triggers():
         """
-        Create an INSERT, UPDATE, DELETE trigger on the tables created by the user in order to store the modifications time.
+        Create an INSERT, UPDATE, DELETE trigger on the tables created by the user in order to store the modifications mtime_epoch_millis.
         """
         stmt = ["INSERT", "UPDATE", "DELETE"]
         for tablename in Base.metadata.tables:
@@ -99,11 +99,11 @@ class TableInputOutputInformation(InputOutput, Base):
                         # import pdb; pdb.set_trace()
                         sql_trigger = "CREATE TRIGGER IF NOT EXISTS {tablename}_{statement} " \
                               "AFTER {statement} ON {tablename} BEGIN UPDATE wom_modification_table " \
-                              "SET time = CAST((julianday('now') - 2440587.5)*86400000 AS INTEGER) WHERE table_name = '{tablename}'; END;".format(**data)
+                              "SET mtime_epoch_millis = CAST((julianday('now') - 2440587.5)*86400000 AS INTEGER) WHERE table_name = '{tablename}'; END;".format(**data)
                     elif SQLManager.instance().__dict__['d_database_config']['db_connection'] == 'mysql':
                         sql_trigger = "CREATE TRIGGER IF NOT EXISTS {tablename}_{statement} AFTER {statement} " \
                           "ON {tablename} for each row UPDATE wom_modification_table SET " \
-                                      "time = ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) " \
+                                      "mtime_epoch_millis = ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) " \
                           "WHERE table_name = '{tablename}';".format(**data)
                         obj_ddl = DDL(sql_trigger)
                         SQLManager.instance().create_trigger(Base.metadata.tables[tablename], obj_ddl)
@@ -111,7 +111,7 @@ class TableInputOutputInformation(InputOutput, Base):
                         sql_trigger = """
                             CREATE OR REPLACE FUNCTION {tablename}_{statement}() RETURNS TRIGGER AS ${tablename}_{statement}$
                             BEGIN
-                            UPDATE wom_modification_table SET time = extract(epoch from now())*1000 WHERE table_name = '{tablename}';
+                            UPDATE wom_modification_table SET mtime_epoch_millis = extract(epoch from now())*1000 WHERE table_name = '{tablename}';
                             RETURN NULL; -- result is ignored since this is an AFTER trigger
                             END;
                             ${tablename}_{statement}$ LANGUAGE plpgsql;

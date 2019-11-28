@@ -11,9 +11,9 @@ class Execution(Base):
     The table ``wom_execution`` contains the following fields:
 
     - id: INTEGER: primary key - auto increment - arbitrary iD
-    - started_at: BigInteger - unix time at wich the execution started
-    - finished_at: BigInteger - unix time at wich the execution finished
-    - time: FLOAT - the total time of execution
+    - started_at: BigInteger - unix mtime_epoch_millis at wich the execution started
+    - finished_at: BigInteger - unix mtime_epoch_millis at wich the execution finished
+    - mtime_epoch_millis: FLOAT - the total mtime_epoch_millis of execution
     - status: VARCHAR(255) - the final status of the Execution. it can be:
 
         - SUCCESS
