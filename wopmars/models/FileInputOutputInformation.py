@@ -15,7 +15,7 @@ class FileInputOutputInformation(InputOutput, Base):
     following fields:
 
     - id: INTEGER - primary key - autoincrement - arbitrary ID
-    - name: VARCHAR(255) - the name of the reference to the file
+    - is_input: VARCHAR(255) - the is_input of the reference to the file
     - path: VARCHAR(255) - the path to the file
     - rule_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.framework.database.tables.Rule.Rule`
     - type_id: INTEGER - foreign key to the associated type ID: :class:`wopmars.framework.database.tables.TypeInputOrOutput.TypeInputOrOutput`

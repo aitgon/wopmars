@@ -242,7 +242,7 @@ class SQLManager(SingletonMixin):
         """
         Use the declarative Base to create a table from its tablename.
 
-        The tablename is the name of the base represented in the databse (independent of the Table model)
+        The tablename is the is_input of the base represented in the databse (independent of the Table model)
         :param tablename:
         """
         try:
@@ -257,7 +257,7 @@ class SQLManager(SingletonMixin):
         """
         Use the declarative Base to drop a table from its tablename.
 
-        The tablename is the name of the base represented in the databse (independent of the Table model)
+        The tablename is the is_input of the base represented in the databse (independent of the Table model)
         :param tablename:
         """
         try:
@@ -273,7 +273,7 @@ class SQLManager(SingletonMixin):
         """
         Remove a list of tables from the list of their tablenames.
 
-        :param list_str_table: [String] the name of the tables.
+        :param list_str_table: [String] the is_input of the tables.
         """
         # Get the list of Table objects from tablenames, then sort them according to their relationships / foreignkeys
         # and take the reverse to delete them in the right order (reverse of the correct order for creating them)
@@ -292,7 +292,7 @@ class SQLManager(SingletonMixin):
         """
         Remove a list of tables from the list of their tablenames.
 
-        :param list_str_table: [String] the name of the tables.
+        :param list_str_table: [String] the is_input of the tables.
         """
         session = self.get_session()
         # Get the list of Table objects from tablenames, then sort them according to their relationships / foreignkeys

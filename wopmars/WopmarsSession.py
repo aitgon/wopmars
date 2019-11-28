@@ -152,7 +152,7 @@ class WopmarsSession:
     #
     #     :param df: pandas dataframe
     #     :type df: DataFrame
-    #     :param tablename: the name of the table on which you want to perform operations
+    #     :param tablename: the is_input of the table on which you want to perform operations
     #     :type tablename: str
     #     :param args: args of the conventionnal pandas.to_sql method
     #     :param kwargs: kwargs of the conventionnal pandas.to_sql method

@@ -39,7 +39,7 @@ class InsertSNP2Phenotype(ToolWrapper): # inherit WopMars
             snp_rsid = int(line[0])
             phenotype_name = line[1]
             input_file_snp_obj = {'rsid': snp_rsid}
-            input_file_phenotype_obj = {'name': phenotype_name}
+            input_file_phenotype_obj = {'is_input': phenotype_name}
             try: # checks if exists Phenotype in db
                 snp_id = session.query(snp_model).filter_by(**input_file_snp_obj).one().id
                 phenotype_id = session.query(phenotype_model).filter_by(**input_file_phenotype_obj).one().id
@@ -51,5 +51,5 @@ class InsertSNP2Phenotype(ToolWrapper): # inherit WopMars
                     session.add(snp2phenotype_instance)
                 session.commit()
             except: # if not, add
-                print("warning: SNP rsid or phenotype name not in db")
+                print("warning: SNP rsid or phenotype is_input not in db")
 

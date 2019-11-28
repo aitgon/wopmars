@@ -84,10 +84,10 @@ class RuleThread(threading.Thread, Observable):
                     self.__toolwrapper.set_execution_infos(status="DRY")
             else:
                 Logger.instance().info("Rule: " + str(self.__toolwrapper.name) + " -> " + self.__toolwrapper.__class__.__name__ + " skiped.")
-                self.__toolwrapper.set_execution_infos(start, time_unix_ms(), "ALREADY_EXECUTED")
+                self.__toolwrapper.set_execution_infos(start, time_human, "ALREADY_EXECUTED")
         except Exception as e:
             wopmars_session.rollback()
-            self.__toolwrapper.set_execution_infos(start, time_unix_ms, "EXECUTION_ERROR")
+            self.__toolwrapper.set_execution_infos(start, time_human, "EXECUTION_ERROR")
             raise WopMarsException("Error while executing rule " + self.__toolwrapper.name +
                                    " (Rule " + self.__toolwrapper.toolwrapper + ")",
                                    "Full stack trace: \n" + str(traceback.format_exc()))
@@ -103,8 +103,8 @@ class RuleThread(threading.Thread, Observable):
 
         :return: The string containg the command line
         """
-        list_str_inputs_files = [f.name + "': '" + f.path for f in self.__toolwrapper.files if f.type.name == 1]
-        list_str_inputs_tables = [t.tablename + "': '" + t.model for t in self.__toolwrapper.tables if t.type.name == 1]
+        list_str_inputs_files = [f.name + "': '" + f.path for f in self.__toolwrapper.files if f.type.is_input == 1]
+        list_str_inputs_tables = [t.tablename + "': '" + t.model for t in self.__toolwrapper.tables if t.type.is_input == 1]
         str_input_dict = ""
         str_input_dict_files = ""
         str_input_dict_tables = ""
@@ -116,8 +116,8 @@ class RuleThread(threading.Thread, Observable):
         if list_str_inputs_files or list_str_inputs_tables:
             str_input_dict = " -i \"{%s}\"" % (", ".join([s for s in [str_input_dict_files, str_input_dict_tables] if s != ""]))
 
-        list_str_outputs_files = [f.name + "': '" + f.path for f in self.__toolwrapper.files if f.type.name == 0]
-        list_str_outputs_tables = [t.tablename + "': '" + t.model for t in self.__toolwrapper.tables if t.type.name == 0]
+        list_str_outputs_files = [f.name + "': '" + f.path for f in self.__toolwrapper.files if f.type.is_input == 0]
+        list_str_outputs_tables = [t.tablename + "': '" + t.model for t in self.__toolwrapper.tables if t.type.is_input == 0]
         str_output_dict = ""
         str_output_dict_files = ""
         str_output_dict_tables = ""
