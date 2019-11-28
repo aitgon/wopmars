@@ -31,15 +31,15 @@ class SQLManager(SingletonMixin):
     Allows droping and creating tables from table names ("create" and "drop"), list of table models ("drop_table_list")
     and all ("create_all" and "drop_all").
     """
-    wom_table_io_information_names = [
-        "wom_type_input_or_output",
-        "wom_modification_table",
-        "wom_execution",
-        "wom_rule",
-        "wom_table_io_information",
-        "wom_file",
-        "wom_option"
-    ]
+    # wom_table_io_information_names = [
+    #     "wom_type_input_or_output",
+    #     "wom_modification_table",
+    #     "wom_execution",
+    #     "wom_rule",
+    #     "wom_table_io_information",
+    #     "wom_file",
+    #     "wom_option"
+    # ]
 
     def __init__(self):
         """
@@ -73,6 +73,7 @@ class SQLManager(SingletonMixin):
         # http://stackoverflow.com/questions/2614984/sqlite-sqlalchemy-how-to-enforce-foreign-keys/7831210#7831210
         # enforce foreign key constraints
         ###
+
         def _fk_pragma_on_connect(dbapi_con, con_record):
             if self.d_database_config['db_connection'] == "sqlite":
                 dbapi_con.execute('pragma foreign_keys=ON')
