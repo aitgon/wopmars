@@ -103,8 +103,8 @@ class RuleThread(threading.Thread, Observable):
 
         :return: The string containg the command line
         """
-        list_str_inputs_files = [f.name + "': '" + f.path for f in self.__toolwrapper.files if f.type.name == "input"]
-        list_str_inputs_tables = [t.tablename + "': '" + t.model for t in self.__toolwrapper.tables if t.type.name == "input"]
+        list_str_inputs_files = [f.name + "': '" + f.path for f in self.__toolwrapper.files if f.type.name == 1]
+        list_str_inputs_tables = [t.tablename + "': '" + t.model for t in self.__toolwrapper.tables if t.type.name == 1]
         str_input_dict = ""
         str_input_dict_files = ""
         str_input_dict_tables = ""
@@ -116,8 +116,8 @@ class RuleThread(threading.Thread, Observable):
         if list_str_inputs_files or list_str_inputs_tables:
             str_input_dict = " -i \"{%s}\"" % (", ".join([s for s in [str_input_dict_files, str_input_dict_tables] if s != ""]))
 
-        list_str_outputs_files = [f.name + "': '" + f.path for f in self.__toolwrapper.files if f.type.name == "output"]
-        list_str_outputs_tables = [t.tablename + "': '" + t.model for t in self.__toolwrapper.tables if t.type.name == "output"]
+        list_str_outputs_files = [f.name + "': '" + f.path for f in self.__toolwrapper.files if f.type.name == 0]
+        list_str_outputs_tables = [t.tablename + "': '" + t.model for t in self.__toolwrapper.tables if t.type.name == 0]
         str_output_dict = ""
         str_output_dict_files = ""
         str_output_dict_tables = ""

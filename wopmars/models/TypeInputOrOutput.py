@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Boolean
 from sqlalchemy.orm import relationship
 
 from wopmars.Base import Base
@@ -17,7 +17,7 @@ class TypeInputOrOutput(Base):
     __tablename__ = "wom_type_input_or_output"
 
     id = Column(Integer, primary_key=True, autoincrement=False)
-    name = Column(String(255))
+    name = Column(Boolean, unique=True)
 
     # One type is in Many table
     tables = relationship("TableInputOutputInformation", back_populates="type")
@@ -25,4 +25,4 @@ class TypeInputOrOutput(Base):
     files = relationship("FileInputOutputInformation", back_populates="type")
 
     def __repr__(self):
-        return "<TypeInputOrOutput: %s>" % self.name
+        return "<TypeInputOrOutput: {}>".format(self.name)
