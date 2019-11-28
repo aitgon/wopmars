@@ -63,8 +63,8 @@ class Option(Base):
             else:
                 # we check if an option is required and has no default value
                 if s_formated_type != Option.static_option_default and s_formated_type != Option.static_option_req:
-                    raise WopMarsException("Malformed toolwrapper class.",
-                                           "The toolwrapper " + str(self.rule.toolwrapper) + " of the rule " +
+                    raise WopMarsException("Malformed tool_python_path class.",
+                                           "The tool_python_path " + str(self.rule.toolwrapper) + " of the rule " +
                                            str(self.rule.name) + " has an incorrect \"specify_params\" method wich is " +
                                            "associating the " + self.name + " option with an unknown type. " +
                                            "Found: " + s_type + " - Allowed: " +

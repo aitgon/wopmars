@@ -19,28 +19,28 @@ class Rule(Base):
 
     - id: INTEGER - primary_key - auto increment - arbitrary ID
     - is_input: VARCHAR(255) - the is_input of the rule
-    - toolwrapper: VARCHAR(255) - the is_input of the Toolwrapper
+    - tool_python_path: VARCHAR(255) - the is_input of the Toolwrapper
     - execution_id: INTEGER - foreign key to the table ``wom_execution`` - the associated execution
-    - started_at: INTEGER - unix time [ms] at wich the toolwrapper started its execution
-    - finished_at: INTEGER - unix time [ms] at wich the toolwrapper finished its execution
-    - time: FLOAT - the total time [ms] toolwrapper execution
+    - started_at: INTEGER - unix time [ms] at wich the tool_python_path started its execution
+    - finished_at: INTEGER - unix time [ms] at wich the tool_python_path finished its execution
+    - time: FLOAT - the total time [ms] tool_python_path execution
     - status: VARCHAR(255) - the final status of the Toolwrapper. it can be:
 
-       - NOT PLANNED: the toolwrapper execution wasn't evene xpected by the user
-       - ALREADY EXECUTED: the toolwrapper has been previously executed in an old workflow and doesn't need to be re-executed
-       - EXECUTED: the toolwrapper has been executed
-       - EXECUTION_ERROR: the toolwrapper has encountered an error during the execution
+       - NOT PLANNED: the tool_python_path execution wasn't evene xpected by the user
+       - ALREADY EXECUTED: the tool_python_path has been previously executed in an old workflow and doesn't need to be re-executed
+       - EXECUTED: the tool_python_path has been executed
+       - EXECUTION_ERROR: the tool_python_path has encountered an error during the execution
     """
 
     __tablename__ = "wom_rule"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255))
-    toolwrapper = Column(String(255))
+    tool_python_path = Column(String(255))
     execution_id = Column(Integer, ForeignKey("wom_execution.id"))
     started_at = Column(DateTime, nullable=True)
     finished_at = Column(DateTime, nullable=True)
-    run_duration = Column(BigInteger, nullable=True)
+    run_duration_secs = Column(Integer, nullable=True)
     status = Column(String(255), nullable=True, default="NOT_EXECUTED")
 
     # One rule has Many table
@@ -54,7 +54,7 @@ class Rule(Base):
 
     # parentrules = relationship etc...
     __mapper_args__ = {
-        'polymorphic_on': toolwrapper,
+        'polymorphic_on': tool_python_path,
         'polymorphic_identity': 'Rule'
     }
 
@@ -64,7 +64,7 @@ class Rule(Base):
 
     def __init__(self, rule_name=""):
         """
-        The constructor of the toolwrapper, must not be overwritten.
+        The constructor of the tool_python_path, must not be overwritten.
 
         self.__state is the state given to the Toolwrapper to let the
         :class:`~.wopmars.framework.management.WorflowManager.WorkflowManager` knows if the Toolwrapper is
@@ -105,12 +105,12 @@ class Rule(Base):
         """
         Parsing method:
 
-        Check if the input file variables names associated with the toolwrapper are ok according to the toolwrapper developer.
+        Check if the input file variables names associated with the tool_python_path are ok according to the tool_python_path developer.
 
         It checks if the input variable names exists or not. If not, throws a WopMarsParsingException.
 
         This method calls the :meth:`~.wopmars.framework.database.Rule.Rule.specify_input_file` method
-        which have been written by the toolwrapper developer.
+        which have been written by the tool_python_path developer.
 
         :raise WopMarsException: The input are not respected by the user.
         """
@@ -172,7 +172,7 @@ class Rule(Base):
 
         It checks if the output variable names exists or not. If not, throws a WopMarsParsingException.
 
-        This method calls the "specify_output_file" method which have been written by the toolwrapper developer.
+        This method calls the "specify_output_file" method which have been written by the tool_python_path developer.
 
         :raises WopMarsException: The output are not respected by the user.
         """
@@ -218,7 +218,7 @@ class Rule(Base):
         It checks if the params names given by the user exists or not, if the type correspond and if the required
         options are given. If not, throws a WopMarsParsingException.
 
-        This method calls the "specify_params" method of the toolwrapper. This method should return a dictionnary
+        This method calls the "specify_params" method of the tool_python_path. This method should return a dictionnary
         associating the is_input of the option with a String containing the types allowed with it. A "|" is used between
         each types allowed for one option.
 
@@ -587,9 +587,9 @@ class Rule(Base):
 
     def __repr__(self):
         """
-        Return the string representing the toolwrapper in the DAG.
+        Return the string representing the tool_python_path in the DAG.
 
-        :return: String representing the toolwrapper
+        :return: String representing the tool_python_path
         """
         s = "\""
         s += "Rule " + self.name
@@ -627,7 +627,7 @@ class Rule(Base):
         params_list_str = [str(p) for p in self.options]
         s = ""
         s += "Rule " + str(self.name) + ":" + "\n"
-        s += "\ttool: " + str(self.toolwrapper) + "\n"
+        s += "\ttool: " + str(self.tool_python_path) + "\n"
         if len(inputs_list_str) > 0:
             s += "\tinput:" + "\n"
             s += "\t\t" + "\n\t\t".join(inputs_list_str)
@@ -645,7 +645,7 @@ class Rule(Base):
 
     def specify_input_file(self):
         """
-        Should be implemented by the toolwrapper developper.
+        Should be implemented by the tool_python_path developper.
 
         This method return a List of string containing the input file variable names as String.
         :return: [String]
@@ -654,7 +654,7 @@ class Rule(Base):
 
     def specify_input_table(self):
         """
-        Should be implemented by the toolwrapper developper.
+        Should be implemented by the tool_python_path developper.
 
         This method return a List of string containing the input table names names as String.
         :return: [String]
@@ -663,7 +663,7 @@ class Rule(Base):
 
     def specify_output_file(self):
         """
-        Should be implemented by the toolwrapper developper.
+        Should be implemented by the tool_python_path developper.
 
         This method return a List of string containing the output file variable names as String.
         :return: [String]
@@ -672,7 +672,7 @@ class Rule(Base):
 
     def specify_output_table(self):
         """
-        Should be implemented by the toolwrapper developper.
+        Should be implemented by the tool_python_path developper.
 
         This method return a List of string containing the output table names as String.
         :return: [String]
@@ -681,7 +681,7 @@ class Rule(Base):
 
     def specify_params(self):
         """
-        Should be implemented by the toolwrapper developper.
+        Should be implemented by the tool_python_path developper.
 
         This method return a dict of string associated with string. Keys are the is_input of the options and values, their types.
 
@@ -691,13 +691,13 @@ class Rule(Base):
 
     def run(self):
         """
-        Should be implemented by the toolwrapper developper.
+        Should be implemented by the tool_python_path developper.
 
         The core function of the Rule is this method. It wraps the actual execution of the tool underlying the Rule.
 
         :raises NotImplementedError: If it doesn't have been implemented by the Rule Developer.
         """
-        raise NotImplementedError("The method run of the Rule " + str(self.toolwrapper) + " should be implemented")
+        raise NotImplementedError("The method run of the Rule " + str(self.tool_python_path) + " should be implemented")
 
     ### Methods availables for the tool developer
 
@@ -711,7 +711,7 @@ class Rule(Base):
         try:
             return [f.path for f in self.files if f.name == key and f.type.is_input == 1][0]
         except IndexError:
-            raise WopMarsException("Error during the execution of the Rule " + str(self.toolwrapper) +
+            raise WopMarsException("Error during the execution of the Rule " + str(self.tool_python_path) +
                                    " (rule " + self.name + ").",
                                    "The input file " + str(key) + " has not been specified.")
 
@@ -725,7 +725,7 @@ class Rule(Base):
         try:
             return [t for t in self.tables if t.tablename == key and t.type.is_input == 1][0].get_table()
         except IndexError:
-            raise WopMarsException("Error during the execution of the Rule " + str(self.toolwrapper) +
+            raise WopMarsException("Error during the execution of the Rule " + str(self.tool_python_path) +
                                    " (rule " + self.name + ").",
                                    "The input table " + str(key) + " has not been specified.")
 
@@ -739,7 +739,7 @@ class Rule(Base):
         try:
             return [f.path for f in self.files if f.name == key and f.type.is_input == 0][0]
         except IndexError:
-            raise WopMarsException("Error during the execution of the Rule " + str(self.toolwrapper) +
+            raise WopMarsException("Error during the execution of the Rule " + str(self.tool_python_path) +
                                    " (rule " + self.name + ").",
                                    "The output file " + str(key) + " has not been specified.")
 
@@ -753,7 +753,7 @@ class Rule(Base):
         try:
             return [t for t in self.tables if t.tablename == key and t.type.is_input == 0][0].get_table()
         except IndexError:
-            raise WopMarsException("Error during the execution of the Rule " + str(self.toolwrapper) +
+            raise WopMarsException("Error during the execution of the Rule " + str(self.tool_python_path) +
                                    " (rule " + self.name + ").",
                                    "The output table " + str(key) + " has not been specified.")
 
@@ -788,7 +788,7 @@ class Rule(Base):
 
     def log(self, level, msg):
         """
-        use by the toolwrapper developer in order to have a dedicated logger.
+        use by the tool_python_path developer in order to have a dedicated logger.
 
         :param level: The level of logging you need: "debug", "info", "warning", "error"
         :type level: str
@@ -796,13 +796,13 @@ class Rule(Base):
         :type msg: str
         """
         if level == "debug":
-            Logger.instance().toolwrapper_debug(msg, self.toolwrapper)
+            Logger.instance().toolwrapper_debug(msg, self.tool_python_path)
         elif level == "info":
-            Logger.instance().toolwrapper_info(msg, self.toolwrapper)
+            Logger.instance().toolwrapper_info(msg, self.tool_python_path)
         elif level == "warning":
-            Logger.instance().toolwrapper_debug(msg, self.toolwrapper)
+            Logger.instance().toolwrapper_debug(msg, self.tool_python_path)
         elif level == "error":
-            Logger.instance().toolwrapper_error(msg, self.toolwrapper)
+            Logger.instance().toolwrapper_error(msg, self.tool_python_path)
         else:
             raise WopMarsException("Error in the Toolwrapper definition of method run()",
                                    "The is no logging level associated with " + str(level) + ". " +

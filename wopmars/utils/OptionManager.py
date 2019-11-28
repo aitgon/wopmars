@@ -126,5 +126,5 @@ class OptionManager(dict, SingletonMixin):
         OptionManager.instance()["--directory"] = PathFinder.get_module_path()
         OptionManager.instance()["--clear-history"] = False
         os.chdir(OptionManager.instance()["--directory"])
-        OptionManager.instance()["--toolwrapper-log"] = False
+        OptionManager.instance()["--tool_python_path-log"] = False
 

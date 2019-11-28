@@ -273,9 +273,9 @@ class Reader:
     def load_one_toolwrapper(self, s_toolwrapper, s_dict_inputs, s_dict_outputs, s_dict_params):
         """
         Method called when the ``tool`` command is used. It is equivalent to the :meth:`~.wopmars.framework.parsing.Reader.Reader.read` method but create a workflow
-        with only one toolwrapper. The workflow is also stored inside the database.
+        with only one tool_python_path. The workflow is also stored inside the database.
 
-        :param s_toolwrapper: The is_input of the toolwrapper (will be imported)
+        :param s_toolwrapper: The is_input of the tool_python_path (will be imported)
         :type s_toolwrapper: str
         :param s_dict_inputs: A string containing the dict of input files
         :type s_dict_inputs: str
@@ -298,7 +298,7 @@ class Reader:
             input_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.is_input == True).one()
             output_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.is_input == False).one()
 
-            Logger.instance().debug("Loading unique toolwrapper " + s_toolwrapper)
+            Logger.instance().debug("Loading unique tool_python_path " + s_toolwrapper)
             dict_dict_dict_elm = dict(dict_input={"file": {}, "table": {}},
                                  dict_params={},
                                  dict_output={"file": {}, "table": {}})
@@ -340,7 +340,7 @@ class Reader:
             wrapper_entry = self.create_toolwrapper_entry("rule_" + s_toolwrapper, s_toolwrapper,
                                                           dict_dict_dict_elm, input_entry, output_entry)
             wrapper_entry.execution = execution
-            Logger.instance().debug("Object toolwrapper: " + s_toolwrapper + " created.")
+            Logger.instance().debug("Object tool_python_path: " + s_toolwrapper + " created.")
             session.add(wrapper_entry)
             session.commit()
             session.rollback()
@@ -350,7 +350,7 @@ class Reader:
             # dans la meme session?
             session.commit()
             session.rollback()
-            # This create_all will create all models that have been found in the toolwrapper
+            # This create_all will create all models that have been found in the tool_python_path
             # if not SQLManager.instance().d_database_config['db_connection'] == 'postgresql':
             # TODO: this function is not creating the triggers after the table in postgresql so I switched it off
             TableInputOutputInformation.create_triggers()
@@ -457,10 +457,10 @@ class Reader:
 
                 # Instantiate the refered class and add it to the set of objects
                 wrapper_entry = self.create_toolwrapper_entry(str_rule_name, str_wrapper_name, dict_dict_dict_elm, input_entry, output_entry)
-                # Associating a toolwrapper to an execution
+                # Associating a tool_python_path to an execution
                 wrapper_entry.execution = execution
                 set_wrapper.add(wrapper_entry)
-                Logger.instance().debug("Object toolwrapper: " + str_wrapper_name + " created.")
+                Logger.instance().debug("Object tool_python_path: " + str_wrapper_name + " created.")
                 # commit/rollback trick to clean the session - SQLAchemy bug suspected
                 session.commit()
                 session.rollback()
@@ -469,7 +469,7 @@ class Reader:
             TableInputOutputInformation.set_tables_properties(TableInputOutputInformation.get_execution_tables())
             session.commit()
             session.rollback()
-            # This create_all will create all models that have been found in the toolwrapper
+            # This create_all will create all models that have been found in the tool_python_path
             # if not SQLManager.instance().d_database_config['db_connection'] == 'postgresql':
             # TODO: this function is not creating the triggers after the table in postgresql so I switched it off
             TableInputOutputInformation.create_triggers()
@@ -489,16 +489,16 @@ class Reader:
         """
         Actual creating of the Toolwrapper object.
 
-        The toolwrapper object is an entry of the table rule in the resulting database.
+        The tool_python_path object is an entry of the table rule in the resulting database.
 
         If the scoped_session has current modification, they probably will be commited during this method:
         models are created and this can only be done with clean session.
 
-        :param rule_name: Contains the is_input of the rule in which the toolwrapper will be used.
+        :param rule_name: Contains the is_input of the rule in which the tool_python_path will be used.
         :type rule_name: str
-        :param tool_python_path: Contains the is_input of the toolwrapper. It will be used for importing the correct module and then for creating the class
+        :param tool_python_path: Contains the is_input of the tool_python_path. It will be used for importing the correct module and then for creating the class
         :type tool_python_path: str
-        :param dict_dict_dict_elm: "input"s "output"s and "params" and will be used to make relations between options / input / output and the toolwrapper.
+        :param dict_dict_dict_elm: "input"s "output"s and "params" and will be used to make relations between options / input / output and the tool_python_path.
         :type dict_dict_dict_elm: dict(dict(dict()))
         :param input_entry: input entry
         :type input_entry: :class:`wopmars.framework.bdd.models.TypeInputOrOutput.TypeInputOrOutput`
@@ -534,12 +534,12 @@ class Reader:
                     iofileput_entry = dict_dict_dict_elm["dict_input"][elm][input_f]
                     iofileput_entry.type = input_entry
                     try:
-                        # associating file and toolwrapper
+                        # associating file and tool_python_path
                         toolwrapper_wrapper.files.append(iofileput_entry)
                     except ObjectDeletedError as e:
-                        raise WopMarsException("Error in the toolwrapper class declaration. Please, notice the developer",
+                        raise WopMarsException("Error in the tool_python_path class declaration. Please, notice the developer",
                                                "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
-                                               " in the toolwrapper. Error message: \n" + str(e))
+                                               " in the tool_python_path. Error message: \n" + str(e))
             elif elm == "table":
                 for input_t in dict_dict_dict_elm["dict_input"][elm]:
                     # input_t is the is_input of the table (not the model)
@@ -561,9 +561,9 @@ class Reader:
                     try:
                         toolwrapper_wrapper.tables.append(iodbput_entry)
                     except ObjectDeletedError as e:
-                        raise WopMarsException("Error in the toolwrapper class declaration. Please, notice the developer",
+                        raise WopMarsException("Error in the tool_python_path class declaration. Please, notice the developer",
                                                "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
-                                               " in the toolwrapper. Error message: \n" + str(e))
+                                               " in the tool_python_path. Error message: \n" + str(e))
 
         for elm in dict_dict_dict_elm["dict_output"]:
             if elm == "file":
@@ -573,9 +573,9 @@ class Reader:
                     try:
                         toolwrapper_wrapper.files.append(iofileput_entry)
                     except ObjectDeletedError as e:
-                        raise WopMarsException("Error in the toolwrapper class declaration. Please, notice the developer",
+                        raise WopMarsException("Error in the tool_python_path class declaration. Please, notice the developer",
                                                "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
-                                               " in the toolwrapper. Error message: \n" + str(e))
+                                               " in the tool_python_path. Error message: \n" + str(e))
             elif elm == "table":
                 for output_t in dict_dict_dict_elm["dict_output"][elm]:
                     # output_t is the table is_input (not the model)
@@ -592,13 +592,13 @@ class Reader:
                         toolwrapper_wrapper.tables.append(iodbput_entry)
                     except ObjectDeletedError as e:
                         raise WopMarsException(
-                            "Error in the toolwrapper class declaration. Please, notice the developer",
+                            "Error in the tool_python_path class declaration. Please, notice the developer",
                             "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
-                            " in the toolwrapper. Error message: \n" + str(
+                            " in the tool_python_path. Error message: \n" + str(
                                 e))
 
         for opt in dict_dict_dict_elm["dict_params"]:
-            # associating option and toolwrapper
+            # associating option and tool_python_path
             toolwrapper_wrapper.options.append(dict_dict_dict_elm["dict_params"][opt])
 
         # toolwrapper_wrapper.is_content_respected()
