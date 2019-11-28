@@ -3,7 +3,7 @@ Module containing the FooWrapper1 class
 """
 import time
 
-from wopmars.models import Rule
+from wopmars.models.Rule import Rule
 
 
 class FooWrapper7(Rule):

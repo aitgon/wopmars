@@ -5,7 +5,7 @@ import time
 
 import subprocess
 
-from wopmars.models import Rule
+from wopmars.models.Rule import Rule
 
 class FooWrapper2(Rule):
     """

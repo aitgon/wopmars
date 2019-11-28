@@ -6,7 +6,7 @@ import unittest
 
 from wopmars import OptionManager
 from wopmars.SQLManager import SQLManager
-from wopmars.models import Execution
+from wopmars.models.Execution import Execution
 from wopmars.utils.PathFinder import PathFinder
 from wopmars import WopMars
 
@@ -165,13 +165,12 @@ class TestWopMars(TestCase):
             WopMars().run(cmd_line)
         self.assertEqual(SE.exception.code, 2)
 
-    # def test_run_packaged_wrappers(self):
-    #     # TODO ag: must be fixed later
-    #     cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file4, "-vv", "-p", "-d",
-    #                 PathFinder.get_module_path()]
-    #     with self.assertRaises(SystemExit) as se:
-    #         WopMars().run(cmd_line)
-    #     self.assertEqual(se.exception.code, 0)
+    def test_run_packaged_wrappers(self):
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file4, "-vv", "-p", "-d",
+                    PathFinder.get_module_path()]
+        with self.assertRaises(SystemExit) as se:
+            WopMars().run(cmd_line)
+        self.assertEqual(se.exception.code, 0)
 
     def test_run_one_tool(self):
         cmd_line = ["python", "tool", "test.resource.wrapper.FooWrapper4",

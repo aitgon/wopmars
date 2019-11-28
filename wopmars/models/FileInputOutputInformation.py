@@ -19,7 +19,7 @@ class FileInputOutputInformation(InputOutput, Base):
     - path: VARCHAR(255) - the path to the file
     - rule_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.framework.database.tables.Rule.Rule`
     - is_input: INTEGER - foreign key to the associated type ID: :class:`wopmars.framework.database.tables.TypeInputOrOutput.TypeInputOrOutput`
-    - used_at: INTEGER - unix time at which the table have been used
+    - mtime_epoch_millis: INTEGER - unix time at which the table have been used
     - size: INTEGER - the size of the file
     """
     __tablename__ = "wom_file"
@@ -53,7 +53,7 @@ class FileInputOutputInformation(InputOutput, Base):
         return id(self)
 
     def __repr__(self):
-        return "<class '{}' File (%s): %s: %s; size: %s; used_at: %s>" % (self.type.is_input, self.name, self.path, self.size, self.used_at)
+        return "<class '{}' File (%s): %s: %s; size: %s; mtime_epoch_millis: %s>" % (self.type.is_input, self.name, self.path, self.size, self.used_at)
 
     def __str__(self):
         return "file: " + self.name + ": " + self.path

@@ -5,7 +5,7 @@ from unittest import TestCase
 from test.resource.model.FooBase import FooBase
 from test.resource.model.FooBase2 import FooBase2
 from wopmars.SQLManager import SQLManager
-from wopmars.models import TableInputOutputInformation
+from wopmars.models.TableInputOutputInformation import TableInputOutputInformation
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder
 

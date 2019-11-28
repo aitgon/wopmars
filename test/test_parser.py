@@ -10,8 +10,8 @@ from test.resource.wrapper.FooWrapper7 import FooWrapper7
 from test.resource.wrapper.FooWrapper8 import FooWrapper8
 from test.resource.wrapper.FooWrapper9 import FooWrapper9
 from wopmars.SQLManager import SQLManager
-from wopmars.models import TableInputOutputInformation
-from wopmars.models import FileInputOutputInformation
+from wopmars.models.TableInputOutputInformation import TableInputOutputInformation
+from wopmars.models.FileInputOutputInformation import FileInputOutputInformation
 from wopmars.models.TypeInputOrOutput import TypeInputOrOutput
 from wopmars.DAG import DAG
 from wopmars.Parser import Parser

@@ -3,7 +3,7 @@ import unittest
 from unittest import TestCase
 
 from wopmars.SQLManager import SQLManager
-from wopmars.models import FileInputOutputInformation
+from wopmars.models.FileInputOutputInformation import FileInputOutputInformation
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder
 

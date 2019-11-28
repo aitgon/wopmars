@@ -4,7 +4,7 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy.sql.ddl import DDL
 
 from wopmars.Base import Base
-from sqlalchemy import Column, Integer, String, ForeignKey, BigInteger, Boolean
+from sqlalchemy import Column, Integer, String, ForeignKey, BigInteger, Boolean, DateTime
 from sqlalchemy.orm import relationship, reconstructor
 
 from wopmars.SQLManager import SQLManager
@@ -17,7 +17,7 @@ from sqlalchemy.sql.functions import func
 class TableInputOutputInformation(InputOutput, Base):
     """
     This class extends InputOutput and is specific to the input or output tables. It is the model which store the references
-    to the actual tables needed by the user. The table ``wom_table`` associated with this model contains the
+    to the actual tables needed by the user. The table ``wom_table_io_information`` associated with this model contains the
     following fields:
 
     - id: INTEGER - primary key - autoincrement - arbitrary ID
@@ -25,16 +25,17 @@ class TableInputOutputInformation(InputOutput, Base):
     - model: VARCHAR(255) - the path to the model (in python notation)
     - rule_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.framework.database.tables.Rule.Rule`
     - is_input: INTEGER - foreign key to the associated type ID: :class:`wopmars.framework.database.tables.TypeInputOrOutput.TypeInputOrOutput`
-    - used_at: INTEGER - unix time at which the table have been used
+    - mtime_epoch_millis: INTEGER - unix time at which the table have been used
     """
-    __tablename__ = "wom_table"
+    __tablename__ = "wom_table_io_information"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     tablename = Column(String(255), ForeignKey("wom_modification_table.table_name"))
     model = Column(String(255))
     rule_id = Column(Integer, ForeignKey("wom_rule.id"))
     is_input = Column(Boolean, ForeignKey("wom_type_input_or_output.is_input"))
-    used_at = Column(BigInteger, nullable=True)
+    mtime_epoch_millis = Column(BigInteger, nullable=True)
+    mtime_human = Column(DateTime, nullable=True)
 
     # One table is in one rule
     rule = relationship("Rule", back_populates="tables", enable_typechecks=False)
@@ -212,7 +213,7 @@ class TableInputOutputInformation(InputOutput, Base):
         return id(self)
 
     def __repr__(self):
-        return '<Table ({}):\"{}; used at:{}>"'.format(self.type.is_input, str(self.tablename), str(self.used_at))
+        return '<Table ({}):\"{}; used at:{}>"'.format(self.type.is_input, str(self.tablename), str(self.mtime_epoch_millis))
 
     def __str__(self):
         return "<Table: " + self.tablename + "; model: " + self.model + ">"

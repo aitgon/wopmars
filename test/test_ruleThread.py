@@ -7,9 +7,9 @@ from test.resource.wrapper.FooWrapper5 import FooWrapper5
 from test.resource.wrapper.sprintFive.Add import Add as tw_add
 from test.resource.wrapper.sprintFive.Query import Query as tw_query
 from wopmars.SQLManager import SQLManager
-from wopmars.models import TableInputOutputInformation
-from wopmars.models import FileInputOutputInformation
-from wopmars.models import TableModificationTime
+from wopmars.models.TableInputOutputInformation import TableInputOutputInformation
+from wopmars.models.FileInputOutputInformation import FileInputOutputInformation
+from wopmars.models.TableModificationTime import TableModificationTime
 from wopmars.models.Option import Option
 from wopmars.models.TypeInputOrOutput import TypeInputOrOutput
 from wopmars.RuleThread import RuleThread
