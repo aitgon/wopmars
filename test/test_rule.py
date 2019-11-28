@@ -21,7 +21,7 @@ from wopmars.utils.various import get_current_time
 from wopmars.utils.various import get_mtime
 
 
-class TestToolWrapper(TestCase):
+class TestRule(TestCase):
     def setUp(self):
         OptionManager.initial_test_setup()
         self.s_root_path = PathFinder.get_module_path()
