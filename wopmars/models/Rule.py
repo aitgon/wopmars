@@ -9,7 +9,7 @@ from wopmars.models.Option import Option
 from wopmars.utils.Logger import Logger
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.exceptions.WopMarsException import WopMarsException
-from wopmars.utils.various import get_mtime
+from wopmars.utils.various import get_mtime, get_current_time
 
 
 class Rule(Base):
@@ -374,7 +374,9 @@ class Rule(Base):
         session.commit()
 
         for t in [t for t in self.tables if t.type.is_input == type]:
-            t.used_at = t.modification.mtime_epoch_millis
+            t.mtime_human = t.modification.mtime_human
+            t.mtime_epoch_millis = t.modification.mtime_epoch_millis
+            # t.used_at = t.modification.mtime_epoch_millis
             session.add(t)
         session.commit()
 
@@ -499,8 +501,7 @@ class Rule(Base):
         if stop is not None:
             self.finished_at = stop
         if self.started_at is not None and self.finished_at is not None:
-            #self.mtime_epoch_millis = (self.finished_at - self.started_at).total_seconds()
-            self.time = self.finished_at - self.started_at
+            self.run_duration_secs = (self.finished_at - self.started_at).total_seconds()
         if status is not None:
             self.status = status
 
