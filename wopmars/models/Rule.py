@@ -428,10 +428,10 @@ class Rule(Base):
 
         :return: Bool: True if the output is actually more recent than input
         """
-        most_recent_input = max([get_mtime(f.path) for f in self.files if f.type.is_input == 1] +
-                                [t.modification.time for t in self.tables if t.type.is_input == 1])
-        oldest_output = min([get_mtime(f.path) for f in self.files if f.type.is_input == 0] +
-                            [t.modification.time for t in self.tables if t.type.is_input == 0])
+        most_recent_input = max([get_mtime(f.path)[0] for f in self.files if f.type.is_input == 1]
+                                + [t.modification.time for t in self.tables if t.type.is_input == 1])
+        oldest_output = min([get_mtime(f.path)[0] for f in self.files if f.type.is_input == 0]
+                            + [t.modification.time for t in self.tables if t.type.is_input == 0])
         # in seconds since the begining of time (computer), the oldest thing has a lower number of seconds
         return most_recent_input < oldest_output
 
@@ -495,12 +495,12 @@ class Rule(Base):
         :param status: The status of the Toolwrapper
         """
         if start is not None:
-            self.started_at = start
+            self.started_epoch_millis = start
         if stop is not None:
-            self.finished_at = stop
-        if self.started_at is not None and self.finished_at is not None:
+            self.finish_epoch_millis = stop
+        if self.started_epoch_millis is not None and self.finish_epoch_millis is not None:
             #self.time = (self.finish_epoch_millis - self.started_epoch_millis).total_seconds()
-            self.time = self.finished_at - self.started_at
+            self.time = self.finish_epoch_millis - self.started_epoch_millis
         if status is not None:
             self.status = status
 

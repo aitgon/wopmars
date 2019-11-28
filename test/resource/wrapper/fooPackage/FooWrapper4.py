@@ -7,6 +7,7 @@ import subprocess
 
 from wopmars.models import Rule
 
+
 class FooWrapper4(Rule):
     """
     This class has been done for example/testing purpose.

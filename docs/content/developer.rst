@@ -130,7 +130,7 @@ Here is a list of the tables used for history. All of the associated models are 
 
 - ``wom_execution`` represented by the model :class:`~.wopmars.framework.database.tables.Execution.Execution`
 - ``wom_rule`` represented by the model :class:`~.wopmars.framework.database.tables.Rule.Rule`
-- ``wom_type`` represented by the model :class:`~.wopmars.framework.database.tables.TypeInputOrOutput.TypeInputOrOutput`
+- ``wom_type_input_or_output`` represented by the model :class:`~.wopmars.framework.database.tables.TypeInputOrOutput.TypeInputOrOutput`
 - ``wom_file`` represented by the model :class:`~.wopmars.framework.database.tables.FileInputOutputInformation.FileInputOutputInformation`
 - ``wom_table`` represented by the model :class:`~.wopmars.framework.database.tables.TableInputOutputInformation.TableInputOutputInformation`
 - ``wom_modification_table`` represented by the model :class:`~.wopmars.framework.database.tables.TableModificationTime.TableModificationTime`

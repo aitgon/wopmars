@@ -42,6 +42,7 @@ Example:
 """
 
 import os
+import pathlib
 import re
 import sys
 
@@ -140,8 +141,22 @@ class WopMars:
             ExampleBuilder().build_snp()
             sys.exit(1)
 
-
         workflow_manager = WorkflowManager()
+
+        # ################################################################################################################
+        # #
+        # # --clear-history (clear history and exit) or --forceall (clear history and continue)
+        # #
+        # ################################################################################################################
+        #
+        # if OptionManager.instance()["--clear-history"] or OptionManager.instance()["--forceall"]:
+        #     Logger.instance().info("Deleting Wopmars history...")
+        #     # Check if sqlite db path exists
+        #     if pathlib.Path(SQLManager.instance().d_database_config['db_database']).is_file():
+        #         SQLManager.instance().clear_wopmars_history()
+        #     if OptionManager.instance()["--clear-history"]:
+        #         sys.exit(0)
+
         try:
             workflow_manager.run()
         except WopMarsException as WE:
