@@ -17,11 +17,11 @@ from wopmars.models.TypeInputOrOutput import TypeInputOrOutput
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder
 from wopmars.utils.exceptions.WopMarsException import WopMarsException
-from wopmars.utils.various import time_unix_ms
-from wopmars.utils.various import os_path_getmtime_ms
+from wopmars.utils.various import get_current_time
+from wopmars.utils.various import get_mtime
 
 
-class TestToolWrapper(TestCase):
+class TestRule(TestCase):
     def setUp(self):
         OptionManager.initial_test_setup()
         self.s_root_path = PathFinder.get_module_path()
@@ -30,8 +30,8 @@ class TestToolWrapper(TestCase):
         set_tw_to_add = set()
         self.__session = SQLManager.instance().get_session()
 
-        self.input_entry = TypeInputOrOutput(name="input")
-        self.output_entry = TypeInputOrOutput(name="output")
+        self.input_entry = TypeInputOrOutput(is_input=True)
+        self.output_entry = TypeInputOrOutput(is_input=False)
 
         ### Toolwrappers for __eq__ test_bak
         opt1 = Option(name="param1", value="1")
