@@ -328,7 +328,7 @@ class WorkflowManager(RuleObserver):
         modify_exec = self.__session.query(Execution).order_by(Execution.id.desc()).first()
         if modify_exec is not None:
             modify_exec.finish_epoch_millis = finish_epoch_millis
-            #modify_exec.time = (modify_exec.finish_epoch_millis - modify_exec.started_epoch_millis).total_seconds()
+            #modify_exec.time = (modify_exec.finished_at - modify_exec.started_at).total_seconds()
             # modify_exec.time = modify_exec.finished_at - modify_exec.started_at
             modify_exec.time = int((modify_exec.finish_epoch_millis - modify_exec.started_epoch_millis).total_seconds())
             modify_exec.status = status

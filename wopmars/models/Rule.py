@@ -21,8 +21,8 @@ class Rule(Base):
     - is_input: VARCHAR(255) - the is_input of the rule
     - toolwrapper: VARCHAR(255) - the is_input of the Toolwrapper
     - execution_id: INTEGER - foreign key to the table ``wom_execution`` - the associated execution
-    - started_epoch_millis: INTEGER - unix time [ms] at wich the toolwrapper started its execution
-    - finish_epoch_millis: INTEGER - unix time [ms] at wich the toolwrapper finished its execution
+    - started_at: INTEGER - unix time [ms] at wich the toolwrapper started its execution
+    - finished_at: INTEGER - unix time [ms] at wich the toolwrapper finished its execution
     - time: FLOAT - the total time [ms] toolwrapper execution
     - status: VARCHAR(255) - the final status of the Toolwrapper. it can be:
 
@@ -38,9 +38,9 @@ class Rule(Base):
     name = Column(String(255))
     toolwrapper = Column(String(255))
     execution_id = Column(Integer, ForeignKey("wom_execution.id"))
-    started_epoch_millis = Column(DateTime, nullable=True)
-    finish_epoch_millis = Column(DateTime, nullable=True)
-    delta_epoch_millis = Column(BigInteger, nullable=True)
+    started_at = Column(DateTime, nullable=True)
+    finished_at = Column(DateTime, nullable=True)
+    run_duration = Column(BigInteger, nullable=True)
     status = Column(String(255), nullable=True, default="NOT_EXECUTED")
 
     # One rule has Many table
@@ -495,12 +495,12 @@ class Rule(Base):
         :param status: The status of the Toolwrapper
         """
         if start is not None:
-            self.started_epoch_millis = start
+            self.started_at = start
         if stop is not None:
-            self.finish_epoch_millis = stop
-        if self.started_epoch_millis is not None and self.finish_epoch_millis is not None:
-            #self.time = (self.finish_epoch_millis - self.started_epoch_millis).total_seconds()
-            self.time = self.finish_epoch_millis - self.started_epoch_millis
+            self.finished_at = stop
+        if self.started_at is not None and self.finished_at is not None:
+            #self.time = (self.finished_at - self.started_at).total_seconds()
+            self.time = self.finished_at - self.started_at
         if status is not None:
             self.status = status
 
