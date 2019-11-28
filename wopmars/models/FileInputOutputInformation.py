@@ -1,6 +1,6 @@
 import os
 
-from sqlalchemy import Column, BigInteger, Integer, String, ForeignKey, Boolean
+from sqlalchemy import Column, BigInteger, Integer, String, ForeignKey, Boolean, DateTime
 from sqlalchemy.orm import relationship
 
 from wopmars.Base import Base
@@ -29,7 +29,8 @@ class FileInputOutputInformation(InputOutput, Base):
     path = Column(String(255))
     rule_id = Column(Integer, ForeignKey("wom_rule.id"))
     is_input = Column(Boolean, ForeignKey("wom_type_input_or_output.is_input"))
-    used_at = Column(BigInteger, nullable=True)
+    mtime_human = Column(DateTime, nullable=True)
+    mtime_epoch_millis = Column(BigInteger, nullable=True)
     size = Column(BigInteger, nullable=True)
 
     # One file is in Many rule_file and is in Many rule
@@ -53,7 +54,7 @@ class FileInputOutputInformation(InputOutput, Base):
         return id(self)
 
     def __repr__(self):
-        return "<class '{}' File (%s): %s: %s; size: %s; mtime_epoch_millis: %s>" % (self.type.is_input, self.name, self.path, self.size, self.used_at)
+        return "<class '{}' File (%s): %s: %s; size: %s; mtime_epoch_millis: %s>" % (self.type.is_input, self.name, self.path, self.size, self.mtime_epoch_millis)
 
     def __str__(self):
         return "file: " + self.name + ": " + self.path
