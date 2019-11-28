@@ -353,7 +353,7 @@ class Reader:
             # This create_all will create all models that have been found in the tool_python_path
             # if not SQLManager.instance().d_database_config['db_connection'] == 'postgresql':
             # TODO: this function is not creating the triggers after the table in postgresql so I switched it off
-            TableInputOutputInformation.create_triggers()
+            TableModificationTime.create_triggers()
             SQLManager.instance().create_all()
             wrapper_entry.is_content_respected()
         except NoResultFound as e:
@@ -472,7 +472,7 @@ class Reader:
             # This create_all will create all models that have been found in the tool_python_path
             # if not SQLManager.instance().d_database_config['db_connection'] == 'postgresql':
             # TODO: this function is not creating the triggers after the table in postgresql so I switched it off
-            TableInputOutputInformation.create_triggers()
+            TableModificationTime.create_triggers()
             SQLManager.instance().create_all()
             session.add_all(set_wrapper)
             # save all operations done so far.
