@@ -81,7 +81,7 @@ class WorkflowManager(RuleObserver):
 
         if OptionManager.instance()["--clear-history"]:
             Logger.instance().info("Deleting WoPMaRS history...")
-            SQLManager.instance().drop_table_content_list(SQLManager.wom_table_names)
+            SQLManager.instance().drop_table_content_list(SQLManager.wom_table_io_information_names)
 
         # The following lines allow to create types 'input' and 'output' in the db if they don't exist.
         self.__session.get_or_create(TypeInputOrOutput, defaults={"is_input": True}, is_input=True)

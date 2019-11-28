@@ -8,9 +8,9 @@ from test.resource.model.FooBase import FooBase
 from test.resource.wrapper.FooWrapper2 import FooWrapper2
 from test.resource.wrapper.FooWrapper3 import FooWrapper3
 from wopmars.SQLManager import SQLManager
-from wopmars.models import TableInputOutputInformation
-from wopmars.models import FileInputOutputInformation
-from wopmars.models import TableModificationTime
+from wopmars.models.TableInputOutputInformation import TableInputOutputInformation
+from wopmars.models.FileInputOutputInformation import FileInputOutputInformation
+from wopmars.models.TableModificationTime import TableModificationTime
 from wopmars.models.Option import Option
 from wopmars.models import Rule
 from wopmars.models.TypeInputOrOutput import TypeInputOrOutput
@@ -19,6 +19,7 @@ from wopmars.utils.PathFinder import PathFinder
 from wopmars.utils.exceptions.WopMarsException import WopMarsException
 from wopmars.utils.various import time_unix_ms
 from wopmars.utils.various import os_path_getmtime_ms
+
 
 class TestToolWrapper(TestCase):
     def setUp(self):

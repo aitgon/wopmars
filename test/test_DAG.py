@@ -4,8 +4,8 @@ from unittest import TestCase
 from test.resource.wrapper.FooWrapper2 import FooWrapper2
 from test.resource.wrapper.FooWrapper8 import FooWrapper8
 from wopmars.SQLManager import SQLManager
-from wopmars.models import FileInputOutputInformation
-from wopmars.models import Rule
+from wopmars.models.FileInputOutputInformation import FileInputOutputInformation
+from wopmars.models.Rule import Rule
 from wopmars.models.TypeInputOrOutput import TypeInputOrOutput
 from wopmars.DAG import DAG
 from wopmars.utils.OptionManager import OptionManager

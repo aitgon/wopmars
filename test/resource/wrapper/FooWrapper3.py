@@ -1,7 +1,7 @@
 """
 Module containing the FooWrapper2 class
 """
-from wopmars.models import Rule
+from wopmars.models.Rule import Rule
 
 
 class FooWrapper3(Rule):
