@@ -56,7 +56,6 @@ class TestSQLManager(TestCase):
         except Exception as e:
             print(e)
             raise AssertionError("Should not raise an exception")
-
         self.assertTrue(len(self.__local_session.query(FooBase).filter(FooBase.name.like('string %')).all()) == 3000)
 
     def tearDown(self):

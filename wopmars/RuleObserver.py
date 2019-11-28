@@ -10,14 +10,14 @@ class RuleObserver:
 
     def notify_success(self, toolwrapper):
         """
-        Behavior of the Observer when the execution of toolwrapper has succeeded.
+        Behavior of the Observer when the execution of tool_python_path has succeeded.
         :return:
         """
         raise NotImplementedError
 
     def notify_failure(self, toolwrapper):
         """
-        Behavior of the Observer when the execution of toolwrapper has failed.
+        Behavior of the Observer when the execution of tool_python_path has failed.
         :return:
         """
         raise NotImplementedError
