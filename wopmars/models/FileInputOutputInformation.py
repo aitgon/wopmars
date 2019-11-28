@@ -1,6 +1,6 @@
 import os
 
-from sqlalchemy import Column, BigInteger, Integer, String, ForeignKey
+from sqlalchemy import Column, BigInteger, Integer, String, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 
 from wopmars.Base import Base
@@ -18,7 +18,7 @@ class FileInputOutputInformation(InputOutput, Base):
     - is_input: VARCHAR(255) - the is_input of the reference to the file
     - path: VARCHAR(255) - the path to the file
     - rule_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.framework.database.tables.Rule.Rule`
-    - type_id: INTEGER - foreign key to the associated type ID: :class:`wopmars.framework.database.tables.TypeInputOrOutput.TypeInputOrOutput`
+    - is_input: INTEGER - foreign key to the associated type ID: :class:`wopmars.framework.database.tables.TypeInputOrOutput.TypeInputOrOutput`
     - used_at: INTEGER - unix time at which the table have been used
     - size: INTEGER - the size of the file
     """
@@ -28,7 +28,7 @@ class FileInputOutputInformation(InputOutput, Base):
     name = Column(String(255))
     path = Column(String(255))
     rule_id = Column(Integer, ForeignKey("wom_rule.id"))
-    type_id = Column(Integer, ForeignKey("wom_type_input_or_output.id"))
+    is_input = Column(Boolean, ForeignKey("wom_type_input_or_output.is_input"))
     used_at = Column(BigInteger, nullable=True)
     size = Column(BigInteger, nullable=True)
 
