@@ -274,8 +274,8 @@ class Rule(Base):
                 if rule_f_path == rule_f2_path:
                     return True
 
-        for rule_t_name in [t.model for t in self.tables if t.type.is_input == 1]:
-            for rule_t2_name in [t.model for t in other.tables if t.type.is_input == 0]:
+        for rule_t_name in [t.model_py_path for t in self.tables if t.type.is_input == 1]:
+            for rule_t2_name in [t.model_py_path for t in other.tables if t.type.is_input == 0]:
                 if rule_t_name == rule_t2_name:
                     return True
 
@@ -399,7 +399,7 @@ class Rule(Base):
             is_same = False
             for t2 in [t2 for t2 in other.tables if t2.type.is_input == 1]:
                 # two tables are the same if they have the same model/tablename/modification mtime_epoch_millis
-                if (t.model == t2.model and
+                if (t.model_py_path == t2.model_py_path and
                     t.tablename == t2.tablename and
                        t.used_at == t2.used_at):
                     is_same = True
@@ -450,7 +450,7 @@ class Rule(Base):
         for t in [t for t in self.tables if t.type.is_input == 0]:
             is_same = False
             for t2 in [t2 for t2 in other.tables if t2.type.is_input == 0]:
-                if t.model == t2.model and t.tablename == t2.tablename:
+                if t.model_py_path == t2.model_py_path and t.tablename == t2.tablename:
                     is_same = True
                     break
             if not is_same:
@@ -553,7 +553,7 @@ class Rule(Base):
         :return: Bool: True if the tables are the same
         """
         for t in [t for t in self.tables if t.type.is_input == is_input]:
-            is_in = bool([t for t in other.tables if (t.model == t.model and
+            is_in = bool([t for t in other.tables if (t.model_py_path == t.model_py_path and
                                                       t.type.is_input == is_input and
                                                       t.tablename == t.tablename)])
             if not is_in:

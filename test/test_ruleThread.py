@@ -38,7 +38,7 @@ class TestToolThread(TestCase):
         f2 = FileInputOutputInformation(name="output1", path="test/output/output_file1.txt")
         f2.type = output_entry
 
-        t1 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
+        t1 = TableInputOutputInformation(model_path="FooBase", tablename="FooBase")
         t1.set_table(FooBase)
         t1.type = output_entry
         modification_table_entry = TableModificationTime(time=time_unix_ms(), table_name=t1.tablename)
@@ -54,7 +54,7 @@ class TestToolThread(TestCase):
         f22 = FileInputOutputInformation(name="output1", path="test/output/output_file1.txt")
         f22.type = output_entry
 
-        t12 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
+        t12 = TableInputOutputInformation(model_path="FooBase", tablename="FooBase")
         t12.set_table(FooBase)
         t12.type = output_entry
         modification_table_entry = TableModificationTime(
@@ -71,7 +71,7 @@ class TestToolThread(TestCase):
         f23 = FileInputOutputInformation(name="output1", path="test/output/output_file1.txt")
         f23.type = output_entry
 
-        t13 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
+        t13 = TableInputOutputInformation(model_path="FooBase", tablename="FooBase")
         t13.set_table(FooBase)
         t13.type = output_entry
         modification_table_entry = TableModificationTime(
@@ -105,7 +105,7 @@ class TestToolThread(TestCase):
             f1 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
             f1.type = input_entry
 
-            t1 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
+            t1 = TableInputOutputInformation(model_path="FooBase", tablename="FooBase")
             t1.set_table(FooBase)
             t1.type = output_entry
             modification_table_entry = TableModificationTime(time=time_unix_ms(), table_name=t1.tablename)
@@ -121,7 +121,7 @@ class TestToolThread(TestCase):
             f12 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
             f12.type = input_entry
 
-            t12 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
+            t12 = TableInputOutputInformation(model_path="FooBase", tablename="FooBase")
             t12.set_table(FooBase)
             t12.type = output_entry
             modification_table_entry = TableModificationTime(time=time_unix_ms(),
@@ -138,7 +138,7 @@ class TestToolThread(TestCase):
             f13 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
             f13.type = input_entry
 
-            t13 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
+            t13 = TableInputOutputInformation(model_path="FooBase", tablename="FooBase")
             t13.set_table(FooBase)
             t13.type = output_entry
             modification_table_entry = TableModificationTime(time=time_unix_ms(),
@@ -156,21 +156,21 @@ class TestToolThread(TestCase):
             tt2 = RuleThread(tw12)
             tt3 = RuleThread(tw13)
 
-            t21 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
+            t21 = TableInputOutputInformation(model_path="FooBase", tablename="FooBase")
             t21.set_table(FooBase)
             t21.type = input_entry
 
             tw21 = tw_query(rule_name="rule1")
             tw21.tables.append(t21)
 
-            t22 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
+            t22 = TableInputOutputInformation(model_path="FooBase", tablename="FooBase")
             t22.set_table(FooBase)
             t22.type = input_entry
 
             tw22 = tw_query(rule_name="rule1")
             tw22.tables.append(t22)
 
-            t23 = TableInputOutputInformation(model="FooBase", tablename="FooBase")
+            t23 = TableInputOutputInformation(model_path="FooBase", tablename="FooBase")
             t23.set_table(FooBase)
             t23.type = input_entry
 

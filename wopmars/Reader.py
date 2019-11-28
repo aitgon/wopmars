@@ -312,7 +312,7 @@ class Reader:
                         Logger.instance().debug("Object input file: " + s_input + " created.")
                 elif type == "table":
                     for s_input in dict_inputs[type]:
-                        obj_created = TableInputOutputInformation(model=dict_inputs[type][s_input],
+                        obj_created = TableInputOutputInformation(model_py_path=dict_inputs[type][s_input],
                                                                   tablename=s_input)
                         dict_dict_dict_elm["dict_input"][type][s_input] = obj_created
                         Logger.instance().debug("Object input table: " + s_input + " created.")
@@ -326,7 +326,7 @@ class Reader:
                         Logger.instance().debug("Object output file: " + s_output + " created.")
                 elif type == "table":
                     for s_output in dict_outputs[type]:
-                        obj_created = TableInputOutputInformation(model=dict_outputs[type][s_output],
+                        obj_created = TableInputOutputInformation(model_py_path=dict_outputs[type][s_output],
                                                                   tablename=s_output)
                         dict_dict_dict_elm["dict_output"]["table"][s_output] = obj_created
                         Logger.instance().debug("Object output table: " + s_output + " created.")
@@ -427,7 +427,7 @@ class Reader:
                                             key_second_step][
                                             key_third_step][
                                             key]
-                                        obj_created = TableInputOutputInformation(model=modelname, tablename=key)
+                                        obj_created = TableInputOutputInformation(model_py_path=modelname, tablename=key)
 
                                         dict_dict_dict_elm["dict_" + key_second_step][
                                             key_third_step][
