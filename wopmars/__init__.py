@@ -57,7 +57,7 @@ from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder
 from wopmars.utils.exceptions.WopMarsException import WopMarsException
 from wopmars.constants import home_wopmars
-from wopmars.utils.various import get_mtime
+from wopmars.utils.various import get_mtime, get_current_time
 
 # todo combinatorices pour les rules
 # todo option pour reset les resultats (supprimer le contenu de la database) / fresh run
@@ -141,16 +141,17 @@ class WopMars:
             sys.exit(1)
 
 
-        wm = WorkflowManager()
+        workflow_manager = WorkflowManager()
         try:
-            wm.run()
+            workflow_manager.run()
         except WopMarsException as WE:
             Logger.instance().error(str(WE))
             session = SQLManager.instance().get_session()
             try:
-                finished_at = time_unix_ms()
-                Logger.instance().error("The workflow has encountered an error at: " + str(finished_at))
-                wm.set_finishing_informations(finished_at, "ERROR")
+                time_unix_ms, time_human = get_current_time()
+                finish_epoch_millis = time_unix_ms
+                Logger.instance().error("The workflow has encountered an error at: " + str(finish_epoch_millis))
+                workflow_manager.set_finishing_informations(finish_epoch_millis, "ERROR")
             except AttributeError:
                 session.rollback()
                 Logger.instance().error("The execution has not even begun. No informations will be stored in the database.")

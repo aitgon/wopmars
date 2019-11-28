@@ -295,8 +295,8 @@ class Reader:
             time_unix_ms, time_human = get_current_time()
             execution = Execution(started_epoch_millis=time_human)
             # get the types that should have been created previously
-            input_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.name == "input").one()
-            output_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.name == "output").one()
+            input_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.name == True).one()
+            output_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.name == False).one()
 
             Logger.instance().debug("Loading unique toolwrapper " + s_toolwrapper)
             dict_dict_dict_elm = dict(dict_input={"file": {}, "table": {}},
@@ -382,8 +382,8 @@ class Reader:
             time_unix_ms, time_human = get_current_time()
             execution = Execution(started_epoch_millis=time_human)
             # get the types database entries that should have been created previously
-            input_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.name == "input").one()
-            output_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.name == "output").one()
+            input_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.name == True).one()
+            output_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.name == False).one()
             set_wrapper = set()
             # Encounter a rule block
             for rule in self.__dict_workflow_definition:

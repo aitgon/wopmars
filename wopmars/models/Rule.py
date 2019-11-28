@@ -114,7 +114,7 @@ class Rule(Base):
 
         :raise WopMarsException: The input are not respected by the user.
         """
-        set_input_file_names = set([f_input.name for f_input in self.files if f_input.type.name == "input"])
+        set_input_file_names = set([f_input.name for f_input in self.files if f_input.type.name == 1])
         # check if the input file names for the Rule are coherent with the Rule specifications
         if set_input_file_names != set(self.specify_input_file()):
             raise WopMarsException("The content of the definition file is not valid.",
@@ -126,7 +126,7 @@ class Rule(Base):
                                    "\n\t'{0}'".format("'\n\t'".join(set_input_file_names))
                                    )
 
-        set_input_table = set([t_input for t_input in self.tables if t_input.type.name == "input"])
+        set_input_table = set([t_input for t_input in self.tables if t_input.type.name == 1])
         set_input_table_names = set([t_input.tablename for t_input in set_input_table])
 
         # check if the input table names for the Rule are coherent with the Rule specifications
@@ -176,17 +176,17 @@ class Rule(Base):
 
         :raises WopMarsException: The output are not respected by the user.
         """
-        if set([f_output.name for f_output in self.files if f_output.type.name == "output"]) != set(self.specify_output_file()):
+        if set([f_output.name for f_output in self.files if f_output.type.name == 0]) != set(self.specify_output_file()):
             raise WopMarsException("The content of the definition file is not valid.",
                                    "The given output variable names for " + self.__class__.__name__ +
                                    " (rule " + str(self.name) + ")" +
                                    " are not correct, they should be: " +
                                    "\n\t'{0}'".format("'\n\t'".join(self.specify_output_file())) +
                                    "\n" + "They are:" +
-                                   "\n\t'{0}'".format("'\n\t'".join([f.name for f in self.files if f.type.name == "output"]))
+                                   "\n\t'{0}'".format("'\n\t'".join([f.name for f in self.files if f.type.name == 0]))
                                    )
 
-        set_output_table = set([t_output for t_output in self.tables if t_output.type.name == "output"])
+        set_output_table = set([t_output for t_output in self.tables if t_output.type.name == 0])
         set_output_table_names = set([t_input.tablename for t_input in set_output_table])
         if set_output_table_names != set(self.specify_output_table()):
             raise WopMarsException("The content of the definition file is not valid.",
@@ -269,13 +269,13 @@ class Rule(Base):
         :param other: Rule that is possibly a predecessor of "self"
         :return: bool True if "self" follows "other"
         """
-        for rule_f_path in [f.path for f in self.files if f.type.name == "input"]:
-            for rule_f2_path in [f.path for f in other.files if f.type.name == "output"]:
+        for rule_f_path in [f.path for f in self.files if f.type.name == 1]:
+            for rule_f2_path in [f.path for f in other.files if f.type.name == 0]:
                 if rule_f_path == rule_f2_path:
                     return True
 
-        for rule_t_name in [t.model for t in self.tables if t.type.name == "input"]:
-            for rule_t2_name in [t.model for t in other.tables if t.type.name == "output"]:
+        for rule_t_name in [t.model for t in self.tables if t.type.name == 1]:
+            for rule_t2_name in [t.model for t in other.tables if t.type.name == 0]:
                 if rule_t_name == rule_t2_name:
                     return True
 
@@ -290,7 +290,7 @@ class Rule(Base):
         :return: bool - True if inputs are ready.
         """
         input_files_not_ready = []
-        input_files = [f for f in self.files if f.type.name == "input"]
+        input_files = [f for f in self.files if f.type.name == 1]
         for i in input_files:
             if not i.is_ready():
                 input_files_not_ready.append(i)
@@ -302,7 +302,7 @@ class Rule(Base):
 
         :return: bool - True if inputs are ready.
         """
-        input_files = [f for f in self.files if f.type.name == "input"]
+        input_files = [f for f in self.files if f.type.name == 1]
         Logger.instance().debug("Inputs files of " + str(self.__class__.__name__) + ": " + str([i.name for i in input_files]))
         for i in input_files:
             if not i.is_ready():
@@ -311,7 +311,7 @@ class Rule(Base):
                 return False
             Logger.instance().debug("Input: " + str(i.name) + " is ready.")
 
-        input_tables = [t for t in self.tables if t.type.name == "input"]
+        input_tables = [t for t in self.tables if t.type.name == 1]
         Logger.instance().debug("Inputs tables of " + str(self.__class__.__name__) + ": " + str([i.tablename for i in input_tables]))
         for i in input_tables:
             if not i.is_ready():
@@ -363,11 +363,11 @@ class Rule(Base):
             f.used_at = mtime_epoch_millis
             f.size = size
             session.add(f)
-            if type == "input":
+            if type == 1:
                 Logger.instance().debug("Input file " + str(f) + " used.")
-            elif type == "output" and dry:
+            elif type == 0 and dry:
                 Logger.instance().debug("Output file " + str(f) + " has been loaded from previous execution.")
-            elif type == "output" and not dry:
+            elif type == 0 and not dry:
                 Logger.instance().debug("Output file " + str(f) + " has been created.")
         # this commit is due to a bug that i couldn't figure out: the session empty itself between the two loops...
         # this is not good at all since it may lead to inconsistence in the database
@@ -393,9 +393,9 @@ class Rule(Base):
 
         :return: bool
         """
-        for t in [t for t in self.tables if t.type.name == "input"]:
+        for t in [t for t in self.tables if t.type.name == 1]:
             is_same = False
-            for t2 in [t2 for t2 in other.tables if t2.type.name == "input"]:
+            for t2 in [t2 for t2 in other.tables if t2.type.name == 1]:
                 # two tables are the same if they have the same model/tablename/modification time
                 if (t.model == t2.model and
                     t.tablename == t2.tablename and
@@ -405,9 +405,9 @@ class Rule(Base):
             if not is_same:
                 return False
 
-        for f in [f for f in self.files if f.type.name == "input"]:
+        for f in [f for f in self.files if f.type.name == 1]:
             is_same = False
-            for f2 in [f2 for f2 in other.files if f2.type.name == "input"]:
+            for f2 in [f2 for f2 in other.files if f2.type.name == 1]:
                 # two files are the same if they have the same name, path, size and modification time
                 if (f.name == f2.name and
                         f.path == f2.path and
@@ -428,10 +428,10 @@ class Rule(Base):
 
         :return: Bool: True if the output is actually more recent than input
         """
-        most_recent_input = max([os_path_getmtime_ms(f.path) for f in self.files if f.type.name == "input"] +
-                                [t.modification.time for t in self.tables if t.type.name == "input"])
-        oldest_output = min([os_path_getmtime_ms(f.path) for f in self.files if f.type.name == "output"] +
-                            [t.modification.time for t in self.tables if t.type.name == "output"])
+        most_recent_input = max([get_mtime(f.path) for f in self.files if f.type.name == 1] +
+                                [t.modification.time for t in self.tables if t.type.name == 1])
+        oldest_output = min([get_mtime(f.path) for f in self.files if f.type.name == 0] +
+                            [t.modification.time for t in self.tables if t.type.name == 0])
         # in seconds since the begining of time (computer), the oldest thing has a lower number of seconds
         return most_recent_input < oldest_output
 
@@ -445,18 +445,18 @@ class Rule(Base):
 
         :return: bool
         """
-        for t in [t for t in self.tables if t.type.name == "output"]:
+        for t in [t for t in self.tables if t.type.name == 0]:
             is_same = False
-            for t2 in [t2 for t2 in other.tables if t2.type.name == "output"]:
+            for t2 in [t2 for t2 in other.tables if t2.type.name == 0]:
                 if t.model == t2.model and t.tablename == t2.tablename:
                     is_same = True
                     break
             if not is_same:
                 return False
 
-        for f in [f for f in self.files if f.type.name == "input"]:
+        for f in [f for f in self.files if f.type.name == 1]:
             is_same = False
-            for f2 in [f2 for f2 in other.files if f2.type.name == "input"]:
+            for f2 in [f2 for f2 in other.files if f2.type.name == 1]:
                 if (f.name == f2.name and
                         f.path == f2.path):
                     is_same = True
@@ -474,11 +474,11 @@ class Rule(Base):
 
         :return: Bool: True if outputs exist.
         """
-        for of in [f for f in self.files if f.type.name == "output"]:
+        for of in [f for f in self.files if f.type.name == 0]:
             if not os.path.exists(of.path):
                 return False
 
-        for ot in [t for t in self.tables if t.type.name == "output"]:
+        for ot in [t for t in self.tables if t.type.name == 0]:
             if not SQLManager.instance().get_session().query(ot.get_table()).count():
                 return False
         return True
@@ -517,43 +517,43 @@ class Rule(Base):
         :return: Bool: True if the ToolWrappers are equals.
         """
         return (isinstance(other, self.__class__) and
-                self.same_files(other, "input") and
-                self.same_tables(other, "input") and
-                self.same_files(other, "output") and
-                self.same_tables(other, "output") and
+                self.same_files(other, True) and
+                self.same_tables(other, True) and
+                self.same_files(other, False) and
+                self.same_tables(other, False) and
                 self.same_options(other))
 
-    def same_files(self, other, type_name):
+    def same_files(self, other, is_name):
         """
         Check if the files of a ToolWrapper are the same than the files of the other for a given type (input or output).
 
         :param other: ToolWrapper with which you need to compare
         :type other: Rule
-        :param type_name: The name of the type of file (input or output)
-        :type type_name: str
+        :param is_name: The name of the type of file (input or output)
+        :type is_name: str
         :return: Bool: True if the files are the same
         """
-        for f in [rf for rf in self.files if rf.type.name == type_name]:
+        for f in [rf for rf in self.files if rf.type.name == is_name]:
             is_in = bool([rf for rf in other.files if (os.path.abspath(f.path) == os.path.abspath(rf.path) and
                                                        f.name == rf.name and
-                                                       rf.type.name == type_name)])
+                                                       rf.type.name == is_name)])
             if not is_in:
                 return False
         return True
 
-    def same_tables(self, other, type_name):
+    def same_tables(self, other, is_input):
         """
         Check if the tables of a ToolWrapper are the same than the tables of the other for a given type (input or output).
 
         :param other: ToolWrapper with which you need to compare
         :type other: Rule
-        :param type_name: The name of the type of table (input or output)
-        :type type_name: str
+        :param is_input: The name of the type of table (input or output)
+        :type is_input: str
         :return: Bool: True if the tables are the same
         """
-        for t in [t for t in self.tables if t.type.name == type_name]:
+        for t in [t for t in self.tables if t.type.name == is_input]:
             is_in = bool([t for t in other.tables if (t.model == t.model and
-                                                      t.type.name == type_name and
+                                                      t.type.name == is_input and
                                                       t.tablename == t.tablename)])
             if not is_in:
                 return False
@@ -596,22 +596,22 @@ class Rule(Base):
         s += "\\n"
         s += "tool: " + self.__class__.__name__
         s += "\\n"
-        for input_f in [f for f in self.files if f.type.name == "input"]:
+        for input_f in [f for f in self.files if f.type.name == 1]:
             s += "\\n\t\t" + input_f.name + ": " + str(input_f.path)
-        for input_t in [t for t in self.tables if t.type.name == "input"]:
+        for input_t in [t for t in self.tables if t.type.name == 1]:
             s += "\\n\t\tinput_table: " + input_t.name
         s += "\\n"
-        for output_f in [f for f in self.files if f.type.name == "output"]:
+        for output_f in [f for f in self.files if f.type.name == 0]:
             s += "\\n\t\t" + output_f.name + ": " + str(output_f.path)
-        for output_t in [t for t in self.tables if t.type.name == "output"]:
+        for output_t in [t for t in self.tables if t.type.name == 0]:
             s += "\\n\t\toutput_table: " + output_t.name
         s += "\""
         return s
 
     def dot_label(self):
         """Label for the dot dag"""
-        inputs_list_str = [str(i).replace(":", "") for i in self.files + self.tables if i.type.name == "input"]
-        outputs_list_str = [str(o).replace(":", "") for o in self.files + self.tables if o.type.name == "output"]
+        inputs_list_str = [str(i).replace(":", "") for i in self.files + self.tables if i.type.name == 1]
+        outputs_list_str = [str(o).replace(":", "") for o in self.files + self.tables if o.type.name == 0]
         params_list_str = [str(p).replace(":","") for p in self.options]
         s = ""
         s += "Rule " + self.name + "\n"
@@ -622,8 +622,8 @@ class Rule(Base):
         return(s)
 
     def __str__(self):
-        inputs_list_str = [str(i) for i in self.files + self.tables if i.type.name == "input"]
-        outputs_list_str = [str(o) for o in self.files + self.tables if o.type.name == "output"]
+        inputs_list_str = [str(i) for i in self.files + self.tables if i.type.name == 1]
+        outputs_list_str = [str(o) for o in self.files + self.tables if o.type.name == 0]
         params_list_str = [str(p) for p in self.options]
         s = ""
         s += "Rule " + str(self.name) + ":" + "\n"
@@ -709,7 +709,7 @@ class Rule(Base):
         :return:
         """
         try:
-            return [f.path for f in self.files if f.name == key and f.type.name == "input"][0]
+            return [f.path for f in self.files if f.name == key and f.type.name == 1][0]
         except IndexError:
             raise WopMarsException("Error during the execution of the Rule " + str(self.toolwrapper) +
                                    " (rule " + self.name + ").",
@@ -723,7 +723,7 @@ class Rule(Base):
         :return:
         """
         try:
-            return [t for t in self.tables if t.tablename == key and t.type.name == "input"][0].get_table()
+            return [t for t in self.tables if t.tablename == key and t.type.name == 1][0].get_table()
         except IndexError:
             raise WopMarsException("Error during the execution of the Rule " + str(self.toolwrapper) +
                                    " (rule " + self.name + ").",
@@ -737,7 +737,7 @@ class Rule(Base):
         :return:
         """
         try:
-            return [f.path for f in self.files if f.name == key and f.type.name == "output"][0]
+            return [f.path for f in self.files if f.name == key and f.type.name == 0][0]
         except IndexError:
             raise WopMarsException("Error during the execution of the Rule " + str(self.toolwrapper) +
                                    " (rule " + self.name + ").",
@@ -751,7 +751,7 @@ class Rule(Base):
         :return:
         """
         try:
-            return [t for t in self.tables if t.tablename == key and t.type.name == "output"][0].get_table()
+            return [t for t in self.tables if t.tablename == key and t.type.name == 0][0].get_table()
         except IndexError:
             raise WopMarsException("Error during the execution of the Rule " + str(self.toolwrapper) +
                                    " (rule " + self.name + ").",

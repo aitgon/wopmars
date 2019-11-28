@@ -84,8 +84,8 @@ class WorkflowManager(RuleObserver):
             SQLManager.instance().drop_table_content_list(SQLManager.wom_table_names)
 
         # The following lines allow to create types 'input' and 'output' in the db if they don't exist.
-        self.__session.get_or_create(TypeInputOrOutput, defaults={"id": 1}, name="input")
-        self.__session.get_or_create(TypeInputOrOutput, defaults={"id": 2}, name="output")
+        self.__session.get_or_create(TypeInputOrOutput, defaults={"id": 1}, name=True)
+        self.__session.get_or_create(TypeInputOrOutput, defaults={"id": 0}, name=False)
         self.__session.commit()
         # Get the DAG representing the whole workflow
         self.__dag_tools = self.__parser.parse()
@@ -106,8 +106,8 @@ class WorkflowManager(RuleObserver):
 
         Logger.instance().info("Forced execution implies overwrite existing output. Erasing files and models.")
         for tw in list_tw:
-           [set_files.add(f.path) for f in tw.files if f.type.name == "output"]
-           [set_tables.add(t.tablename) for t in tw.tables if t.type.name == "output"]
+           [set_files.add(f.path) for f in tw.files if f.type.name == 0]
+           [set_tables.add(t.tablename) for t in tw.tables if t.type.name == 0]
 
         s = ""
         for f_path in set_files:
@@ -242,7 +242,7 @@ class WorkflowManager(RuleObserver):
             # for running, either the inputs have to be ready or the dry-run mode is enabled
             elif tw.are_inputs_ready() or OptionManager.instance()["--dry-run"]:
                 # the state of inputs (table and file) are set in the db here.
-                tw.set_args_time_and_size("input")
+                tw.set_args_time_and_size(1)
                 Logger.instance().debug("Rule ready: " + tw.toolwrapper)
                 dry = False
                 # if forceall option, then the tool is reexecuted anyway
