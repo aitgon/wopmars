@@ -29,7 +29,7 @@ class TableInputOutputInformation(InputOutput, Base):
     __tablename__ = "wom_table_io_information"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    tablename = Column(String(255), ForeignKey("wom_modification_table.table_name"))
+    tablename = Column(String(255), ForeignKey("wom_TableModificationTime.table_name"))
     model = Column(String(255))
     rule_id = Column(Integer, ForeignKey("wom_rule.id"))
     is_input = Column(Boolean, ForeignKey("wom_type_input_or_output.is_input"))
