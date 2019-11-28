@@ -14,9 +14,9 @@ class TypeInputOrOutput(Base):
     - id: INTEGER - primary key -arbitrary ID
     - name: VARCHAR(255) - the name of the type ("input" or "output")
     """
-    __tablename__ = "wom_type"
+    __tablename__ = "wom_type_input_or_output"
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=False)
     name = Column(String(255))
 
     # One type is in Many table

@@ -33,7 +33,7 @@ class TableInputOutputInformation(InputOutput, Base):
     tablename = Column(String(255), ForeignKey("wom_modification_table.table_name"))
     model = Column(String(255))
     rule_id = Column(Integer, ForeignKey("wom_rule.id"))
-    type_id = Column(Integer, ForeignKey("wom_type.id"))
+    type_id = Column(Integer, ForeignKey("wom_type_input_or_output.id"))
     used_at = Column(BigInteger, nullable=True)
 
     # One table is in one rule
