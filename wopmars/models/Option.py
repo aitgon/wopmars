@@ -11,7 +11,7 @@ class Option(Base):
     table ``wom_option`` which contains the following fields:
 
     - id: INTEGER - primary key - auto increment
-    - name: VARCHAR(255) - the name of the referenced option
+    - is_input: VARCHAR(255) - the is_input of the referenced option
     - value: VRACHAR(255) - the value of the option
     - rule_id: INTEGER - the ID of the associated rule
     """

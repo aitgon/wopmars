@@ -113,7 +113,7 @@ class Reader:
         """
         This method raises an exception if the workflow definition file contains duplicate rule names.
 
-        The workflow definition file should contain rules with different name. It is therefore recommended to not
+        The workflow definition file should contain rules with different is_input. It is therefore recommended to not
         call rules with tool names but functionality instead. Example:
 
             .. code-block:: yaml
@@ -135,20 +135,20 @@ class Reader:
 
         :param s_workflow_file: The content of the definition file
         :type s_workflow_file: str
-        :raises WopMarsException: There is a duplicate rule name
+        :raises WopMarsException: There is a duplicate rule is_input
         """
         Logger.instance().debug("Looking for duplicate rules...")
         # All rules are found using this regex.
         rules = re.findall(r'rule (.+?):', str(s_workflow_file))
         seen = set()
-        # for each rule name
+        # for each rule is_input
         for r in rules:
             # if the rule has not been seen before
             if r not in seen:
                 # add it to the set of seen rules
                 seen.add(r)
             else:
-                # There is a duplicate rule name
+                # There is a duplicate rule is_input
                 raise WopMarsException("Error while parsing the configuration file:\n\t",
                                        "The rule " + r + " is duplicated.")
         Logger.instance().debug("No Duplicate.")
@@ -251,7 +251,7 @@ class Reader:
                                                            "The grammar of the WopMars's definition file is not respected:",
                                                            "The line containing:'" + str(s_variable_name) + "'" +
                                                            " for rule '" + str(s_key_step1) + "'" +
-                                                           " doesn't match the grammar: it should be the string containing the name of the Model."
+                                                           " doesn't match the grammar: it should be the string containing the is_input of the Model."
                                                            "\nexemple:" + exemple_file_def)
 
                 # There should be one tool at max in each rule
@@ -275,7 +275,7 @@ class Reader:
         Method called when the ``tool`` command is used. It is equivalent to the :meth:`~.wopmars.framework.parsing.Reader.Reader.read` method but create a workflow
         with only one toolwrapper. The workflow is also stored inside the database.
 
-        :param s_toolwrapper: The name of the toolwrapper (will be imported)
+        :param s_toolwrapper: The is_input of the toolwrapper (will be imported)
         :type s_toolwrapper: str
         :param s_dict_inputs: A string containing the dict of input files
         :type s_dict_inputs: str
@@ -295,8 +295,8 @@ class Reader:
             time_unix_ms, time_human = get_current_time()
             execution = Execution(started_epoch_millis=time_human)
             # get the types that should have been created previously
-            input_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.name == True).one()
-            output_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.name == False).one()
+            input_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.is_input == True).one()
+            output_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.is_input == False).one()
 
             Logger.instance().debug("Loading unique toolwrapper " + s_toolwrapper)
             dict_dict_dict_elm = dict(dict_input={"file": {}, "table": {}},
@@ -382,13 +382,13 @@ class Reader:
             time_unix_ms, time_human = get_current_time()
             execution = Execution(started_epoch_millis=time_human)
             # get the types database entries that should have been created previously
-            input_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.name == True).one()
-            output_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.name == False).one()
+            input_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.is_input == True).one()
+            output_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.is_input == False).one()
             set_wrapper = set()
             # Encounter a rule block
             for rule in self.__dict_workflow_definition:
                 str_wrapper_name = None
-                # the name of the rule is extracted after the "rule" keyword. There shouldn't be a ":" but it costs nothing.
+                # the is_input of the rule is extracted after the "rule" keyword. There shouldn't be a ":" but it costs nothing.
                 str_rule_name = rule.split()[-1].strip(":")
                 Logger.instance().debug("Encounter rule " + str_rule_name + ": \n" +
                                         str(DictUtils.pretty_repr(self.__dict_workflow_definition[rule])))
@@ -494,9 +494,9 @@ class Reader:
         If the scoped_session has current modification, they probably will be commited during this method:
         models are created and this can only be done with clean session.
 
-        :param str_rule_name: Contains the name of the rule in which the toolwrapper will be used.
+        :param str_rule_name: Contains the is_input of the rule in which the toolwrapper will be used.
         :type str_rule_name: str
-        :param str_wrapper_name: Contains the name of the toolwrapper. It will be used for importing the correct module and then for creating the class
+        :param str_wrapper_name: Contains the is_input of the toolwrapper. It will be used for importing the correct module and then for creating the class
         :type str_wrapper_name: str
         :param dict_dict_dict_elm: "input"s "output"s and "params" and will be used to make relations between options / input / output and the toolwrapper.
         :type dict_dict_dict_elm: dict(dict(dict()))
@@ -542,14 +542,14 @@ class Reader:
                                                " in the toolwrapper. Error message: \n" + str(e))
             elif elm == "table":
                 for input_t in dict_dict_dict_elm["dict_input"][elm]:
-                    # input_t is the name of the table (not the model)
+                    # input_t is the is_input of the table (not the model)
                     # this is a preventing commit because next statement will create a new table and the session has to
                     # be clean. I think it is a bug in SQLAlchemy which not allows queries then insert statements in
                     # the same session
                     session.commit()
                     iodbput_entry = dict_dict_dict_elm["dict_input"][elm][input_t]
                     # the user-side models are created during the reading of the definition file
-                    # table_entry = TableInputOutputInformation(name=dict_dict_dict_elm["dict_input"][elm][input_t], tablename=input_t)
+                    # table_entry = TableInputOutputInformation(is_input=dict_dict_dict_elm["dict_input"][elm][input_t], tablename=input_t)
                     # insert in the database the time of last modification of a developper-side table
                     time_unix_ms, time_human = get_current_time()
                     modification_table_entry, created = session.get_or_create(TableModificationTime,
@@ -578,7 +578,7 @@ class Reader:
                                                " in the toolwrapper. Error message: \n" + str(e))
             elif elm == "table":
                 for output_t in dict_dict_dict_elm["dict_output"][elm]:
-                    # output_t is the table name (not the model)
+                    # output_t is the table is_input (not the model)
                     session.commit()
                     iodbput_entry = dict_dict_dict_elm["dict_output"][elm][output_t]
                     time_unix_ms, time_human = get_current_time()

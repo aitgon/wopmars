@@ -84,8 +84,8 @@ class WorkflowManager(RuleObserver):
             SQLManager.instance().drop_table_content_list(SQLManager.wom_table_names)
 
         # The following lines allow to create types 'input' and 'output' in the db if they don't exist.
-        self.__session.get_or_create(TypeInputOrOutput, defaults={"id": 1}, name=True)
-        self.__session.get_or_create(TypeInputOrOutput, defaults={"id": 0}, name=False)
+        self.__session.get_or_create(TypeInputOrOutput, defaults={"id": 1}, is_input=True)
+        self.__session.get_or_create(TypeInputOrOutput, defaults={"id": 0}, is_input=False)
         self.__session.commit()
         # Get the DAG representing the whole workflow
         self.__dag_tools = self.__parser.parse()
@@ -232,56 +232,56 @@ class WorkflowManager(RuleObserver):
             Logger.instance().debug("Queue content: " + str(["rule: " + tt.get_toolwrapper().name + "->" +
                                                              tt.get_toolwrapper().toolwrapper for tt in self.__queue_exec.get_queue_tuple()]))
             # get the first element of the queue to execute
-            thread_tw = self.__queue_exec.get()
-            tw = thread_tw.get_toolwrapper()
-            Logger.instance().debug("Current rule: " + tw.name + "->" + tw.toolwrapper)
+            rule_thread = self.__queue_exec.get()
+            rule = rule_thread.get_toolwrapper()
+            Logger.instance().debug("Current rule: " + rule.name + "->" + rule.toolwrapper)
             # check if the predecessors of a rule have been already executed: a rule shouldn't be executed if
             # its predecessors have not been executed yet
-            if not self.all_predecessors_have_run(tw):
-                Logger.instance().debug("Predecessors of rule: " + tw.name + " have not been executed yet.")
+            if not self.all_predecessors_have_run(rule):
+                Logger.instance().debug("Predecessors of rule: " + rule.name + " have not been executed yet.")
             # for running, either the inputs have to be ready or the dry-run mode is enabled
-            elif tw.are_inputs_ready() or OptionManager.instance()["--dry-run"]:
+            elif rule.are_inputs_ready() or OptionManager.instance()["--dry-run"]:
                 # the state of inputs (table and file) are set in the db here.
-                tw.set_args_time_and_size(1)
-                Logger.instance().debug("Rule ready: " + tw.toolwrapper)
+                rule.set_args_time_and_size(1)
+                Logger.instance().debug("Rule ready: " + rule.toolwrapper)
                 dry = False
                 # if forceall option, then the tool is reexecuted anyway
                 # check if the actual execution of the toolwrapper is necessary
                 # every predecessors of the toolwrapper have to be executed (or simulated)
                 if not OptionManager.instance()["--forceall"] and \
-                        self.is_this_tool_already_done(tw) and \
-                        not bool([node for node in self.__dag_to_exec.predecessors(tw) if node.status != "EXECUTED" and
+                        self.is_this_tool_already_done(rule) and \
+                        not bool([node for node in self.__dag_to_exec.predecessors(rule) if node.status != "EXECUTED" and
                                         node.status != "ALREADY_EXECUTED"]):
-                    Logger.instance().info("Rule: " + tw.name + " -> " + tw.toolwrapper +
+                    Logger.instance().info("Rule: " + rule.name + " -> " + rule.toolwrapper +
                                            " seemed to have already" +
                                            " been runned with same" +
                                            " parameters.")
                     dry = True
 
                 # todo twthread verification des ressources
-                thread_tw.subscribe(self)
+                rule_thread.subscribe(self)
                 self.__count_exec += 1
                 # todo twthread methode start
-                thread_tw.set_dry(dry)
+                rule_thread.set_dry(dry)
                 try:
                     # be carefull here: the execution of the toolthreads is recursive meaning that calls to function may
                     # be stacked (run -> notify success -> run(next tool) -> notify success(next tool) -> etc....
                     # todo twthread methode start
-                    thread_tw.run()
+                    rule_thread.run()
                 except Exception as e:
                     # as mentionned above, there may be recursive calls to this function, so every exception can
                     # pass here multiple times: this attribute is used for recognizing exception that have already been
                     # caught
                     if not hasattr(e, "teb_already_seen"):
                         setattr(e, "teb_already_seen", True)
-                        tw.set_execution_infos(status="EXECUTION_ERROR")
-                        self.__session.add(tw)
+                        rule.set_execution_infos(status="EXECUTION_ERROR")
+                        self.__session.add(rule)
                         self.__session.commit()
                     raise e
             else:
-                Logger.instance().debug("Rule not ready: rule: " + tw.name + " -> " + str(tw.toolwrapper))
+                Logger.instance().debug("Rule not ready: rule: " + rule.name + " -> " + str(rule.toolwrapper))
                 # The buffer contains the ToolWrappers that have inputs which are not ready yet.
-                self.__list_queue_buffer.append(thread_tw)
+                self.__list_queue_buffer.append(rule_thread)
 
         Logger.instance().debug("Buffer: " + str(["rule: " + t.get_toolwrapper().name + "->" +
                                                   t.get_toolwrapper().toolwrapper for t in self.__list_queue_buffer]))
@@ -313,7 +313,7 @@ class WorkflowManager(RuleObserver):
                                            # "The inputs are not ready for thisto: " +
                                            # ", \n".join([t.get_toolwrapper().toolwrapper +
                                            #            " -> rule: " +
-                                           #            t.get_toolwrapper().name for t in self.__list_queue_buffer]) + ". ")
+                                           #            t.get_toolwrapper().is_input for t in self.__list_queue_buffer]) + ". ")
             # If there is one tool that is ready, it means that it is in queue because ressources weren't available.
 
     def set_finishing_informations(self, finish_epoch_millis, status):
@@ -354,7 +354,7 @@ class WorkflowManager(RuleObserver):
             - The Rule exist in database (named = tw_old)
             - The tw_old param are the same than the same which is about to start
             - the tw_old inputs are the same
-            - the tw_old outputs exists with the same name and are more recent than inputs
+            - the tw_old outputs exists with the same is_input and are more recent than inputs
 
         :param tw: The Toolwrapper to test_bak
         :type tw: :class:`~.wopmars.main.framework.database.models.Rule.Rule`

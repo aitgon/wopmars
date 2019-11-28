@@ -21,7 +21,7 @@ class TableInputOutputInformation(InputOutput, Base):
     following fields:
 
     - id: INTEGER - primary key - autoincrement - arbitrary ID
-    - tablename: VARCHAR(255) - foreign key to the associated table: :class:`wopmars.framework.database.tables.TableModificationTime.TableModificationTime` - the name of the referenced table
+    - tablename: VARCHAR(255) - foreign key to the associated table: :class:`wopmars.framework.database.tables.TableModificationTime.TableModificationTime` - the is_input of the referenced table
     - model: VARCHAR(255) - the path to the model (in python notation)
     - rule_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.framework.database.tables.Rule.Rule`
     - type_id: INTEGER - foreign key to the associated type ID: :class:`wopmars.framework.database.tables.TypeInputOrOutput.TypeInputOrOutput`
@@ -54,7 +54,7 @@ class TableInputOutputInformation(InputOutput, Base):
 
         :param model: The path to the model
         :type model: str
-        :param tablename: The name of the table associated with the model
+        :param tablename: The is_input of the table associated with the model
         :type tablename: str
         """
         # The file containing the table should be in PYTHONPATH
@@ -66,7 +66,7 @@ class TableInputOutputInformation(InputOutput, Base):
     def init_on_load(self):
         """
         This is used by SQLAlchemy to regenerate the right object when loading it from the database. Here, we need to
-        get back the actual Model from the model name and store it in self.__table.
+        get back the actual Model from the model is_input and store it in self.__table.
         """
         for table in TableInputOutputInformation.tablemodelnames:
             mod = importlib.import_module(table)

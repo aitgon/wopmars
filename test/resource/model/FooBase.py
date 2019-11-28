@@ -18,5 +18,5 @@ class FooBase(Base):
 
     def __repr__(self):
         s = ""
-        s += "<FooBase (id: %s; name: %s)>" % (self.id, self.name)
+        s += "<FooBase (id: %s; is_input: %s)>" % (self.id, self.name)
         return s

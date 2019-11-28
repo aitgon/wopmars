@@ -8,7 +8,7 @@ class TableModificationTime(Base):
     The TableModificationTime model contains the table names of the workflow and their time of last modification. The table
     ``wom_modification_table`` contains the following fields:
 
-    - table_name: VARCHAR(255) - primary key - the name of the table
+    - table_name: VARCHAR(255) - primary key - the is_input of the table
     - time: INTEGER - unix time [ms] of last modification of the table
     """
 

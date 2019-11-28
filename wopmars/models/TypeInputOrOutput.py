@@ -12,12 +12,12 @@ class TypeInputOrOutput(Base):
     Fields:
 
     - id: INTEGER - primary key -arbitrary ID
-    - name: VARCHAR(255) - the name of the type ("input" or "output")
+    - is_input: VARCHAR(255) - the is_input of the type ("input" or "output")
     """
     __tablename__ = "wom_type_input_or_output"
 
     id = Column(Integer, primary_key=True, autoincrement=False)
-    name = Column(Boolean, unique=True)
+    is_input = Column(Boolean, unique=True)
 
     # One type is in Many table
     tables = relationship("TableInputOutputInformation", back_populates="type")
@@ -25,4 +25,4 @@ class TypeInputOrOutput(Base):
     files = relationship("FileInputOutputInformation", back_populates="type")
 
     def __repr__(self):
-        return "<TypeInputOrOutput: {}>".format(self.name)
+        return "<TypeInputOrOutput: {}>".format(self.is_input)
