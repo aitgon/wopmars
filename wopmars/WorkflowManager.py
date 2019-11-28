@@ -316,21 +316,21 @@ class WorkflowManager(RuleObserver):
                                            #            t.get_toolwrapper().is_input for t in self.__list_queue_buffer]) + ". ")
             # If there is one tool that is ready, it means that it is in queue because ressources weren't available.
 
-    def set_finishing_informations(self, finish_epoch_millis, status):
+    def set_finishing_informations(self, finished_at, status):
         """
         Set the finsihing information of the whole workflow.
 
-        :param finish_epoch_millis: The finishing mtime_epoch_millis of the workflow
-        :type finish_epoch_millis: integer unix mtime_epoch_millis
+        :param finished_at: The finishing mtime_epoch_millis of the workflow
+        :type finished_at: integer unix mtime_epoch_millis
         :param status: The final status of the workflow
         :type status: str
         """
         modify_exec = self.__session.query(Execution).order_by(Execution.id.desc()).first()
         if modify_exec is not None:
-            modify_exec.finish_epoch_millis = finish_epoch_millis
+            modify_exec.finished_at = finished_at
             #modify_exec.mtime_epoch_millis = (modify_exec.finished_at - modify_exec.started_at).total_seconds()
             # modify_exec.mtime_epoch_millis = modify_exec.finished_at - modify_exec.started_at
-            modify_exec.time = int((modify_exec.finish_epoch_millis - modify_exec.started_epoch_millis).total_seconds())
+            modify_exec.time = int((modify_exec.finished_at - modify_exec.started_at).total_seconds())
             modify_exec.status = status
             self.__session.add(modify_exec)
             self.__session.commit()

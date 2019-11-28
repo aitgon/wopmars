@@ -24,8 +24,8 @@ class Execution(Base):
     __tablename__ = "wom_{}".format(__qualname__)
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    started_epoch_millis = Column(DateTime, nullable=True)
-    finish_epoch_millis = Column(DateTime, nullable=True)
+    started_at = Column(DateTime, nullable=True)
+    finished_at = Column(DateTime, nullable=True)
     time = Column(Float, nullable=True)
     status = Column(String(255), nullable=True)
 

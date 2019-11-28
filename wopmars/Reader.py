@@ -293,7 +293,7 @@ class Reader:
         try:
             # The same execution entry for the whole workflow-related database entries.
             time_unix_ms, time_human = get_current_time()
-            execution = Execution(started_epoch_millis=time_human)
+            execution = Execution(started_at=time_human)
             # get the types that should have been created previously
             input_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.is_input == True).one()
             output_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.is_input == False).one()
@@ -380,7 +380,7 @@ class Reader:
         try:
             # The same execution entry for the whole workflow-related database entries.
             time_unix_ms, time_human = get_current_time()
-            execution = Execution(started_epoch_millis=time_human)
+            execution = Execution(started_at=time_human)
             # get the types database entries that should have been created previously
             input_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.is_input == True).one()
             output_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.is_input == False).one()

@@ -34,8 +34,8 @@ class TableInputOutputInformation(InputOutput, Base):
     model = Column(String(255))
     rule_id = Column(Integer, ForeignKey("wom_Rule.id"))
     is_input = Column(Boolean, ForeignKey("wom_TypeInputOrOutput.is_input"))
-    mtime_epoch_millis = Column(BigInteger, nullable=True)
     mtime_human = Column(DateTime, nullable=True)
+    mtime_epoch_millis = Column(BigInteger, nullable=True)
 
     # One table is in one rule
     rule = relationship("Rule", back_populates="tables", enable_typechecks=False)
