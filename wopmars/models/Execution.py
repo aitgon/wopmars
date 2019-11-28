@@ -21,7 +21,7 @@ class Execution(Base):
 
     """
 
-    __tablename__ = "wom_execution"
+    __tablename__ = "wom_{}".format(__qualname__)
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     started_epoch_millis = Column(DateTime, nullable=True)

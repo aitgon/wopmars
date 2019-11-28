@@ -22,13 +22,14 @@ class FileInputOutputInformation(InputOutput, Base):
     - mtime_epoch_millis: INTEGER - unix mtime_epoch_millis at which the table have been used
     - size: INTEGER - the size of the file
     """
-    __tablename__ = "wom_file"
+
+    __tablename__ = "wom_{}".format(__qualname__)
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255))
     path = Column(String(255))
-    rule_id = Column(Integer, ForeignKey("wom_rule.id"))
-    is_input = Column(Boolean, ForeignKey("wom_type_input_or_output.is_input"))
+    rule_id = Column(Integer, ForeignKey("wom_Rule.id"))
+    is_input = Column(Boolean, ForeignKey("wom_TypeInputOrOutput.is_input"))
     mtime_human = Column(DateTime, nullable=True)
     mtime_epoch_millis = Column(BigInteger, nullable=True)
     size = Column(BigInteger, nullable=True)

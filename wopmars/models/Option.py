@@ -26,12 +26,12 @@ class Option(Base):
     static_option_req = "required"
     static_option_default = "optional"
 
-    __tablename__ = "wom_option"
+    __tablename__ = "wom_{}".format(__qualname__)
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255))
     value = Column(String(255))
-    rule_id = Column(Integer, ForeignKey("wom_rule.id"))
+    rule_id = Column(Integer, ForeignKey("wom_Rule.id"))
 
     rule = relationship("Rule", back_populates="options", enable_typechecks=False)
 

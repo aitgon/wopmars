@@ -14,7 +14,8 @@ class TypeInputOrOutput(Base):
     - id: INTEGER - primary key -arbitrary ID
     - is_input: VARCHAR(255) - the is_input of the type ("input" or "output")
     """
-    __tablename__ = "wom_type_input_or_output"
+
+    __tablename__ = "wom_{}".format(__qualname__)
 
     is_input = Column(Boolean, primary_key=True, autoincrement=False)
 

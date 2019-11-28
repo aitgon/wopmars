@@ -32,12 +32,12 @@ class Rule(Base):
        - EXECUTION_ERROR: the tool_python_path has encountered an error during the execution
     """
 
-    __tablename__ = "wom_rule"
+    __tablename__ = "wom_{}".format(__qualname__)
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255))
     tool_python_path = Column(String(255))
-    execution_id = Column(Integer, ForeignKey("wom_execution.id"))
+    execution_id = Column(Integer, ForeignKey("wom_Execution.id"))
     started_at = Column(DateTime, nullable=True)
     finished_at = Column(DateTime, nullable=True)
     run_duration_secs = Column(Integer, nullable=True)
