@@ -26,13 +26,14 @@ class TableInputOutputInformation(InputOutput, Base):
     - is_input: INTEGER - foreign key to the associated type ID: :class:`wopmars.framework.database.tables.TypeInputOrOutput.TypeInputOrOutput`
     - mtime_epoch_millis: INTEGER - unix mtime_epoch_millis at which the table have been used
     """
-    __tablename__ = "wom_table_io_information"
+
+    __tablename__ = "wom_{}".format(__qualname__)
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     tablename = Column(String(255), ForeignKey("wom_TableModificationTime.table_name"))
     model = Column(String(255))
-    rule_id = Column(Integer, ForeignKey("wom_rule.id"))
-    is_input = Column(Boolean, ForeignKey("wom_type_input_or_output.is_input"))
+    rule_id = Column(Integer, ForeignKey("wom_Rule.id"))
+    is_input = Column(Boolean, ForeignKey("wom_TypeInputOrOutput.is_input"))
     mtime_epoch_millis = Column(BigInteger, nullable=True)
     mtime_human = Column(DateTime, nullable=True)
 
