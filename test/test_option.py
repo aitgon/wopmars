@@ -1,7 +1,7 @@
 import unittest
 from unittest import TestCase
 from wopmars.models.Option import Option
-from wopmars.utils.exceptions.WopMarsException import WopMarsException
+from wopmars.utils.WopMarsException import WopMarsException
 
 
 class TestOption(TestCase):

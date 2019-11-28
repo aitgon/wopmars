@@ -19,7 +19,7 @@ from wopmars.Reader import Reader
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder
 from wopmars.utils.SetUtils import SetUtils
-from wopmars.utils.exceptions.WopMarsException import WopMarsException
+from wopmars.utils.WopMarsException import WopMarsException
 
 
 class TestReader(TestCase):

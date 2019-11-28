@@ -1,6 +1,6 @@
 import os
 
-from sqlalchemy import Column, Integer, String, ForeignKey, Float, BigInteger, DateTime
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 
 from wopmars.Base import Base
@@ -8,8 +8,8 @@ from wopmars.SQLManager import SQLManager
 from wopmars.models.Option import Option
 from wopmars.utils.Logger import Logger
 from wopmars.utils.OptionManager import OptionManager
-from wopmars.utils.exceptions.WopMarsException import WopMarsException
-from wopmars.utils.various import get_mtime, get_current_time
+from wopmars.utils.WopMarsException import WopMarsException
+from wopmars.utils.various import get_mtime
 
 
 class Rule(Base):
@@ -127,7 +127,7 @@ class Rule(Base):
                                    )
 
         set_input_table = set([t_input for t_input in self.tables if t_input.type.is_input == 1])
-        set_input_table_names = set([t_input.tablename for t_input in set_input_table])
+        set_input_table_names = set([t_input.table_name for t_input in set_input_table])
 
         # check if the input table names for the Rule are coherent with the Rule specifications
         # this condition may be a duplicate... # todo to fix?
@@ -142,7 +142,7 @@ class Rule(Base):
                                    )
 
         for t_input in set_input_table:
-            s_tablename = t_input.tablename
+            s_tablename = t_input.table_name
             if s_tablename not in self.specify_input_table():
                 raise WopMarsException("The content of the definition file is not valid.",
                                        "The given input tablenames for " + 
@@ -155,7 +155,7 @@ class Rule(Base):
             s_tablename_of_model = t_input.get_table().__tablename__
             if s_tablename_of_model not in self.specify_input_table():
                 raise WopMarsException("The content of the definition file is not valid.",
-                                       "The given tablename of model for " +
+                                       "The given table_name of model for " +
                                        self.__class__.__name__ +
                                        " (rule " + str(self.name) + ")" +
                                        " is not correct. it should be in: " +
@@ -187,7 +187,7 @@ class Rule(Base):
                                    )
 
         set_output_table = set([t_output for t_output in self.tables if t_output.type.is_input == 0])
-        set_output_table_names = set([t_input.tablename for t_input in set_output_table])
+        set_output_table_names = set([t_input.table_name for t_input in set_output_table])
         if set_output_table_names != set(self.specify_output_table()):
             raise WopMarsException("The content of the definition file is not valid.",
                                    "The given output table variable names for " + self.__class__.__name__ +
@@ -198,7 +198,7 @@ class Rule(Base):
                                    "\n\t'{0}'".format("'\n\t'".join(set_output_table_names))
                                    )
         for t_output in set_output_table:
-            s_tablename = t_output.tablename
+            s_tablename = t_output.table_name
             if s_tablename not in self.specify_output_table():
                 raise WopMarsException("The content of the definition file is not valid.",
                                        "The given output tablenames for " + 
@@ -312,13 +312,13 @@ class Rule(Base):
             Logger.instance().debug("Input: " + str(i.name) + " is ready.")
 
         input_tables = [t for t in self.tables if t.type.is_input == 1]
-        Logger.instance().debug("Inputs tables of " + str(self.__class__.__name__) + ": " + str([i.tablename for i in input_tables]))
+        Logger.instance().debug("Inputs tables of " + str(self.__class__.__name__) + ": " + str([i.table_name for i in input_tables]))
         for i in input_tables:
             if not i.is_ready():
-                Logger.instance().debug("Input: " + str(i.tablename) + " is not ready.")
+                Logger.instance().debug("Input: " + str(i.table_name) + " is not ready.")
                 self.__state = Rule.NOT_READY
                 return False
-            Logger.instance().debug("Input: " + str(i.tablename) + " is ready.")
+            Logger.instance().debug("Input: " + str(i.table_name) + " is ready.")
 
         self.__state = Rule.READY
         return True
@@ -398,9 +398,9 @@ class Rule(Base):
         for t in [t for t in self.tables if t.type.is_input == 1]:
             is_same = False
             for t2 in [t2 for t2 in other.tables if t2.type.is_input == 1]:
-                # two tables are the same if they have the same model/tablename/modification mtime_epoch_millis
+                # two tables are the same if they have the same model/table_name/modification mtime_epoch_millis
                 if (t.model_py_path == t2.model_py_path and
-                    t.tablename == t2.tablename and
+                    t.table_name == t2.table_name and
                        t.used_at == t2.used_at):
                     is_same = True
                     break
@@ -450,7 +450,7 @@ class Rule(Base):
         for t in [t for t in self.tables if t.type.is_input == 0]:
             is_same = False
             for t2 in [t2 for t2 in other.tables if t2.type.is_input == 0]:
-                if t.model_py_path == t2.model_py_path and t.tablename == t2.tablename:
+                if t.model_py_path == t2.model_py_path and t.table_name == t2.table_name:
                     is_same = True
                     break
             if not is_same:
@@ -555,7 +555,7 @@ class Rule(Base):
         for t in [t for t in self.tables if t.type.is_input == is_input]:
             is_in = bool([t for t in other.tables if (t.model_py_path == t.model_py_path and
                                                       t.type.is_input == is_input and
-                                                      t.tablename == t.tablename)])
+                                                      t.table_name == t.table_name)])
             if not is_in:
                 return False
         return True
@@ -724,7 +724,7 @@ class Rule(Base):
         :return:
         """
         try:
-            return [t for t in self.tables if t.tablename == key and t.type.is_input == 1][0].get_table()
+            return [t for t in self.tables if t.table_name == key and t.type.is_input == 1][0].get_table()
         except IndexError:
             raise WopMarsException("Error during the execution of the Rule " + str(self.tool_python_path) +
                                    " (rule " + self.name + ").",
@@ -752,7 +752,7 @@ class Rule(Base):
         :return:
         """
         try:
-            return [t for t in self.tables if t.tablename == key and t.type.is_input == 0][0].get_table()
+            return [t for t in self.tables if t.table_name == key and t.type.is_input == 0][0].get_table()
         except IndexError:
             raise WopMarsException("Error during the execution of the Rule " + str(self.tool_python_path) +
                                    " (rule " + self.name + ").",

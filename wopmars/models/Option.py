@@ -1,6 +1,6 @@
 from wopmars.Base import Base
 
-from wopmars.utils.exceptions.WopMarsException import WopMarsException
+from wopmars.utils.WopMarsException import WopMarsException
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 

@@ -6,7 +6,7 @@ from wopmars.SQLManager import SQLManager
 from wopmars.WorkflowManager import WorkflowManager
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder
-from wopmars.utils.exceptions.WopMarsException import WopMarsException
+from wopmars.utils.WopMarsException import WopMarsException
 
 
 class TestWorkflowManager(TestCase):

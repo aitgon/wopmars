@@ -3,7 +3,7 @@ import shutil
 import errno
 
 from wopmars.utils.OptionManager import OptionManager
-from wopmars.utils.exceptions.WopMarsException import WopMarsException
+from wopmars.utils.WopMarsException import WopMarsException
 
 
 class ExampleBuilder:

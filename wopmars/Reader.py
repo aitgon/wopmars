@@ -5,7 +5,7 @@ import os
 import yaml
 from yaml.constructor import ConstructorError
 
-from wopmars.utils.various import get_mtime, get_current_time
+from wopmars.utils.various import get_current_time
 
 try:
     from yaml import CLoader as Loader
@@ -25,7 +25,7 @@ from wopmars.utils.DictUtils import DictUtils
 
 from wopmars.utils.Logger import Logger
 from wopmars.utils.OptionManager import OptionManager
-from wopmars.utils.exceptions.WopMarsException import WopMarsException
+from wopmars.utils.WopMarsException import WopMarsException
 
 
 class Reader:
@@ -313,7 +313,7 @@ class Reader:
                 elif type == "table":
                     for s_input in dict_inputs[type]:
                         obj_created = TableInputOutputInformation(model_py_path=dict_inputs[type][s_input],
-                                                                  tablename=s_input)
+                                                                  table_name=s_input)
                         dict_dict_dict_elm["dict_input"][type][s_input] = obj_created
                         Logger.instance().debug("Object input table: " + s_input + " created.")
             for type in dict_outputs:
@@ -327,7 +327,7 @@ class Reader:
                 elif type == "table":
                     for s_output in dict_outputs[type]:
                         obj_created = TableInputOutputInformation(model_py_path=dict_outputs[type][s_output],
-                                                                  tablename=s_output)
+                                                                  table_name=s_output)
                         dict_dict_dict_elm["dict_output"]["table"][s_output] = obj_created
                         Logger.instance().debug("Object output table: " + s_output + " created.")
             for s_param in dict_params:
@@ -427,7 +427,7 @@ class Reader:
                                             key_second_step][
                                             key_third_step][
                                             key]
-                                        obj_created = TableInputOutputInformation(model_py_path=modelname, tablename=key)
+                                        obj_created = TableInputOutputInformation(model_py_path=modelname, table_name=key)
 
                                         dict_dict_dict_elm["dict_" + key_second_step][
                                             key_third_step][

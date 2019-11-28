@@ -79,13 +79,13 @@ class TestToolWrapper(TestCase):
         f2 = FileInputOutputInformation(name="output1", path="file2.txt")
         f2.type_io = self.output_entry
 
-        t1 = TableInputOutputInformation(model_path="FooBase", table_name="FooBase")
+        t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t1.set_table(FooBase)
         t1.model_declarative_meta = FooBase
         t1.table = t1
         t1.type_io = self.input_entry
 
-        t2 = TableInputOutputInformation(model_path="FooBase", table_name="FooBase")
+        t2 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t2.set_table(FooBase)
         t2.model_declarative_meta = FooBase
         t2.table = t2
@@ -104,12 +104,12 @@ class TestToolWrapper(TestCase):
         f2 = FileInputOutputInformation(name="output1", path="file2.txt")
         f2.type_io = self.output_entry
 
-        t1 = TableInputOutputInformation(model_path="FooBase", table_name="FooBase")
+        t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t1.set_table(FooBase)
         t1.model_declarative_meta = FooBase
         t1.table = t1
 
-        t2 = TableInputOutputInformation(model_path="FooBase", table_name="FooBase")
+        t2 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t2.set_table(FooBase)
         t2.model_declarative_meta = FooBase
         t2.table = t2
@@ -130,12 +130,12 @@ class TestToolWrapper(TestCase):
         f3 = FileInputOutputInformation(name="input2", path="file2.txt")
         f3.type_io = self.input_entry
 
-        t1 = TableInputOutputInformation(model_path="FooBase", table_name="FooBase")
+        t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t1.set_table(FooBase)
         t1.model_declarative_meta = FooBase
         t1.table = t1
 
-        t2 = TableInputOutputInformation(model_path="FooBase", table_name="FooBase")
+        t2 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t2.set_table(FooBase)
         t2.model_declarative_meta = FooBase
         t2.table = t2
@@ -153,12 +153,12 @@ class TestToolWrapper(TestCase):
         f2 = FileInputOutputInformation(name="output1", path="file2.txt")
         f2.type_io = self.output_entry
 
-        t1 = TableInputOutputInformation(model_path="FooBase", table_name="FooBase")
+        t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t1.set_table(FooBase)
         t1.model_declarative_meta = FooBase
         t1.table = t1
 
-        t2 = TableInputOutputInformation(model_path="FooBase", table_name="FooBase")
+        t2 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t2.set_table(FooBase)
         t2.model_declarative_meta = FooBase
         t2.table = t2
@@ -176,12 +176,12 @@ class TestToolWrapper(TestCase):
         f2 = FileInputOutputInformation(name="output1", path="file2.txt")
         f2.type_io = self.output_entry
 
-        t1 = TableInputOutputInformation(model_path="FooBase", table_name="FooBase")
+        t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t1.set_table(FooBase)
         t1.model_declarative_meta = FooBase
         t1.table = t1
 
-        t2 = TableInputOutputInformation(model_path="FooBase", table_name="FooBase")
+        t2 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t2.set_table(FooBase)
         t2.model_declarative_meta = FooBase
         t2.table = t2
@@ -197,12 +197,12 @@ class TestToolWrapper(TestCase):
         f2 = FileInputOutputInformation(name="output1", path="file2.txt")
         f2.type_io = self.output_entry
 
-        t1 = TableInputOutputInformation(model_path="FooBase", table_name="FooBase")
+        t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t1.set_table(FooBase)
         t1.model_declarative_meta = FooBase
         t1.table = t1
 
-        t2 = TableInputOutputInformation(model_path="FooBase", table_name="FooBase")
+        t2 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t2.set_table(FooBase)
         t2.model_declarative_meta = FooBase
         t2.table = t2
@@ -282,7 +282,7 @@ class TestToolWrapper(TestCase):
         SQLManager.instance().session.add_all([FooBase(name="test_bak " + str(i)) for i in range(5)])
         SQLManager.instance().session.commit()
 
-        t1 = TableInputOutputInformation(model_path="FooBase", table_name="FooBase")
+        t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t1.set_table(FooBase)
         t1.model_declarative_meta = FooBase
         t1.type_io = self.input_entry
@@ -300,14 +300,14 @@ class TestToolWrapper(TestCase):
         mtime_epoch_millis, mtime_human = get_current_time()
         moment = mtime_epoch_millis
 
-        t1 = TableInputOutputInformation(model_path="FooBase", table_name="FooBase")
+        t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t1.set_table(FooBase)
         t1.model_declarative_meta = FooBase
         t1.type_io = self.input_entry
         modif = TableModificationTime(table_name="FooBase", mtime_epoch_millis=moment, mtime_human=mtime_human)
         modif.tables.append(t1)
 
-        t2 = TableInputOutputInformation(model_path="FooBase", table_name="FooBase")
+        t2 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t2.set_table(FooBase)
         t2.model_declarative_meta = FooBase
         t2.type_io = self.input_entry
@@ -328,7 +328,7 @@ class TestToolWrapper(TestCase):
         toolwrapper2.files.append(f2)
         toolwrapper2.tables.append(t2)
 
-        t3 = TableInputOutputInformation(model_path="FooBase", table_name="FooBase")
+        t3 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t3.set_table(FooBase)
         t3.model_declarative_meta = FooBase
         t3.type_io = self.input_entry
@@ -350,7 +350,7 @@ class TestToolWrapper(TestCase):
 
         mtime_epoch_millis, mtime_human = get_current_time()
         moment = mtime_epoch_millis
-        t1 = TableInputOutputInformation(model_path="FooBase", table_name="FooBase")
+        t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t1.set_table(FooBase)
         t1.model_declarative_meta = FooBase
         t1.type_io = self.input_entry
@@ -378,7 +378,7 @@ class TestToolWrapper(TestCase):
         f1.type_io = self.output_entry
         mtime_epoch_millis, mtime_human = get_current_time()
         moment = mtime_epoch_millis
-        t1 = TableInputOutputInformation(model_path="FooBase", table_name="FooBase")
+        t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t1.set_table(FooBase)
         t1.model_declarative_meta = FooBase
         t1.type_io = self.input_entry

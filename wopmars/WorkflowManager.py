@@ -1,7 +1,5 @@
 import sys
 
-import datetime
-
 from wopmars.SQLManager import SQLManager
 from wopmars.models.Execution import Execution
 from wopmars.models.TableInputOutputInformation import TableInputOutputInformation
@@ -15,8 +13,8 @@ from wopmars.utils.PathFinder import PathFinder
 from wopmars.utils.Logger import Logger
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.UniqueQueue import UniqueQueue
-from wopmars.utils.exceptions.WopMarsException import WopMarsException
-from wopmars.utils.various import get_mtime, get_current_time
+from wopmars.utils.WopMarsException import WopMarsException
+from wopmars.utils.various import get_current_time
 
 
 class WorkflowManager(RuleObserver):
