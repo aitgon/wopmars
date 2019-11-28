@@ -30,7 +30,7 @@ class TableInputOutputInformation(InputOutput, Base):
     __tablename__ = "wom_{}".format(__qualname__)
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    tablename = Column(String(255), ForeignKey("wom_TableModificationTime.table_name"))
+    table_name = Column(String(255), ForeignKey("wom_TableModificationTime.table_name"))
     model_py_path = Column(String(255))
     rule_id = Column(Integer, ForeignKey("wom_Rule.id"))
     is_input = Column(Boolean, ForeignKey("wom_TypeInputOrOutput.is_input"))
@@ -49,18 +49,18 @@ class TableInputOutputInformation(InputOutput, Base):
     # al the table names met since the begining of this instance of WopMaRS
     tablenames = set()
 
-    def __init__(self, model_py_path, tablename):
+    def __init__(self, model_py_path, table_name):
         """
         self.__table is initialized to None and will contain the model of this TableInputOutputInformation object.
 
         :param model_py_path: The path to the model
         :type model_py_path: str
-        :param tablename: The is_input of the table associated with the model
-        :type tablename: str
+        :param table_name: The is_input of the table associated with the model
+        :type table_name: str
         """
         # The file containing the table should be in PYTHONPATH
-        Base.__init__(self, model_py_path=model_py_path, tablename=tablename)
-        Logger.instance().debug(str(model_py_path) + " model_py_path loaded. Tablename: " + str(tablename))
+        Base.__init__(self, model_py_path=model_py_path, table_name=table_name)
+        Logger.instance().debug(str(model_py_path) + " model_py_path loaded. Tablename: " + str(table_name))
         self.__table = None
 
     @reconstructor
@@ -77,7 +77,7 @@ class TableInputOutputInformation(InputOutput, Base):
                     self.__table = eval("mod." + self.model_py_path.split(".")[-1])
             except AttributeError as e:
                 raise e
-        Logger.instance().debug(self.tablename + " table class reloaded. Model: " + self.model_py_path)
+        Logger.instance().debug(self.table_name + " table class reloaded. Model: " + self.model_py_path)
 
     def set_table(self, model):
         self.__table = model
@@ -140,7 +140,7 @@ class TableInputOutputInformation(InputOutput, Base):
         try:
             results = session.query(self.__table).first()
             if results is None:
-                Logger.instance().debug("The table " + self.tablename + " is empty.")
+                Logger.instance().debug("The table " + self.table_name + " is empty.")
                 return False
         except OperationalError as e:
             Logger.instance().debug("The table " + self.__table.__tablename__ + " doesn't exist.")
@@ -160,7 +160,7 @@ class TableInputOutputInformation(InputOutput, Base):
         :return: boolean: True if the table attributes are the same, False if not
         """
         session = SQLManager.instance().get_session()
-        if self.model_py_path != other.model_py_path or self.tablename != other.tablename:
+        if self.model_py_path != other.model_py_path or self.table_name != other.table_name:
             return False
         try:
             self_results = set(session.query(self.__table).all())
@@ -176,7 +176,7 @@ class TableInputOutputInformation(InputOutput, Base):
         return id(self)
 
     def __repr__(self):
-        return '<Table ({}):\"{}; used at:{}>"'.format(self.type.is_input, str(self.tablename), str(self.mtime_epoch_millis))
+        return '<Table ({}):\"{}; used at:{}>"'.format(self.type.is_input, str(self.table_name), str(self.mtime_epoch_millis))
 
     def __str__(self):
-        return "<Table: " + self.tablename + "; model: " + self.model_py_path + ">"
+        return "<Table: " + self.table_name + "; model: " + self.model_py_path + ">"

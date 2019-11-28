@@ -13,7 +13,7 @@ from wopmars.utils.Logger import Logger
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.RWLock import RWLock
 from wopmars.utils.Singleton import SingletonMixin
-from wopmars.utils.exceptions.WopMarsException import WopMarsException
+from wopmars.utils.WopMarsException import WopMarsException
 
 
 class SQLManager(SingletonMixin):

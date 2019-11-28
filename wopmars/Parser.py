@@ -11,7 +11,7 @@ from wopmars.DAG import DAG
 from wopmars.Reader import Reader
 from wopmars.utils.Logger import Logger
 from wopmars.utils.OptionManager import OptionManager
-from wopmars.utils.exceptions.WopMarsException import WopMarsException
+from wopmars.utils.WopMarsException import WopMarsException
 
 from networkx.algorithms.dag import is_directed_acyclic_graph
 

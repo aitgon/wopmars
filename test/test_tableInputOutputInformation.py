@@ -25,11 +25,11 @@ class TestIODbPut(TestCase):
             self.__local_session.close()
             raise e
 
-        self.__io_base_existing = TableInputOutputInformation(model_path="FooBase", tablename="FooBase")
+        self.__io_base_existing = TableInputOutputInformation(model_path="FooBase", table_name="FooBase")
         self.__io_base_existing.set_table(FooBase)
-        self.__io_base_existing2 = TableInputOutputInformation(model_path="FooBase", tablename="FooBase")
+        self.__io_base_existing2 = TableInputOutputInformation(model_path="FooBase", table_name="FooBase")
         self.__io_base_existing2.set_table(FooBase)
-        self.__io_base_existing3 = TableInputOutputInformation(model_path="FooBase2", tablename="FooBase2")
+        self.__io_base_existing3 = TableInputOutputInformation(model_path="FooBase2", table_name="FooBase2")
         self.__io_base_existing3.set_table(FooBase2)
 
     def tearDown(self):
