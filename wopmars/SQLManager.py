@@ -32,7 +32,7 @@ class SQLManager(SingletonMixin):
     and all ("create_all" and "drop_all").
     """
     wom_table_names = [
-        "wom_type",
+        "wom_type_input_or_output",
         "wom_modification_table",
         "wom_execution",
         "wom_rule",
@@ -84,6 +84,32 @@ class SQLManager(SingletonMixin):
         self.__Session = scoped_session(sessionmaker(bind=self.__engine, autoflush=True, autocommit=False))
         # The lock
         self.__lock = RWLock()
+
+    def clear_wopmars_history(self):
+        """
+        Empty all wom tables except wom_type_input_or_output
+
+        :param list_str_table: [String] the name of the models.
+        """
+        from wopmars.models.Option import Option
+        from wopmars.models.TableInputOutputInformation import TableInputOutputInformation
+        from wopmars.models.FileInputOutputInformation import FileInputOutputInformation
+        from wopmars.models.TableModificationTime import TableModificationTime
+        from wopmars.models.Rule import Rule
+        from wopmars.models.Execution import Execution
+
+        if self.engine.has_table(Option.__tablename__):
+            self.engine.execute(Option.__table__.delete())
+        if self.engine.has_table(TableInputOutputInformation.__tablename__):
+            self.engine.execute(TableInputOutputInformation.__table__.delete())
+        if self.engine.has_table(FileInputOutputInformation.__tablename__):
+            self.engine.execute(FileInputOutputInformation.__table__.delete())
+        if self.engine.has_table(TableModificationTime.__tablename__):
+            self.engine.execute(TableModificationTime.__table__.delete())
+        if self.engine.has_table(Rule.__tablename__):
+            self.engine.execute(Rule.__table__.delete())
+        if self.engine.has_table(Execution.__tablename__):
+            self.engine.execute(Execution.__table__.delete())
 
     def get_engine(self):
         """

@@ -6,7 +6,7 @@ from wopmars.Base import Base
 
 class TypeInputOrOutput(Base):
     """
-    This class is the model of the table ``wom_type``. It stores the two kind of entry named "input" and "output" which
+    This class is the model of the table ``wom_type_input_or_output``. It stores the two kind of entry named "input" and "output" which
     are associated with an ID.
 
     Fields:
@@ -24,4 +24,4 @@ class TypeInputOrOutput(Base):
     files = relationship("FileInputOutputInformation", back_populates="type")
 
     def __repr__(self):
-        return "<TypeInputOrOutput: {}>".format(self.is_input)
+        return "<class TypeInputOrOutput: is_input {}>".format(self.is_input)

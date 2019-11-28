@@ -74,7 +74,7 @@ Now you can show the database tables using
 
     $ sqlite3 output/db.sqlite '.table'
     Phenotype               wom_file                wom_table             
-    SNP                     wom_modification_table  wom_type              
+    SNP                     wom_modification_table  wom_type_input_or_output              
     SNP2Phenotype           wom_option            
     wom_execution           wom_rule
 

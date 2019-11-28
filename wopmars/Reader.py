@@ -485,7 +485,7 @@ class Reader:
             raise WopMarsException("Error while parsing the configuration file. The database has not been setUp Correctly.",
                                    str(e))
 
-    def create_toolwrapper_entry(self, str_rule_name, str_wrapper_name, dict_dict_dict_elm, input_entry, output_entry):
+    def create_toolwrapper_entry(self, rule_name, tool_python_path, dict_dict_dict_elm, input_entry, output_entry):
         """
         Actual creating of the Toolwrapper object.
 
@@ -494,10 +494,10 @@ class Reader:
         If the scoped_session has current modification, they probably will be commited during this method:
         models are created and this can only be done with clean session.
 
-        :param str_rule_name: Contains the is_input of the rule in which the toolwrapper will be used.
-        :type str_rule_name: str
-        :param str_wrapper_name: Contains the is_input of the toolwrapper. It will be used for importing the correct module and then for creating the class
-        :type str_wrapper_name: str
+        :param rule_name: Contains the is_input of the rule in which the toolwrapper will be used.
+        :type rule_name: str
+        :param tool_python_path: Contains the is_input of the toolwrapper. It will be used for importing the correct module and then for creating the class
+        :type tool_python_path: str
         :param dict_dict_dict_elm: "input"s "output"s and "params" and will be used to make relations between options / input / output and the toolwrapper.
         :type dict_dict_dict_elm: dict(dict(dict()))
         :param input_entry: input entry
@@ -510,21 +510,21 @@ class Reader:
         session = SQLManager.instance().get_session()
         # Importing the module in the mod variable
         try:
-            mod = importlib.import_module(str_wrapper_name)
+            mod = importlib.import_module(tool_python_path)
             # Building the class object
-            toolwrapper_class = eval("mod." + str_wrapper_name.split('.')[-1])
+            toolwrapper_class = eval("mod." + tool_python_path.split('.')[-1])
         except AttributeError:
             raise WopMarsException("Error while parsing the configuration file: \n\t",
-                                   "The class " + str_wrapper_name + " doesn't exist.")
+                                   "The class " + tool_python_path + " doesn't exist.")
         except ImportError as IE:
-            if str_wrapper_name in str(IE):
+            if tool_python_path in str(IE):
                 raise WopMarsException("Error while parsing the configuration file:",
-                                       str_wrapper_name + " module is not in the pythonpath. ")
+                                       tool_python_path + " module is not in the pythonpath. ")
             else:
                 raise WopMarsException("Error while parsing the configuration file:",
-                                       str_wrapper_name + " module contains an ImportError: " + str(IE))
+                                       tool_python_path + " module contains an ImportError: " + str(IE))
         # Initialize the instance of Rule
-        toolwrapper_wrapper = toolwrapper_class(rule_name=str_rule_name)
+        toolwrapper_wrapper = toolwrapper_class(rule_name=rule_name)
 
         # associating Rule instances with their files / models
         for elm in dict_dict_dict_elm["dict_input"]:
