@@ -16,8 +16,7 @@ class TypeInputOrOutput(Base):
     """
     __tablename__ = "wom_type_input_or_output"
 
-    id = Column(Integer, primary_key=True, autoincrement=False)
-    is_input = Column(Boolean, unique=True)
+    is_input = Column(Boolean, primary_key=True, autoincrement=False)
 
     # One type is in Many table
     tables = relationship("TableInputOutputInformation", back_populates="type")

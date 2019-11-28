@@ -4,7 +4,7 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy.sql.ddl import DDL
 
 from wopmars.Base import Base
-from sqlalchemy import Column, Integer, String, ForeignKey, BigInteger
+from sqlalchemy import Column, Integer, String, ForeignKey, BigInteger, Boolean
 from sqlalchemy.orm import relationship, reconstructor
 
 from wopmars.SQLManager import SQLManager
@@ -24,7 +24,7 @@ class TableInputOutputInformation(InputOutput, Base):
     - tablename: VARCHAR(255) - foreign key to the associated table: :class:`wopmars.framework.database.tables.TableModificationTime.TableModificationTime` - the is_input of the referenced table
     - model: VARCHAR(255) - the path to the model (in python notation)
     - rule_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.framework.database.tables.Rule.Rule`
-    - type_id: INTEGER - foreign key to the associated type ID: :class:`wopmars.framework.database.tables.TypeInputOrOutput.TypeInputOrOutput`
+    - is_input: INTEGER - foreign key to the associated type ID: :class:`wopmars.framework.database.tables.TypeInputOrOutput.TypeInputOrOutput`
     - used_at: INTEGER - unix time at which the table have been used
     """
     __tablename__ = "wom_table"
@@ -33,7 +33,7 @@ class TableInputOutputInformation(InputOutput, Base):
     tablename = Column(String(255), ForeignKey("wom_modification_table.table_name"))
     model = Column(String(255))
     rule_id = Column(Integer, ForeignKey("wom_rule.id"))
-    type_id = Column(Integer, ForeignKey("wom_type_input_or_output.id"))
+    is_input = Column(Boolean, ForeignKey("wom_type_input_or_output.is_input"))
     used_at = Column(BigInteger, nullable=True)
 
     # One table is in one rule
@@ -212,7 +212,7 @@ class TableInputOutputInformation(InputOutput, Base):
         return id(self)
 
     def __repr__(self):
-        return "<Table (" + self.type.name + "  ):\"" + str(self.tablename) + "\"; used_at:" + str(self.used_at) + ">"
+        return '<Table ({}):\"{}; used at:{}>"'.format(self.type.is_input, str(self.tablename), str(self.used_at))
 
     def __str__(self):
         return "<Table: " + self.tablename + "; model: " + self.model + ">"

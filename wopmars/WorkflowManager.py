@@ -84,8 +84,8 @@ class WorkflowManager(RuleObserver):
             SQLManager.instance().drop_table_content_list(SQLManager.wom_table_names)
 
         # The following lines allow to create types 'input' and 'output' in the db if they don't exist.
-        self.__session.get_or_create(TypeInputOrOutput, defaults={"id": 1}, is_input=True)
-        self.__session.get_or_create(TypeInputOrOutput, defaults={"id": 0}, is_input=False)
+        self.__session.get_or_create(TypeInputOrOutput, defaults={"is_input": True}, is_input=True)
+        self.__session.get_or_create(TypeInputOrOutput, defaults={"is_input": False}, is_input=False)
         self.__session.commit()
         # Get the DAG representing the whole workflow
         self.__dag_tools = self.__parser.parse()
@@ -106,8 +106,8 @@ class WorkflowManager(RuleObserver):
 
         Logger.instance().info("Forced execution implies overwrite existing output. Erasing files and models.")
         for tw in list_tw:
-           [set_files.add(f.path) for f in tw.files if f.type.name == 0]
-           [set_tables.add(t.tablename) for t in tw.tables if t.type.name == 0]
+           [set_files.add(f.path) for f in tw.files if f.type.is_input == 0]
+           [set_tables.add(t.tablename) for t in tw.tables if t.type.is_input == 0]
 
         s = ""
         for f_path in set_files:
