@@ -28,7 +28,7 @@ class FileInputOutputInformation(InputOutput, Base):
     name = Column(String(255))
     path = Column(String(255))
     rule_id = Column(Integer, ForeignKey("wom_rule.id"))
-    type_id = Column(Integer, ForeignKey("wom_type.id"))
+    type_id = Column(Integer, ForeignKey("wom_type_input_or_output.id"))
     used_at = Column(BigInteger, nullable=True)
     size = Column(BigInteger, nullable=True)
 
