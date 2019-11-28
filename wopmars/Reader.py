@@ -554,7 +554,8 @@ class Reader:
                     time_unix_ms, time_human = get_current_time()
                     modification_table_entry, created = session.get_or_create(TableModificationTime,
                                                                               defaults={
-                                                                                  "mtime_epoch_millis": time_unix_ms},
+                                                                                  "mtime_epoch_millis": time_unix_ms,
+                                                                                  "mtime_human": time_human},
                                                                               table_name=input_t)
                     iodbput_entry.modification = modification_table_entry
                     iodbput_entry.type = input_entry
@@ -584,7 +585,8 @@ class Reader:
                     time_unix_ms, time_human = get_current_time()
                     modification_table_entry, created = session.get_or_create(TableModificationTime,
                                                                               defaults={
-                                                                                  "mtime_epoch_millis": time_unix_ms},
+                                                                                  "mtime_epoch_millis": time_unix_ms,
+                                                                                  "mtime_human": time_human},
                                                                               table_name=output_t)
                     iodbput_entry.modification = modification_table_entry
                     iodbput_entry.type = output_entry
