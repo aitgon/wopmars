@@ -1,7 +1,6 @@
 import importlib
 
 from sqlalchemy.exc import OperationalError
-from sqlalchemy.sql.ddl import DDL
 
 from wopmars.Base import Base
 from sqlalchemy import Column, Integer, String, ForeignKey, BigInteger, Boolean, DateTime
