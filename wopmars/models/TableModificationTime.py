@@ -13,7 +13,7 @@ class TableModificationTime(Base):
     - mtime_epoch_millis: INTEGER - unix mtime_epoch_millis [ms] of last modification of the table
     """
 
-    __tablename__ = "wom_modification_table"
+    __tablename__ = "wom_{}".format(__qualname__)
 
     table_name = Column(String(255), primary_key=True)
     mtime_human = Column(DateTime, nullable=False)
@@ -24,22 +24,22 @@ class TableModificationTime(Base):
     def __repr__(self):
         return "<Modification on " + str(self.table_name) + ": " + str(self.mtime_epoch_millis) + ">"
 
-    @staticmethod
-    def create_triggers():
+    @classmethod
+    def create_triggers(cls):
         """
         Create an INSERT, UPDATE, DELETE trigger on the models created by the user in order to store the modifications mtime_epoch_millis.
         """
-        stmt = ["INSERT", "UPDATE", "DELETE"]
-        for table_name in Base.metadata.tables:
-            if table_name[:4] != "wom_":
-                for s in stmt:
-                    data={"statement": str(s), "table_name": str(table_name)}
+        stmt_list = ["INSERT", "UPDATE", "DELETE"]
+        for user_table_name in Base.metadata.tables:
+            if user_table_name[:4] != "wom_":
+                for statement in stmt_list:
+                    data={"statement": str(statement), "user_table_name": user_table_name, "wom_table_name": "wom_{}".format(cls.__qualname__)}
                     if SQLManager.instance().__dict__['d_database_config']['db_connection'] == 'sqlite':
-                        sql_trigger = "CREATE TRIGGER IF NOT EXISTS {table_name}_{statement} " \
-                              "AFTER {statement} ON {table_name} BEGIN UPDATE wom_modification_table " \
+                        sql_trigger = "CREATE TRIGGER IF NOT EXISTS {user_table_name}_{statement} " \
+                              "AFTER {statement} ON {user_table_name} BEGIN UPDATE {wom_table_name} " \
                               "SET mtime_epoch_millis = CAST((julianday('now') - 2440587.5)*86400000 AS INTEGER), " \
                               "mtime_human = datetime('now', 'localtime') " \
-                                      "WHERE table_name = '{table_name}'; END;".format(**data)
+                                      "WHERE table_name = '{user_table_name}'; END;".format(**data)
                     # elif SQLManager.instance().__dict__['d_database_config']['db_connection'] == 'mysql':
                     #     sql_trigger = "CREATE TRIGGER IF NOT EXISTS {table_name}_{statement} AFTER {statement} " \
                     #       "ON {table_name} for each row UPDATE wom_table_modification_time SET " \
@@ -60,4 +60,4 @@ class TableModificationTime(Base):
                     #         FOR EACH ROW EXECUTE PROCEDURE {table_name}_{statement}();
                     #         """.format(**data)
                     obj_ddl = DDL(sql_trigger)
-                    SQLManager.instance().create_trigger(Base.metadata.tables[table_name], obj_ddl)
+                    SQLManager.instance().create_trigger(Base.metadata.tables[user_table_name], obj_ddl)
