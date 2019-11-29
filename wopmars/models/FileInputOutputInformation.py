@@ -28,7 +28,7 @@ class FileInputOutputInformation(InputOutput, Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255))
     path = Column(String(255))
-    rule_id = Column(Integer, ForeignKey("wom_ToolWrapper.id"))
+    toolwrapper_id = Column(Integer, ForeignKey("wom_ToolWrapper.id"))
     is_input = Column(Boolean, ForeignKey("wom_TypeInputOrOutput.is_input"))
     mtime_human = Column(DateTime, nullable=True)
     mtime_epoch_millis = Column(BigInteger, nullable=True)
