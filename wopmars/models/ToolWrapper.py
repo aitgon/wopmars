@@ -48,7 +48,7 @@ class ToolWrapper(Base):
     # One rule has many files
     one_x_to_many_files = relationship("FileInputOutputInformation", back_populates="one_toolwrapper_to_many_x")
     # One option is used by many toolwrappers
-    options = relationship("Option", back_populates="one_toolwrapper_to_many_x")
+    options = relationship("Option", back_populates="one_option_to_one_rule")
     # One rule has one execution
     execution = relationship("Execution", back_populates="rules")
 
