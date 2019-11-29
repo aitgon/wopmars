@@ -34,8 +34,8 @@ class FileInputOutputInformation(InputOutput, Base):
     mtime_epoch_millis = Column(BigInteger, nullable=True)
     size = Column(BigInteger, nullable=True)
 
-    # One file is in Many rule_file and is in Many rule
-    rule = relationship("ToolWrapper", back_populates="files", enable_typechecks=False)
+    # One file is in one rule
+    one_toolwrapper_to_many_x = relationship("ToolWrapper", back_populates="files", enable_typechecks=False)
     # One file has One type
     type = relationship("TypeInputOrOutput", back_populates="files")
 
