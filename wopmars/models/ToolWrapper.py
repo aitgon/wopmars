@@ -50,7 +50,8 @@ class ToolWrapper(Base):
     # One option is used by many toolwrappers
     one_toolwrapper_to_many_options = relationship("Option", back_populates="one_option_to_one_rule")
     # One rule has one execution
-    execution = relationship("Execution", back_populates="rules")
+    # execution = relationship("Execution", back_populates="rules")
+    relation_toolwrapper_to_execution = relationship("Execution", back_populates="relation_execution_to_toolwrapper")
 
     # parentrules = relationship etc...
     __mapper_args__ = {

@@ -30,5 +30,6 @@ class Execution(Base):
     status = Column(String(255), nullable=True)
 
     # One execution has many rules
-    rules = relationship("ToolWrapper", back_populates="execution")
+    # rules = relationship("ToolWrapper", back_populates="execution")
+    relation_execution_to_toolwrapper = relationship("ToolWrapper", back_populates="relation_toolwrapper_to_execution")
 
