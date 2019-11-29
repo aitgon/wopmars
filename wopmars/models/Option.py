@@ -13,7 +13,7 @@ class Option(Base):
     - id: INTEGER - primary key - auto increment
     - is_input: VARCHAR(255) - the is_input of the referenced option
     - value: VRACHAR(255) - the value of the option
-    - rule_id: INTEGER - the ID of the associated rule
+    - toolwrapper_id: INTEGER - the ID of the associated rule
     """
 
     # static value necessary to perform tests on Options
