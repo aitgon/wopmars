@@ -19,7 +19,7 @@ class TableModificationTime(Base):
     mtime_human = Column(DateTime, nullable=False)
     mtime_epoch_millis = Column(BigInteger, nullable=False)
 
-    tables = relationship("TableInputOutputInformation", back_populates="modification")
+    one_x_to_many_tables = relationship("TableInputOutputInformation", back_populates="modification")
 
     def __repr__(self):
         return "<Modification on " + str(self.table_name) + ": " + str(self.mtime_epoch_millis) + ">"
@@ -46,7 +46,7 @@ class TableModificationTime(Base):
                     #                   "mtime_epoch_millis = ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) " \
                     #       "WHERE table_name = '{table_name}';".format(**data)
                     #     obj_ddl = DDL(sql_trigger)
-                    #     SQLManager.instance().create_trigger(Base.metadata.tables[table_name], obj_ddl)
+                    #     SQLManager.instance().create_trigger(Base.metadata.one_x_to_many_tables[table_name], obj_ddl)
                     # elif SQLManager.instance().__dict__['d_database_config']['db_connection'] == 'postgresql':
                     #     sql_trigger = """
                     #         CREATE OR REPLACE FUNCTION {table_name}_{statement}() RETURNS TRIGGER AS ${table_name}_{statement}$
