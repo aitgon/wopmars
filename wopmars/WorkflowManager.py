@@ -6,7 +6,7 @@ from wopmars.models.TableInputOutputInformation import TableInputOutputInformati
 from wopmars.models.ToolWrapper import ToolWrapper
 from wopmars.models.TypeInputOrOutput import TypeInputOrOutput
 from wopmars.DAG import DAG
-from wopmars.RuleThread import RuleThread
+from wopmars.ToolWrapperThread import ToolWrapperThread
 from wopmars.RuleObserver import RuleObserver
 from wopmars.Parser import Parser
 from wopmars.utils.PathFinder import PathFinder
@@ -28,13 +28,13 @@ class WorkflowManager(RuleObserver):
     2- The method :meth:`~.wopmars.framework.management.WorkflowManager.WorkflowManager.execute_from` is call without argument, meaning that the execution begin at the top of the dag
     (the root of the tree).
     3- The nodes are gathered thanks to the :meth:`~.wopmars.framework.management.DAG.DAG.successors` method of the :class:`wopmars.framework.management.DAG.DAG`
-    4- Each node is wrapped inside a :class:`~.wopmars.framework.management.RuleThread.RuleThread` object which will be added to the queue.
-    5- Each RuleThread is executed (ordered) as follows:
+    4- Each node is wrapped inside a :class:`~.wopmars.framework.management.ToolWrapperThread.ToolWrapperThread` object which will be added to the queue.
+    5- Each ToolWrapperThread is executed (ordered) as follows:
 
       a- If the inputs are ready: they are executed.
       b- If not, they are put in the buffer.
 
-    6- When the :class:`~.wopmars.framework.management.RuleThread.RuleThread` has finished its execution, a notification of success is sent.
+    6- When the :class:`~.wopmars.framework.management.ToolWrapperThread.ToolWrapperThread` has finished its execution, a notification of success is sent.
     7- The method :meth:`~wopmars.framework.management.WorkflowManager.WorkflowManager.execute_from` is called again with the succeeded ToolWrapper as argument.
     8- Loop to the 3rd step
     9- When the DAG is finished, the software exits
@@ -192,8 +192,8 @@ class WorkflowManager(RuleObserver):
         for tw in list_tw:
             # every rule should be executed once and only once
             if tw not in self.__already_runned:
-                # RuleThread object is a thread ready to start
-                self.__queue_exec.put(RuleThread(tw))
+                # ToolWrapperThread object is a thread ready to start
+                self.__queue_exec.put(ToolWrapperThread(tw))
             else:
                 Logger.instance().debug("ToolWrapper: " + tw.name +
                                         " -> " + tw.tool_python_path +
@@ -227,61 +227,61 @@ class WorkflowManager(RuleObserver):
         #  - There were remaing tools in the queue but they weren't ready, so they are tested again
         while not self.__queue_exec.empty():
             Logger.instance().debug("Queue size: " + str(self.__queue_exec.qsize()))
-            Logger.instance().debug("Queue content: " + str(["rule: " + tt.get_toolwrapper().name + "->" +
+            Logger.instance().debug("Queue content: " + str(["rule: " + tt.get_toolwrapper().rule_name + "->" +
                                                              tt.get_toolwrapper().tool_python_path for tt in self.__queue_exec.get_queue_tuple()]))
             # get the first element of the queue to execute
-            rule_thread = self.__queue_exec.get()
-            rule = rule_thread.get_toolwrapper()
-            Logger.instance().debug("Current rule: " + rule.name + "->" + rule.tool_python_path)
+            tool_wrapper_thread = self.__queue_exec.get()
+            tool_wrapper = tool_wrapper_thread.get_toolwrapper()
+            Logger.instance().debug("Current rule: " + tool_wrapper.rule_name + "->" + tool_wrapper.tool_python_path)
             # check if the predecessors of a rule have been already executed: a rule shouldn't be executed if
             # its predecessors have not been executed yet
-            if not self.all_predecessors_have_run(rule):
-                Logger.instance().debug("Predecessors of rule: " + rule.name + " have not been executed yet.")
+            if not self.all_predecessors_have_run(tool_wrapper):
+                Logger.instance().debug("Predecessors of rule: " + tool_wrapper.rule_name + " have not been executed yet.")
             # for running, either the inputs have to be ready or the dry-run mode is enabled
-            elif rule.are_inputs_ready() or OptionManager.instance()["--dry-run"]:
+            elif tool_wrapper.are_inputs_ready() or OptionManager.instance()["--dry-run"]:
                 # the state of inputs (table and file) are set in the db here.
-                rule.set_args_time_and_size(1)
-                Logger.instance().debug("ToolWrapper ready: " + rule.tool_python_path)
+                tool_wrapper.set_args_time_and_size(1)
+                Logger.instance().debug("ToolWrapper ready: " + tool_wrapper.tool_python_path)
                 dry = False
                 # if forceall option, then the tool is reexecuted anyway
                 # check if the actual execution of the tool_python_path is necessary
                 # every predecessors of the tool_python_path have to be executed (or simulated)
                 if not OptionManager.instance()["--forceall"] and \
-                        self.is_this_tool_already_done(rule) and \
-                        not bool([node for node in self.__dag_to_exec.predecessors(rule) if node.status != "EXECUTED" and
+                        self.is_this_tool_already_done(tool_wrapper) and \
+                        not bool([node for node in self.__dag_to_exec.predecessors(tool_wrapper) if node.status != "EXECUTED" and
                                         node.status != "ALREADY_EXECUTED"]):
-                    Logger.instance().info("ToolWrapper: " + rule.name + " -> " + rule.tool_python_path +
+                    Logger.instance().info("ToolWrapper: " + tool_wrapper.rule_name + " -> " + tool_wrapper.tool_python_path +
                                            " seemed to have already" +
                                            " been runned with same" +
                                            " parameters.")
                     dry = True
 
                 # todo twthread verification des ressources
-                rule_thread.subscribe(self)
+                tool_wrapper_thread.subscribe(self)
                 self.__count_exec += 1
                 # todo twthread methode start
-                rule_thread.set_dry(dry)
+                tool_wrapper_thread.set_dry(dry)
                 try:
                     # be carefull here: the execution of the toolthreads is recursive meaning that calls to function may
                     # be stacked (run -> notify success -> run(next tool) -> notify success(next tool) -> etc....
                     # todo twthread methode start
-                    rule_thread.run()
+                    tool_wrapper_thread.run()
                 except Exception as e:
                     # as mentionned above, there may be recursive calls to this function, so every exception can
                     # pass here multiple times: this attribute is used for recognizing exception that have already been
                     # caught
                     if not hasattr(e, "teb_already_seen"):
                         setattr(e, "teb_already_seen", True)
-                        rule.set_execution_infos(status="EXECUTION_ERROR")
-                        self.__session.add(rule)
+                        tool_wrapper.set_execution_infos(status="EXECUTION_ERROR")
+                        self.__session.add(tool_wrapper)
                         self.__session.commit()
                     raise e
             else:
-                Logger.instance().debug("ToolWrapper not ready: rule: " + rule.name + " -> " + str(rule.tool_python_path))
+                Logger.instance().debug("ToolWrapper not ready: rule: " + tool_wrapper.rule_name + " -> " + str(tool_wrapper.tool_python_path))
                 # The buffer contains the ToolWrappers that have inputs which are not ready yet.
-                self.__list_queue_buffer.append(rule_thread)
+                self.__list_queue_buffer.append(tool_wrapper_thread)
 
-        Logger.instance().debug("Buffer: " + str(["rule: " + t.get_toolwrapper().name + "->" +
+        Logger.instance().debug("Buffer: " + str(["rule: " + t.get_toolwrapper().rule_name + "->" +
                                                   t.get_toolwrapper().tool_python_path for t in self.__list_queue_buffer]))
         Logger.instance().debug("Running rules: " + str(self.__count_exec))
 
@@ -307,7 +307,7 @@ class WorkflowManager(RuleObserver):
                     input_files_not_ready = tw_list[0].get_input_files_not_ready()
                     self.set_finishing_informations(finish_epoch_millis_datetime, "ERROR")
                     raise WopMarsException("The workflow has failed.",
-                                           "The inputs '{}' have failed for this tool '{}'".format(input_files_not_ready[0], tw_list[0].name))
+                                           "The inputs '{}' have failed for this tool '{}'".format(input_files_not_ready[0], tw_list[0].rule_name))
                                            # "The inputs are not ready for thisto: " +
                                            # ", \n".join([t.get_toolwrapper().tool_python_path +
                                            #            " -> rule: " +
@@ -393,7 +393,7 @@ class WorkflowManager(RuleObserver):
         Handle thread_toolwrapper success by continuing the dag.
 
         :param thread_toolwrapper: ToolWrapper thread that just succeed
-        :type thread_toolwrapper: :class:`~.wopmars.management.RuleThread.RuleThread`
+        :type thread_toolwrapper: :class:`~.wopmars.management.ToolWrapperThread.ToolWrapperThread`
         """
         self.__session.add(thread_toolwrapper.get_toolwrapper())
         self.__session.commit()
@@ -402,7 +402,7 @@ class WorkflowManager(RuleObserver):
         # if not OptionManager.instance()["--dry-run"]:
         #     thread_toolwrapper.get_toolwrapper().set_args_time_and_size("output", dry_status)
         if dry_status is False and not OptionManager.instance()["--dry-run"]:
-            Logger.instance().info("ToolWrapper " + str(thread_toolwrapper.get_toolwrapper().name) + " -> " + str(thread_toolwrapper.get_toolwrapper().__class__.__name__) + " has succeed.")
+            Logger.instance().info("ToolWrapper " + str(thread_toolwrapper.get_toolwrapper().rule_name) + " -> " + str(thread_toolwrapper.get_toolwrapper().__class__.__name__) + " has succeed.")
         # Continue the dag execution from the tool_python_path that just finished.
         self.__already_runned.add(thread_toolwrapper.get_toolwrapper())
         self.__count_exec -= 1

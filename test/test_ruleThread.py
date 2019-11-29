@@ -12,7 +12,7 @@ from wopmars.models.FileInputOutputInformation import FileInputOutputInformation
 from wopmars.models.TableModificationTime import TableModificationTime
 from wopmars.models.Option import Option
 from wopmars.models.TypeInputOrOutput import TypeInputOrOutput
-from wopmars.RuleThread import RuleThread
+from wopmars.ToolWrapperThread import ToolWrapperThread
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder
 from wopmars.utils.various import get_current_time
@@ -85,9 +85,9 @@ class TestToolThread(TestCase):
         tw3.files.extend([f13, f23])
         tw3.tables.append(t13)
 
-        tt1 = RuleThread(tw1)
-        tt2 = RuleThread(tw2)
-        tt3 = RuleThread(tw3)
+        tt1 = ToolWrapperThread(tw1)
+        tt2 = ToolWrapperThread(tw2)
+        tt3 = ToolWrapperThread(tw3)
 
         tt1.start()
         tt2.start()
@@ -158,9 +158,9 @@ class TestToolThread(TestCase):
             tw13.tables.append(t13)
             tw13.options.append(o13)
 
-            tt1 = RuleThread(tw1)
-            tt2 = RuleThread(tw12)
-            tt3 = RuleThread(tw13)
+            tt1 = ToolWrapperThread(tw1)
+            tt2 = ToolWrapperThread(tw12)
+            tt3 = ToolWrapperThread(tw13)
 
             t21 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
             t21.set_table(FooBase)
@@ -183,9 +183,9 @@ class TestToolThread(TestCase):
             tw23 = tw_query(name="rule1")
             tw23.tables.append(t23)
 
-            tt4 = RuleThread(tw21)
-            tt5 = RuleThread(tw22)
-            tt6 = RuleThread(tw23)
+            tt4 = ToolWrapperThread(tw21)
+            tt5 = ToolWrapperThread(tw22)
+            tt6 = ToolWrapperThread(tw23)
 
             tt4.start()
 

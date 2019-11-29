@@ -42,7 +42,7 @@ class TestRule(TestCase):
         f2 = FileInputOutputInformation(name="output1", path="file2.txt")
         f2.type_io = self.output_entry
 
-        self.__toolwrapper1 = ToolWrapper(name="rule1")
+        self.__toolwrapper1 = ToolWrapper(rule_name="rule1")
         self.__toolwrapper1.files.extend([f1, f2])
         self.__toolwrapper1.options.append(opt1)
 
@@ -54,7 +54,7 @@ class TestRule(TestCase):
         f2 = FileInputOutputInformation(name="output1", path="file2.txt")
         f2.type_io = self.output_entry
 
-        self.__toolwrapper2 = ToolWrapper(name="rule2")
+        self.__toolwrapper2 = ToolWrapper(rule_name="rule2")
         self.__toolwrapper2.files.extend([f1, f2])
         self.__toolwrapper2.options.append(opt1)
 
@@ -66,7 +66,7 @@ class TestRule(TestCase):
         f2 = FileInputOutputInformation(name="output1", path="file2.txt")
         f2.type_io = self.output_entry
 
-        self.__toolwrapper3 = ToolWrapper(name="rule3")
+        self.__toolwrapper3 = ToolWrapper(rule_name="rule3")
         self.__toolwrapper3.files.extend([f1, f2])
         self.__toolwrapper3.options.append(opt1)
 

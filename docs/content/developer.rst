@@ -105,7 +105,7 @@ the :class:`~.wopmars.framework.database.SQLManager.SQLManager` which is used to
 wopmars.framework.management
 .................................
 
-Here are the classes involved in the actual management of the workflow. Which means the building of the :class:`~.wopmars.framework.management.DAG.DAG` and the walk through it thanks to the :class:`~.wopmars.framework.management.WorkflowManager.WorkflowManager`. Also, the class responsible of the actual execution of the ToolWrappers, :class:`~.wopmars.framework.management.RuleThread.RuleThread` is stored here.
+Here are the classes involved in the actual management of the workflow. Which means the building of the :class:`~.wopmars.framework.management.DAG.DAG` and the walk through it thanks to the :class:`~.wopmars.framework.management.WorkflowManager.WorkflowManager`. Also, the class responsible of the actual execution of the ToolWrappers, :class:`~.wopmars.framework.management.ToolWrapperThread.ToolWrapperThread` is stored here.
 
 wopmars.framework.parsing
 ..............................
@@ -249,7 +249,7 @@ To get a :class:`~.wopmars.database.WopmarsSession.WopmarsSession` associated wi
    
 ----
 
-.. autoclass:: wopmars.framework.management.RuleThread.RuleThread
+.. autoclass:: wopmars.framework.management.ToolWrapperThread.ToolWrapperThread
    :members:
    
    
