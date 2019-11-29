@@ -38,7 +38,8 @@ class TableInputOutputInformation(InputOutput, Base):
     mtime_epoch_millis = Column(BigInteger, nullable=True)
 
     # One table is in one rule
-    rule = relationship("ToolWrapper", back_populates="tables", enable_typechecks=False)
+    # rule = relationship("ToolWrapper", back_populates="tables", enable_typechecks=False)
+    one_toolwrapper_to_many_x = relationship("ToolWrapper", back_populates="tables", enable_typechecks=False)
     # One file has One type
     type = relationship("TypeInputOrOutput", back_populates="tables")
 

@@ -33,7 +33,7 @@ class Option(Base):
     value = Column(String(255))
     rule_id = Column(Integer, ForeignKey("wom_ToolWrapper.id"))
 
-    rule = relationship("ToolWrapper", back_populates="options", enable_typechecks=False)
+    one_toolwrapper_to_many_x = relationship("ToolWrapper", back_populates="options", enable_typechecks=False)
 
     def correspond(self, carac):
         """

@@ -44,11 +44,11 @@ class ToolWrapper(Base):
     status = Column(String(255), nullable=True, default="NOT_EXECUTED")
 
     # One rule has Many table
-    tables = relationship("TableInputOutputInformation", back_populates="rule")
+    tables = relationship("TableInputOutputInformation", back_populates="one_toolwrapper_to_many_x")
     # One rule has Many file
-    files = relationship("FileInputOutputInformation", back_populates="rule")
+    files = relationship("FileInputOutputInformation", back_populates="one_toolwrapper_to_many_x")
     # One rule has Many option
-    options = relationship("Option", back_populates="rule")
+    options = relationship("Option", back_populates="one_toolwrapper_to_many_x")
     # One rule has one execution
     execution = relationship("Execution", back_populates="rules")
 
