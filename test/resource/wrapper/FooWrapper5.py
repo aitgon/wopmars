@@ -28,6 +28,7 @@ class FooWrapper5(Rule):
         p.wait()
         # self.session().delete_content(self.output_table("FooBase"))
         for i in range(1000):
+            # import pdb; pdb.set_trace()
             f = self.output_table("FooBase")(name="Foowrapper5 - " + str(i))
             self.session().add(f)
         self.session().commit()

@@ -30,8 +30,8 @@ class TestRule(TestCase):
         set_tw_to_add = set()
         self.__session = SQLManager.instance().session
 
-        self.input_entry = TypeInputOrOutput(is_input=1)
-        self.output_entry = TypeInputOrOutput(is_input=0)
+        self.input_entry = TypeInputOrOutput(is_input=True)
+        self.output_entry = TypeInputOrOutput(is_input=False)
 
         ### Toolwrappers for __eq__ test_bak
         opt1 = Option(name="param1", value="1")
