@@ -43,10 +43,10 @@ class ToolWrapper(Base):
     run_duration_secs = Column(Integer, nullable=True)
     status = Column(String(255), nullable=True, default="NOT_EXECUTED")
 
-    # One rule has Many table
+    # One rule has many tables
     tables = relationship("TableInputOutputInformation", back_populates="one_toolwrapper_to_many_x")
-    # One rule has Many file
-    files = relationship("FileInputOutputInformation", back_populates="one_toolwrapper_to_many_x")
+    # One rule has many files
+    one_x_to_many_files = relationship("FileInputOutputInformation", back_populates="one_toolwrapper_to_many_x")
     # One rule has Many option
     options = relationship("Option", back_populates="one_toolwrapper_to_many_x")
     # One rule has one execution
@@ -114,7 +114,7 @@ class ToolWrapper(Base):
 
         :raise WopMarsException: The input are not respected by the user.
         """
-        set_input_file_names = set([f_input.name for f_input in self.files if f_input.one_typeio_to_many_x.is_input == 1])
+        set_input_file_names = set([f_input.name for f_input in self.one_x_to_many_files if f_input.one_typeio_to_many_x.is_input == 1])
         # check if the input file names for the ToolWrapper are coherent with the ToolWrapper specifications
         if set_input_file_names != set(self.specify_input_file()):
             raise WopMarsException("The content of the definition file is not valid.",
@@ -176,14 +176,14 @@ class ToolWrapper(Base):
 
         :raises WopMarsException: The output are not respected by the user.
         """
-        if set([f_output.name for f_output in self.files if f_output.one_typeio_to_many_x.is_input == 0]) != set(self.specify_output_file()):
+        if set([f_output.name for f_output in self.one_x_to_many_files if f_output.one_typeio_to_many_x.is_input == 0]) != set(self.specify_output_file()):
             raise WopMarsException("The content of the definition file is not valid.",
                                    "The given output variable names for " + self.__class__.__name__ +
                                    " (rule " + str(self.rule_name) + ")" +
                                    " are not correct, they should be: " +
                                    "\n\t'{0}'".format("'\n\t'".join(self.specify_output_file())) +
                                    "\n" + "They are:" +
-                                   "\n\t'{0}'".format("'\n\t'".join([f.name for f in self.files if f.one_typeio_to_many_x.is_input == 0]))
+                                   "\n\t'{0}'".format("'\n\t'".join([f.name for f in self.one_x_to_many_files if f.one_typeio_to_many_x.is_input == 0]))
                                    )
 
         set_output_table = set([t_output for t_output in self.tables if t_output.one_typeio_to_many_x.is_input == 0])
@@ -269,8 +269,8 @@ class ToolWrapper(Base):
         :param other: ToolWrapper that is possibly a predecessor of "self"
         :return: bool True if "self" follows "other"
         """
-        for rule_f_path in [f.path for f in self.files if f.one_typeio_to_many_x.is_input == 1]:
-            for rule_f2_path in [f.path for f in other.files if f.one_typeio_to_many_x.is_input == 0]:
+        for rule_f_path in [f.path for f in self.one_x_to_many_files if f.one_typeio_to_many_x.is_input == 1]:
+            for rule_f2_path in [f.path for f in other.one_x_to_many_files if f.one_typeio_to_many_x.is_input == 0]:
                 if rule_f_path == rule_f2_path:
                     return True
 
@@ -290,7 +290,7 @@ class ToolWrapper(Base):
         :return: bool - True if inputs are ready.
         """
         input_files_not_ready = []
-        input_files = [f for f in self.files if f.one_typeio_to_many_x.is_input == 1]
+        input_files = [f for f in self.one_x_to_many_files if f.one_typeio_to_many_x.is_input == 1]
         for i in input_files:
             if not i.is_ready():
                 input_files_not_ready.append(i)
@@ -302,7 +302,7 @@ class ToolWrapper(Base):
 
         :return: bool - True if inputs are ready.
         """
-        input_files = [f for f in self.files if f.one_typeio_to_many_x.is_input == 1]
+        input_files = [f for f in self.one_x_to_many_files if f.one_typeio_to_many_x.is_input == 1]
         Logger.instance().debug("Inputs files of " + str(self.__class__.__name__) + ": " + str([i.name for i in input_files]))
         for i in input_files:
             if not i.is_ready():
@@ -341,7 +341,7 @@ class ToolWrapper(Base):
         :type dry: bool
         """
         session = SQLManager.instance().get_session()
-        for f in [f for f in self.files if f.one_typeio_to_many_x.is_input == type]:
+        for f in [f for f in self.one_x_to_many_files if f.one_typeio_to_many_x.is_input == type]:
             try:
                 mtime_epoch_millis, mtime_human = get_mtime(f.path)
                 f.mtime_human = mtime_human
@@ -407,9 +407,9 @@ class ToolWrapper(Base):
             if not is_same:
                 return False
 
-        for f in [f for f in self.files if f.one_typeio_to_many_x.is_input == 1]:
+        for f in [f for f in self.one_x_to_many_files if f.one_typeio_to_many_x.is_input == 1]:
             is_same = False
-            for f2 in [f2 for f2 in other.files if f2.one_typeio_to_many_x.is_input == 1]:
+            for f2 in [f2 for f2 in other.one_x_to_many_files if f2.one_typeio_to_many_x.is_input == 1]:
                 # two files are the same if they have the same is_input, path, size and modification mtime_epoch_millis
                 if (f.name == f2.name and
                         f.path == f2.path and
@@ -430,9 +430,9 @@ class ToolWrapper(Base):
 
         :return: Bool: True if the output is actually more recent than input
         """
-        most_recent_input = max([get_mtime(f.path)[0] for f in self.files if f.one_typeio_to_many_x.is_input == 1]
+        most_recent_input = max([get_mtime(f.path)[0] for f in self.one_x_to_many_files if f.one_typeio_to_many_x.is_input == 1]
                                 + [t.modification.mtime_epoch_millis for t in self.tables if t.one_typeio_to_many_x.is_input == 1])
-        oldest_output = min([get_mtime(f.path)[0] for f in self.files if f.one_typeio_to_many_x.is_input == 0]
+        oldest_output = min([get_mtime(f.path)[0] for f in self.one_x_to_many_files if f.one_typeio_to_many_x.is_input == 0]
                             + [t.modification.mtime_epoch_millis for t in self.tables if t.one_typeio_to_many_x.is_input == 0])
         # in seconds since the begining of mtime_epoch_millis (computer), the oldest thing has a lower number of seconds
         return most_recent_input < oldest_output
@@ -456,9 +456,9 @@ class ToolWrapper(Base):
             if not is_same:
                 return False
 
-        for f in [f for f in self.files if f.one_typeio_to_many_x.is_input == 1]:
+        for f in [f for f in self.one_x_to_many_files if f.one_typeio_to_many_x.is_input == 1]:
             is_same = False
-            for f2 in [f2 for f2 in other.files if f2.one_typeio_to_many_x.is_input == 1]:
+            for f2 in [f2 for f2 in other.one_x_to_many_files if f2.one_typeio_to_many_x.is_input == 1]:
                 if (f.name == f2.name and
                         f.path == f2.path):
                     is_same = True
@@ -476,7 +476,7 @@ class ToolWrapper(Base):
 
         :return: Bool: True if outputs exist.
         """
-        for of in [f for f in self.files if f.one_typeio_to_many_x.is_input == 0]:
+        for of in [f for f in self.one_x_to_many_files if f.one_typeio_to_many_x.is_input == 0]:
             if not os.path.exists(of.path):
                 return False
 
@@ -534,8 +534,8 @@ class ToolWrapper(Base):
         :type is_name: str
         :return: Bool: True if the files are the same
         """
-        for f in [rf for rf in self.files if rf.one_typeio_to_many_x.is_input == is_name]:
-            is_in = bool([rf for rf in other.files if (os.path.abspath(f.path) == os.path.abspath(rf.path) and
+        for f in [rf for rf in self.one_x_to_many_files if rf.one_typeio_to_many_x.is_input == is_name]:
+            is_in = bool([rf for rf in other.one_x_to_many_files if (os.path.abspath(f.path) == os.path.abspath(rf.path) and
                                                        f.name == rf.name and
                                                        rf.one_typeio_to_many_x.is_input == is_name)])
             if not is_in:
@@ -597,12 +597,12 @@ class ToolWrapper(Base):
         s += "\\n"
         s += "tool: " + self.__class__.__name__
         s += "\\n"
-        for input_f in [f for f in self.files if f.one_typeio_to_many_x.is_input == 1]:
+        for input_f in [f for f in self.one_x_to_many_files if f.one_typeio_to_many_x.is_input == 1]:
             s += "\\n\t\t" + input_f.name + ": " + str(input_f.path)
         for input_t in [t for t in self.tables if t.one_typeio_to_many_x.is_input == 1]:
             s += "\\n\t\tinput_table: " + input_t.name
         s += "\\n"
-        for output_f in [f for f in self.files if f.one_typeio_to_many_x.is_input == 0]:
+        for output_f in [f for f in self.one_x_to_many_files if f.one_typeio_to_many_x.is_input == 0]:
             s += "\\n\t\t" + output_f.name + ": " + str(output_f.path)
         for output_t in [t for t in self.tables if t.one_typeio_to_many_x.is_input == 0]:
             s += "\\n\t\toutput_table: " + output_t.name
@@ -611,8 +611,8 @@ class ToolWrapper(Base):
 
     def dot_label(self):
         """Label for the dot dag"""
-        inputs_list_str = [str(i).replace(":", "") for i in self.files + self.tables if i.one_typeio_to_many_x.is_input == 1]
-        outputs_list_str = [str(o).replace(":", "") for o in self.files + self.tables if o.one_typeio_to_many_x.is_input == 0]
+        inputs_list_str = [str(i).replace(":", "") for i in self.one_x_to_many_files + self.tables if i.one_typeio_to_many_x.is_input == 1]
+        outputs_list_str = [str(o).replace(":", "") for o in self.one_x_to_many_files + self.tables if o.one_typeio_to_many_x.is_input == 0]
         params_list_str = [str(p).replace(":","") for p in self.options]
         s = ""
         s += "ToolWrapper " + self.rule_name + "\n"
@@ -623,8 +623,8 @@ class ToolWrapper(Base):
         return(s)
 
     def __str__(self):
-        inputs_list_str = [str(i) for i in self.files + self.tables if i.one_typeio_to_many_x.is_input == 1]
-        outputs_list_str = [str(o) for o in self.files + self.tables if o.one_typeio_to_many_x.is_input == 0]
+        inputs_list_str = [str(i) for i in self.one_x_to_many_files + self.tables if i.one_typeio_to_many_x.is_input == 1]
+        outputs_list_str = [str(o) for o in self.one_x_to_many_files + self.tables if o.one_typeio_to_many_x.is_input == 0]
         params_list_str = [str(p) for p in self.options]
         s = ""
         s += "ToolWrapper " + str(self.rule_name) + ":" + "\n"
@@ -710,7 +710,7 @@ class ToolWrapper(Base):
         :return:
         """
         try:
-            return [f.path for f in self.files if f.name == key and f.one_typeio_to_many_x.is_input == 1][0]
+            return [f.path for f in self.one_x_to_many_files if f.name == key and f.one_typeio_to_many_x.is_input == 1][0]
         except IndexError:
             raise WopMarsException("Error during the execution of the ToolWrapper " + str(self.tool_python_path) +
                                    " (rule " + self.rule_name + ").",
@@ -738,7 +738,7 @@ class ToolWrapper(Base):
         :return:
         """
         try:
-            return [f.path for f in self.files if f.name == key and f.one_typeio_to_many_x.is_input == 0][0]
+            return [f.path for f in self.one_x_to_many_files if f.name == key and f.one_typeio_to_many_x.is_input == 0][0]
         except IndexError:
             raise WopMarsException("Error during the execution of the ToolWrapper " + str(self.tool_python_path) +
                                    " (rule " + self.rule_name + ").",

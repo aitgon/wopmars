@@ -535,7 +535,7 @@ class Reader:
                     iofileput_entry.one_typeio_to_many_x = input_entry
                     try:
                         # associating file and tool_python_path
-                        toolwrapper_wrapper.files.append(iofileput_entry)
+                        toolwrapper_wrapper.one_x_to_many_files.append(iofileput_entry)
                     except ObjectDeletedError as e:
                         raise WopMarsException("Error in the tool_python_path class declaration. Please, notice the developer",
                                                "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
@@ -572,7 +572,7 @@ class Reader:
                     iofileput_entry = dict_dict_dict_elm["dict_output"][elm][output_f]
                     iofileput_entry.one_typeio_to_many_x = output_entry
                     try:
-                        toolwrapper_wrapper.files.append(iofileput_entry)
+                        toolwrapper_wrapper.one_x_to_many_files.append(iofileput_entry)
                     except ObjectDeletedError as e:
                         raise WopMarsException("Error in the tool_python_path class declaration. Please, notice the developer",
                                                "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
