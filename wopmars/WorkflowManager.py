@@ -104,8 +104,8 @@ class WorkflowManager(ToolWrapperObserver):
 
         Logger.instance().info("Forced execution implies overwrite existing output. Erasing files and models.")
         for tw in list_tw:
-           [set_files.add(f.path) for f in tw.one_x_to_many_files if f.one_typeio_to_many_x.is_input == 0]
-           [set_tables.add(t.tablename) for t in tw.one_x_to_many_tables if t.one_typeio_to_many_x.is_input == 0]
+           [set_files.add(f.path) for f in tw.relation_typeio_to_fileioinfo if f.relation_typeio_to_file_or_tableioinfo.is_input == 0]
+           [set_tables.add(t.tablename) for t in tw.relation_typeio_to_tableioinfo if t.relation_typeio_to_file_or_tableioinfo.is_input == 0]
 
         s = ""
         for f_path in set_files:
@@ -161,7 +161,7 @@ class WorkflowManager(ToolWrapperObserver):
         # ???
         # todo checkout what is going on here
         tables = []
-        [tables.extend(tw.one_x_to_many_tables) for tw in self.__dag_to_exec.nodes()]
+        [tables.extend(tw.relation_typeio_to_tableioinfo) for tw in self.__dag_to_exec.nodes()]
         TableInputOutputInformation.set_tables_properties(tables)
 
         # For the tools that are in the workflow definition file but not in the executed dag, their status is set to

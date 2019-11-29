@@ -532,10 +532,10 @@ class Reader:
                 for input_f in dict_dict_dict_elm["dict_input"][elm]:
                     # set the type of FileInputOutputInformation object
                     iofileput_entry = dict_dict_dict_elm["dict_input"][elm][input_f]
-                    iofileput_entry.one_typeio_to_many_x = input_entry
+                    iofileput_entry.relation_typeio_to_file_or_tableioinfo = input_entry
                     try:
                         # associating file and tool_python_path
-                        toolwrapper_wrapper.one_x_to_many_files.append(iofileput_entry)
+                        toolwrapper_wrapper.relation_typeio_to_fileioinfo.append(iofileput_entry)
                     except ObjectDeletedError as e:
                         raise WopMarsException("Error in the tool_python_path class declaration. Please, notice the developer",
                                                "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
@@ -557,10 +557,10 @@ class Reader:
                                                                                   "mtime_epoch_millis": time_unix_ms,
                                                                                   "mtime_human": time_human},
                                                                               table_name=input_t)
-                    iodbput_entry.one_tablemodificationtime_to_many_x = modification_table_entry
-                    iodbput_entry.one_typeio_to_many_x = input_entry
+                    iodbput_entry.relation_tablemodiftime_to_tableioinfo = modification_table_entry
+                    iodbput_entry.relation_typeio_to_file_or_tableioinfo = input_entry
                     try:
-                        toolwrapper_wrapper.one_x_to_many_tables.append(iodbput_entry)
+                        toolwrapper_wrapper.relation_typeio_to_tableioinfo.append(iodbput_entry)
                     except ObjectDeletedError as e:
                         raise WopMarsException("Error in the tool_python_path class declaration. Please, notice the developer",
                                                "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
@@ -570,9 +570,9 @@ class Reader:
             if elm == "file":
                 for output_f in dict_dict_dict_elm["dict_output"][elm]:
                     iofileput_entry = dict_dict_dict_elm["dict_output"][elm][output_f]
-                    iofileput_entry.one_typeio_to_many_x = output_entry
+                    iofileput_entry.relation_typeio_to_file_or_tableioinfo = output_entry
                     try:
-                        toolwrapper_wrapper.one_x_to_many_files.append(iofileput_entry)
+                        toolwrapper_wrapper.relation_typeio_to_fileioinfo.append(iofileput_entry)
                     except ObjectDeletedError as e:
                         raise WopMarsException("Error in the tool_python_path class declaration. Please, notice the developer",
                                                "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
@@ -588,10 +588,10 @@ class Reader:
                                                                                   "mtime_epoch_millis": time_unix_ms,
                                                                                   "mtime_human": time_human},
                                                                               table_name=output_t)
-                    iodbput_entry.one_tablemodificationtime_to_many_x = modification_table_entry
-                    iodbput_entry.one_typeio_to_many_x = output_entry
+                    iodbput_entry.relation_tablemodiftime_to_tableioinfo = modification_table_entry
+                    iodbput_entry.relation_typeio_to_file_or_tableioinfo = output_entry
                     try:
-                        toolwrapper_wrapper.one_x_to_many_tables.append(iodbput_entry)
+                        toolwrapper_wrapper.relation_typeio_to_tableioinfo.append(iodbput_entry)
                     except ObjectDeletedError as e:
                         raise WopMarsException(
                             "Error in the tool_python_path class declaration. Please, notice the developer",

@@ -20,10 +20,10 @@ class TableInputOutputInformation(InputOutput, Base):
     following fields:
 
     - id: INTEGER - primary key - autoincrement - arbitrary ID
-    - tablename: VARCHAR(255) - foreign key to the associated table: :class:`wopmars.framework.database.one_x_to_many_tables.TableModificationTime.TableModificationTime` - the is_input of the referenced table
+    - tablename: VARCHAR(255) - foreign key to the associated table: :class:`wopmars.framework.database.relation_typeio_to_tableioinfo.TableModificationTime.TableModificationTime` - the is_input of the referenced table
     - model: VARCHAR(255) - the path to the model (in python notation)
-    - toolwrapper_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.framework.database.one_x_to_many_tables.ToolWrapper.ToolWrapper`
-    - is_input: INTEGER - foreign key to the associated type ID: :class:`wopmars.framework.database.one_x_to_many_tables.TypeInputOrOutput.TypeInputOrOutput`
+    - toolwrapper_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.framework.database.relation_typeio_to_tableioinfo.ToolWrapper.ToolWrapper`
+    - is_input: INTEGER - foreign key to the associated type ID: :class:`wopmars.framework.database.relation_typeio_to_tableioinfo.TypeInputOrOutput.TypeInputOrOutput`
     - mtime_epoch_millis: INTEGER - unix mtime_epoch_millis at which the table have been used
     """
 
@@ -38,11 +38,11 @@ class TableInputOutputInformation(InputOutput, Base):
     mtime_epoch_millis = Column(BigInteger, nullable=True)
 
     # One toolwrapper uses many tables
-    one_toolwrapper_to_many_x = relationship("ToolWrapper", back_populates="one_x_to_many_tables", enable_typechecks=False)
+    relation_toolwrapper_to_file_or_tableioinfo = relationship("ToolWrapper", back_populates="relation_typeio_to_tableioinfo", enable_typechecks=False)
     # One type_io is used by many tables
-    one_typeio_to_many_x = relationship("TypeInputOrOutput", back_populates="one_x_to_many_tables")
+    relation_typeio_to_file_or_tableioinfo = relationship("TypeInputOrOutput", back_populates="relation_typeio_to_tableioinfo")
     # One table_io_info has one table_modif_time
-    one_tablemodificationtime_to_many_x = relationship("TableModificationTime", back_populates="one_x_to_many_tables")
+    relation_tablemodiftime_to_tableioinfo = relationship("TableModificationTime", back_populates="relation_typeio_to_tableioinfo")
 
     # all the model names met since the begining of this instance of WopMaRS
     tablemodelnames = set()

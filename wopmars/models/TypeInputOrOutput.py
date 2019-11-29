@@ -20,9 +20,9 @@ class TypeInputOrOutput(Base):
     is_input = Column(Boolean, primary_key=True, autoincrement=False)
 
     # One type_io is used by many tables
-    one_x_to_many_tables = relationship("TableInputOutputInformation", back_populates="one_typeio_to_many_x")
+    relation_typeio_to_tableioinfo = relationship("TableInputOutputInformation", back_populates="relation_typeio_to_file_or_tableioinfo")
     # One type_io is used by many files
-    one_x_to_many_files = relationship("FileInputOutputInformation", back_populates="one_typeio_to_many_x")
+    relation_typeio_to_fileioinfo = relationship("FileInputOutputInformation", back_populates="relation_typeio_to_file_or_tableioinfo")
 
     def __repr__(self):
         return "<class TypeInputOrOutput: is_input {}>".format(self.is_input)
