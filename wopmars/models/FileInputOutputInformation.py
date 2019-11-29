@@ -35,9 +35,9 @@ class FileInputOutputInformation(InputOutput, Base):
     size = Column(BigInteger, nullable=True)
 
     # One file is in one rule
-    one_toolwrapper_to_many_x = relationship("ToolWrapper", back_populates="files", enable_typechecks=False)
+    one_toolwrapper_to_many_x = relationship("ToolWrapper", back_populates="one_x_to_many_files", enable_typechecks=False)
     # One file has one typeio
-    one_typeio_to_many_x = relationship("TypeInputOrOutput", back_populates="files")
+    one_typeio_to_many_x = relationship("TypeInputOrOutput", back_populates="one_x_to_many_files")
 
     def is_ready(self):
         """
