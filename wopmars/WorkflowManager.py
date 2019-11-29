@@ -7,7 +7,7 @@ from wopmars.models.ToolWrapper import ToolWrapper
 from wopmars.models.TypeInputOrOutput import TypeInputOrOutput
 from wopmars.DAG import DAG
 from wopmars.ToolWrapperThread import ToolWrapperThread
-from wopmars.RuleObserver import RuleObserver
+from wopmars.ToolWrapperObserver import ToolWrapperObserver
 from wopmars.Parser import Parser
 from wopmars.utils.PathFinder import PathFinder
 from wopmars.utils.Logger import Logger
@@ -17,7 +17,7 @@ from wopmars.utils.WopMarsException import WopMarsException
 from wopmars.utils.various import get_current_time
 
 
-class WorkflowManager(RuleObserver):
+class WorkflowManager(ToolWrapperObserver):
     """
     The WorkflowManager class manage all the workflow execution.
 
