@@ -532,7 +532,7 @@ class Reader:
                 for input_f in dict_dict_dict_elm["dict_input"][elm]:
                     # set the type of FileInputOutputInformation object
                     iofileput_entry = dict_dict_dict_elm["dict_input"][elm][input_f]
-                    iofileput_entry.type = input_entry
+                    iofileput_entry.one_typeio_to_many_x = input_entry
                     try:
                         # associating file and tool_python_path
                         toolwrapper_wrapper.files.append(iofileput_entry)
@@ -558,7 +558,7 @@ class Reader:
                                                                                   "mtime_human": time_human},
                                                                               table_name=input_t)
                     iodbput_entry.modification = modification_table_entry
-                    iodbput_entry.type = input_entry
+                    iodbput_entry.one_typeio_to_many_x = input_entry
                     try:
                         toolwrapper_wrapper.tables.append(iodbput_entry)
                     except ObjectDeletedError as e:
@@ -570,7 +570,7 @@ class Reader:
             if elm == "file":
                 for output_f in dict_dict_dict_elm["dict_output"][elm]:
                     iofileput_entry = dict_dict_dict_elm["dict_output"][elm][output_f]
-                    iofileput_entry.type = output_entry
+                    iofileput_entry.one_typeio_to_many_x = output_entry
                     try:
                         toolwrapper_wrapper.files.append(iofileput_entry)
                     except ObjectDeletedError as e:
@@ -589,7 +589,7 @@ class Reader:
                                                                                   "mtime_human": time_human},
                                                                               table_name=output_t)
                     iodbput_entry.modification = modification_table_entry
-                    iodbput_entry.type = output_entry
+                    iodbput_entry.one_typeio_to_many_x = output_entry
                     try:
                         toolwrapper_wrapper.tables.append(iodbput_entry)
                     except ObjectDeletedError as e:

@@ -41,7 +41,7 @@ class TableInputOutputInformation(InputOutput, Base):
     # rule = relationship("ToolWrapper", back_populates="tables", enable_typechecks=False)
     one_toolwrapper_to_many_x = relationship("ToolWrapper", back_populates="tables", enable_typechecks=False)
     # One file has One type
-    type = relationship("TypeInputOrOutput", back_populates="tables")
+    one_typeio_to_many_x = relationship("TypeInputOrOutput", back_populates="tables")
 
     modification = relationship("TableModificationTime", back_populates="tables")
 

@@ -20,9 +20,9 @@ class TypeInputOrOutput(Base):
     is_input = Column(Boolean, primary_key=True, autoincrement=False)
 
     # One type is in Many table
-    tables = relationship("TableInputOutputInformation", back_populates="type")
+    tables = relationship("TableInputOutputInformation", back_populates="one_typeio_to_many_x")
     # One type is in Many files
-    files = relationship("FileInputOutputInformation", back_populates="type")
+    files = relationship("FileInputOutputInformation", back_populates="one_typeio_to_many_x")
 
     def __repr__(self):
         return "<class TypeInputOrOutput: is_input {}>".format(self.is_input)
