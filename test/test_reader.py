@@ -13,7 +13,7 @@ from test.resource.wrapper.fooPackage.FooWrapperPackaged import FooWrapperPackag
 from wopmars.SQLManager import SQLManager
 from wopmars.models import TableInputOutputInformation
 from wopmars.models import FileInputOutputInformation
-from wopmars.models import Rule
+from wopmars.models import ToolWrapper
 from wopmars.models.TypeInputOrOutput import TypeInputOrOutput
 from wopmars.Reader import Reader
 from wopmars.utils.OptionManager import OptionManager
@@ -93,7 +93,7 @@ class TestReader(TestCase):
     def test_read2(self):
         try:
             self.__reader.read(self.__s_example_definition_file2)
-            result = self.__session.query(Rule).one()
+            result = self.__session.query(ToolWrapper).one()
         except:
             raise AssertionError("Packaged wrappers should not raise an exception")
 
@@ -118,7 +118,7 @@ class TestReader(TestCase):
     def test_read(self):
 
         self.__reader.read(self.__s_example_definition_file)
-        result = set(self.__session.query(Rule).all())
+        result = set(self.__session.query(ToolWrapper).all())
 
         input_entry = TypeInputOrOutput(name="input")
         output_entry = TypeInputOrOutput(name="output")

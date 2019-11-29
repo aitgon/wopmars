@@ -1,9 +1,9 @@
 import threading
 
-from wopmars.models.Rule import Rule
+from wopmars.models.ToolWrapper import ToolWrapper
 
 
-class Query(Rule):
+class Query(ToolWrapper):
     __mapper_args__ = {'polymorphic_identity': "sprintFive.Query"}
 
     def specify_input_table(self):

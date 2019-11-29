@@ -63,7 +63,7 @@ class RuleThread(threading.Thread, Observable):
                     "\n" + str(self.__rule) + "\n" + "command line: \n\t" + self.get_command_line())
                 # if you shouldn't simulate
                 if not OptionManager.instance()["--dry-run"]:
-                    Logger.instance().info("Rule: " + str(self.__rule.name) + " -> " + self.__rule.__class__.__name__ + " started.")
+                    Logger.instance().info("ToolWrapper: " + str(self.__rule.name) + " -> " + self.__rule.__class__.__name__ + " started.")
                     # mkdir -p output dir: before running we need output dir
                     output_file_fields = self.__rule.specify_output_file()
                     for out_field in output_file_fields:
@@ -83,13 +83,13 @@ class RuleThread(threading.Thread, Observable):
                     Logger.instance().debug("Dry-run mode enabled. Execution skiped.")
                     self.__rule.set_execution_infos(status="DRY")
             else:
-                Logger.instance().info("Rule: " + str(self.__rule.name) + " -> " + self.__rule.__class__.__name__ + " skiped.")
+                Logger.instance().info("ToolWrapper: " + str(self.__rule.name) + " -> " + self.__rule.__class__.__name__ + " skiped.")
                 self.__rule.set_execution_infos(start, time_human, "ALREADY_EXECUTED")
         except Exception as e:
             wopmars_session.rollback()
             self.__rule.set_execution_infos(start, time_human, "EXECUTION_ERROR")
             raise WopMarsException("Error while executing rule " + self.__rule.name +
-                                   " (Rule " + self.__rule.tool_python_path + ")",
+                                   " (ToolWrapper " + self.__rule.tool_python_path + ")",
                                    "Full stack trace: \n" + str(traceback.format_exc()))
         finally:
             # todo twthread , fermer session

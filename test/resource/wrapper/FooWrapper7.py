@@ -4,9 +4,9 @@ Module containing the FooWrapper1 class
 import time
 
 from test.resource.model.FooBase2 import FooBase2
-from wopmars.models.Rule import Rule
+from wopmars.models.ToolWrapper import ToolWrapper
 
-class FooWrapper7(Rule):
+class FooWrapper7(ToolWrapper):
     """
     This class has been done for example/testing purpose.
     Modifications may lead to failure in tests.

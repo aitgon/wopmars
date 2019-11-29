@@ -17,7 +17,7 @@ class FileInputOutputInformation(InputOutput, Base):
     - id: INTEGER - primary key - autoincrement - arbitrary ID
     - is_input: VARCHAR(255) - the is_input of the reference to the file
     - path: VARCHAR(255) - the path to the file
-    - rule_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.framework.database.tables.Rule.Rule`
+    - rule_id: INTEGER - foreign key to the associated rule ID: :class:`wopmars.framework.database.tables.ToolWrapper.ToolWrapper`
     - is_input: INTEGER - foreign key to the associated type ID: :class:`wopmars.framework.database.tables.TypeInputOrOutput.TypeInputOrOutput`
     - mtime_epoch_millis: INTEGER - unix mtime_epoch_millis at which the table have been used
     - size: INTEGER - the size of the file
@@ -28,14 +28,14 @@ class FileInputOutputInformation(InputOutput, Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255))
     path = Column(String(255))
-    rule_id = Column(Integer, ForeignKey("wom_Rule.id"))
+    rule_id = Column(Integer, ForeignKey("wom_ToolWrapper.id"))
     is_input = Column(Boolean, ForeignKey("wom_TypeInputOrOutput.is_input"))
     mtime_human = Column(DateTime, nullable=True)
     mtime_epoch_millis = Column(BigInteger, nullable=True)
     size = Column(BigInteger, nullable=True)
 
     # One file is in Many rule_file and is in Many rule
-    rule = relationship("Rule", back_populates="files", enable_typechecks=False)
+    rule = relationship("ToolWrapper", back_populates="files", enable_typechecks=False)
     # One file has One type
     type = relationship("TypeInputOrOutput", back_populates="files")
 

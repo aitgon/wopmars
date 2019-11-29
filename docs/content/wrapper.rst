@@ -30,10 +30,10 @@ Here is an example of the declaration of a class called ``SparePartsManufacturer
 
 .. code-block:: python
 
-    from wopmars.framework.bdd.tables.Rule import Rule
+    from wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
 
 
-    class SparePartsManufacturer(Rule):
+    class SparePartsManufacturer(ToolWrapper):
         __mapper_args__ = {
             "polymorphic_identity": "wopmars.example.SparePartsManufacturer"
         }
@@ -60,7 +60,7 @@ The class ``SparePartsManufacturer`` takes a file in input but doesn't produce a
 
 .. code-block:: python
 
-    class SparePartsManufacturer(Rule):
+    class SparePartsManufacturer(ToolWrapper):
         __mapper_args__ = {
             "polymorphic_identity": "wopmars.example.SparePartsManufacturer"
         }
@@ -83,7 +83,7 @@ Here is the rest of the `Toolwrapper` ``SparePartsManufacturer`` which writes it
 
 .. code-block:: python
 
-    class SparePartsManufacturer(Rule):
+    class SparePartsManufacturer(ToolWrapper):
         __mapper_args__ = {
             "polymorphic_identity": "wopmars.example.SparePartsManufacturer"
         }
@@ -111,7 +111,7 @@ In the following class, the parameter ``max_price`` is an ``int`` and will be us
 
 .. code-block:: python
 
-    class SparePartsManufacturer(Rule):
+    class SparePartsManufacturer(ToolWrapper):
         __mapper_args__ = {
             "polymorphic_identity": "wopmars.example.SparePartsManufacturer"
         }
@@ -189,7 +189,7 @@ During the parsing of the configuration file, WopMars check first the validity o
 
 .. code-block:: python
 
-    class CarAssembler(Rule):
+    class CarAssembler(ToolWrapper):
         __mapper_args__ = {
             "polymorphic_identity": "wopmars.example.CarAssembler"
         }
@@ -276,10 +276,10 @@ With this model, there is an other `Toolwrapper` provided in the example: ``AddD
     import time, datetime
     import random
 
-    from wopmars.framework.bdd.tables.Rule import Rule
+    from wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
 
 
-    class AddDateToPiece(Rule):
+    class AddDateToPiece(ToolWrapper):
         __mapper_args__ = {
             "polymorphic_identity": "wopmars.example.AddDateToPiece"
         }

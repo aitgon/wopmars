@@ -100,7 +100,7 @@ wopmars.framework.database
 ..........................
 
 All the processing related to the database is done here. Every objects that should exist in order to work with the database is stored here:
-the :class:`~.wopmars.framework.database.SQLManager.SQLManager` which is used to perform synchronized operations against the database, the :class:`~.wopmars.framework.database.WopmarsSession.WopmarsSession` which is used to bind the Toolwrappers to the database,  the :class:`~.wopmars.framework.database.WopmarsQuery.WopmarsQuery` which is used to create queries that use the WopMaRS machinery There is a package ``tables`` which contains the models related to the history_ of **WopMars**. Among them, the :class:`~.wopmars.framework.database.tables.Rule.Rule` class.
+the :class:`~.wopmars.framework.database.SQLManager.SQLManager` which is used to perform synchronized operations against the database, the :class:`~.wopmars.framework.database.WopmarsSession.WopmarsSession` which is used to bind the Toolwrappers to the database,  the :class:`~.wopmars.framework.database.WopmarsQuery.WopmarsQuery` which is used to create queries that use the WopMaRS machinery There is a package ``tables`` which contains the models related to the history_ of **WopMars**. Among them, the :class:`~.wopmars.framework.database.tables.ToolWrapper.ToolWrapper` class.
 
 wopmars.framework.management
 .................................
@@ -129,7 +129,7 @@ Numerous calls to those tables are done during all the process of the parsing of
 Here is a list of the tables used for history. All of the associated models are stored under ``wopmars.framework.database.tables``. If you want more informations about the models themselves, you should follow the links to get the code documentation:
 
 - ``wom_execution`` represented by the model :class:`~.wopmars.framework.database.tables.Execution.Execution`
-- ``wom_rule`` represented by the model :class:`~.wopmars.framework.database.tables.Rule.Rule`
+- ``wom_rule`` represented by the model :class:`~.wopmars.framework.database.tables.ToolWrapper.ToolWrapper`
 - ``wom_type_input_or_output`` represented by the model :class:`~.wopmars.framework.database.tables.TypeInputOrOutput.TypeInputOrOutput`
 - ``wom_file`` represented by the model :class:`~.wopmars.framework.database.tables.FileInputOutputInformation.FileInputOutputInformation`
 - ``wom_table_io_information`` represented by the model :class:`~.wopmars.framework.database.tables.TableInputOutputInformation.TableInputOutputInformation`
@@ -166,7 +166,7 @@ The class responsible of the parsing of the workflow definition file (and the ``
 
 Once all informations regarding the workflow definition file have been stored in the database, the options ``--targetrule`` and ``--sourcerule`` are parsed in order to get only the rules that are intended to be executed by the user (see `Options and Arguments <use.html#options-and-arguments>`__ of WopMars).
 
-To build the DAG itself, a class :class:`~.wopmars.framework.management.DAG.DAG` which inherit from ``networkx.DiGraph`` has been written. This class takes a set of nodes as argument and build itself by determining which nodes are following which others. Since the nodes are actually :class:`~.wopmars.framework.database.tables.Rule.Rule`, a node follows an other node if one output of the former is in the list of inputs of the last. This information is given by the method :meth:`~.wopmars.framework.database.tables.Rule.Rule.follows` of :class:`~.wopmars.framework.database.tables.Rule.Rule`.
+To build the DAG itself, a class :class:`~.wopmars.framework.management.DAG.DAG` which inherit from ``networkx.DiGraph`` has been written. This class takes a set of nodes as argument and build itself by determining which nodes are following which others. Since the nodes are actually :class:`~.wopmars.framework.database.tables.ToolWrapper.ToolWrapper`, a node follows an other node if one output of the former is in the list of inputs of the last. This information is given by the method :meth:`~.wopmars.framework.database.tables.ToolWrapper.ToolWrapper.follows` of :class:`~.wopmars.framework.database.tables.ToolWrapper.ToolWrapper`.
 
 
 Executing the DAG
@@ -199,7 +199,7 @@ To get a :class:`~.wopmars.database.WopmarsSession.WopmarsSession` associated wi
 
 ----
 
-.. autoclass:: wopmars.framework.database.tables.Rule.Rule
+.. autoclass:: wopmars.framework.database.tables.ToolWrapper.ToolWrapper
    :members:
 
 ----

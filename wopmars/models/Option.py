@@ -31,9 +31,9 @@ class Option(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255))
     value = Column(String(255))
-    rule_id = Column(Integer, ForeignKey("wom_Rule.id"))
+    rule_id = Column(Integer, ForeignKey("wom_ToolWrapper.id"))
 
-    rule = relationship("Rule", back_populates="options", enable_typechecks=False)
+    rule = relationship("ToolWrapper", back_populates="options", enable_typechecks=False)
 
     def correspond(self, carac):
         """

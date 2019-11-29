@@ -3,7 +3,7 @@ import sys
 from wopmars.SQLManager import SQLManager
 from wopmars.models.Execution import Execution
 from wopmars.models.TableInputOutputInformation import TableInputOutputInformation
-from wopmars.models.Rule import Rule
+from wopmars.models.ToolWrapper import ToolWrapper
 from wopmars.models.TypeInputOrOutput import TypeInputOrOutput
 from wopmars.DAG import DAG
 from wopmars.RuleThread import RuleThread
@@ -35,7 +35,7 @@ class WorkflowManager(RuleObserver):
       b- If not, they are put in the buffer.
 
     6- When the :class:`~.wopmars.framework.management.RuleThread.RuleThread` has finished its execution, a notification of success is sent.
-    7- The method :meth:`~wopmars.framework.management.WorkflowManager.WorkflowManager.execute_from` is called again with the succeeded Rule as argument.
+    7- The method :meth:`~wopmars.framework.management.WorkflowManager.WorkflowManager.execute_from` is called again with the succeeded ToolWrapper as argument.
     8- Loop to the 3rd step
     9- When the DAG is finished, the software exits
 
@@ -179,10 +179,10 @@ class WorkflowManager(RuleObserver):
         The next nodes are taken thanks to the "successors()" method of the DAG and are put into the queue.
         The "run_queue()" is then called.
 
-        A trace of the already_runned Rule objects is kept in order to avoid duplicate execution.
+        A trace of the already_runned ToolWrapper objects is kept in order to avoid duplicate execution.
 
         :param node: A node of the DAG or None, if it needs to be executed from the root.
-        :type node: :class:`~.wopmars.framework.database.models.Rule.Rule`
+        :type node: :class:`~.wopmars.framework.database.models.ToolWrapper.ToolWrapper`
         :return: void
         """
         # the first list will be the root nodes
@@ -195,7 +195,7 @@ class WorkflowManager(RuleObserver):
                 # RuleThread object is a thread ready to start
                 self.__queue_exec.put(RuleThread(tw))
             else:
-                Logger.instance().debug("Rule: " + tw.name +
+                Logger.instance().debug("ToolWrapper: " + tw.name +
                                         " -> " + tw.tool_python_path +
                                         " has already been executed. Pass.")
         self.run_queue()
@@ -208,7 +208,7 @@ class WorkflowManager(RuleObserver):
         If not, they are put in a buffer list of "not ready tools" or "ready but has not necessary ressources available
         tools".
 
-        The start method is called with a dry argument, if it appears that the input of the Rule are the same
+        The start method is called with a dry argument, if it appears that the input of the ToolWrapper are the same
         than in a previous execution, and that the output are already ready. The dry parameter is set to True and the
         start method will only simulate the execution.
 
@@ -241,7 +241,7 @@ class WorkflowManager(RuleObserver):
             elif rule.are_inputs_ready() or OptionManager.instance()["--dry-run"]:
                 # the state of inputs (table and file) are set in the db here.
                 rule.set_args_time_and_size(1)
-                Logger.instance().debug("Rule ready: " + rule.tool_python_path)
+                Logger.instance().debug("ToolWrapper ready: " + rule.tool_python_path)
                 dry = False
                 # if forceall option, then the tool is reexecuted anyway
                 # check if the actual execution of the tool_python_path is necessary
@@ -250,7 +250,7 @@ class WorkflowManager(RuleObserver):
                         self.is_this_tool_already_done(rule) and \
                         not bool([node for node in self.__dag_to_exec.predecessors(rule) if node.status != "EXECUTED" and
                                         node.status != "ALREADY_EXECUTED"]):
-                    Logger.instance().info("Rule: " + rule.name + " -> " + rule.tool_python_path +
+                    Logger.instance().info("ToolWrapper: " + rule.name + " -> " + rule.tool_python_path +
                                            " seemed to have already" +
                                            " been runned with same" +
                                            " parameters.")
@@ -277,7 +277,7 @@ class WorkflowManager(RuleObserver):
                         self.__session.commit()
                     raise e
             else:
-                Logger.instance().debug("Rule not ready: rule: " + rule.name + " -> " + str(rule.tool_python_path))
+                Logger.instance().debug("ToolWrapper not ready: rule: " + rule.name + " -> " + str(rule.tool_python_path))
                 # The buffer contains the ToolWrappers that have inputs which are not ready yet.
                 self.__list_queue_buffer.append(rule_thread)
 
@@ -285,7 +285,7 @@ class WorkflowManager(RuleObserver):
                                                   t.get_toolwrapper().tool_python_path for t in self.__list_queue_buffer]))
         Logger.instance().debug("Running rules: " + str(self.__count_exec))
 
-        # There is no more Rule that are waiting to be executed.
+        # There is no more ToolWrapper that are waiting to be executed.
         # Is there some tools that are currently being executed?
         if self.__count_exec == 0:
             # Is there some tools that weren't ready?
@@ -338,7 +338,7 @@ class WorkflowManager(RuleObserver):
         Check if all the predecessors of the given tool_python_path have yet been executed in this workflow.
 
         :param rule: Node of the DAG
-        :type rule: :class:`~.wopmars.main.framework.database.models.Rule.Rule`
+        :type rule: :class:`~.wopmars.main.framework.database.models.ToolWrapper.ToolWrapper`
         :return: Bool
         """
         return bool(self.__dag_to_exec.get_all_predecessors(rule).difference(set([rule])).issubset(set(self.__already_runned)))
@@ -346,20 +346,20 @@ class WorkflowManager(RuleObserver):
     @staticmethod
     def is_this_tool_already_done(rule):
         """
-        Return True if conditions for saying "The output of this Rule are already available" are filled.
+        Return True if conditions for saying "The output of this ToolWrapper are already available" are filled.
 
         The conditions are:
-            - The Rule exist in database (named = tw_old)
+            - The ToolWrapper exist in database (named = tw_old)
             - The tw_old param are the same than the same which is about to start
             - the tw_old inputs are the same
             - the tw_old outputs exists with the same is_input and are more recent than inputs
 
         :param rule: The Toolwrapper to test_bak
-        :type rule: :class:`~.wopmars.main.framework.database.models.Rule.Rule`
+        :type rule: :class:`~.wopmars.main.framework.database.models.ToolWrapper.ToolWrapper`
         """
         session = SQLManager.instance().get_session()
-        same_rule_list = session.query(Rule).filter(Rule.tool_python_path == rule.tool_python_path)\
-            .filter(Rule.execution_id != rule.execution_id).all()
+        same_rule_list = session.query(ToolWrapper).filter(ToolWrapper.tool_python_path == rule.tool_python_path)\
+            .filter(ToolWrapper.execution_id != rule.execution_id).all()
         i = 0
         while i < len(same_rule_list):
             same = False
@@ -379,12 +379,12 @@ class WorkflowManager(RuleObserver):
 
     def check_buffer(self):
         """
-        Check if the buffer contains Rule that are ready.
+        Check if the buffer contains ToolWrapper that are ready.
 
         :return: bool: True if there is at least one tool_python_path that is READY in the buffer.
         """
         for tw in self.__list_queue_buffer:
-            if tw.get_toolwrapper().get_state() == Rule.READY:
+            if tw.get_toolwrapper().get_state() == ToolWrapper.READY:
                 return True
         return False
 
@@ -392,7 +392,7 @@ class WorkflowManager(RuleObserver):
         """
         Handle thread_toolwrapper success by continuing the dag.
 
-        :param thread_toolwrapper: Rule thread that just succeed
+        :param thread_toolwrapper: ToolWrapper thread that just succeed
         :type thread_toolwrapper: :class:`~.wopmars.management.RuleThread.RuleThread`
         """
         self.__session.add(thread_toolwrapper.get_toolwrapper())
@@ -402,7 +402,7 @@ class WorkflowManager(RuleObserver):
         # if not OptionManager.instance()["--dry-run"]:
         #     thread_toolwrapper.get_toolwrapper().set_args_time_and_size("output", dry_status)
         if dry_status is False and not OptionManager.instance()["--dry-run"]:
-            Logger.instance().info("Rule " + str(thread_toolwrapper.get_toolwrapper().name) + " -> " + str(thread_toolwrapper.get_toolwrapper().__class__.__name__) + " has succeed.")
+            Logger.instance().info("ToolWrapper " + str(thread_toolwrapper.get_toolwrapper().name) + " -> " + str(thread_toolwrapper.get_toolwrapper().__class__.__name__) + " has succeed.")
         # Continue the dag execution from the tool_python_path that just finished.
         self.__already_runned.add(thread_toolwrapper.get_toolwrapper())
         self.__count_exec -= 1
@@ -422,7 +422,7 @@ class WorkflowManager(RuleObserver):
         """
         Handle thread_toolwrapper failure by re-puting it in the queue.
 
-        :param thread_toolwrapper: Rule thread that just failed
+        :param thread_toolwrapper: ToolWrapper thread that just failed
         :return:
         """
         pass
