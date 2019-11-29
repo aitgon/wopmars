@@ -56,7 +56,6 @@ from wopmars.utils.Logger import Logger
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder
 from wopmars.utils.WopMarsException import WopMarsException
-from wopmars.constants import home_wopmars
 from wopmars.utils.various import get_mtime, get_current_time
 
 # todo combinatorices pour les rules
@@ -183,11 +182,6 @@ def run():
     # l'arborescence du projet? même les toolwrappers de base
     sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/toolwrappers/")
     sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/base/")
-
-
-
-    if not os.path.isdir(home_wopmars):
-        os.makedirs(home_wopmars)
 
     WopMars().run(sys.argv)
 

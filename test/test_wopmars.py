@@ -10,7 +10,6 @@ from wopmars.models.Execution import Execution
 from wopmars.utils.PathFinder import PathFinder
 from wopmars import WopMars
 
-from wopmars.constants import home_wopmars
 from wopmars.utils.various import get_mtime, get_current_time
 
 
@@ -18,8 +17,6 @@ class TestWopMars(TestCase):
 
 
     def setUp(self):
-        if not os.path.isdir(home_wopmars):
-            os.makedirs(home_wopmars)
         self.s_root_path = PathFinder.get_module_path()
         os.chdir(self.s_root_path)
         #
