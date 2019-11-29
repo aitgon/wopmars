@@ -19,7 +19,8 @@ class TableModificationTime(Base):
     mtime_human = Column(DateTime, nullable=False)
     mtime_epoch_millis = Column(BigInteger, nullable=False)
 
-    one_x_to_many_tables = relationship("TableInputOutputInformation", back_populates="modification")
+    # One table_io_info has one table_modif_time
+    one_x_to_many_tables = relationship("TableInputOutputInformation", back_populates="one_tablemodificationtime_to_many_x")
 
     def __repr__(self):
         return "<Modification on " + str(self.table_name) + ": " + str(self.mtime_epoch_millis) + ">"

@@ -47,7 +47,7 @@ class ToolWrapper(Base):
     one_x_to_many_tables = relationship("TableInputOutputInformation", back_populates="one_toolwrapper_to_many_x")
     # One rule has many files
     one_x_to_many_files = relationship("FileInputOutputInformation", back_populates="one_toolwrapper_to_many_x")
-    # One rule has Many option
+    # One option is to used by many toolwrappers
     options = relationship("Option", back_populates="one_toolwrapper_to_many_x")
     # One rule has one execution
     execution = relationship("Execution", back_populates="rules")
@@ -374,9 +374,9 @@ class ToolWrapper(Base):
         session.commit()
 
         for t in [t for t in self.one_x_to_many_tables if t.one_typeio_to_many_x.is_input == type]:
-            t.mtime_human = t.modification.mtime_human
-            t.mtime_epoch_millis = t.modification.mtime_epoch_millis
-            # t.used_at = t.modification.mtime_epoch_millis
+            t.mtime_human = t.one_tablemodificationtime_to_many_x.mtime_human
+            t.mtime_epoch_millis = t.one_tablemodificationtime_to_many_x.mtime_epoch_millis
+            # t.used_at = t.one_tablemodificationtime_to_many_x.mtime_epoch_millis
             session.add(t)
         session.commit()
 
@@ -431,9 +431,9 @@ class ToolWrapper(Base):
         :return: Bool: True if the output is actually more recent than input
         """
         most_recent_input = max([get_mtime(f.path)[0] for f in self.one_x_to_many_files if f.one_typeio_to_many_x.is_input == 1]
-                                + [t.modification.mtime_epoch_millis for t in self.one_x_to_many_tables if t.one_typeio_to_many_x.is_input == 1])
+                                + [t.one_tablemodificationtime_to_many_x.mtime_epoch_millis for t in self.one_x_to_many_tables if t.one_typeio_to_many_x.is_input == 1])
         oldest_output = min([get_mtime(f.path)[0] for f in self.one_x_to_many_files if f.one_typeio_to_many_x.is_input == 0]
-                            + [t.modification.mtime_epoch_millis for t in self.one_x_to_many_tables if t.one_typeio_to_many_x.is_input == 0])
+                            + [t.one_tablemodificationtime_to_many_x.mtime_epoch_millis for t in self.one_x_to_many_tables if t.one_typeio_to_many_x.is_input == 0])
         # in seconds since the begining of mtime_epoch_millis (computer), the oldest thing has a lower number of seconds
         return most_recent_input < oldest_output
 
