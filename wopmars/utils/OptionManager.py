@@ -6,8 +6,6 @@ import os
 from wopmars.utils.PathFinder import PathFinder
 from wopmars.utils.Singleton import SingletonMixin
 
-from wopmars.constants import home_wopmars
-
 
 class OptionManager(dict, SingletonMixin):
     """
