@@ -560,7 +560,7 @@ class Reader:
                     iodbput_entry.modification = modification_table_entry
                     iodbput_entry.one_typeio_to_many_x = input_entry
                     try:
-                        toolwrapper_wrapper.tables.append(iodbput_entry)
+                        toolwrapper_wrapper.one_x_to_many_tables.append(iodbput_entry)
                     except ObjectDeletedError as e:
                         raise WopMarsException("Error in the tool_python_path class declaration. Please, notice the developer",
                                                "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
@@ -591,7 +591,7 @@ class Reader:
                     iodbput_entry.modification = modification_table_entry
                     iodbput_entry.one_typeio_to_many_x = output_entry
                     try:
-                        toolwrapper_wrapper.tables.append(iodbput_entry)
+                        toolwrapper_wrapper.one_x_to_many_tables.append(iodbput_entry)
                     except ObjectDeletedError as e:
                         raise WopMarsException(
                             "Error in the tool_python_path class declaration. Please, notice the developer",

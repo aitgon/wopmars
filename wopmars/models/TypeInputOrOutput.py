@@ -20,7 +20,7 @@ class TypeInputOrOutput(Base):
     is_input = Column(Boolean, primary_key=True, autoincrement=False)
 
     # One type is in many tables
-    tables = relationship("TableInputOutputInformation", back_populates="one_typeio_to_many_x")
+    one_x_to_many_tables = relationship("TableInputOutputInformation", back_populates="one_typeio_to_many_x")
     # One type is in many files
     one_x_to_many_files = relationship("FileInputOutputInformation", back_populates="one_typeio_to_many_x")
 
