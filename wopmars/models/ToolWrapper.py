@@ -48,7 +48,7 @@ class ToolWrapper(Base):
     # One rule has many files
     one_x_to_many_files = relationship("FileInputOutputInformation", back_populates="one_toolwrapper_to_many_x")
     # One option is used by many toolwrappers
-    one_toolwrapper_to_many_options = relationship("Option", back_populates="one_option_to_one_rule")
+    relation_toolwrapper_to_option = relationship("Option", back_populates="one_option_to_one_rule")
     # One rule has one execution
     # execution = relationship("Execution", back_populates="rules")
     relation_toolwrapper_to_execution = relationship("Execution", back_populates="relation_execution_to_toolwrapper")
@@ -95,7 +95,7 @@ class ToolWrapper(Base):
         - :meth:`~.wopmars.framework.database.ToolWrapper.ToolWrapper.is_input_respected`
         - :meth:`~.wopmars.framework.database.ToolWrapper.ToolWrapper.is_output_respected`
         """
-        # the one_toolwrapper_to_many_options have to be checked first because they can alter the behavior of the is_input_respected and
+        # the relation_toolwrapper_to_option have to be checked first because they can alter the behavior of the is_input_respected and
         # is_output_respected methods
         self.is_options_respected()
 
@@ -217,7 +217,7 @@ class ToolWrapper(Base):
         This method check if the params given in the constructor are properly formed for the tool.
 
         It checks if the params names given by the user exists or not, if the type correspond and if the required
-        one_toolwrapper_to_many_options are given. If not, throws a WopMarsParsingException.
+        relation_toolwrapper_to_option are given. If not, throws a WopMarsParsingException.
 
         This method calls the "specify_params" method of the tool_python_path. This method should return a dictionnary
         associating the is_input of the option with a String containing the types allowed with it. A "|" is used between
@@ -236,23 +236,23 @@ class ToolWrapper(Base):
         """
         dict_wrapper_opt_carac = self.specify_params()
 
-        # check if the given one_toolwrapper_to_many_options are authorized
-        if not set([opt.name for opt in self.one_toolwrapper_to_many_options]).issubset(dict_wrapper_opt_carac):
+        # check if the given relation_toolwrapper_to_option are authorized
+        if not set([opt.name for opt in self.relation_toolwrapper_to_option]).issubset(dict_wrapper_opt_carac):
             raise WopMarsException("The content of the definition file is not valid.",
                                    "The given option variable for the rule " + str(self.rule_name) + " -> " + self.__class__.__name__ +
                                    " are not correct, they should be in: " +
                                    "\n\t'{0}'".format("'\n\t'".join(dict_wrapper_opt_carac)) +
                                    "\n" + "They are:" +
-                                   "\n\t'{0}'".format("'\n\t'".join([opt.name for opt in self.one_toolwrapper_to_many_options]))
+                                   "\n\t'{0}'".format("'\n\t'".join([opt.name for opt in self.relation_toolwrapper_to_option]))
                                    )
 
         # check if the types correspond
-        for opt in self.one_toolwrapper_to_many_options:
+        for opt in self.relation_toolwrapper_to_option:
             opt.correspond(dict_wrapper_opt_carac[opt.name])
 
-        # check if the required one_toolwrapper_to_many_options are given
+        # check if the required relation_toolwrapper_to_option are given
         for opt in dict_wrapper_opt_carac:
-            if "required" in str(dict_wrapper_opt_carac[opt]).lower() and opt not in [opt2.name for opt2 in self.one_toolwrapper_to_many_options]:
+            if "required" in str(dict_wrapper_opt_carac[opt]).lower() and opt not in [opt2.name for opt2 in self.relation_toolwrapper_to_option]:
                 raise WopMarsException("The content of the definition file is not valid.",
                                        "The option '" + opt + "' has not been provided but it is required.")
 
@@ -513,7 +513,7 @@ class ToolWrapper(Base):
         """
         Two ToolWrapper objects are equals if all their attributes are equals.
 
-        We check if the files, tables and one_toolwrapper_to_many_options are the same.
+        We check if the files, tables and relation_toolwrapper_to_option are the same.
         :param other: ToolWrapper
         :type other: ToolWrapper
         :return: Bool: True if the ToolWrappers are equals.
@@ -563,14 +563,14 @@ class ToolWrapper(Base):
 
     def same_options(self, other):
         """
-        Check if the one_toolwrapper_to_many_options of a ToolWrapper are the same the one_toolwrapper_to_many_options of the other.
+        Check if the relation_toolwrapper_to_option of a ToolWrapper are the same the relation_toolwrapper_to_option of the other.
 
         :param other: ToolWrapper with which you need to compare.
         :type other: ToolWrapper
-        :return: Bool: True if the one_toolwrapper_to_many_options are the same.
+        :return: Bool: True if the relation_toolwrapper_to_option are the same.
         """
-        for opt in self.one_toolwrapper_to_many_options:
-            is_in = bool([o for o in other.one_toolwrapper_to_many_options if (o.name == opt.name and
+        for opt in self.relation_toolwrapper_to_option:
+            is_in = bool([o for o in other.relation_toolwrapper_to_option if (o.name == opt.name and
                                                        o.value == opt.value)])
 
             if not is_in:
@@ -614,7 +614,7 @@ class ToolWrapper(Base):
         """Label for the dot dag"""
         inputs_list_str = [str(i).replace(":", "") for i in self.one_x_to_many_files + self.one_x_to_many_tables if i.one_typeio_to_many_x.is_input == 1]
         outputs_list_str = [str(o).replace(":", "") for o in self.one_x_to_many_files + self.one_x_to_many_tables if o.one_typeio_to_many_x.is_input == 0]
-        params_list_str = [str(p).replace(":","") for p in self.one_toolwrapper_to_many_options]
+        params_list_str = [str(p).replace(":","") for p in self.relation_toolwrapper_to_option]
         s = ""
         s += "ToolWrapper " + self.rule_name + "\n"
         s += "ToolWrapper " + self.__class__.__name__ + "\n"
@@ -626,7 +626,7 @@ class ToolWrapper(Base):
     def __str__(self):
         inputs_list_str = [str(i) for i in self.one_x_to_many_files + self.one_x_to_many_tables if i.one_typeio_to_many_x.is_input == 1]
         outputs_list_str = [str(o) for o in self.one_x_to_many_files + self.one_x_to_many_tables if o.one_typeio_to_many_x.is_input == 0]
-        params_list_str = [str(p) for p in self.one_toolwrapper_to_many_options]
+        params_list_str = [str(p) for p in self.relation_toolwrapper_to_option]
         s = ""
         s += "ToolWrapper " + str(self.rule_name) + ":" + "\n"
         s += "\ttool: " + str(self.tool_python_path) + "\n"
@@ -685,7 +685,7 @@ class ToolWrapper(Base):
         """
         Should be implemented by the tool_python_path developper.
 
-        This method return a dict of string associated with string. Keys are the is_input of the one_toolwrapper_to_many_options and values, their types.
+        This method return a dict of string associated with string. Keys are the is_input of the relation_toolwrapper_to_option and values, their types.
 
         :return: {String: String}
         """
@@ -770,7 +770,7 @@ class ToolWrapper(Base):
         :return:
         """
         try:
-            value = [o.value for o in self.one_toolwrapper_to_many_options if o.name == key][0]
+            value = [o.value for o in self.relation_toolwrapper_to_option if o.name == key][0]
             list_splitted_carac = self.specify_params()[key].split("|")
             for s_type in list_splitted_carac:
                 s_formated_type = s_type.strip().lower()
