@@ -1,10 +1,10 @@
 """
 Module containing the FooWrapper2 class
 """
-from wopmars.models.Rule import Rule
+from wopmars.models.ToolWrapper import ToolWrapper
 
 
-class FooWrapper3(Rule):
+class FooWrapper3(ToolWrapper):
     """
     This class has been done for example/testing purpose.
     Modifications may lead to failure in tests.

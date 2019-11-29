@@ -5,10 +5,10 @@ import time
 
 import subprocess
 
-from wopmars.models.Rule import Rule
+from wopmars.models.ToolWrapper import ToolWrapper
 
 
-class FooWrapper11(Rule):
+class FooWrapper11(ToolWrapper):
     """
     This class has been done for example/testing purpose.
     Modifications may lead to failure in tests.

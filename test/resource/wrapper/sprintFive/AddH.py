@@ -1,7 +1,7 @@
-from wopmars.models import Rule
+from wopmars.models import ToolWrapper
 
 
-class AddH(Rule):
+class AddH(ToolWrapper):
     __mapper_args__ = {'polymorphic_identity': "sprintFive.AddH"}
 
     def specify_output_table(self):

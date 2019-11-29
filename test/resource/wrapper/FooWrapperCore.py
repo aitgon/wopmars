@@ -1,12 +1,12 @@
 """
 Module containing the FooWrapper1 class
 """
-from wopmars.models.Rule import Rule
+from wopmars.models.ToolWrapper import ToolWrapper
 
 from sqlalchemy.sql import select
 
 
-class FooWrapperCore(Rule):
+class FooWrapperCore(ToolWrapper):
     """
     This class has been done for example/testing purpose.
     Modifications may lead to failure in tests.

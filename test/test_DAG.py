@@ -5,7 +5,7 @@ from test.resource.wrapper.FooWrapper2 import FooWrapper2
 from test.resource.wrapper.FooWrapper8 import FooWrapper8
 from wopmars.SQLManager import SQLManager
 from wopmars.models.FileInputOutputInformation import FileInputOutputInformation
-from wopmars.models.Rule import Rule
+from wopmars.models.ToolWrapper import ToolWrapper
 from wopmars.models.TypeInputOrOutput import TypeInputOrOutput
 from wopmars.DAG import DAG
 from wopmars.utils.OptionManager import OptionManager
@@ -107,7 +107,7 @@ class TestDAG(TestCase):
         try:
             my_dag = DAG(self.__set_tool)
 
-            dag_from_base = DAG(set(SQLManager.instance().get_session().query(Rule).all()))
+            dag_from_base = DAG(set(SQLManager.instance().get_session().query(ToolWrapper).all()))
             self.assertEqual(my_dag, dag_from_base)
 
             # Verifying that the nodes are correctly sorted

@@ -95,7 +95,7 @@ class SQLManager(SingletonMixin):
         from wopmars.models.TableInputOutputInformation import TableInputOutputInformation
         from wopmars.models.FileInputOutputInformation import FileInputOutputInformation
         from wopmars.models.TableModificationTime import TableModificationTime
-        from wopmars.models.Rule import Rule
+        from wopmars.models.ToolWrapper import ToolWrapper
         from wopmars.models.Execution import Execution
 
         if self.engine.has_table(Option.__tablename__):
@@ -106,8 +106,8 @@ class SQLManager(SingletonMixin):
             self.engine.execute(FileInputOutputInformation.__table__.delete())
         if self.engine.has_table(TableModificationTime.__tablename__):
             self.engine.execute(TableModificationTime.__table__.delete())
-        if self.engine.has_table(Rule.__tablename__):
-            self.engine.execute(Rule.__table__.delete())
+        if self.engine.has_table(ToolWrapper.__tablename__):
+            self.engine.execute(ToolWrapper.__table__.delete())
         if self.engine.has_table(Execution.__tablename__):
             self.engine.execute(Execution.__table__.delete())
 
