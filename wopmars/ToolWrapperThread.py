@@ -103,8 +103,8 @@ class ToolWrapperThread(threading.Thread, Observable):
 
         :return: The string containg the command line
         """
-        list_str_inputs_files = [f.name + "': '" + f.path for f in self.__tool_wrapper.one_x_to_many_files if f.one_typeio_to_many_x.is_input == 1]
-        list_str_inputs_tables = [t.table_name + "': '" + t.model_py_path for t in self.__tool_wrapper.one_x_to_many_tables if t.one_typeio_to_many_x.is_input == 1]
+        list_str_inputs_files = [f.name + "': '" + f.path for f in self.__tool_wrapper.relation_typeio_to_fileioinfo if f.relation_typeio_to_file_or_tableioinfo.is_input == 1]
+        list_str_inputs_tables = [t.table_name + "': '" + t.model_py_path for t in self.__tool_wrapper.relation_typeio_to_tableioinfo if t.relation_typeio_to_file_or_tableioinfo.is_input == 1]
         str_input_dict = ""
         str_input_dict_files = ""
         str_input_dict_tables = ""
@@ -116,8 +116,8 @@ class ToolWrapperThread(threading.Thread, Observable):
         if list_str_inputs_files or list_str_inputs_tables:
             str_input_dict = " -i \"{%s}\"" % (", ".join([s for s in [str_input_dict_files, str_input_dict_tables] if s != ""]))
 
-        list_str_outputs_files = [f.name + "': '" + f.path for f in self.__tool_wrapper.one_x_to_many_files if f.one_typeio_to_many_x.is_input == 0]
-        list_str_outputs_tables = [t.table_name + "': '" + t.model_py_path for t in self.__tool_wrapper.one_x_to_many_tables if t.one_typeio_to_many_x.is_input == 0]
+        list_str_outputs_files = [f.name + "': '" + f.path for f in self.__tool_wrapper.relation_typeio_to_fileioinfo if f.relation_typeio_to_file_or_tableioinfo.is_input == 0]
+        list_str_outputs_tables = [t.table_name + "': '" + t.model_py_path for t in self.__tool_wrapper.relation_typeio_to_tableioinfo if t.relation_typeio_to_file_or_tableioinfo.is_input == 0]
         str_output_dict = ""
         str_output_dict_files = ""
         str_output_dict_tables = ""
