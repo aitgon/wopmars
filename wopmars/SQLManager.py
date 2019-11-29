@@ -89,7 +89,7 @@ class SQLManager(SingletonMixin):
         """
         Empty all wom tables except wom_type_input_or_output
 
-        :param list_str_table: [String] the name of the models.
+        :param list_str_table: [String] the rule_name of the models.
         """
         from wopmars.models.Option import Option
         from wopmars.models.TableInputOutputInformation import TableInputOutputInformation

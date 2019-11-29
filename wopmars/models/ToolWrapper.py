@@ -18,7 +18,7 @@ class ToolWrapper(Base):
     SQLAlchemy Model of the table ``wom_rule`` with the following fields:
 
     - id: INTEGER - primary_key - auto increment - arbitrary ID
-    - is_input: VARCHAR(255) - the is_input of the rule
+    - rule_name: VARCHAR(255) - the name of the rule
     - tool_python_path: VARCHAR(255) - the is_input of the Toolwrapper
     - execution_id: INTEGER - foreign key to the table ``wom_execution`` - the associated execution
     - started_at: INTEGER - unix mtime_epoch_millis [ms] at wich the tool_python_path started its execution
@@ -35,7 +35,7 @@ class ToolWrapper(Base):
     __tablename__ = "wom_{}".format(__qualname__)
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(255))
+    rule_name = Column(String(255))
     tool_python_path = Column(String(255))
     execution_id = Column(Integer, ForeignKey("wom_Execution.id"))
     started_at = Column(DateTime, nullable=True)
@@ -62,7 +62,7 @@ class ToolWrapper(Base):
     READY = 2
     NOT_READY = 3
 
-    def __init__(self, name=""):
+    def __init__(self, rule_name=""):
         """
         The constructor of the tool_python_path, must not be overwritten.
 
@@ -72,10 +72,10 @@ class ToolWrapper(Base):
         self.__session is the session (WopmarsSession) associated with the Toolwrapper and which will be used in the run method.
         self.__state is an integer which says the actual state of the TooLWrapper: ``NEW``, ``READY``, ``NOT_READY``
 
-        :param name: the is_input of the rule
-        :type name: str
+        :param rule_name: the is_input of the rule
+        :type rule_name: str
         """
-        super().__init__(name=name)
+        super().__init__(rule_name=rule_name)
         self.__state = ToolWrapper.NEW
         self.__session = None
 
@@ -119,7 +119,7 @@ class ToolWrapper(Base):
         if set_input_file_names != set(self.specify_input_file()):
             raise WopMarsException("The content of the definition file is not valid.",
                                    "The given input file variable names for " + self.__class__.__name__ +
-                                   " (rule " + str(self.name) + ")" +
+                                   " (rule " + str(self.rule_name) + ")" +
                                    " are not correct, they should be: " +
                                    "\n\t'{0}'".format("'\n\t'".join(self.specify_input_file())) +
                                    "\n" + "They are:" +
@@ -134,7 +134,7 @@ class ToolWrapper(Base):
         if set_input_table_names != set(self.specify_input_table()):
             raise WopMarsException("The content of the definition file is not valid.",
                                    "The given input table variable names for " + self.__class__.__name__ +
-                                   " (rule " + str(self.name) + ")" +
+                                   " (rule " + str(self.rule_name) + ")" +
                                    " are not correct, they should be: " +
                                    "\n\t'{0}'".format("'\n\t'".join(self.specify_input_table())) +
                                    "\n" + "They are:" +
@@ -145,8 +145,8 @@ class ToolWrapper(Base):
             s_tablename = t_input.table_name
             if s_tablename not in self.specify_input_table():
                 raise WopMarsException("The content of the definition file is not valid.",
-                                       "The given input tablenames for " + 
-                                       self.__class__.__name__ + " (rule " + str(self.name) + ")" +
+                                       "The given input tablenames for " +
+                                       self.__class__.__name__ + " (rule " + str(self.rule_name) + ")" +
                                        " is not correct. it should be in: " +
                                        "\n\t'{0}'".format("'\n\t'".join(self.specify_input_table())) +
                                        "\n" + "It is:" +
@@ -157,7 +157,7 @@ class ToolWrapper(Base):
                 raise WopMarsException("The content of the definition file is not valid.",
                                        "The given table_name of model for " +
                                        self.__class__.__name__ +
-                                       " (rule " + str(self.name) + ")" +
+                                       " (rule " + str(self.rule_name) + ")" +
                                        " is not correct. it should be in: " +
                                        "\n\t'{0}'".format("'\n\t'".join(self.specify_input_table())) +
                                        "\n" + "It is:" +
@@ -179,7 +179,7 @@ class ToolWrapper(Base):
         if set([f_output.name for f_output in self.files if f_output.type.is_input == 0]) != set(self.specify_output_file()):
             raise WopMarsException("The content of the definition file is not valid.",
                                    "The given output variable names for " + self.__class__.__name__ +
-                                   " (rule " + str(self.name) + ")" +
+                                   " (rule " + str(self.rule_name) + ")" +
                                    " are not correct, they should be: " +
                                    "\n\t'{0}'".format("'\n\t'".join(self.specify_output_file())) +
                                    "\n" + "They are:" +
@@ -191,7 +191,7 @@ class ToolWrapper(Base):
         if set_output_table_names != set(self.specify_output_table()):
             raise WopMarsException("The content of the definition file is not valid.",
                                    "The given output table variable names for " + self.__class__.__name__ +
-                                   " (rule " + str(self.name) + ")" +
+                                   " (rule " + str(self.rule_name) + ")" +
                                    " are not correct, they should be: " +
                                    "\n\t'{0}'".format("'\n\t'".join(self.specify_output_table())) +
                                    "\n" + "They are:" +
@@ -201,8 +201,8 @@ class ToolWrapper(Base):
             s_tablename = t_output.table_name
             if s_tablename not in self.specify_output_table():
                 raise WopMarsException("The content of the definition file is not valid.",
-                                       "The given output tablenames for " + 
-                                       self.__class__.__name__ + " (rule " + str(self.name) + ")" +
+                                       "The given output tablenames for " +
+                                       self.__class__.__name__ + " (rule " + str(self.rule_name) + ")" +
                                        " is not correct. it should be in: " +
                                        "\n\t'{0}'".format("'\n\t'".join(self.specify_output_table())) +
                                        "\n" + "It is:" +
@@ -238,7 +238,7 @@ class ToolWrapper(Base):
         # check if the given options are authorized
         if not set([opt.name for opt in self.options]).issubset(dict_wrapper_opt_carac):
             raise WopMarsException("The content of the definition file is not valid.",
-                                   "The given option variable for the rule " + str(self.name) + " -> " + self.__class__.__name__ +
+                                   "The given option variable for the rule " + str(self.rule_name) + " -> " + self.__class__.__name__ +
                                    " are not correct, they should be in: " +
                                    "\n\t'{0}'".format("'\n\t'".join(dict_wrapper_opt_carac)) +
                                    "\n" + "They are:" +
@@ -354,7 +354,7 @@ class ToolWrapper(Base):
                 if not OptionManager.instance()["--dry-run"]:
                     session.rollback()
                     raise WopMarsException("Error during the execution of the workflow",
-                                           "The " + type + " file " + str(f.path) + " of rule " + str(self.name) +
+                                           "The " + type + " file " + str(f.path) + " of rule " + str(self.rule_name) +
                                            " doesn't exist")
                 else:
                     # in dry-run mode, input/output files might not exist
@@ -593,7 +593,7 @@ class ToolWrapper(Base):
         :return: String representing the tool_python_path
         """
         s = "\""
-        s += "ToolWrapper " + self.name
+        s += "ToolWrapper " + self.rule_name
         s += "\\n"
         s += "tool: " + self.__class__.__name__
         s += "\\n"
@@ -615,7 +615,7 @@ class ToolWrapper(Base):
         outputs_list_str = [str(o).replace(":", "") for o in self.files + self.tables if o.type.is_input == 0]
         params_list_str = [str(p).replace(":","") for p in self.options]
         s = ""
-        s += "ToolWrapper " + self.name + "\n"
+        s += "ToolWrapper " + self.rule_name + "\n"
         s += "ToolWrapper " + self.__class__.__name__ + "\n"
         s += "Inputs\n" + "\n\t".join(inputs_list_str) + "\n"
         s += "Outputs\n" + "\n".join(outputs_list_str) + "\n"
@@ -627,7 +627,7 @@ class ToolWrapper(Base):
         outputs_list_str = [str(o) for o in self.files + self.tables if o.type.is_input == 0]
         params_list_str = [str(p) for p in self.options]
         s = ""
-        s += "ToolWrapper " + str(self.name) + ":" + "\n"
+        s += "ToolWrapper " + str(self.rule_name) + ":" + "\n"
         s += "\ttool: " + str(self.tool_python_path) + "\n"
         if len(inputs_list_str) > 0:
             s += "\tinput:" + "\n"
@@ -713,7 +713,7 @@ class ToolWrapper(Base):
             return [f.path for f in self.files if f.name == key and f.type.is_input == 1][0]
         except IndexError:
             raise WopMarsException("Error during the execution of the ToolWrapper " + str(self.tool_python_path) +
-                                   " (rule " + self.name + ").",
+                                   " (rule " + self.rule_name + ").",
                                    "The input file " + str(key) + " has not been specified.")
 
     def input_table(self, key):
@@ -727,7 +727,7 @@ class ToolWrapper(Base):
             return [t for t in self.tables if t.table_name == key and t.type.is_input == 1][0].get_table()
         except IndexError:
             raise WopMarsException("Error during the execution of the ToolWrapper " + str(self.tool_python_path) +
-                                   " (rule " + self.name + ").",
+                                   " (rule " + self.rule_name + ").",
                                    "The input table " + str(key) + " has not been specified.")
 
     def output_file(self, key):
@@ -741,7 +741,7 @@ class ToolWrapper(Base):
             return [f.path for f in self.files if f.name == key and f.type.is_input == 0][0]
         except IndexError:
             raise WopMarsException("Error during the execution of the ToolWrapper " + str(self.tool_python_path) +
-                                   " (rule " + self.name + ").",
+                                   " (rule " + self.rule_name + ").",
                                    "The output file " + str(key) + " has not been specified.")
 
     def output_table(self, key):
@@ -755,7 +755,7 @@ class ToolWrapper(Base):
             return [t for t in self.tables if t.table_name == key and t.type.is_input == 0][0].get_table()
         except IndexError:
             raise WopMarsException("Error during the execution of the ToolWrapper " + str(self.tool_python_path) +
-                                   " (rule " + self.name + ").",
+                                   " (rule " + self.rule_name + ").",
                                    "The output table " + str(key) + " has not been specified.")
 
     def option(self, key):
