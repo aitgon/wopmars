@@ -1,7 +1,6 @@
 """
 Module containing the SQLManager class.
 """
-# import pandas
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import create_engine
 from sqlalchemy.schema import sort_tables
@@ -66,9 +65,9 @@ class SQLManager(SingletonMixin):
         # echo=False mute the log of database
         # connect_args have been necessary because of the accession of the same objects in different Threads.
         if self.d_database_config['db_connection']=="sqlite":
-            self.__engine = create_engine(self.d_database_config['db_url'], echo=False, connect_args={'check_same_thread': False})
+            self.engine = create_engine(self.d_database_config['db_url'], echo=False, connect_args={'check_same_thread': False})
         else:
-            self.__engine = create_engine(self.d_database_config['db_url'], echo=False)
+            self.engine = create_engine(self.d_database_config['db_url'], echo=False)
         # Below, between "###", code copy-pasted from this post
         # http://stackoverflow.com/questions/2614984/sqlite-sqlalchemy-how-to-enforce-foreign-keys/7831210#7831210
         # enforce foreign key constraints
@@ -78,11 +77,11 @@ class SQLManager(SingletonMixin):
             if self.d_database_config['db_connection'] == "sqlite":
                 dbapi_con.execute('pragma foreign_keys=ON')
 
-        event.listen(self.__engine, 'connect', _fk_pragma_on_connect)
+        event.listen(self.engine, 'connect', _fk_pragma_on_connect)
         ###
 
-        # I don't know why I have used the autoflush=True
-        self.__Session = scoped_session(sessionmaker(bind=self.__engine, autoflush=True, autocommit=False))
+        # Luc: I don't know why I have used the autoflush=True
+        self.__Session = scoped_session(sessionmaker(bind=self.engine, autoflush=True, autocommit=False))
         # The lock
         self.__lock = RWLock()
 
@@ -112,17 +111,19 @@ class SQLManager(SingletonMixin):
         if self.engine.has_table(Execution.__tablename__):
             self.engine.execute(Execution.__table__.delete())
 
-    def get_engine(self):
-        """
-        Return the engine of the current execution.
-
-        :return: engine
-        """
-        return self.__engine
+    # def get_engine(self):
+    #     """
+    #     Return the engine of the current execution.
+    #
+    #     :return: engine
+    #     """
+    #     return self.engine
 
     def get_session(self):
         """
         Return a WopmarsSession associated with this SQLmanager.
+        Aitor: I do not know why by this method is necessary rather than self.session direct access
+        for test_SQLManager to work
 
         :return: WopmarsSession
         """
@@ -246,7 +247,7 @@ class SQLManager(SingletonMixin):
         try:
             self.__lock.acquire_write()
             Logger.instance().debug("Dropping all tables...")
-            Base.metadata.drop_all(self.__engine)
+            Base.metadata.drop_all(self.engine)
         finally:
             # Always release the lock
             self.__lock.release()
@@ -260,7 +261,7 @@ class SQLManager(SingletonMixin):
         try:
             self.__lock.acquire_write()
             Logger.instance().debug("Creating all tables...")
-            Base.metadata.create_all(self.__engine)
+            Base.metadata.create_all(self.engine)
             # Always release the lock
         finally:
             self.__lock.release()
@@ -275,7 +276,7 @@ class SQLManager(SingletonMixin):
         try:
             self.__lock.acquire_write()
             Logger.instance().debug("SQLManager.create(" + str(tablename) + "): create table " + str(tablename))
-            Base.metadata.tables[tablename.split(".")[-1]].create(self.__engine, checkfirst=True)
+            Base.metadata.tables[tablename.split(".")[-1]].create(self.engine, checkfirst=True)
         finally:
             # Always release the lock
             self.__lock.release()
@@ -310,7 +311,7 @@ class SQLManager(SingletonMixin):
             self.__lock.acquire_write()
             for t in list_obj_table:
                 Logger.instance().debug("SQLManager.drop_table_list(" + str(list_str_table) + "): drop table " + str(t.name))
-                t.drop(self.__engine, checkfirst=True)
+                t.drop(self.engine, checkfirst=True)
         finally:
             # Always release the lock
             self.__lock.release()

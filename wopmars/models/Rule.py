@@ -62,7 +62,7 @@ class Rule(Base):
     READY = 2
     NOT_READY = 3
 
-    def __init__(self, rule_name=""):
+    def __init__(self, name=""):
         """
         The constructor of the tool_python_path, must not be overwritten.
 
@@ -72,10 +72,10 @@ class Rule(Base):
         self.__session is the session (WopmarsSession) associated with the Toolwrapper and which will be used in the run method.
         self.__state is an integer which says the actual state of the TooLWrapper: ``NEW``, ``READY``, ``NOT_READY``
 
-        :param rule_name: the is_input of the rule
-        :type rule_name: str
+        :param name: the is_input of the rule
+        :type name: str
         """
-        super().__init__(name=rule_name)
+        super().__init__(name=name)
         self.__state = Rule.NEW
         self.__session = None
 

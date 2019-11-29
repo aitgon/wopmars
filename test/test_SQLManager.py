@@ -17,8 +17,7 @@ class ConcurrentCommitingThread(threading.Thread):
 
         thread_session.close()
 
-
-# todo LG: refaire test_bak rollback
+# old toodoo LG: refaire test_bak rollback
 class ConcurrentRollBackingThread(threading.Thread):
     def run(self):
         thread_session = SQLManager.instance().get_session()

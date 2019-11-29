@@ -1,6 +1,6 @@
 import threading
 
-from wopmars.models import Rule
+from wopmars.models.Rule import Rule
 
 
 class Query(Rule):
