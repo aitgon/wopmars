@@ -339,7 +339,7 @@ class Reader:
             # Instantiate the refered class
             wrapper_entry = self.create_toolwrapper_entry("rule_" + s_toolwrapper, s_toolwrapper,
                                                           dict_dict_dict_elm, input_entry, output_entry)
-            wrapper_entry.execution = execution
+            wrapper_entry.relation_toolwrapper_to_execution = execution
             Logger.instance().debug("Object tool_python_path: " + s_toolwrapper + " created.")
             session.add(wrapper_entry)
             session.commit()
@@ -458,7 +458,7 @@ class Reader:
                 # Instantiate the refered class and add it to the set of objects
                 wrapper_entry = self.create_toolwrapper_entry(str_rule_name, str_wrapper_name, dict_dict_dict_elm, input_entry, output_entry)
                 # Associating a tool_python_path to an execution
-                wrapper_entry.execution = execution
+                wrapper_entry.relation_toolwrapper_to_execution = execution
                 set_wrapper.add(wrapper_entry)
                 Logger.instance().debug("Object tool_python_path: " + str_wrapper_name + " created.")
                 # commit/rollback trick to clean the session - SQLAchemy bug suspected
