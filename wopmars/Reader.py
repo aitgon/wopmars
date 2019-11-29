@@ -557,7 +557,7 @@ class Reader:
                                                                                   "mtime_epoch_millis": time_unix_ms,
                                                                                   "mtime_human": time_human},
                                                                               table_name=input_t)
-                    iodbput_entry.modification = modification_table_entry
+                    iodbput_entry.one_tablemodificationtime_to_many_x = modification_table_entry
                     iodbput_entry.one_typeio_to_many_x = input_entry
                     try:
                         toolwrapper_wrapper.one_x_to_many_tables.append(iodbput_entry)
@@ -588,7 +588,7 @@ class Reader:
                                                                                   "mtime_epoch_millis": time_unix_ms,
                                                                                   "mtime_human": time_human},
                                                                               table_name=output_t)
-                    iodbput_entry.modification = modification_table_entry
+                    iodbput_entry.one_tablemodificationtime_to_many_x = modification_table_entry
                     iodbput_entry.one_typeio_to_many_x = output_entry
                     try:
                         toolwrapper_wrapper.one_x_to_many_tables.append(iodbput_entry)

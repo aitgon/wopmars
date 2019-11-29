@@ -37,13 +37,12 @@ class TableInputOutputInformation(InputOutput, Base):
     mtime_human = Column(DateTime, nullable=True)
     mtime_epoch_millis = Column(BigInteger, nullable=True)
 
-    # One table is in one rule
-    # rule = relationship("ToolWrapper", back_populates="tables", enable_typechecks=False)
+    # One toolwrapper uses many tables
     one_toolwrapper_to_many_x = relationship("ToolWrapper", back_populates="one_x_to_many_tables", enable_typechecks=False)
-    # One file has one type
+    # One type_io is used by many tables
     one_typeio_to_many_x = relationship("TypeInputOrOutput", back_populates="one_x_to_many_tables")
-
-    modification = relationship("TableModificationTime", back_populates="one_x_to_many_tables")
+    # One table_io_info has one table_modif_time
+    one_tablemodificationtime_to_many_x = relationship("TableModificationTime", back_populates="one_x_to_many_tables")
 
     # all the model names met since the begining of this instance of WopMaRS
     tablemodelnames = set()
