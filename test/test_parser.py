@@ -26,8 +26,8 @@ class TestParser(TestCase):
 
         SQLManager.instance().create_all()
         session = SQLManager.instance().get_session()
-        session.get_or_create(TypeInputOrOutput, defaults={"id": 1}, name="input")
-        session.get_or_create(TypeInputOrOutput, defaults={"id": 2}, name="output")
+        session.get_or_create(TypeInputOrOutput, defaults={"is_input": True}, is_input=True)
+        session.get_or_create(TypeInputOrOutput, defaults={"is_input": False}, is_input=False)
         session.commit()
         self.__s_root_path = PathFinder.get_module_path()
         self.__parser = Parser()
@@ -43,85 +43,85 @@ class TestParser(TestCase):
         OptionManager.initial_test_setup()
 
         # The good --------------------------:
-        input_entry = TypeInputOrOutput(name="input")
-        output_entry = TypeInputOrOutput(name="output")
+        input_entry = TypeInputOrOutput(is_input=True)
+        output_entry = TypeInputOrOutput(is_input=False)
 
         f1 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
-        f1.type = input_entry
+        f1.relation_typeio_to_file_or_tableioinfo = input_entry
 
         f2 = FileInputOutputInformation(name="output1", path="test/output/output_file1.txt")
-        f2.type = output_entry
+        f2.relation_typeio_to_file_or_tableioinfo = output_entry
 
         f3 = FileInputOutputInformation(name="input1", path="test/output/output_file1.txt")
-        f3.type = input_entry
+        f3.relation_typeio_to_file_or_tableioinfo = input_entry
 
         f3bis = FileInputOutputInformation(name="input1", path="test/output/output_file1.txt")
-        f3bis.type = input_entry
+        f3bis.relation_typeio_to_file_or_tableioinfo = input_entry
 
         f4 = FileInputOutputInformation(name="output1", path="test/output/output_file2.txt")
-        f4.type = output_entry
+        f4.relation_typeio_to_file_or_tableioinfo = output_entry
 
         f5 = FileInputOutputInformation(name="output1", path="test/output/output_file3.txt")
-        f5.type = output_entry
+        f5.relation_typeio_to_file_or_tableioinfo = output_entry
 
         f6 = FileInputOutputInformation(name="output2", path="test/output/output_file4.txt")
-        f6.type = output_entry
+        f6.relation_typeio_to_file_or_tableioinfo = output_entry
 
         f7 = FileInputOutputInformation(name="input1", path="test/output/output_file3.txt")
-        f7.type = input_entry
+        f7.relation_typeio_to_file_or_tableioinfo = input_entry
 
         f8 = FileInputOutputInformation(name="input2", path="test/output/output_file2.txt")
-        f8.type = input_entry
+        f8.relation_typeio_to_file_or_tableioinfo = input_entry
 
         f9 = FileInputOutputInformation(name="output1", path="test/output/output_file5.txt")
-        f9.type = output_entry
+        f9.relation_typeio_to_file_or_tableioinfo = output_entry
 
         f10 = FileInputOutputInformation(name="input1", path="test/output/output_file4.txt")
-        f10.type = input_entry
+        f10.relation_typeio_to_file_or_tableioinfo = input_entry
 
         f11 = FileInputOutputInformation(name="output1", path="test/output/output_file6.txt")
-        f11.type = output_entry
+        f11.relation_typeio_to_file_or_tableioinfo = output_entry
 
         f12 = FileInputOutputInformation(name="input1", path="test/output/output_file1.txt")
-        f12.type = input_entry
+        f12.relation_typeio_to_file_or_tableioinfo = input_entry
 
         f13 = FileInputOutputInformation(name="input2", path="test/output/output_file5.txt")
-        f13.type = input_entry
+        f13.relation_typeio_to_file_or_tableioinfo = input_entry
 
         f14 = FileInputOutputInformation(name="input3", path="test/output/output_file6.txt")
-        f14.type = input_entry
+        f14.relation_typeio_to_file_or_tableioinfo = input_entry
 
         f15 = FileInputOutputInformation(name="output1", path="test/output/output_file7.txt")
-        f15.type = output_entry
+        f15.relation_typeio_to_file_or_tableioinfo = output_entry
 
-        t1 = TableInputOutputInformation(model_path="FooBase", table_name="FooBase")
-        t1.type = output_entry
+        t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
+        t1.relation_typeio_to_file_or_tableioinfo = output_entry
 
-        t1bis = TableInputOutputInformation(model_path="FooBase", table_name="FooBase")
-        t1bis.type = input_entry
+        t1bis = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
+        t1bis.relation_typeio_to_file_or_tableioinfo = input_entry
 
-        t2 = TableInputOutputInformation(model_path="FooBase2", table_name="FooBase2")
-        t2.type = output_entry
+        t2 = TableInputOutputInformation(model_py_path="FooBase2", table_name="FooBase2")
+        t2.relation_typeio_to_file_or_tableioinfo = output_entry
 
-        t2bis = TableInputOutputInformation(model_path="FooBase2", table_name="FooBase2")
-        t2bis.type = input_entry
+        t2bis = TableInputOutputInformation(model_py_path="FooBase2", table_name="FooBase2")
+        t2bis.relation_typeio_to_file_or_tableioinfo = input_entry
 
         tw1 = FooWrapper4(rule_name="rule1")
-        tw1.files.extend([f1, f2])
+        tw1.relation_typeio_to_fileioinfo.extend([f1, f2])
         tw2 = FooWrapper5(rule_name="rule2")
-        tw2.files.extend([f3, f4])
-        tw2.tables.extend([t1])
+        tw2.relation_typeio_to_fileioinfo.extend([f3, f4])
+        tw2.relation_typeio_to_tableioinfo.extend([t1])
         tw3 = FooWrapper6(rule_name="rule3")
-        tw3.files.extend([f3bis, f5, f6])
+        tw3.relation_typeio_to_fileioinfo.extend([f3bis, f5, f6])
         tw4 = FooWrapper7(rule_name="rule4")
-        tw4.tables.extend([t1bis, t2])
+        tw4.relation_typeio_to_tableioinfo.extend([t1bis, t2])
         tw5 = FooWrapper8(rule_name="rule5")
-        tw5.files.extend([f8, f7, f9])
+        tw5.relation_typeio_to_fileioinfo.extend([f8, f7, f9])
         tw6 = FooWrapper9(rule_name="rule6")
-        tw6.files.extend([f10, f11])
-        tw6.tables.extend([t2bis])
+        tw6.relation_typeio_to_fileioinfo.extend([f10, f11])
+        tw6.relation_typeio_to_tableioinfo.extend([t2bis])
         tw7 = FooWrapper10(rule_name="rule7")
-        tw7.files.extend([f12, f13, f14, f15])
+        tw7.relation_typeio_to_fileioinfo.extend([f12, f13, f14, f15])
 
         set_toolwrappers = set([tw1, tw2, tw3, tw4, tw5, tw6, tw7])
 
