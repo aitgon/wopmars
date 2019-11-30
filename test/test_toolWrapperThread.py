@@ -18,7 +18,7 @@ from wopmars.utils.PathFinder import PathFinder
 from wopmars.utils.various import get_current_time
 
 
-class TestToolThread(TestCase):
+class TestToolWrapperThread(TestCase):
 
     def setUp(self):
         OptionManager.initial_test_setup()
@@ -33,57 +33,57 @@ class TestToolThread(TestCase):
         output_entry = TypeInputOrOutput(is_input=False)
 
         f1 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
-        f1.type = input_entry
+        f1.relation_typeio_to_file_or_tableioinfo = input_entry
 
         f2 = FileInputOutputInformation(name="output1", path="test/output/output_file1.txt")
-        f2.type = output_entry
+        f2.relation_typeio_to_file_or_tableioinfo = output_entry
 
         t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         t1.set_table(FooBase)
-        t1.type = output_entry
+        t1.relation_typeio_to_file_or_tableioinfo = output_entry
         timestamp_millis, timestamp_human = get_current_time()
         modification_table_entry = TableModificationTime(mtime_epoch_millis=timestamp_millis, table_name=t1.table_name)
         t1.modification = modification_table_entry
 
-        tw1 = FooWrapper5(name="rule1")
-        tw1.files.extend([f1, f2])
-        tw1.tables.append(t1)
+        tw1 = FooWrapper5(rule_name="rule1")
+        tw1.relation_typeio_to_fileioinfo.extend([f1, f2])
+        tw1.relation_typeio_to_tableioinfo.append(t1)
 
         f12 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
-        f12.type = input_entry
+        f12.relation_typeio_to_file_or_tableioinfo = input_entry
 
         f22 = FileInputOutputInformation(name="output1", path="test/output/output_file1.txt")
-        f22.type = output_entry
+        f22.relation_typeio_to_file_or_tableioinfo = output_entry
 
         t12 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         t12.set_table(FooBase)
-        t12.type = output_entry
+        t12.relation_typeio_to_file_or_tableioinfo = output_entry
         timestamp_millis, timestamp_human = get_current_time()
         modification_table_entry = TableModificationTime(
             mtime_epoch_millis=timestamp_millis, table_name=t12.table_name)
         t12.modification = modification_table_entry
 
-        tw2 = FooWrapper5(name="rule2")
-        tw2.files.extend([f12, f22])
-        tw2.tables.append(t12)
+        tw2 = FooWrapper5(rule_name="rule2")
+        tw2.relation_typeio_to_fileioinfo.extend([f12, f22])
+        tw2.relation_typeio_to_tableioinfo.append(t12)
 
         f13 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
-        f13.type = input_entry
+        f13.relation_typeio_to_file_or_tableioinfo = input_entry
 
         f23 = FileInputOutputInformation(name="output1", path="test/output/output_file1.txt")
-        f23.type = output_entry
+        f23.relation_typeio_to_file_or_tableioinfo = output_entry
 
         t13 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         t13.set_table(FooBase)
-        t13.type = output_entry
+        t13.relation_typeio_to_file_or_tableioinfo = output_entry
         timestamp_millis, timestamp_human = get_current_time()
         modification_table_entry = TableModificationTime(
             mtime_epoch_millis=timestamp_millis, table_name=t13.table_name)
         t13.modification = modification_table_entry
 
-        tw3 = FooWrapper5(name="rule3")
-        tw3.files.extend([f13, f23])
-        tw3.tables.append(t13)
+        tw3 = FooWrapper5(rule_name="rule3")
+        tw3.relation_typeio_to_fileioinfo.extend([f13, f23])
+        tw3.relation_typeio_to_tableioinfo.append(t13)
 
         tt1 = ToolWrapperThread(tw1)
         tt2 = ToolWrapperThread(tw2)
@@ -106,28 +106,28 @@ class TestToolThread(TestCase):
             output_entry = TypeInputOrOutput(is_input=False)
 
             f1 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
-            f1.type = input_entry
+            f1.relation_typeio_to_file_or_tableioinfo = input_entry
 
             t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
             t1.set_table(FooBase)
-            t1.type = output_entry
+            t1.relation_typeio_to_file_or_tableioinfo = output_entry
             timestamp_millis, timestamp_human = get_current_time()
             modification_table_entry = TableModificationTime(mtime_epoch_millis=timestamp_millis, table_name=t1.table_name)
             t1.modification = modification_table_entry
 
             o1 = Option(name="rows", value="1000")
 
-            tw1 = tw_add(name="rule1")
-            tw1.files.append(f1)
-            tw1.tables.append(t1)
-            tw1.options.append(o1)
+            tw1 = tw_add(rule_name="rule1")
+            tw1.relation_typeio_to_fileioinfo.append(f1)
+            tw1.relation_typeio_to_tableioinfo.append(t1)
+            tw1.relation_toolwrapper_to_option.append(o1)
 
             f12 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
-            f12.type = input_entry
+            f12.relation_typeio_to_file_or_tableioinfo = input_entry
 
             t12 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
             t12.set_table(FooBase)
-            t12.type = output_entry
+            t12.relation_typeio_to_file_or_tableioinfo = output_entry
             timestamp_millis, timestamp_human = get_current_time()
             modification_table_entry = TableModificationTime(mtime_epoch_millis=timestamp_millis,
                                                              table_name=t12.table_name)
@@ -135,17 +135,17 @@ class TestToolThread(TestCase):
 
             o12 = Option(name="rows", value="1000")
 
-            tw12 = tw_add(name="rule1")
-            tw12.files.append(f12)
-            tw12.tables.append(t12)
-            tw12.options.append(o12)
+            tw12 = tw_add(rule_name="rule1")
+            tw12.relation_typeio_to_fileioinfo.append(f12)
+            tw12.relation_typeio_to_tableioinfo.append(t12)
+            tw12.relation_toolwrapper_to_option.append(o12)
 
             f13 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
-            f13.type = input_entry
+            f13.relation_typeio_to_file_or_tableioinfo = input_entry
 
             t13 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
             t13.set_table(FooBase)
-            t13.type = output_entry
+            t13.relation_typeio_to_file_or_tableioinfo = output_entry
             timestamp_millis, timestamp_human = get_current_time()
             modification_table_entry = TableModificationTime(mtime_epoch_millis=timestamp_millis,
                                                              table_name=t13.table_name)
@@ -153,10 +153,10 @@ class TestToolThread(TestCase):
 
             o13 = Option(name="rows", value="1000")
 
-            tw13 = tw_add(name="rule1")
-            tw13.files.append(f13)
-            tw13.tables.append(t13)
-            tw13.options.append(o13)
+            tw13 = tw_add(rule_name="rule1")
+            tw13.relation_typeio_to_fileioinfo.append(f13)
+            tw13.relation_typeio_to_tableioinfo.append(t13)
+            tw13.relation_toolwrapper_to_option.append(o13)
 
             tt1 = ToolWrapperThread(tw1)
             tt2 = ToolWrapperThread(tw12)
@@ -164,24 +164,24 @@ class TestToolThread(TestCase):
 
             t21 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
             t21.set_table(FooBase)
-            t21.type = input_entry
+            t21.relation_typeio_to_file_or_tableioinfo = input_entry
 
-            tw21 = tw_query(name="rule1")
-            tw21.tables.append(t21)
+            tw21 = tw_query(rule_name="rule1")
+            tw21.relation_typeio_to_tableioinfo.append(t21)
 
             t22 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
             t22.set_table(FooBase)
-            t22.type = input_entry
+            t22.relation_typeio_to_file_or_tableioinfo = input_entry
 
-            tw22 = tw_query(name="rule1")
-            tw22.tables.append(t22)
+            tw22 = tw_query(rule_name="rule1")
+            tw22.relation_typeio_to_tableioinfo.append(t22)
 
             t23 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
             t23.set_table(FooBase)
-            t23.type = input_entry
+            t23.relation_typeio_to_file_or_tableioinfo = input_entry
 
-            tw23 = tw_query(name="rule1")
-            tw23.tables.append(t23)
+            tw23 = tw_query(rule_name="rule1")
+            tw23.relation_typeio_to_tableioinfo.append(t23)
 
             tt4 = ToolWrapperThread(tw21)
             tt5 = ToolWrapperThread(tw22)

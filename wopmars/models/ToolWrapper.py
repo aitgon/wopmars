@@ -335,7 +335,7 @@ class ToolWrapper(Base):
         If the type of InputOutput is "output" and the execution is "not dry", the mtime_epoch_millis in modification_table is set to the
         current mtime_epoch_millis.mtime_epoch_millis().
 
-        # todo modify it to take commits into account isntead of the status of 'output' of a table
+        # totodo LucG modify it to take commits into account instead of the status of 'output' of a table
 
         :param type: "input" or "output"
         :type type: str
@@ -352,7 +352,7 @@ class ToolWrapper(Base):
                 f.size = size
                 size = os.path.getsize(f.path)
             except FileNotFoundError as FE:
-                # todo ask lionel sans ce rollback, ca bug, pourquoi? la session est vide... comme si la query etait bloquante
+                # totodo LucG ask lionel sans ce rollback, ca bug, pourquoi? la session est vide... comme si la query etait bloquante
                 if not OptionManager.instance()["--dry-run"]:
                     session.rollback()
                     raise WopMarsException("Error during the execution of the workflow",
@@ -789,24 +789,24 @@ class ToolWrapper(Base):
     def session(self):
         return self.__session
 
-    def log(self, level, msg):
-        """
-        use by the tool_python_path developer in order to have a dedicated logger.
-
-        :param level: The level of logging you need: "debug", "info", "warning", "error"
-        :type level: str
-        :param msg: The actual string to log.
-        :type msg: str
-        """
-        if level == "debug":
-            Logger.instance().toolwrapper_debug(msg, self.tool_python_path)
-        elif level == "info":
-            Logger.instance().toolwrapper_info(msg, self.tool_python_path)
-        elif level == "warning":
-            Logger.instance().toolwrapper_debug(msg, self.tool_python_path)
-        elif level == "error":
-            Logger.instance().toolwrapper_error(msg, self.tool_python_path)
-        else:
-            raise WopMarsException("Error in the Toolwrapper definition of method run()",
-                                   "The is no logging level associated with " + str(level) + ". " +
-                                   "The authorized ones are: debug, info, warning, error")
+    # def log(self, level, msg):
+    #     """
+    #     use by the tool_python_path developer in order to have a dedicated logger.
+    #
+    #     :param level: The level of logging you need: "debug", "info", "warning", "error"
+    #     :type level: str
+    #     :param msg: The actual string to log.
+    #     :type msg: str
+    #     """
+    #     if level == "debug":
+    #         Logger.instance().toolwrapper_debug(msg, self.tool_python_path)
+    #     elif level == "info":
+    #         Logger.instance().toolwrapper_info(msg, self.tool_python_path)
+    #     elif level == "warning":
+    #         Logger.instance().toolwrapper_debug(msg, self.tool_python_path)
+    #     elif level == "error":
+    #         Logger.instance().toolwrapper_error(msg, self.tool_python_path)
+    #     else:
+    #         raise WopMarsException("Error in the Toolwrapper definition of method run()",
+    #                                "The is no logging level associated with " + str(level) + ". " +
+    #                                "The authorized ones are: debug, info, warning, error")

@@ -58,9 +58,9 @@ from wopmars.utils.PathFinder import PathFinder
 from wopmars.utils.WopMarsException import WopMarsException
 from wopmars.utils.various import get_mtime, get_current_time
 
-# todo combinatorices pour les rules
-# todo option pour reset les resultats (supprimer le contenu de la database) / fresh run
-# todo ajouter un flag NOT_FINISHED aux executions
+# totodo LucG combinatorices pour les rules
+# totodo LucG option pour reset les resultats (supprimer le contenu de la database) / fresh run
+# totodo LucG ajouter un flag NOT_FINISHED aux executions
 
 __version__='0.0.2'
 
