@@ -79,7 +79,7 @@ class WorkflowManager(ToolWrapperObserver):
 
         if OptionManager.instance()["--clear-history"]:
             Logger.instance().info("Deleting WoPMaRS history...")
-            SQLManager.instance().drop_table_content_list(SQLManager.wom_table_io_information_names)
+            SQLManager.instance().drop_table_content_list(SQLManager.wopmars_history_tables)
 
         # The following lines allow to create types 'input' and 'output' in the db if they don't exist.
         self.__session.get_or_create(TypeInputOrOutput, defaults={"is_input": True}, is_input=True)
@@ -137,7 +137,7 @@ class WorkflowManager(ToolWrapperObserver):
         if OptionManager.instance()["--sourcerule"] is not None:
             try:
                 # Get the rule asked by the user as 'sourcerule'
-                node_from_rule = [n for n in self.__dag_tools if n.name == OptionManager.instance()["--sourcerule"]][0]
+                node_from_rule = [n for n in self.__dag_tools if n.rule_name == OptionManager.instance()["--sourcerule"]][0]
             except IndexError:
                 raise WopMarsException(
                     "The given rule to start from: " + OptionManager.instance()["--sourcerule"] + " doesn't exist.")
@@ -148,7 +148,7 @@ class WorkflowManager(ToolWrapperObserver):
         elif OptionManager.instance()["--targetrule"] is not None:
             try:
                 # Get the rule asked by the user as 'targetrule'
-                node_from_rule = [n for n in self.__dag_tools if n.name == OptionManager.instance()["--targetrule"]][0]
+                node_from_rule = [n for n in self.__dag_tools if n.rule_name == OptionManager.instance()["--targetrule"]][0]
             except IndexError:
                 raise WopMarsException(
                     "The given rule to go to: " + OptionManager.instance()["--targetrule"] + " doesn't exist.")
@@ -195,7 +195,7 @@ class WorkflowManager(ToolWrapperObserver):
                 # ToolWrapperThread object is a thread ready to start
                 self.__queue_exec.put(ToolWrapperThread(tw))
             else:
-                Logger.instance().debug("ToolWrapper: " + tw.name +
+                Logger.instance().debug("ToolWrapper: " + tw.rule_name +
                                         " -> " + tw.tool_python_path +
                                         " has already been executed. Pass.")
         self.run_queue()
