@@ -131,7 +131,8 @@ class ToolWrapper(Base):
         set_input_table_names = set([t_input.table_name for t_input in set_input_table])
 
         # check if the input table names for the ToolWrapper are coherent with the ToolWrapper specifications
-        # this condition may be a duplicate... # todo to fix?
+        # this condition may be a duplicate...
+        # toodo LucG to fix?
         if set_input_table_names != set(self.specify_input_table()):
             raise WopMarsException("The content of the definition file is not valid.",
                                    "The given input table variable names for " + self.__class__.__name__ +

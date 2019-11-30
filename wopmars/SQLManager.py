@@ -30,15 +30,15 @@ class SQLManager(SingletonMixin):
     Allows droping and creating tables from table names ("create" and "drop"), list of table models ("drop_table_list")
     and all ("create_all" and "drop_all").
     """
-    # wom_table_io_information_names = [
-    #     "wom_type_input_or_output",
-    #     "wom_modification_table",
-    #     "wom_execution",
-    #     "wom_rule",
-    #     "wom_table_io_information",
-    #     "wom_file",
-    #     "wom_option"
-    # ]
+    wopmars_history_tables = [
+        "wom_TypeInputOrOutput",
+        "wom_TableModificationTime",
+        "wom_Execution",
+        "wom_ToolWrapper",
+        "wom_TableInputOutputInformation",
+        "wom_FileInputOutputInformation",
+        "wom_Option"
+    ]
 
     def __init__(self):
         """

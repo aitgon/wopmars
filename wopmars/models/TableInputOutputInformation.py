@@ -73,7 +73,7 @@ class TableInputOutputInformation(InputOutput, Base):
             mod = importlib.import_module(table)
             try:
                 if table == self.model_py_path:
-                    # todo tabling
+                    # toodo LucG tabling
                     self.__table = eval("mod." + self.model_py_path.split(".")[-1])
             except AttributeError as e:
                 raise e
@@ -148,7 +148,7 @@ class TableInputOutputInformation(InputOutput, Base):
         except Exception as e:
             session.rollback()
             raise e
-            # todo twthread
+            # toodo LG twthread
         return True
 
     def __eq__(self, other):
