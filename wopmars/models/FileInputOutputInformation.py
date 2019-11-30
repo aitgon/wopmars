@@ -55,7 +55,7 @@ class FileInputOutputInformation(InputOutput, Base):
         return id(self)
 
     def __repr__(self):
-        return "<class '{}' File (%s): %s: %s; size: %s; mtime_epoch_millis: %s>" % (self.type.is_input, self.name, self.path, self.size, self.mtime_epoch_millis)
+        return "<class '{}' File (%s): %s: %s; size: %s; mtime_epoch_millis: %s>" % (self.relation_typeio_to_file_or_tableioinfo.is_input, self.name, self.path, self.size, self.mtime_epoch_millis)
 
     def __str__(self):
         return "file: " + self.name + ": " + self.path

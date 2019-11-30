@@ -8,7 +8,7 @@ from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathFinder import PathFinder
 
 
-class TestIOFilePut(TestCase):
+class TestFileInputOutputInformation(TestCase):
     def setUp(self):
         OptionManager.initial_test_setup()
 

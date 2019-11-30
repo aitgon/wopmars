@@ -28,7 +28,7 @@ class TestRule(TestCase):
         SQLManager.instance().create_all()
 
         set_tw_to_add = set()
-        self.__session = SQLManager.instance().session
+        self.__session = SQLManager.instance().get_session()
 
         self.input_entry = TypeInputOrOutput(is_input=True)
         self.output_entry = TypeInputOrOutput(is_input=False)
@@ -279,8 +279,8 @@ class TestRule(TestCase):
         self.assertTrue(self.__toolwrapper_ready.are_inputs_ready())
         self.assertFalse(self.__toolwrapper_not_ready.are_inputs_ready())
 
-        SQLManager.instance().session.add_all([FooBase(name="test_bak " + str(i)) for i in range(5)])
-        SQLManager.instance().session.commit()
+        SQLManager.instance().get_session().add_all([FooBase(name="test_bak " + str(i)) for i in range(5)])
+        SQLManager.instance().get_session().commit()
 
         t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t1.set_table(FooBase)
@@ -391,7 +391,7 @@ class TestRule(TestCase):
         toolwrapper2.tables.append(t1)
 
     def tearDown(self):
-        SQLManager.instance().session.close()
+        SQLManager.instance().get_session().close()
         SQLManager.instance().drop_all()
         PathFinder.dir_content_remove(os.path.join(self.s_root_path, "test/output"))
         OptionManager._drop()
