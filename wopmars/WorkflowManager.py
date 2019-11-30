@@ -105,7 +105,7 @@ class WorkflowManager(ToolWrapperObserver):
         Logger.instance().info("Forced execution implies overwrite existing output. Erasing files and models.")
         for tw in list_tw:
            [set_files.add(f.path) for f in tw.relation_typeio_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 0]
-           [set_tables.add(t.tablename) for t in tw.relation_typeio_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 0]
+           [set_tables.add(t.table_name) for t in tw.relation_typeio_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 0]
 
         s = ""
         for f_path in set_files:
