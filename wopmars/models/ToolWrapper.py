@@ -526,20 +526,20 @@ class ToolWrapper(Base):
                 self.same_tables(other, False) and
                 self.same_options(other))
 
-    def same_files(self, other, is_name):
+    def same_files(self, other, is_input):
         """
         Check if the files of a ToolWrapper are the same than the files of the other for a given type (input or output).
 
         :param other: ToolWrapper with which you need to compare
         :type other: ToolWrapper
-        :param is_name: The is_input of the type of file (input or output)
-        :type is_name: str
+        :param is_input: The is_input of the type of file (input or output)
+        :type is_input: str
         :return: Bool: True if the files are the same
         """
-        for f in [rf for rf in self.relation_typeio_to_fileioinfo if rf.relation_file_or_tableioinfo_to_typeio.is_input == is_name]:
+        for f in [rf for rf in self.relation_typeio_to_fileioinfo if rf.relation_file_or_tableioinfo_to_typeio.is_input == is_input]:
             is_in = bool([rf for rf in other.relation_typeio_to_fileioinfo if (os.path.abspath(f.path) == os.path.abspath(rf.path) and
-                                                       f.name == rf.name and
-                                                       rf.relation_file_or_tableioinfo_to_typeio.is_input == is_name)])
+                                                                               f.name == rf.name and
+                                                                               rf.relation_file_or_tableioinfo_to_typeio.is_input == is_input)])
             if not is_in:
                 return False
         return True

@@ -81,13 +81,13 @@ class TestToolWrapper(TestCase):
         f2.relation_file_or_tableioinfo_to_typeio = self.output_entry
 
         t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
-        # t1.set_table(FooBase)
+        t1.set_table(FooBase)
         t1.model_declarative_meta = FooBase
         t1.table = t1
         t1.relation_file_or_tableioinfo_to_typeio = self.input_entry
 
         t2 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
-        # t2.set_table(FooBase)
+        t2.set_table(FooBase)
         t2.model_declarative_meta = FooBase
         t2.table = t2
         t2.relation_file_or_tableioinfo_to_typeio = self.output_entry
