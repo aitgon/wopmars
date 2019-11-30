@@ -532,7 +532,7 @@ class Reader:
                 for input_f in dict_dict_dict_elm["dict_input"][elm]:
                     # set the type of FileInputOutputInformation object
                     iofileput_entry = dict_dict_dict_elm["dict_input"][elm][input_f]
-                    iofileput_entry.relation_typeio_to_file_or_tableioinfo = input_entry
+                    iofileput_entry.relation_file_or_tableioinfo_to_typeio = input_entry
                     try:
                         # associating file and tool_python_path
                         toolwrapper_wrapper.relation_typeio_to_fileioinfo.append(iofileput_entry)
@@ -558,7 +558,7 @@ class Reader:
                                                                                   "mtime_human": time_human},
                                                                               table_name=input_t)
                     iodbput_entry.relation_tablemodiftime_to_tableioinfo = modification_table_entry
-                    iodbput_entry.relation_typeio_to_file_or_tableioinfo = input_entry
+                    iodbput_entry.relation_file_or_tableioinfo_to_typeio = input_entry
                     try:
                         toolwrapper_wrapper.relation_typeio_to_tableioinfo.append(iodbput_entry)
                     except ObjectDeletedError as e:
@@ -570,7 +570,7 @@ class Reader:
             if elm == "file":
                 for output_f in dict_dict_dict_elm["dict_output"][elm]:
                     iofileput_entry = dict_dict_dict_elm["dict_output"][elm][output_f]
-                    iofileput_entry.relation_typeio_to_file_or_tableioinfo = output_entry
+                    iofileput_entry.relation_file_or_tableioinfo_to_typeio = output_entry
                     try:
                         toolwrapper_wrapper.relation_typeio_to_fileioinfo.append(iofileput_entry)
                     except ObjectDeletedError as e:
@@ -589,7 +589,7 @@ class Reader:
                                                                                   "mtime_human": time_human},
                                                                               table_name=output_t)
                     iodbput_entry.relation_tablemodiftime_to_tableioinfo = modification_table_entry
-                    iodbput_entry.relation_typeio_to_file_or_tableioinfo = output_entry
+                    iodbput_entry.relation_file_or_tableioinfo_to_typeio = output_entry
                     try:
                         toolwrapper_wrapper.relation_typeio_to_tableioinfo.append(iodbput_entry)
                     except ObjectDeletedError as e:

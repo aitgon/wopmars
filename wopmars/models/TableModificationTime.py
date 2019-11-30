@@ -47,7 +47,7 @@ class TableModificationTime(Base):
                     #                   "mtime_epoch_millis = ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) " \
                     #       "WHERE table_name = '{table_name}';".format(**data)
                     #     obj_ddl = DDL(sql_trigger)
-                    #     SQLManager.instance().create_trigger(Base.metadata.relation_typeio_to_tableioinfo[table_name], obj_ddl)
+                    #     SQLManager.instance().create_trigger(Base.metadata.tables[table_name], obj_ddl)
                     # elif SQLManager.instance().__dict__['d_database_config']['db_connection'] == 'postgresql':
                     #     sql_trigger = """
                     #         CREATE OR REPLACE FUNCTION {table_name}_{statement}() RETURNS TRIGGER AS ${table_name}_{statement}$

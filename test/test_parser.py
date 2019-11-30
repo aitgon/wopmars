@@ -47,64 +47,64 @@ class TestParser(TestCase):
         output_entry = TypeInputOrOutput(is_input=False)
 
         f1 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
-        f1.relation_typeio_to_file_or_tableioinfo = input_entry
+        f1.relation_file_or_tableioinfo_to_typeio = input_entry
 
         f2 = FileInputOutputInformation(name="output1", path="test/output/output_file1.txt")
-        f2.relation_typeio_to_file_or_tableioinfo = output_entry
+        f2.relation_file_or_tableioinfo_to_typeio = output_entry
 
         f3 = FileInputOutputInformation(name="input1", path="test/output/output_file1.txt")
-        f3.relation_typeio_to_file_or_tableioinfo = input_entry
+        f3.relation_file_or_tableioinfo_to_typeio = input_entry
 
         f3bis = FileInputOutputInformation(name="input1", path="test/output/output_file1.txt")
-        f3bis.relation_typeio_to_file_or_tableioinfo = input_entry
+        f3bis.relation_file_or_tableioinfo_to_typeio = input_entry
 
         f4 = FileInputOutputInformation(name="output1", path="test/output/output_file2.txt")
-        f4.relation_typeio_to_file_or_tableioinfo = output_entry
+        f4.relation_file_or_tableioinfo_to_typeio = output_entry
 
         f5 = FileInputOutputInformation(name="output1", path="test/output/output_file3.txt")
-        f5.relation_typeio_to_file_or_tableioinfo = output_entry
+        f5.relation_file_or_tableioinfo_to_typeio = output_entry
 
         f6 = FileInputOutputInformation(name="output2", path="test/output/output_file4.txt")
-        f6.relation_typeio_to_file_or_tableioinfo = output_entry
+        f6.relation_file_or_tableioinfo_to_typeio = output_entry
 
         f7 = FileInputOutputInformation(name="input1", path="test/output/output_file3.txt")
-        f7.relation_typeio_to_file_or_tableioinfo = input_entry
+        f7.relation_file_or_tableioinfo_to_typeio = input_entry
 
         f8 = FileInputOutputInformation(name="input2", path="test/output/output_file2.txt")
-        f8.relation_typeio_to_file_or_tableioinfo = input_entry
+        f8.relation_file_or_tableioinfo_to_typeio = input_entry
 
         f9 = FileInputOutputInformation(name="output1", path="test/output/output_file5.txt")
-        f9.relation_typeio_to_file_or_tableioinfo = output_entry
+        f9.relation_file_or_tableioinfo_to_typeio = output_entry
 
         f10 = FileInputOutputInformation(name="input1", path="test/output/output_file4.txt")
-        f10.relation_typeio_to_file_or_tableioinfo = input_entry
+        f10.relation_file_or_tableioinfo_to_typeio = input_entry
 
         f11 = FileInputOutputInformation(name="output1", path="test/output/output_file6.txt")
-        f11.relation_typeio_to_file_or_tableioinfo = output_entry
+        f11.relation_file_or_tableioinfo_to_typeio = output_entry
 
         f12 = FileInputOutputInformation(name="input1", path="test/output/output_file1.txt")
-        f12.relation_typeio_to_file_or_tableioinfo = input_entry
+        f12.relation_file_or_tableioinfo_to_typeio = input_entry
 
         f13 = FileInputOutputInformation(name="input2", path="test/output/output_file5.txt")
-        f13.relation_typeio_to_file_or_tableioinfo = input_entry
+        f13.relation_file_or_tableioinfo_to_typeio = input_entry
 
         f14 = FileInputOutputInformation(name="input3", path="test/output/output_file6.txt")
-        f14.relation_typeio_to_file_or_tableioinfo = input_entry
+        f14.relation_file_or_tableioinfo_to_typeio = input_entry
 
         f15 = FileInputOutputInformation(name="output1", path="test/output/output_file7.txt")
-        f15.relation_typeio_to_file_or_tableioinfo = output_entry
+        f15.relation_file_or_tableioinfo_to_typeio = output_entry
 
         t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
-        t1.relation_typeio_to_file_or_tableioinfo = output_entry
+        t1.relation_file_or_tableioinfo_to_typeio = output_entry
 
         t1bis = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
-        t1bis.relation_typeio_to_file_or_tableioinfo = input_entry
+        t1bis.relation_file_or_tableioinfo_to_typeio = input_entry
 
         t2 = TableInputOutputInformation(model_py_path="FooBase2", table_name="FooBase2")
-        t2.relation_typeio_to_file_or_tableioinfo = output_entry
+        t2.relation_file_or_tableioinfo_to_typeio = output_entry
 
         t2bis = TableInputOutputInformation(model_py_path="FooBase2", table_name="FooBase2")
-        t2bis.relation_typeio_to_file_or_tableioinfo = input_entry
+        t2bis.relation_file_or_tableioinfo_to_typeio = input_entry
 
         tw1 = FooWrapper4(rule_name="rule1")
         tw1.relation_typeio_to_fileioinfo.extend([f1, f2])

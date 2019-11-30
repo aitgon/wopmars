@@ -37,7 +37,7 @@ class FileInputOutputInformation(InputOutput, Base):
     # One file is in one rule
     relation_toolwrapper_to_file_or_tableioinfo = relationship("ToolWrapper", back_populates="relation_typeio_to_fileioinfo", enable_typechecks=False)
     # One file has one typeio
-    relation_typeio_to_file_or_tableioinfo = relationship("TypeInputOrOutput", back_populates="relation_typeio_to_fileioinfo")
+    relation_file_or_tableioinfo_to_typeio = relationship("TypeInputOrOutput", back_populates="relation_typeio_to_fileioinfo")
 
     def is_ready(self):
         """
@@ -55,7 +55,7 @@ class FileInputOutputInformation(InputOutput, Base):
         return id(self)
 
     def __repr__(self):
-        return "<class '{}' File (%s): %s: %s; size: %s; mtime_epoch_millis: %s>" % (self.relation_typeio_to_file_or_tableioinfo.is_input, self.name, self.path, self.size, self.mtime_epoch_millis)
+        return "<class '{}' File (%s): %s: %s; size: %s; mtime_epoch_millis: %s>" % (self.relation_file_or_tableioinfo_to_typeio.is_input, self.name, self.path, self.size, self.mtime_epoch_millis)
 
     def __str__(self):
         return "file: " + self.name + ": " + self.path
