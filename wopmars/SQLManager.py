@@ -276,7 +276,7 @@ class SQLManager(SingletonMixin):
         try:
             self.__lock.acquire_write()
             Logger.instance().debug("SQLManager.create(" + str(tablename) + "): create table " + str(tablename))
-            Base.metadata.relation_typeio_to_tableioinfo[tablename.split(".")[-1]].create(self.engine, checkfirst=True)
+            Base.metadata.tables[tablename.split(".")[-1]].create(self.engine, checkfirst=True)
         finally:
             # Always release the lock
             self.__lock.release()
@@ -292,7 +292,7 @@ class SQLManager(SingletonMixin):
             self.__lock.acquire_write()
             # todo tabling
             Logger.instance().debug("SQLManager.drop(" + str(tablename) + "): drop table " + str(tablename))
-            Base.metadata.relation_typeio_to_tableioinfo[tablename.split(".")[-1]].drop(self.get_engine(), checkfirst=True)
+            Base.metadata.tables[tablename.split(".")[-1]].drop(self.engine, checkfirst=True)
         finally:
             # Always release the lock
             self.__lock.release()
@@ -306,7 +306,7 @@ class SQLManager(SingletonMixin):
         # Get the list of Table objects from tablenames, then sort them according to their relationships / foreignkeys
         # and take the reverse to delete them in the right order (reverse of the correct order for creating them)
         # todo tabling
-        list_obj_table = reversed(sort_tables([Base.metadata.relation_typeio_to_tableioinfo[tablename.split(".")[-1]] for tablename in list_str_table]))
+        list_obj_table = reversed(sort_tables([Base.metadata.tables[tablename.split(".")[-1]] for tablename in list_str_table]))
         try:
             self.__lock.acquire_write()
             for t in list_obj_table:
@@ -326,7 +326,7 @@ class SQLManager(SingletonMixin):
         # Get the list of Table objects from tablenames, then sort them according to their relationships / foreignkeys
         # and take the reverse to delete them in the right order (reverse of the correct order for creating them)
         list_obj_table = reversed(
-            sort_tables([Base.metadata.relation_typeio_to_tableioinfo[tablename.split(".")[-1]] for tablename in list_str_table]))
+            sort_tables([Base.metadata.tables[tablename.split(".")[-1]] for tablename in list_str_table]))
         for t in list_obj_table:
             Logger.instance().debug(
                 "SQLManager.drop_table_content_list(" + str(list_str_table) + "): drop table content " + str(t.name))

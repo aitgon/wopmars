@@ -22,6 +22,7 @@ from wopmars.utils.various import get_mtime
 
 
 class TestToolWrapper(TestCase):
+
     def setUp(self):
         OptionManager.initial_test_setup()
         self.s_root_path = PathFinder.get_module_path()
@@ -37,10 +38,10 @@ class TestToolWrapper(TestCase):
         opt1 = Option(name="param1", value="1")
 
         f1 = FileInputOutputInformation(name="input1", path="file1.txt")
-        f1.type_io = self.input_entry
+        f1.relation_file_or_tableioinfo_to_typeio = self.input_entry
 
         f2 = FileInputOutputInformation(name="output1", path="file2.txt")
-        f2.type_io = self.output_entry
+        f2.relation_file_or_tableioinfo_to_typeio = self.output_entry
 
         self.__toolwrapper1 = ToolWrapper(rule_name="rule1")
         self.__toolwrapper1.relation_typeio_to_fileioinfo.extend([f1, f2])
@@ -49,10 +50,10 @@ class TestToolWrapper(TestCase):
         opt1 = Option(name="param1", value="1")
 
         f1 = FileInputOutputInformation(name="input1", path="file1.txt")
-        f1.type_io = self.input_entry
+        f1.relation_file_or_tableioinfo_to_typeio = self.input_entry
 
         f2 = FileInputOutputInformation(name="output1", path="file2.txt")
-        f2.type_io = self.output_entry
+        f2.relation_file_or_tableioinfo_to_typeio = self.output_entry
 
         self.__toolwrapper2 = ToolWrapper(rule_name="rule2")
         self.__toolwrapper2.relation_typeio_to_fileioinfo.extend([f1, f2])
@@ -61,10 +62,10 @@ class TestToolWrapper(TestCase):
         opt1 = Option(name="param2", value="2")
 
         f1 = FileInputOutputInformation(name="input1", path="file1.txt")
-        f1.type_io = self.input_entry
+        f1.relation_file_or_tableioinfo_to_typeio = self.input_entry
 
         f2 = FileInputOutputInformation(name="output1", path="file2.txt")
-        f2.type_io = self.output_entry
+        f2.relation_file_or_tableioinfo_to_typeio = self.output_entry
 
         self.__toolwrapper3 = ToolWrapper(rule_name="rule3")
         self.__toolwrapper3.relation_typeio_to_fileioinfo.extend([f1, f2])
@@ -74,22 +75,22 @@ class TestToolWrapper(TestCase):
         opt1 = Option(name="param1", value="2")
 
         f1 = FileInputOutputInformation(name="input1", path="file1.txt")
-        f1.type_io = self.input_entry
+        f1.relation_file_or_tableioinfo_to_typeio = self.input_entry
 
         f2 = FileInputOutputInformation(name="output1", path="file2.txt")
-        f2.type_io = self.output_entry
+        f2.relation_file_or_tableioinfo_to_typeio = self.output_entry
 
         t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t1.set_table(FooBase)
         t1.model_declarative_meta = FooBase
         t1.table = t1
-        t1.type_io = self.input_entry
+        t1.relation_file_or_tableioinfo_to_typeio = self.input_entry
 
         t2 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t2.set_table(FooBase)
         t2.model_declarative_meta = FooBase
         t2.table = t2
-        t2.type_io = self.output_entry
+        t2.relation_file_or_tableioinfo_to_typeio = self.output_entry
 
         self.__foowrapper_right_content = FooWrapper3(rule_name="rule1")
         self.__foowrapper_right_content.relation_typeio_to_fileioinfo.extend([f1, f2])
@@ -99,10 +100,10 @@ class TestToolWrapper(TestCase):
         opt1 = Option(name="param1", value="String")
 
         f1 = FileInputOutputInformation(name="input1", path="file1.txt")
-        f1.type_io = self.input_entry
+        f1.relation_file_or_tableioinfo_to_typeio = self.input_entry
 
         f2 = FileInputOutputInformation(name="output1", path="file2.txt")
-        f2.type_io = self.output_entry
+        f2.relation_file_or_tableioinfo_to_typeio = self.output_entry
 
         t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t1.set_table(FooBase)
@@ -122,13 +123,13 @@ class TestToolWrapper(TestCase):
         opt1 = Option(name="param2", value="2")
 
         f1 = FileInputOutputInformation(name="input1", path="file1.txt")
-        f1.type_io = self.input_entry
+        f1.relation_file_or_tableioinfo_to_typeio = self.input_entry
 
         f2 = FileInputOutputInformation(name="output1", path="file2.txt")
-        f2.type_io = self.output_entry
+        f2.relation_file_or_tableioinfo_to_typeio = self.output_entry
 
         f3 = FileInputOutputInformation(name="input2", path="file2.txt")
-        f3.type_io = self.input_entry
+        f3.relation_file_or_tableioinfo_to_typeio = self.input_entry
 
         t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t1.set_table(FooBase)
@@ -148,10 +149,10 @@ class TestToolWrapper(TestCase):
         opt1 = Option(name="param2", value="2")
 
         f1 = FileInputOutputInformation(name="input1", path="file1.txt")
-        f1.type_io = self.input_entry
+        f1.relation_file_or_tableioinfo_to_typeio = self.input_entry
 
         f2 = FileInputOutputInformation(name="output1", path="file2.txt")
-        f2.type_io = self.output_entry
+        f2.relation_file_or_tableioinfo_to_typeio = self.output_entry
 
         t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t1.set_table(FooBase)
@@ -171,10 +172,10 @@ class TestToolWrapper(TestCase):
         opt1 = Option(name="param1", value="String")
 
         f1 = FileInputOutputInformation(name="input1", path="file1.txt")
-        f1.type_io = self.input_entry
+        f1.relation_file_or_tableioinfo_to_typeio = self.input_entry
 
         f2 = FileInputOutputInformation(name="output1", path="file2.txt")
-        f2.type_io = self.output_entry
+        f2.relation_file_or_tableioinfo_to_typeio = self.output_entry
 
         t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t1.set_table(FooBase)
@@ -192,10 +193,10 @@ class TestToolWrapper(TestCase):
         self.__foowrapper_wrong_content4.relation_toolwrapper_to_option.append(opt1)
 
         f1 = FileInputOutputInformation(name="input1", path="file1.txt")
-        f1.type_io = self.input_entry
+        f1.relation_file_or_tableioinfo_to_typeio = self.input_entry
 
         f2 = FileInputOutputInformation(name="output1", path="file2.txt")
-        f2.type_io = self.output_entry
+        f2.relation_file_or_tableioinfo_to_typeio = self.output_entry
 
         t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t1.set_table(FooBase)
@@ -214,19 +215,19 @@ class TestToolWrapper(TestCase):
         ### TooLWrappers for follows
 
         f1 = FileInputOutputInformation(name="input1", path="file1.txt")
-        f1.type_io = self.input_entry
+        f1.relation_file_or_tableioinfo_to_typeio = self.input_entry
 
         f2 = FileInputOutputInformation(name="output1", path="file2.txt")
-        f2.type_io = self.output_entry
+        f2.relation_file_or_tableioinfo_to_typeio = self.output_entry
 
         self.__toolwrapper_first = FooWrapper2(rule_name="rule1")
         self.__toolwrapper_first.relation_typeio_to_fileioinfo.extend([f1, f2])
 
         f1 = FileInputOutputInformation(name="input1", path="file2.txt")
-        f1.type_io = self.input_entry
+        f1.relation_file_or_tableioinfo_to_typeio = self.input_entry
 
         f2 = FileInputOutputInformation(name="output1", path="file3.txt")
-        f2.type_io = self.output_entry
+        f2.relation_file_or_tableioinfo_to_typeio = self.output_entry
 
         self.__toolwrapper_second = FooWrapper2(rule_name="rule2")
         self.__toolwrapper_second.relation_typeio_to_fileioinfo.extend([f1, f2])
@@ -238,19 +239,19 @@ class TestToolWrapper(TestCase):
         s_path_to_example_file_that_exists = os.path.join(s_root_path, "test/resource/input_files/input_file1.txt")
 
         f1 = FileInputOutputInformation(name="input1", path=s_path_to_example_file_that_exists)
-        f1.type_io = self.input_entry
+        f1.relation_file_or_tableioinfo_to_typeio = self.input_entry
 
         f2 = FileInputOutputInformation(name="output1", path="file2.txt")
-        f2.type_io = self.output_entry
+        f2.relation_file_or_tableioinfo_to_typeio = self.output_entry
 
         self.__toolwrapper_ready = FooWrapper2(rule_name="rule2")
         self.__toolwrapper_ready.relation_typeio_to_fileioinfo.extend([f1, f2])
 
         f1 = FileInputOutputInformation(name="input1", path="/not/existent/file")
-        f1.type_io = self.input_entry
+        f1.relation_file_or_tableioinfo_to_typeio = self.input_entry
 
         f2 = FileInputOutputInformation(name="output1", path="file2.txt")
-        f2.type_io = self.output_entry
+        f2.relation_file_or_tableioinfo_to_typeio = self.output_entry
 
         self.__toolwrapper_not_ready = FooWrapper2(rule_name="rule2")
         self.__toolwrapper_not_ready.relation_typeio_to_fileioinfo.extend([f1, f2])
@@ -283,9 +284,9 @@ class TestToolWrapper(TestCase):
         SQLManager.instance().get_session().commit()
 
         t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
-        # t1.set_table(FooBase)
+        t1.set_table(FooBase)
         t1.model_declarative_meta = FooBase
-        t1.type_io = self.input_entry
+        t1.relation_file_or_tableioinfo_to_typeio = self.input_entry
 
         toolwrapper_ready2 = FooWrapper2(rule_name="rule2")
         toolwrapper_ready2.relation_typeio_to_tableioinfo.append(t1)
@@ -303,22 +304,22 @@ class TestToolWrapper(TestCase):
         t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t1.set_table(FooBase)
         t1.model_declarative_meta = FooBase
-        t1.type_io = self.input_entry
+        t1.relation_file_or_tableioinfo_to_typeio = self.input_entry
         modif = TableModificationTime(table_name="FooBase", mtime_epoch_millis=moment, mtime_human=mtime_human)
         modif.relation_typeio_to_tableioinfo.append(t1)
 
         t2 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t2.set_table(FooBase)
         t2.model_declarative_meta = FooBase
-        t2.type_io = self.input_entry
+        t2.relation_file_or_tableioinfo_to_typeio = self.input_entry
         modif = TableModificationTime(table_name="FooBase", mtime_epoch_millis=moment, mtime_human=mtime_human)
         modif.relation_typeio_to_tableioinfo.append(t2)
 
         f1 = FileInputOutputInformation(name="input1", path="path1", mtime_epoch_millis=moment, size=0)
-        f1.type_io = self.input_entry
+        f1.relation_file_or_tableioinfo_to_typeio = self.input_entry
 
         f2 = FileInputOutputInformation(name="input1", path="path1", mtime_epoch_millis=moment, size=0)
-        f2.type_io = self.input_entry
+        f2.relation_file_or_tableioinfo_to_typeio = self.input_entry
 
         toolwrapper1 = FooWrapper2(rule_name="rule1")
         toolwrapper1.relation_typeio_to_fileioinfo.append(f1)
@@ -331,13 +332,13 @@ class TestToolWrapper(TestCase):
         t3 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t3.set_table(FooBase)
         t3.model_declarative_meta = FooBase
-        t3.type_io = self.input_entry
+        t3.relation_file_or_tableioinfo_to_typeio = self.input_entry
         modif = TableModificationTime(table_name="FooBase", mtime_epoch_millis=moment, mtime_human=mtime_human)
         modif.relation_typeio_to_tableioinfo.append(t3)
 
         mtime_epoch_millis, mtime_human = get_current_time()
         f3 = FileInputOutputInformation(name="input1", path="path1", mtime_epoch_millis=mtime_epoch_millis, size=0)
-        f3.type_io = self.input_entry
+        f3.relation_file_or_tableioinfo_to_typeio = self.input_entry
 
         toolwrapper3 = FooWrapper2(rule_name="rule1")
         toolwrapper3.relation_typeio_to_fileioinfo.append(f3)
@@ -353,7 +354,7 @@ class TestToolWrapper(TestCase):
         t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t1.set_table(FooBase)
         t1.model_declarative_meta = FooBase
-        t1.type_io = self.input_entry
+        t1.relation_file_or_tableioinfo_to_typeio = self.input_entry
         t1.mtime_epoch_millis = moment
         modif = TableModificationTime(table_name="FooBase", mtime_epoch_millis=moment, mtime_human=mtime_human)
         modif.relation_typeio_to_tableioinfo.append(t1)
@@ -366,7 +367,7 @@ class TestToolWrapper(TestCase):
 
         f1 = FileInputOutputInformation(name="input1", path=path_f1, mtime_epoch_millis=get_mtime(path_f1),
                                         size=os.path.getsize(path_f1))
-        f1.type_io = self.output_entry
+        f1.relation_file_or_tableioinfo_to_typeio = self.output_entry
 
         toolwrapper1 = FooWrapper2(rule_name="rule1")
         toolwrapper1.relation_typeio_to_fileioinfo.append(f1)
@@ -375,13 +376,13 @@ class TestToolWrapper(TestCase):
         f1 = FileInputOutputInformation(name="input1", path=path_f1, mtime_epoch_millis=get_mtime(path_f1),
                                         size=os.path.getsize(path_f1))
 
-        f1.type_io = self.output_entry
+        f1.relation_file_or_tableioinfo_to_typeio = self.output_entry
         mtime_epoch_millis, mtime_human = get_current_time()
         moment = mtime_epoch_millis
         t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
         # t1.set_table(FooBase)
         t1.model_declarative_meta = FooBase
-        t1.type_io = self.input_entry
+        t1.relation_file_or_tableioinfo_to_typeio = self.input_entry
         t1.mtime_epoch_millis = moment
         modif = TableModificationTime(table_name="FooBase", mtime_epoch_millis=moment, mtime_human=mtime_human)
         modif.relation_typeio_to_tableioinfo.append(t1)
