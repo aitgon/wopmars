@@ -41,7 +41,7 @@ class TestWopMars(TestCase):
         SQLManager._drop()
 
     def test_01run(self):
-        cmd_line = ["python", "-l", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-p", "-d", PathFinder.get_module_path()]
+        cmd_line = ["python", "-l", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-d", PathFinder.get_module_path()]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
         self.assertTrue(os.path.exists(os.path.join(self.s_root_path, 'test/output/output_file1.txt')))
@@ -50,14 +50,14 @@ class TestWopMars(TestCase):
         self.assertEqual(se.exception.code, 0)
 
     def test_02dry_run(self):
-        cmd_line = ["python", "-n", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-p", "-d",
+        cmd_line = ["python", "-n", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-d",
                     PathFinder.get_module_path()]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 0)
 
     def test_03run_that_fail(self):
-        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file5_never_ready, "-vv", "-p", "-d",
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file5_never_ready, "-vv", "-d",
                     PathFinder.get_module_path()]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
@@ -65,7 +65,7 @@ class TestWopMars(TestCase):
         self.assertEqual(se.exception.code, 1)
 
     def test_04run_sourcerule_fail(self):
-        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-p", "--sourcerule", "failure"]
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "--sourcerule", "failure"]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
         self.assertFalse(os.path.exists(os.path.join(self.s_root_path, 'test/output/output_file1.txt')))
@@ -80,7 +80,7 @@ class TestWopMars(TestCase):
         p.wait()
         p=subprocess.Popen(["touch", os.path.join(self.s_root_path, "test/output/output_file4.txt")])
         p.wait()
-        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-d", PathFinder.get_module_path(), "-vv", "-p", "--sourcerule", "rule2"]
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-d", PathFinder.get_module_path(), "-vv", "--sourcerule", "rule2"]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 0)
@@ -105,7 +105,7 @@ class TestWopMars(TestCase):
         PathFinder.silentremove("test/output/output_file1.txt")
 
     def test_07dry_drun_skipping(self):
-        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file2_only_files, "-vv", "-p"]
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file2_only_files, "-vv"]
         with self.assertRaises(SystemExit):
            WopMars().run(cmd_line)
 
@@ -113,7 +113,7 @@ class TestWopMars(TestCase):
            WopMars().run(cmd_line + ["-n"])
 
     def test_08dry_drun_skipping_all_but_one(self):
-        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-p"]
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv"]
         with self.assertRaises(SystemExit):
            WopMars().run(cmd_line)
         PathFinder.silentremove("test/output/output_file7.txt")
@@ -163,7 +163,7 @@ class TestWopMars(TestCase):
         self.assertEqual(SE.exception.code, 2)
 
     def test_run_packaged_wrappers(self):
-        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file4, "-vv", "-p", "-d",
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file4, "-vv", "-d",
                     PathFinder.get_module_path()]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
@@ -172,7 +172,7 @@ class TestWopMars(TestCase):
     def test_run_one_tool(self):
         cmd_line = ["python", "tool", "test.resource.wrapper.FooWrapper4",
                   "-i", "{'file': {'input1': 'test/resource/input_files/input_file1.txt'}}",
-                  "-o", "{'file': {'output1': 'test/output/output1.txt'}}", "-D", self.__db_url, "-vv", "-p", "-d",
+                  "-o", "{'file': {'output1': 'test/output/output1.txt'}}", "-D", self.__db_url, "-vv", "-d",
                   PathFinder.get_module_path()]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
@@ -181,7 +181,7 @@ class TestWopMars(TestCase):
     def test_core(self):
         cmd_line = ["python", "tool", "test.resource.wrapper.FooWrapperCore",
                   "-o", "{'table': {'FooBase7': 'test.resource.model.FooBase7'}}",
-                  "-vv", "-p", "-D", self.__db_url, "-d", PathFinder.get_module_path()]
+                  "-vv", "-D", self.__db_url, "-d", PathFinder.get_module_path()]
         with self.assertRaises(SystemExit) as se:
            WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 0)
@@ -200,14 +200,14 @@ class TestWopMars(TestCase):
 
     def test_run_target_rule(self):
         # SQLManager.instance().create_all()
-        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-p", "--targetrule", "rule3"]
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "--targetrule", "rule3"]
         with self.assertRaises(SystemExit) as se:
            WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 0)
 
     def test_run_input_file_not_ready(self):
         # SQLManager.instance().create_all()
-        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file_input_not_ready, "-vv", "-p"]
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file_input_not_ready, "-vv"]
         with self.assertRaises(SystemExit) as se:
            WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 1)
