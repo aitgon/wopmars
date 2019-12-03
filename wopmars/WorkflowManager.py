@@ -77,9 +77,9 @@ class WorkflowManager(ToolWrapperObserver):
         # This create_all is supposed to only create workflow-management side models (called "wom_*")
         SQLManager.instance().create_all()
 
-        if OptionManager.instance()["--clear-history"]:
-            Logger.instance().info("Deleting WoPMaRS history...")
-            SQLManager.instance().drop_table_content_list(SQLManager.wopmars_history_tables)
+        # if OptionManager.instance()["--clear-history"]:
+        #     Logger.instance().info("Deleting WoPMaRS history...")
+        #     SQLManager.instance().drop_table_content_list(SQLManager.wopmars_history_tables)
 
         # The following lines allow to create types 'input' and 'output' in the db if they don't exist.
         self.__session.get_or_create(TypeInputOrOutput, defaults={"is_input": True}, is_input=True)
