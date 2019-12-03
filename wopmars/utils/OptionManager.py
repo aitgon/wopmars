@@ -105,7 +105,7 @@ class OptionManager(dict, SingletonMixin):
         OptionManager.instance()["-v"] = 4
         OptionManager.instance()["--dot"] = None
         OptionManager.instance()["--log"] = None
-        OptionManager.instance()["--printtools"] = True
+        # OptionManager.instance()["--printtools"] = True
         OptionManager.instance()["--sourcerule"] = None
         OptionManager.instance()["--targetrule"] = None
         OptionManager.instance()["--forceall"] = None
@@ -122,5 +122,5 @@ class OptionManager(dict, SingletonMixin):
         OptionManager.instance()["--directory"] = PathFinder.get_module_path()
         OptionManager.instance()["--clear-history"] = False
         os.chdir(OptionManager.instance()["--directory"])
-        OptionManager.instance()["--tool_python_path-log"] = False
+        # OptionManager.instance()["--tool_python_path-log"] = False
 
