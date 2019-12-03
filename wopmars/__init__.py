@@ -1,8 +1,8 @@
 """WopMars: Workflow Python Manager for Reproducible Science.
 
 Usage:
-  wopmars (-D DATABASE) (-w DEFINITION_FILE) [-n] [-F] [-v...] [-d DIR] [-g FILE] [-L FILE] [-f RULE | -t RULE] [-c] [-l]
-  wopmars tool TOOLWRAPPER [-i DICT] [-o DICT] [-P DICT] [-F] [-D DATABASE] [-v...] [-d DIR] [-L FILE] [-g FILE] [-c] [-l]
+  wopmars (-D DATABASE) (-w DEFINITION_FILE) [-n] [-F] [-v...] [-d DIR] [-g FILE] [-L FILE] [-f RULE | -t RULE] [-c]
+  wopmars tool TOOLWRAPPER [-i DICT] [-o DICT] [-P DICT] [-F] [-D DATABASE] [-v...] [-d DIR] [-L FILE] [-g FILE] [-c]
   wopmars example [-d DIR]
   wopmars example_snp [-d DIR]
 
@@ -24,7 +24,6 @@ Options:
   -g FILE --dot=FILE           Write dot representing the workflow in the FILE file (with .dot extension). This option needs to install WopMars with pygraphviz (pip install wopmars[pygraphviz])
   -h --help                    Show this help.
   -i --input=DICT              Set the input of the tool_python_path you want to use in the dictionnary format.
-  -l --tool_python_path-log         Allow the tool_python_path to print its logs in the standard output.
   -L FILE --log=FILE           Write logs in FILE file [default: $HOME/.wopmars/wopmars.log].
   -n --dry-run                 Only display what would have been done.
   -o --output=DICT             Set the output of the tool_python_path you want to use in the dictionnary format.
@@ -101,7 +100,6 @@ class WopMars:
                 "example": Use(bool),
                 "example_snp": Use(bool),
                 "--clear-history": Use(bool),
-                "--tool_python_path-log": Use(bool)
             })
             # The option values are validated using schema library
             OptionManager.instance().validate(schema_option)

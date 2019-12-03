@@ -41,7 +41,7 @@ class TestWopMars(TestCase):
         SQLManager._drop()
 
     def test_01run(self):
-        cmd_line = ["python", "-l", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-d", PathFinder.get_module_path()]
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-d", PathFinder.get_module_path()]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
         self.assertTrue(os.path.exists(os.path.join(self.s_root_path, 'test/output/output_file1.txt')))
