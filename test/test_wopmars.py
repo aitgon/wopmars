@@ -187,14 +187,16 @@ class TestWopMars(TestCase):
         self.assertEqual(se.exception.code, 0)
 
     def test_clear_history(self):
-        cmd_line = ["python", "-D", self.__db_url,
-                  "-w", self.__example_def_file1,
-                  "-vv", "-p", "-d", PathFinder.get_module_path(), "-c", "-F"]
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv",
+                    "-d", PathFinder.get_module_path()]
+        cmd_line_clear_history = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv",
+                    "-d", PathFinder.get_module_path(), "--clear-history"]
         with self.assertRaises(SystemExit):
-               WopMars().run(cmd_line)
-               WopMars().run(cmd_line)
+            WopMars().run(cmd_line)
+        with self.assertRaises(SystemExit):
+            WopMars().run(cmd_line_clear_history)
         session = SQLManager.instance().get_session()
-        self.assertEqual(session.query(Execution).count(), 1)
+        self.assertEqual(session.query(Execution).count(), 0)
 
     def test_run_target_rule(self):
         # SQLManager.instance().create_all()
