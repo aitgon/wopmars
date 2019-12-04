@@ -129,6 +129,12 @@ class WopMars:
 
         Logger.instance().debug("\nCommand line Args:" + str(OptionManager.instance()))
 
+        ################################################################################################################
+        #
+        # wopmars example
+        #
+        ################################################################################################################
+
         if OptionManager.instance()["example"]:
             ExampleBuilder().build()
             sys.exit(1)
@@ -160,9 +166,9 @@ class WopMars:
             session = SQLManager.instance().get_session()
             try:
                 time_unix_ms, time_human = get_current_time()
-                finish_epoch_millis = time_unix_ms
-                Logger.instance().error("The workflow has encountered an error at: " + str(finish_epoch_millis))
-                workflow_manager.set_finishing_informations(finish_epoch_millis, "ERROR")
+                # finish_epoch_millis = time_unix_ms
+                Logger.instance().error("The workflow has encountered an error at: {}".format(time_human))
+                workflow_manager.set_finishing_informations(time_human, "ERROR")
             except AttributeError:
                 session.rollback()
                 Logger.instance().error("The execution has not even begun. No informations will be stored in the database.")

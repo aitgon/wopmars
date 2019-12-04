@@ -318,8 +318,8 @@ class WorkflowManager(ToolWrapperObserver):
         """
         Set the finsihing information of the whole workflow.
 
-        :param finished_at: The finishing mtime_epoch_millis of the workflow
-        :type finished_at: integer unix mtime_epoch_millis
+        :param finished_at: The finishing human time
+        :type finished_at: DateTime
         :param status: The final status of the workflow
         :type status: str
         """
