@@ -14,20 +14,31 @@ class ExampleBuilder:
     """
 
     def build(self):
-        self.build_file_architecture()
-
-    def build_file_architecture(self):
+        # self.build_file_architecture()
         """
         This builds the car example.
         """
-        cwd = os.path.join(OptionManager.instance()["--directory"], "wopmars_example")
-        example_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "wopmars_example")
+        src_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "wopmars_example")
+        dst_path = os.path.join(OptionManager.instance()["--directory"], "wopmarsexample")
 
-        # copy the folder wopmars_example in cwd
-        ExampleBuilder.copy(example_directory, cwd)
+        shutil.rmtree(dst_path, ignore_errors=True)
+        shutil.copytree(src_path, dst_path)
 
         # empty.txt is an empty text file used in order to take into account the output directory
-        os.remove(os.path.join(cwd, "output/empty.txt"))
+        os.remove(os.path.join(dst_path, "output/empty.txt"))
+
+    # def build_file_architecture(self):
+    #     """
+    #     This builds the car example.
+    #     """
+    #     cwd = os.path.join(OptionManager.instance()["--directory"], "wopmars_example")
+    #     example_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "wopmars_example")
+    #
+    #     # copy the folder wopmars_example in cwd
+    #     ExampleBuilder.copy(example_directory, cwd)
+    #
+    #     # empty.txt is an empty text file used in order to take into account the output directory
+    #     os.remove(os.path.join(cwd, "output/empty.txt"))
 
     def build_snp(self):
         self.build_file_architecture_snp()

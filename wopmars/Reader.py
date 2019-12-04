@@ -72,7 +72,7 @@ class Reader:
                 yaml.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, Reader.no_duplicates_constructor)
                 # The whole content of the definition file is loaded in this dict.
                 # yaml.load return None if there is no content in the String
-                self.__dict_workflow_definition = yaml.load(s_def_file_content) or {}
+                self.__dict_workflow_definition = yaml.load(s_def_file_content, Loader=yaml.SafeLoader) or {}
                 if self.__dict_workflow_definition == {}:
                     Logger.instance().warning("The workflow definition file is empty")
                 Logger.instance().debug("\n" + DictUtils.pretty_repr(self.__dict_workflow_definition))
@@ -523,8 +523,8 @@ class Reader:
             else:
                 raise WopMarsException("Error while parsing the configuration file:",
                                        tool_python_path + " module contains an ImportError: " + str(IE))
-        # Initialize the instance of ToolWrapper
-        toolwrapper_wrapper = toolwrapper_class(rule_name=rule_name)
+        # Initialize the instance of the user ToolWrapper
+        user_tool_wrapper = toolwrapper_class(rule_name=rule_name)
 
         # associating ToolWrapper instances with their files / models
         for elm in dict_dict_dict_elm["dict_input"]:
@@ -535,7 +535,7 @@ class Reader:
                     iofileput_entry.relation_file_or_tableioinfo_to_typeio = input_entry
                     try:
                         # associating file and tool_python_path
-                        toolwrapper_wrapper.relation_typeio_to_fileioinfo.append(iofileput_entry)
+                        user_tool_wrapper.relation_typeio_to_fileioinfo.append(iofileput_entry)
                     except ObjectDeletedError as e:
                         raise WopMarsException("Error in the tool_python_path class declaration. Please, notice the developer",
                                                "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
@@ -560,7 +560,7 @@ class Reader:
                     iodbput_entry.relation_tablemodiftime_to_tableioinfo = modification_table_entry
                     iodbput_entry.relation_file_or_tableioinfo_to_typeio = input_entry
                     try:
-                        toolwrapper_wrapper.relation_typeio_to_tableioinfo.append(iodbput_entry)
+                        user_tool_wrapper.relation_typeio_to_tableioinfo.append(iodbput_entry)
                     except ObjectDeletedError as e:
                         raise WopMarsException("Error in the tool_python_path class declaration. Please, notice the developer",
                                                "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
@@ -572,7 +572,7 @@ class Reader:
                     iofileput_entry = dict_dict_dict_elm["dict_output"][elm][output_f]
                     iofileput_entry.relation_file_or_tableioinfo_to_typeio = output_entry
                     try:
-                        toolwrapper_wrapper.relation_typeio_to_fileioinfo.append(iofileput_entry)
+                        user_tool_wrapper.relation_typeio_to_fileioinfo.append(iofileput_entry)
                     except ObjectDeletedError as e:
                         raise WopMarsException("Error in the tool_python_path class declaration. Please, notice the developer",
                                                "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
@@ -591,7 +591,7 @@ class Reader:
                     iodbput_entry.relation_tablemodiftime_to_tableioinfo = modification_table_entry
                     iodbput_entry.relation_file_or_tableioinfo_to_typeio = output_entry
                     try:
-                        toolwrapper_wrapper.relation_typeio_to_tableioinfo.append(iodbput_entry)
+                        user_tool_wrapper.relation_typeio_to_tableioinfo.append(iodbput_entry)
                     except ObjectDeletedError as e:
                         raise WopMarsException(
                             "Error in the tool_python_path class declaration. Please, notice the developer",
@@ -601,7 +601,7 @@ class Reader:
 
         for opt in dict_dict_dict_elm["dict_params"]:
             # associating option and tool_python_path
-            toolwrapper_wrapper.options.append(dict_dict_dict_elm["dict_params"][opt])
+            user_tool_wrapper.relation_toolwrapper_to_option.append(dict_dict_dict_elm["dict_params"][opt])
 
         # toolwrapper_wrapper.is_content_respected()
-        return toolwrapper_wrapper
+        return user_tool_wrapper
