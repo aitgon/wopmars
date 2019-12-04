@@ -1,13 +1,12 @@
 """
 Module containing the FooWrapper1 class
 """
-import os
 import time
 
 import subprocess
 
-from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
-from wopmars.utils.Logger import Logger
+from wopmars.models.ToolWrapper import ToolWrapper
+
 
 class FooWrapper8(ToolWrapper):
     """

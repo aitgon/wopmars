@@ -1,4 +1,4 @@
-from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
+from wopmars.models.ToolWrapper import ToolWrapper
 
 
 class Add(ToolWrapper):

@@ -6,8 +6,6 @@ import os
 from wopmars.utils.PathFinder import PathFinder
 from wopmars.utils.Singleton import SingletonMixin
 
-from wopmars.constants import home_wopmars
-
 
 class OptionManager(dict, SingletonMixin):
     """
@@ -104,12 +102,10 @@ class OptionManager(dict, SingletonMixin):
 
     @staticmethod
     def initial_test_setup(mod_name="db"):
-        if not os.path.isdir(home_wopmars):
-            os.makedirs(home_wopmars)
         OptionManager.instance()["-v"] = 4
         OptionManager.instance()["--dot"] = None
-        OptionManager.instance()["--log"] = os.path.join(os.path.expanduser("~"), ".wopmars/wopmars.log")
-        OptionManager.instance()["--printtools"] = True
+        OptionManager.instance()["--log"] = None
+        # OptionManager.instance()["--printtools"] = True
         OptionManager.instance()["--sourcerule"] = None
         OptionManager.instance()["--targetrule"] = None
         OptionManager.instance()["--forceall"] = None
@@ -126,5 +122,5 @@ class OptionManager(dict, SingletonMixin):
         OptionManager.instance()["--directory"] = PathFinder.get_module_path()
         OptionManager.instance()["--clear-history"] = False
         os.chdir(OptionManager.instance()["--directory"])
-        OptionManager.instance()["--toolwrapper-log"] = False
+        # OptionManager.instance()["--tool_python_path-log"] = False
 

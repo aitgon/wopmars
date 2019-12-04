@@ -4,7 +4,7 @@ multiple-lined
 """
 from sqlalchemy import Column, Integer, String
 
-from wopmars.framework.database.Base import Base
+from wopmars.Base import Base
 
 
 class FooBasePackaged(Base):
@@ -18,5 +18,5 @@ class FooBasePackaged(Base):
 
     def __repr__(self):
         s = ""
-        s += "<FooBasePackaged (id: %s; name: %s)>" % (self.id, self.name)
+        s += "<FooBasePackaged (id: %s; is_input: %s)>" % (self.id, self.name)
         return s

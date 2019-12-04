@@ -6,7 +6,6 @@ import errno
 import importlib
 import os
 
-from wopmars.utils.exceptions.WopMarsException import WopMarsException
 
 class PathFinder:
     """

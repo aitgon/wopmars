@@ -1,6 +1,6 @@
 import threading
 
-from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
+from wopmars.models.ToolWrapper import ToolWrapper
 
 
 class Query(ToolWrapper):

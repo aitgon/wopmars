@@ -1,9 +1,18 @@
+from datetime import datetime
+import os
 import time
 
-import os
 
-# get unix time in ms
-time_unix_ms = lambda: time.time() * 1000  #  unix time in ms
+def get_current_time():
+    timestamp = time.time()  # epoch mtime_epoch_millis in ms
+    timestamp_millis = timestamp * 1000  # epoch mtime_epoch_millis in ms
+    timestamp_human = datetime.fromtimestamp(timestamp)  # human readable local mtime_epoch_millis
+    return timestamp_millis, timestamp_human
 
-# get path modification time in ms
-os_path_getmtime_ms = lambda path: os.path.getmtime(path)*1000
+
+def get_mtime(path):
+    mtime_epoch = os.path.getmtime(path)  # epoch mtime_epoch_millis in ms
+    mtime_epoch_millis = mtime_epoch * 1000  # epoch mtime_epoch_millis in ms
+    mtime_human = datetime.fromtimestamp(mtime_epoch)  # mtime in human readable local mtime_epoch_millis
+    return mtime_epoch_millis, mtime_human
+

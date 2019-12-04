@@ -3,7 +3,7 @@ Module containing the FooWrapper1 class
 """
 import subprocess
 
-from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
+from wopmars.models.ToolWrapper import ToolWrapper
 
 
 class FooWrapper5(ToolWrapper):
@@ -28,10 +28,11 @@ class FooWrapper5(ToolWrapper):
         p.wait()
         # self.session().delete_content(self.output_table("FooBase"))
         for i in range(1000):
+            # import pdb; pdb.set_trace()
             f = self.output_table("FooBase")(name="Foowrapper5 - " + str(i))
             self.session().add(f)
         self.session().commit()
-        self.log("info", "coucou")
-        self.log("warning", "coucou")
-        self.log("error", "coucou")
-        self.log("debug", "coucou")
+        # self.log("info", "coucou")
+        # self.log("warning", "coucou")
+        # self.log("error", "coucou")
+        # self.log("debug", "coucou")

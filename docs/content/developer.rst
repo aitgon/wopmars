@@ -100,12 +100,12 @@ wopmars.framework.database
 ..........................
 
 All the processing related to the database is done here. Every objects that should exist in order to work with the database is stored here:
-the :class:`~.wopmars.framework.database.SQLManager.SQLManager` which is used to perform synchronized operations against the database, the :class:`~.wopmars.framework.database.WopMarsSession.WopMarsSession` which is used to bind the Toolwrappers to the database,  the :class:`~.wopmars.framework.database.WopMarsQuery.WopMarsQuery` which is used to create queries that use the WopMaRS machinery There is a package ``tables`` which contains the models related to the history_ of **WopMars**. Among them, the :class:`~.wopmars.framework.database.tables.ToolWrapper.ToolWrapper` class.
+the :class:`~.wopmars.framework.database.SQLManager.SQLManager` which is used to perform synchronized operations against the database, the :class:`~.wopmars.framework.database.WopmarsSession.WopmarsSession` which is used to bind the Toolwrappers to the database,  the :class:`~.wopmars.framework.database.WopmarsQuery.WopmarsQuery` which is used to create queries that use the WopMaRS machinery There is a package ``tables`` which contains the models related to the history_ of **WopMars**. Among them, the :class:`~.wopmars.framework.database.tables.ToolWrapper.ToolWrapper` class.
 
 wopmars.framework.management
 .................................
 
-Here are the classes involved in the actual management of the workflow. Which means the building of the :class:`~.wopmars.framework.management.DAG.DAG` and the walk through it thanks to the :class:`~.wopmars.framework.management.WorkflowManager.WorkflowManager`. Also, the class responsible of the actual execution of the ToolWrappers, :class:`~.wopmars.framework.management.ToolThread.ToolThread` is stored here.
+Here are the classes involved in the actual management of the workflow. Which means the building of the :class:`~.wopmars.framework.management.DAG.DAG` and the walk through it thanks to the :class:`~.wopmars.framework.management.WorkflowManager.WorkflowManager`. Also, the class responsible of the actual execution of the ToolWrappers, :class:`~.wopmars.framework.management.ToolWrapperThread.ToolWrapperThread` is stored here.
 
 wopmars.framework.parsing
 ..............................
@@ -130,10 +130,10 @@ Here is a list of the tables used for history. All of the associated models are 
 
 - ``wom_execution`` represented by the model :class:`~.wopmars.framework.database.tables.Execution.Execution`
 - ``wom_rule`` represented by the model :class:`~.wopmars.framework.database.tables.ToolWrapper.ToolWrapper`
-- ``wom_type`` represented by the model :class:`~.wopmars.framework.database.tables.Type.Type`
-- ``wom_file`` represented by the model :class:`~.wopmars.framework.database.tables.IOFilePut.IOFilePut`
-- ``wom_table`` represented by the model :class:`~.wopmars.framework.database.tables.IODbPut.IODbPut`
-- ``wom_modification_table`` represented by the model :class:`~.wopmars.framework.database.tables.ModificationTable.ModificationTable`
+- ``wom_type_input_or_output`` represented by the model :class:`~.wopmars.framework.database.tables.TypeInputOrOutput.TypeInputOrOutput`
+- ``wom_file`` represented by the model :class:`~.wopmars.framework.database.tables.FileInputOutputInformation.FileInputOutputInformation`
+- ``wom_table_io_information`` represented by the model :class:`~.wopmars.framework.database.tables.TableInputOutputInformation.TableInputOutputInformation`
+- ``wom_modification_table`` represented by the model :class:`~.wopmars.framework.database.tables.TableModificationTime.TableModificationTime`
 - ``wom_option`` represented by the model :class:`~.wopmars.framework.database.tables.Option.Option`
 
 .. figure:: ../images/mcd.png
@@ -185,7 +185,7 @@ The main class responsible of managing the database is the :class:`~.wopmars.fra
 
 The constructor of the ``SQLManager`` create the actual database and enable the foreign key support (https://www.sqlite.org/foreignkeys.html#fk_enable) in order to let the user benefit from this constraint.
 
-To get a :class:`~.wopmars.database.WopMarsSession.WopMarsSession` associated with this SQLManager, you just need to call :meth:`~wopmars.framework.database.SQLManager.SQLManager.get_session()`` and you can use the session anywhere, in any thread and at any time. Everything is already synchronized.
+To get a :class:`~.wopmars.database.WopmarsSession.WopmarsSession` associated with this SQLManager, you just need to call :meth:`~wopmars.framework.database.SQLManager.SQLManager.get_session()`` and you can use the session anywhere, in any thread and at any time. Everything is already synchronized.
 
 ----
 
@@ -204,17 +204,17 @@ To get a :class:`~.wopmars.database.WopMarsSession.WopMarsSession` associated wi
 
 ----
 
-.. autoclass:: wopmars.framework.database.tables.IOFilePut.IOFilePut
+.. autoclass:: wopmars.framework.database.tables.FileInputOutputInformation.FileInputOutputInformation
    :members:
 
 ----
 
-.. autoclass:: wopmars.framework.database.tables.IODbPut.IODbPut
+.. autoclass:: wopmars.framework.database.tables.TableInputOutputInformation.TableInputOutputInformation
    :members:
 
 ----
 
-.. autoclass:: wopmars.framework.database.tables.Type.Type
+.. autoclass:: wopmars.framework.database.tables.TypeInputOrOutput.TypeInputOrOutput
    :members:
 
 ----
@@ -224,12 +224,12 @@ To get a :class:`~.wopmars.database.WopMarsSession.WopMarsSession` associated wi
       
 ----
 
-.. autoclass:: wopmars.framework.database.WopMarsSession.WopMarsSession
+.. autoclass:: wopmars.framework.database.WopmarsSession.WopmarsSession
    :members:
       
 ----
 
-.. autoclass:: wopmars.framework.database.WopMarsQuery.WopMarsQuery
+.. autoclass:: wopmars.framework.database.WopmarsQuery.WopmarsQuery
    :members:
 
 ----
@@ -249,7 +249,7 @@ To get a :class:`~.wopmars.database.WopMarsSession.WopMarsSession` associated wi
    
 ----
 
-.. autoclass:: wopmars.framework.management.ToolThread.ToolThread
+.. autoclass:: wopmars.framework.management.ToolWrapperThread.ToolWrapperThread
    :members:
    
    

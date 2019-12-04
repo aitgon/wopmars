@@ -73,8 +73,8 @@ Now you can show the database tables using
 .. code-block:: bash
 
     $ sqlite3 output/db.sqlite '.table'
-    Phenotype               wom_file                wom_table             
-    SNP                     wom_modification_table  wom_type              
+    Phenotype               wom_file                wom_table_io_information             
+    SNP                     wom_modification_table  wom_type_input_or_output              
     SNP2Phenotype           wom_option            
     wom_execution           wom_rule
 

@@ -4,7 +4,7 @@ Module containing the FooWrapper1 class
 import time
 
 from test.resource.model.FooBase2 import FooBase2
-from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
+from wopmars.models.ToolWrapper import ToolWrapper
 
 class FooWrapper7(ToolWrapper):
     """

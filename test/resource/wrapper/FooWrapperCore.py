@@ -1,7 +1,7 @@
 """
 Module containing the FooWrapper1 class
 """
-from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
+from wopmars.models.ToolWrapper import ToolWrapper
 
 from sqlalchemy.sql import select
 
@@ -20,7 +20,7 @@ class FooWrapperCore(ToolWrapper):
         foobase = self.output_table("FooBase7").__table__
         inserted_list = []
         for i in range(10000):
-            inserted_list.append({'id': i, 'name': "FooWrapperCore " + str(i)})
+            inserted_list.append({'id': i, 'is_input': "FooWrapperCore " + str(i)})
         ins = foobase.insert()
         self.session().execute(ins, inserted_list)
 

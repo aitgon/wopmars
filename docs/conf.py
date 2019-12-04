@@ -101,7 +101,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 #
 # add_function_parentheses = True
 
-# If true, the current module name will be prepended to all description
+# If true, the current module is_input will be prepended to all description
 # unit titles (such as .. function::).
 #
 # add_module_names = True
@@ -111,7 +111,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 #
 # show_authors = False
 
-# The name of the Pygments (syntax highlighting) style to use.
+# The is_input of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
 
 # A list of ignored prefixes for module index sorting.
@@ -120,7 +120,6 @@ pygments_style = 'sphinx'
 # If true, keep warnings as "system message" paragraphs in the built documents.
 # keep_warnings = False
 
-# If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
 
 
@@ -140,7 +139,7 @@ html_theme = 'sphinx_rtd_theme'
 # Add any paths that contain custom themes here, relative to this directory.
 # html_theme_path = []
 
-# The name for this set of Sphinx documents.
+# The is_input for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.
 #
 # html_title = 'WopMars v1.1.1'
@@ -149,12 +148,12 @@ html_theme = 'sphinx_rtd_theme'
 #
 # html_short_title = None
 
-# The name of an image file (relative to this directory) to place at the top
+# The is_input of an image file (relative to this directory) to place at the top
 # of the sidebar.
 #
 # html_logo = None
 
-# The name of an image file (relative to this directory) to use as a favicon of
+# The is_input of an image file (relative to this directory) to use as a favicon of
 # the docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
 #
@@ -221,7 +220,7 @@ html_show_sourcelink = False
 #
 # html_use_opensearch = ''
 
-# This is the file name suffix for HTML files (e.g. ".xhtml").
+# This is the file is_input suffix for HTML files (e.g. ".xhtml").
 # html_file_suffix = None
 
 # Language to be used for generating the HTML full-text search index.
@@ -237,12 +236,12 @@ html_show_sourcelink = False
 #
 # html_search_options = {'type': 'default'}
 
-# The name of a javascript file (relative to the configuration directory) that
+# The is_input of a javascript file (relative to the configuration directory) that
 # implements a search results scorer. If empty, the default will be used.
 #
 # html_search_scorer = 'scorer.js'
 
-# Output file base name for HTML help builder.
+# Output file base is_input for HTML help builder.
 htmlhelp_basename = 'WopMarsdoc'
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -266,14 +265,14 @@ latex_elements = {
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
-# (source start file, target name, title,
+# (source start file, target is_input, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'WopMars.tex', 'WopMars Documentation',
      'Luc Giffon, Aitor Gonzalez, Lionel Spinelli', 'manual'),
 ]
 
-# The name of an image file (relative to this directory) to place at the top of
+# The is_input of an image file (relative to this directory) to place at the top of
 # the title page.
 #
 # latex_logo = None
@@ -309,7 +308,7 @@ latex_documents = [
 # -- Options for manual page output ---------------------------------------
 
 # One entry per manual page. List of tuples
-# (source start file, name, description, authors, manual section).
+# (source start file, is_input, description, authors, manual section).
 man_pages = [
     (master_doc, 'wopmars', 'WopMars Documentation',
      [author], 1)
@@ -323,7 +322,7 @@ man_pages = [
 # -- Options for Texinfo output -------------------------------------------
 
 # Grouping the document tree into Texinfo files. List of tuples
-# (source start file, target name, title, author,
+# (source start file, target is_input, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
     (master_doc, 'WopMars', 'WopMars Documentation',

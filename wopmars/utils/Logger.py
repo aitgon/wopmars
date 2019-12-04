@@ -2,6 +2,7 @@
 Module containing the Logger class.
 """
 import logging
+import sys
 from logging.handlers import RotatingFileHandler
 
 from wopmars.utils.OptionManager import OptionManager
@@ -23,112 +24,123 @@ class Logger(SingletonMixin):
     """
 
     def __init__(self):
-        # the top level logger which will distribute messages to different handlers
-        self.__logger = logging.getLogger("wopmars")
-        self.__logger.setLevel(logging.DEBUG)
-        formatter = logging.Formatter('%(asctime)s :: %(levelname)s :: %(message)s')
 
-        # the loger for std out
-        self.__stream_handler = logging.StreamHandler()
-
-        # the loger which will write errors in stdout anyway
-        self.__stream_handler_err = logging.StreamHandler()
-        self.__stream_handler_err.setLevel(logging.WARNING)
-
-        s_path_log_file = OptionManager.instance()["--log"].rsplit(".", 1)[0]
-        # log file in append mode of size 1 Mo and 1 backup
-        # handler equivalent to stream_handler in term of logging level but write in .log file
-        self.__file_handler = RotatingFileHandler(s_path_log_file + ".log", 'a', 1000000, 1)
-        formatter_file = logging.Formatter('%(asctime)s :: %(levelname)s :: %(message)s')
-        self.__file_handler.setFormatter(formatter_file)
-
-        # err file in append mode of size 1 Mo and 1 backup
-        # this handler will write everything in the .err file.
-        self.__err_handler = RotatingFileHandler(s_path_log_file + ".err", 'a', 1000000, 1)
-        formatter_err = logging.Formatter('%(asctime)s :: %(message)s')
-        self.__err_handler.setFormatter(formatter_err)
-        self.__err_handler.setLevel(logging.DEBUG)
+        self.__logger = logging.getLogger('wopmars')
+        self.formatter_str = '%(asctime)s :: %(levelname)s :: %(name)s :: %(message)s'
+        formatter = logging.Formatter(self.formatter_str)
+        self.__logger.setLevel(logging.DEBUG)  # set root's level
 
         verbosity = int(OptionManager.instance()["-v"])
 
-        # set the verbosity of the stream handler and file handler depending of the needs of the user.
+        ################################################################################################################
+        #
+        # Stream stderr
+        #
+        ################################################################################################################
+
+        self.stream_handler_stderr = logging.StreamHandler(stream=sys.stderr)
+        self.stream_handler_stderr.setFormatter(formatter)
+        self.stream_handler_stderr.setLevel(logging.WARNING)
+        self.__logger.addHandler(self.stream_handler_stderr)
+
+        ################################################################################################################
+        #
+        # Stream stdout
+        #
+        ################################################################################################################
+
+        self.stream_handler_stdout = logging.StreamHandler(stream=sys.stdout)
+        self.stream_handler_stdout.setFormatter(formatter)
         if verbosity <= 0:
-            self.__stream_handler.setLevel(logging.WARNING)
-            self.__file_handler.setLevel(logging.WARNING)
-        elif verbosity == 1:
-            self.__stream_handler.setLevel(logging.INFO)
-            self.__file_handler.setLevel(logging.INFO)
+            self.stream_handler_stdout.setLevel(logging.WARNING)
+        if verbosity == 1:
+            self.stream_handler_stdout.setLevel(logging.INFO)
         elif verbosity >= 2:
-            self.__stream_handler.setLevel(logging.DEBUG)
-            self.__file_handler.setLevel(logging.DEBUG)
+            self.stream_handler_stdout.setLevel(logging.DEBUG)
+        self.__logger.addHandler(self.stream_handler_stdout)
 
-        # if printtools is demanded, things about execution will be printed out in std out
-        if OptionManager.instance()["--printtools"]:
-            self.__logger.addHandler(self.__stream_handler)
-        else:
-            self.__logger.addHandler(self.__stream_handler_err)
-        self.__logger.addHandler(self.__file_handler)
-        self.__logger.addHandler(self.__err_handler)
+        ################################################################################################################
+        #
+        # File stderr
+        #
+        ################################################################################################################
 
-        self.__tw_logger = logging.getLogger("tw")
-        self.__tw_streamhandler = logging.StreamHandler()
-        self.__tw_logger.addHandler(self.__tw_streamhandler)
-        self.__tw_logger.setLevel(logging.DEBUG)
+        if "--log" in OptionManager.instance():
 
-    def info(self, msg):
-        formatter_stream = logging.Formatter(ColorPrint.blue('%(levelname)s :: %(asctime)s :: %(message)s'))
-        self.__stream_handler.setFormatter(formatter_stream)
-        self.__stream_handler_err.setFormatter(formatter_stream)
+            if not OptionManager.instance()["--log"] is None:
 
-        self.__logger.info(msg)
+                log_stdout_path = OptionManager.instance()["--log"].rsplit(".", 1)[0]
+
+                # log file in append mode of size 1 Mo and 1 backup
+                # handler equivalent to stream_handler in term of logging level but write in .log file
+                self.__file_handler_out = RotatingFileHandler(log_stdout_path + ".log", 'a', 1000000, 1)
+                self.__file_handler_out.setFormatter(formatter)
+                if verbosity <= 0:
+                    self.__file_handler_out.setLevel(logging.WARNING)
+                if verbosity == 1:
+                    self.__file_handler_out.setLevel(logging.INFO)
+                elif verbosity >= 2:
+                    self.__file_handler_out.setLevel(logging.DEBUG)
+                self.__logger.addHandler(self.__file_handler_out)
+
+                # err file in append mode of size 1 Mo and 1 backup
+                # this handler will write everything in the .err file.
+                self.__file_handler_err = RotatingFileHandler(log_stdout_path + ".err", 'a', 1000000, 1)
+                # formatter_err = logging.Formatter('%(asctime)s :: %(levelname)s :: %(name)s :: %(message)s')
+                self.__file_handler_err.setFormatter(formatter)
+                self.__file_handler_err.setLevel(logging.WARNING)
+                self.__logger.addHandler(self.__file_handler_err)
 
     def debug(self, msg):
-        formatter_stream = logging.Formatter(ColorPrint.yellow('%(levelname)s :: %(asctime)s :: %(message)s'))
-        self.__stream_handler.setFormatter(formatter_stream)
-        self.__stream_handler_err.setFormatter(formatter_stream)
-
+        formatter_stream = logging.Formatter(ColorPrint.cyan(self.formatter_str))
+        self.stream_handler_stderr.setFormatter(formatter_stream)
+        self.stream_handler_stdout.setFormatter(formatter_stream)
         self.__logger.debug(msg)
 
-    def error(self, msg):
-        formatter_stream = logging.Formatter(ColorPrint.red('%(levelname)s :: %(asctime)s :: %(message)s'))
-        self.__stream_handler.setFormatter(formatter_stream)
-        self.__stream_handler_err.setFormatter(formatter_stream)
-
-        self.__logger.error(msg)
+    def info(self, msg):
+        formatter_stream = logging.Formatter(ColorPrint.blue(self.formatter_str))
+        self.stream_handler_stderr.setFormatter(formatter_stream)
+        self.stream_handler_stdout.setFormatter(formatter_stream)
+        self.__logger.info(msg)
 
     def warning(self, msg):
-        formatter_stream = logging.Formatter(ColorPrint.magenta('%(levelname)s :: %(asctime)s :: %(message)s'))
-        self.__stream_handler.setFormatter(formatter_stream)
-        self.__stream_handler_err.setFormatter(formatter_stream)
-
+        formatter_stream = logging.Formatter(ColorPrint.magenta(self.formatter_str))
+        self.stream_handler_stderr.setFormatter(formatter_stream)
+        self.stream_handler_stdout.setFormatter(formatter_stream)
         self.__logger.warning(msg)
 
-    def critical(self, msg):
-        formatter_stream = logging.Formatter(ColorPrint.red('%(levelname)s :: %(asctime)s :: %(message)s'))
-        self.__stream_handler.setFormatter(formatter_stream)
+    def error(self, msg):
+        formatter_stream = logging.Formatter(ColorPrint.red(self.formatter_str))
+        self.stream_handler_stderr.setFormatter(formatter_stream)
+        self.stream_handler_stdout.setFormatter(formatter_stream)
+        self.__logger.error(msg)
 
+    def critical(self, msg):
+        formatter_stream = logging.Formatter(ColorPrint.red_reverse(self.formatter_str))
+        self.stream_handler_stderr.setFormatter(formatter_stream)
+        self.stream_handler_stdout.setFormatter(formatter_stream)
         self.__logger.critical(msg)
 
-    def toolwrapper_debug(self, msg, tw_name):
-        if OptionManager.instance()["--toolwrapper-log"]:
-            self.__tw_streamhandler.setFormatter(
-                logging.Formatter(ColorPrint.green(tw_name + ' ::  %(levelname)s :: %(asctime)s :: %(message)s')))
-            self.__tw_logger.debug(msg)
-
-    def toolwrapper_info(self, msg, tw_name):
-        if OptionManager.instance()["--toolwrapper-log"]:
-            self.__tw_streamhandler.setFormatter(
-                logging.Formatter(ColorPrint.green(tw_name + ' :: %(levelname)s :: %(asctime)s :: %(message)s')))
-            self.__tw_logger.info(msg)
-
-    def toolwrapper_warning(self, msg, tw_name):
-        if OptionManager.instance()["--toolwrapper-log"]:
-            self.__tw_streamhandler.setFormatter(
-                logging.Formatter(ColorPrint.green(tw_name + ' :: %(levelname)s :: %(asctime)s :: %(message)s')))
-            self.__tw_logger.warning(msg)
-
-    def toolwrapper_error(self, msg, tw_name):
-        if OptionManager.instance()["--toolwrapper-log"]:
-            self.__tw_streamhandler.setFormatter(logging.Formatter(ColorPrint.green(tw_name + ' :: %(asctime)s :: %(levelname)s :: %(message)s')))
-            self.__tw_logger.error(msg)
+    # def toolwrapper_debug(self, msg, tw_name):
+    #     if OptionManager.instance()["--tool_python_path-log"]:
+    #         self.__tw_streamhandler.setFormatter(
+    #             logging.Formatter(ColorPrint.green(tw_name + ' ::  %(levelname)s :: %(asctime)s :: %(message)s')))
+    #         self.__tw_logger.debug(msg)
+    #
+    # def toolwrapper_info(self, msg, tw_name):
+    #     if OptionManager.instance()["--tool_python_path-log"]:
+    #         self.__tw_streamhandler.setFormatter(
+    #             logging.Formatter(ColorPrint.green(tw_name + ' :: %(levelname)s :: %(asctime)s :: %(message)s')))
+    #         self.__tw_logger.info(msg)
+    #
+    # def toolwrapper_warning(self, msg, tw_name):
+    #     if OptionManager.instance()["--tool_python_path-log"]:
+    #         self.__tw_streamhandler.setFormatter(
+    #             logging.Formatter(ColorPrint.green(tw_name + ' :: %(levelname)s :: %(asctime)s :: %(message)s')))
+    #         self.__tw_logger.warning(msg)
+    #
+    # def toolwrapper_error(self, msg, tw_name):
+    #     if OptionManager.instance()["--tool_python_path-log"]:
+    #         self.__tw_streamhandler.setFormatter(logging.Formatter(ColorPrint.green(tw_name + ' :: %(asctime)s :: %(levelname)s :: %(message)s')))
+    #         self.__tw_logger.error(msg)
 

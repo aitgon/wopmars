@@ -28,7 +28,7 @@ class InsertPhenotype(ToolWrapper): # inherit WopMars
         input_file_obj_list = []
         for line in csv.reader(open(snp2phenotype_path, 'r', encoding='utf-8'), delimiter="\t"):
             phenotype_name = line[1]
-            input_file_obj = {'name': phenotype_name}
+            input_file_obj = {'is_input': phenotype_name}
             input_file_obj_list.append(input_file_obj)
         #
         # insert input_file_obj_list
@@ -42,7 +42,7 @@ class InsertPhenotype(ToolWrapper): # inherit WopMars
                     engine.execute(phenotype_model.__table__.insert().prefix_with("IGNORE"), input_file_obj_list)
             elif str(engine.__dict__['url']).split("://")[0]=='postgresql':
                 from sqlalchemy.dialects.postgresql import insert as pg_insert
-                engine.execute(pg_insert(phenotype_model.__table__).on_conflict_do_nothing(index_elements=['name']), input_file_obj_list)
+                engine.execute(pg_insert(phenotype_model.__table__).on_conflict_do_nothing(index_elements=['is_input']), input_file_obj_list)
             else:
                 raise "Error: This engine is not implemented."
 
