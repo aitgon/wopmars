@@ -4,6 +4,9 @@ import os
 import subprocess
 import unittest
 
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import sessionmaker
+
 from wopmars import OptionManager
 from wopmars.SQLManager import SQLManager
 from wopmars.models.Execution import Execution
@@ -50,6 +53,9 @@ class TestWopMars(TestCase):
         self.assertEqual(se.exception.code, 0)
 
     def test_forceall_dryrun(self):
+        """This test carries out a normal a forceall and a dryrun and stores the modification times.
+        Then it will test that the modification time of the two first outputs are different and the
+         second and third equal"""
         cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-d", PathFinder.get_module_path()]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)

@@ -219,7 +219,7 @@ class WorkflowManager(ToolWrapperObserver):
         """
 
         #
-        # # TODO THIS METHOD IS NOT THREAD-SAFE (peut etre que si, à voir)
+        # # toTODO LucG THIS METHOD IS NOT THREAD-SAFE (peut etre que si, à voir)
         #
 
         # If no tools have been added to the queue:
