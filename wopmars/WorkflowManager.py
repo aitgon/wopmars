@@ -256,15 +256,15 @@ class WorkflowManager(ToolWrapperObserver):
                                            " parameters.")
                     dry = True
 
-                # todo twthread verification des ressources
+                # totodo lucg twthread verification des ressources
                 tool_wrapper_thread.subscribe(self)
                 self.__count_exec += 1
-                # todo twthread methode start
+                # totodo lucg twthread methode start
                 tool_wrapper_thread.set_dry(dry)
                 try:
                     # be carefull here: the execution of the toolthreads is recursive meaning that calls to function may
                     # be stacked (run -> notify success -> run(next tool) -> notify success(next tool) -> etc....
-                    # todo twthread methode start
+                    # totodo lucg twthread methode start
                     tool_wrapper_thread.run()
                 except Exception as e:
                     # as mentionned above, there may be recursive calls to this function, so every exception can

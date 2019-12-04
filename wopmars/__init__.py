@@ -139,9 +139,9 @@ class WopMars:
             ExampleBuilder().build()
             sys.exit(1)
 
-        if OptionManager.instance()["example_snp"]:
-            ExampleBuilder().build_snp()
-            sys.exit(1)
+        # if OptionManager.instance()["example_snp"]:
+        #     ExampleBuilder().build_snp()
+        #     sys.exit(1)
 
         workflow_manager = WorkflowManager()
 
