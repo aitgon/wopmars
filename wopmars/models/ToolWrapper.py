@@ -106,7 +106,8 @@ class ToolWrapper(Base):
         """
         Parsing method:
 
-        Check if the input file variables names associated with the tool_python_path are ok according to the tool_python_path developer.
+        Check if the input file variables names associated with the tool_python_path are ok according to the
+        tool_python_path developer.
 
         It checks if the input variable names exists or not. If not, throws a WopMarsParsingException.
 
@@ -115,7 +116,8 @@ class ToolWrapper(Base):
 
         :raise WopMarsException: The input are not respected by the user.
         """
-        set_input_file_names = set([f_input.name for f_input in self.relation_typeio_to_fileioinfo if f_input.relation_file_or_tableioinfo_to_typeio.is_input == 1])
+        set_input_file_names = set([f_input.name for f_input in self.relation_typeio_to_fileioinfo
+                                    if f_input.relation_file_or_tableioinfo_to_typeio.is_input == 1])
         # check if the input file names for the ToolWrapper are coherent with the ToolWrapper specifications
         if set_input_file_names != set(self.specify_input_file()):
             raise WopMarsException("The content of the definition file is not valid.",

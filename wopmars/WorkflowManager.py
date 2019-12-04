@@ -159,7 +159,7 @@ class WorkflowManager(ToolWrapperObserver):
             self.__dag_to_exec = self.__dag_tools
 
         # ???
-        # todo checkout what is going on here
+        # totodo LucG checkout what is going on here
         tables = []
         [tables.extend(tw.relation_typeio_to_tableioinfo) for tw in self.__dag_to_exec.nodes()]
         TableInputOutputInformation.set_tables_properties(tables)

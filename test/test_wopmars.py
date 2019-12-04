@@ -49,11 +49,39 @@ class TestWopMars(TestCase):
         self.assertTrue(os.path.exists(os.path.join(self.s_root_path, 'test/output/output_file7.txt')))
         self.assertEqual(se.exception.code, 0)
 
+    def test_forceall_dryrun(self):
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-d", PathFinder.get_module_path()]
+        with self.assertRaises(SystemExit) as se:
+            WopMars().run(cmd_line)
+        # Test that modification date of first run is different from second forced run
+        mtime1 = os.path.getmtime(os.path.join(self.s_root_path, 'test/output/output_file7.txt'))
+        # Run forceall
+        cmd_line_force = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv",
+                    "-d", PathFinder.get_module_path(), "--forceall"]
+        with self.assertRaises(SystemExit) as se:
+            WopMars().run(cmd_line_force)
+        mtime2 = os.path.getmtime(os.path.join(self.s_root_path, 'test/output/output_file7.txt'))
+        # Run dry-run
+        cmd_line_dry_run = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv",
+                    "-d", PathFinder.get_module_path(), "--dry-run"]
+        with self.assertRaises(SystemExit) as se:
+            WopMars().run(cmd_line_dry_run)
+        mtime3 = os.path.getmtime(os.path.join(self.s_root_path, 'test/output/output_file7.txt'))
+        # Assert first two modification times are different
+        # Assert second and third modification times same
+        self.assertTrue(mtime1 != mtime2)
+        self.assertTrue(mtime2 == mtime3)
+        self.assertEqual(se.exception.code, 0)
+
     def test_02dry_run(self):
-        cmd_line = ["python", "-n", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-d",
+        cmd_line = ["python", "--dry-run", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-d",
                     PathFinder.get_module_path()]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
+        # The test is that these files do not exist
+        self.assertTrue(not os.path.exists(os.path.join(self.s_root_path, 'test/output/output_file1.txt')))
+        self.assertTrue(not os.path.exists(os.path.join(self.s_root_path, 'test/output/output_file2.txt')))
+        self.assertTrue(not os.path.exists(os.path.join(self.s_root_path, 'test/output/output_file7.txt')))
         self.assertEqual(se.exception.code, 0)
 
     def test_03run_that_fail(self):

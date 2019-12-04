@@ -182,7 +182,7 @@ class WopMars:
 
 
 def run():
-    # todo ask lionel: du coup, ça, c'est pas censé y être? vu que les toolwrappers ne devront pas être dans
+    # totodo LucG ask lionel: du coup, ça, c'est pas censé y être? vu que les toolwrappers ne devront pas être dans
     # l'arborescence du projet? même les toolwrappers de base
     sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/toolwrappers/")
     sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/base/")
