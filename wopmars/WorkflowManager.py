@@ -89,38 +89,39 @@ class WorkflowManager(ToolWrapperObserver):
         self.__dag_tools = self.__parser.parse()
         # Build the DAG which is willing to be executed according
         self.get_dag_to_exec()
+        # Aitor has removed this command that removed everything before forceall
+        # if OptionManager.instance()["--forceall"] and not OptionManager.instance()["--dry-run"]:
+        #     self.erase_output()
         # Start the execution at the root nodes
-        if OptionManager.instance()["--forceall"] and not OptionManager.instance()["--dry-run"]:
-            self.erase_output()
         self.execute_from()
 
-    def erase_output(self):
-        """
-        Erase the outputs of the DAG that will be executed in order to prevents conflicts.
-        """
-        list_tw = self.__dag_to_exec.nodes()
-        set_files = set()
-        set_tables = set()
-
-        Logger.instance().info("Forced execution implies overwrite existing output. Erasing files and models.")
-        for tw in list_tw:
-           [set_files.add(f.path) for f in tw.relation_typeio_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 0]
-           [set_tables.add(t.table_name) for t in tw.relation_typeio_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 0]
-
-        s = ""
-        for f_path in set_files:
-            s += "\n" + f_path
-            PathFinder.silentremove(f_path)
-        Logger.instance().debug("Removed files:" + s)
-
-        SQLManager.instance().drop_table_content_list(
-            set(TableInputOutputInformation.tablenames).intersection(set_tables))
-
-        s = "\n"
-        s += "\n".join(set_tables)
-        Logger.instance().debug("Removed models content:" + s)
-
-        Logger.instance().info("Output files and models from previous execution have been erased.")
+    # def erase_output(self):
+    #     """
+    #     Erase the outputs of the DAG that will be executed in order to prevents conflicts.
+    #     """
+    #     list_tw = self.__dag_to_exec.nodes()
+    #     set_files = set()
+    #     set_tables = set()
+    #
+    #     Logger.instance().info("Forced execution implies overwrite existing output. Erasing files and models.")
+    #     for tw in list_tw:
+    #        [set_files.add(f.path) for f in tw.relation_typeio_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 0]
+    #        [set_tables.add(t.table_name) for t in tw.relation_typeio_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 0]
+    #
+    #     s = ""
+    #     for f_path in set_files:
+    #         s += "\n" + f_path
+    #         PathFinder.silentremove(f_path)
+    #     Logger.instance().debug("Removed files:" + s)
+    #
+    #     SQLManager.instance().drop_table_content_list(
+    #         set(TableInputOutputInformation.tablenames).intersection(set_tables))
+    #
+    #     s = "\n"
+    #     s += "\n".join(set_tables)
+    #     Logger.instance().debug("Removed models content:" + s)
+    #
+    #     Logger.instance().info("Output files and models from previous execution have been erased.")
 
     def get_dag_to_exec(self):
         """
@@ -159,7 +160,7 @@ class WorkflowManager(ToolWrapperObserver):
             self.__dag_to_exec = self.__dag_tools
 
         # ???
-        # todo checkout what is going on here
+        # totodo LucG checkout what is going on here
         tables = []
         [tables.extend(tw.relation_typeio_to_tableioinfo) for tw in self.__dag_to_exec.nodes()]
         TableInputOutputInformation.set_tables_properties(tables)
@@ -219,7 +220,7 @@ class WorkflowManager(ToolWrapperObserver):
         """
 
         #
-        # # TODO THIS METHOD IS NOT THREAD-SAFE (peut etre que si, à voir)
+        # # toTODO LucG THIS METHOD IS NOT THREAD-SAFE (peut etre que si, à voir)
         #
 
         # If no tools have been added to the queue:
@@ -256,15 +257,15 @@ class WorkflowManager(ToolWrapperObserver):
                                            " parameters.")
                     dry = True
 
-                # todo twthread verification des ressources
+                # totodo lucg twthread verification des ressources
                 tool_wrapper_thread.subscribe(self)
                 self.__count_exec += 1
-                # todo twthread methode start
+                # totodo lucg twthread methode start
                 tool_wrapper_thread.set_dry(dry)
                 try:
                     # be carefull here: the execution of the toolthreads is recursive meaning that calls to function may
                     # be stacked (run -> notify success -> run(next tool) -> notify success(next tool) -> etc....
-                    # todo twthread methode start
+                    # totodo lucg twthread methode start
                     tool_wrapper_thread.run()
                 except Exception as e:
                     # as mentionned above, there may be recursive calls to this function, so every exception can
@@ -272,7 +273,7 @@ class WorkflowManager(ToolWrapperObserver):
                     # caught
                     if not hasattr(e, "teb_already_seen"):
                         setattr(e, "teb_already_seen", True)
-                        tool_wrapper.set_execution_infos(status="EXECUTION_ERROR")
+                        tool_wrapper.set_execution_infos(status="ERROR")
                         self.__session.add(tool_wrapper)
                         self.__session.commit()
                     raise e

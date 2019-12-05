@@ -104,7 +104,7 @@ class OptionManager(dict, SingletonMixin):
     def initial_test_setup(mod_name="db"):
         OptionManager.instance()["-v"] = 4
         OptionManager.instance()["--dot"] = None
-        OptionManager.instance()["--log"] = None
+        # OptionManager.instance()["--log"] = None
         # OptionManager.instance()["--printtools"] = True
         OptionManager.instance()["--sourcerule"] = None
         OptionManager.instance()["--targetrule"] = None

@@ -40,21 +40,21 @@ class ExampleBuilder:
     #     # empty.txt is an empty text file used in order to take into account the output directory
     #     os.remove(os.path.join(cwd, "output/empty.txt"))
 
-    def build_snp(self):
-        self.build_file_architecture_snp()
-
-    def build_file_architecture_snp(self):
-        """
-        This builds the snp example.
-        """
-        cwd = os.path.join(OptionManager.instance()["--directory"], "wopmars_example_snp")
-        example_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "wopmars_example_snp")
-
-        # copy the folder wopmars_example in cwd
-        ExampleBuilder.copy(example_directory, cwd)
-
-        # empty.txt is an empty text file used in order to take into account the output directory
-        os.remove(os.path.join(cwd, "output/empty.txt"))
+    # def build_snp(self):
+    #     self.build_file_architecture_snp()
+    #
+    # def build_file_architecture_snp(self):
+    #     """
+    #     This builds the snp example.
+    #     """
+    #     cwd = os.path.join(OptionManager.instance()["--directory"], "wopmars_example_snp")
+    #     example_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "wopmars_example_snp")
+    #
+    #     # copy the folder wopmars_example in cwd
+    #     ExampleBuilder.copy(example_directory, cwd)
+    #
+    #     # empty.txt is an empty text file used in order to take into account the output directory
+    #     os.remove(os.path.join(cwd, "output/empty.txt"))
 
     @staticmethod
     # http://pythoncentral.io/how-to-recursively-copy-a-directory-folder-in-python/

@@ -1,3 +1,4 @@
+import pathlib
 from unittest import TestCase
 
 import os
@@ -10,7 +11,8 @@ from wopmars.models.Execution import Execution
 from wopmars.utils.PathFinder import PathFinder
 from wopmars import WopMars
 
-from wopmars.utils.various import get_mtime, get_current_time
+from wopmars.utils.various import get_current_time
+from wopmars.Base import Base
 
 
 class TestWopMars(TestCase):
@@ -28,8 +30,10 @@ class TestWopMars(TestCase):
             self.__db_url = os.environ['DB_URL']
         #
         self.__example_def_file1 = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file1.yml")
-        self.__example_def_file4 = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file4.yml")
+        self.__example_def_file1_only_database = \
+            os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file1_only_database.yml")
         self.__example_def_file2_only_files = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file2_only_files.yml")
+        self.__example_def_file4 = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file4.yml")
         self.__example_def_file5_never_ready = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file5_never_ready.yml")
         self.__example_def_file_input_not_ready = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file_input_not_ready.yml")
 
@@ -49,11 +53,105 @@ class TestWopMars(TestCase):
         self.assertTrue(os.path.exists(os.path.join(self.s_root_path, 'test/output/output_file7.txt')))
         self.assertEqual(se.exception.code, 0)
 
+    def test_db_forceall(self):
+        """Tests the forceall option in the database. Will carry out different runs in either default or forceall mode
+        that will either increase or keep same the number of rows of the FooBase table"""
+
+        pathlib.Path(os.path.join(self.s_root_path, "test/output/output_file1.txt")).touch()
+
+        ################################################################################################################
+        #
+        # Run 1: normal mode. Results in 1000 rows
+        #
+        ################################################################################################################
+
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1_only_database, "-vv",
+                    "-d", PathFinder.get_module_path()]
+        with self.assertRaises(SystemExit) as se:
+            WopMars().run(cmd_line)
+        foobase_model = Base.metadata.tables['FooBase']
+        row_count = SQLManager.instance().get_session().query(foobase_model).count()
+        self.assertTrue(row_count == 1000)
+        self.assertEqual(se.exception.code, 0)
+
+        ################################################################################################################
+        #
+        # Run 2: normal mode. Still 1000 rows, because it does not execute
+        #
+        ################################################################################################################
+
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1_only_database, "-vv",
+                    "-d", PathFinder.get_module_path()]
+        with self.assertRaises(SystemExit) as se:
+            WopMars().run(cmd_line)
+        row_count = SQLManager.instance().get_session().query(foobase_model).count()
+        self.assertTrue(row_count == 1000)
+        self.assertEqual(se.exception.code, 0)
+
+        ################################################################################################################
+        #
+        # Run 3: forceall mode. Now 2000 rows, because it is forced to execute
+        #
+        ################################################################################################################
+
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1_only_database, "-vv",
+                    "-d", PathFinder.get_module_path(), "--forceall"]
+        with self.assertRaises(SystemExit) as se:
+            WopMars().run(cmd_line)
+        row_count = SQLManager.instance().get_session().query(foobase_model).count()
+        self.assertTrue(row_count == 2000)
+        self.assertEqual(se.exception.code, 0)
+
+        ################################################################################################################
+        #
+        # Run 4: normal mode. Again 2000 rows, because it does not execute
+        #
+        ################################################################################################################
+
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1_only_database, "-vv",
+                    "-d", PathFinder.get_module_path()]
+        with self.assertRaises(SystemExit) as se:
+            WopMars().run(cmd_line)
+        row_count = SQLManager.instance().get_session().query(foobase_model).count()
+        self.assertTrue(row_count == 2000)
+        self.assertEqual(se.exception.code, 0)
+
+    def test_forceall_dryrun(self):
+        """This test carries out a normal a forceall and a dryrun and stores the modification times.
+        Then it will test that the modification time of the two first outputs are different and the
+         second and third equal"""
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-d", PathFinder.get_module_path()]
+        with self.assertRaises(SystemExit) as se:
+            WopMars().run(cmd_line)
+        # Test that modification date of first run is different from second forced run
+        mtime1 = os.path.getmtime(os.path.join(self.s_root_path, 'test/output/output_file7.txt'))
+        # Run forceall
+        cmd_line_force = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv",
+                    "-d", PathFinder.get_module_path(), "--forceall"]
+        with self.assertRaises(SystemExit) as se:
+            WopMars().run(cmd_line_force)
+        mtime2 = os.path.getmtime(os.path.join(self.s_root_path, 'test/output/output_file7.txt'))
+        # Run dry-run
+        cmd_line_dry_run = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv",
+                    "-d", PathFinder.get_module_path(), "--dry-run"]
+        with self.assertRaises(SystemExit) as se:
+            WopMars().run(cmd_line_dry_run)
+        mtime3 = os.path.getmtime(os.path.join(self.s_root_path, 'test/output/output_file7.txt'))
+        # Assert first two modification times are different
+        # Assert second and third modification times same
+        self.assertTrue(mtime1 != mtime2)
+        self.assertTrue(mtime2 == mtime3)
+        self.assertEqual(se.exception.code, 0)
+
     def test_02dry_run(self):
-        cmd_line = ["python", "-n", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-d",
+        cmd_line = ["python", "--dry-run", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-d",
                     PathFinder.get_module_path()]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
+        # The test is that these files do not exist
+        self.assertFalse(os.path.exists(os.path.join(self.s_root_path, 'test/output/output_file1.txt')))
+        self.assertFalse(os.path.exists(os.path.join(self.s_root_path, 'test/output/output_file2.txt')))
+        self.assertFalse(os.path.exists(os.path.join(self.s_root_path, 'test/output/output_file7.txt')))
         self.assertEqual(se.exception.code, 0)
 
     def test_03run_that_fail(self):

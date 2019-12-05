@@ -21,11 +21,6 @@ class TestWorkflowManager(TestCase):
 
         self.__wm = WorkflowManager()
 
-
-    def test_erase_output(self):
-        #todo LG
-        pass
-
     def tearDown(self):
         SQLManager.instance().get_session().close()
         SQLManager.instance().drop_all()

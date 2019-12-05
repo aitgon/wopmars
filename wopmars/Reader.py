@@ -346,14 +346,14 @@ class Reader:
             session.rollback()
             TableInputOutputInformation.set_tables_properties(TableInputOutputInformation.get_execution_tables())
             # commit /rollback trick to clean the session
-            # todo ask lionel est-ce-que tu as deja eu ce problème à ne pas pouvoir faire des queries et des ajouts
+            # totodo LucG ask lionel est-ce-que tu as deja eu ce problème à ne pas pouvoir faire des queries et des ajouts
             # dans la meme session?
             session.commit()
             session.rollback()
-            # This create_all will create all models that have been found in the tool_python_path
             # if not SQLManager.instance().d_database_config['db_connection'] == 'postgresql':
-            # TODO: this function is not creating the triggers after the table in postgresql so I switched it off
+            # This command will create all the triggers that will create timestamp after modification
             TableModificationTime.create_triggers()
+            # This create_all will create all models that have been found in the tool_python_path
             SQLManager.instance().create_all()
             wrapper_entry.is_content_respected()
         except NoResultFound as e:
@@ -401,7 +401,7 @@ class Reader:
                     if type(self.__dict_workflow_definition[rule][key_second_step]) == dict:
                         # if it is a dict, then inputs, outputs or params are coming
                         for key_third_step in self.__dict_workflow_definition[rule][key_second_step]:
-                            # todo tabling modification of the indentation levels + appearance of models in file
+                            # totodo LucG tabling modification of the indentation levels + appearance of models in file
                             if key_second_step == "params":
                                 key = key_third_step
                                 value = self.__dict_workflow_definition[rule][key_second_step][key_third_step]
@@ -464,15 +464,14 @@ class Reader:
                 # commit/rollback trick to clean the session - SQLAchemy bug suspected
                 session.commit()
                 session.rollback()
-                # todo set_table_properties outside the rules loop to take into account all the models at once
+                # totodo LucG set_table_properties outside the rules loop to take into account all the models at once
                 # (error if one tool has a foreign key refering to a table that is not in its I/O put
             TableInputOutputInformation.set_tables_properties(TableInputOutputInformation.get_execution_tables())
             session.commit()
             session.rollback()
-            # This create_all will create all models that have been found in the tool_python_path
-            # if not SQLManager.instance().d_database_config['db_connection'] == 'postgresql':
-            # TODO: this function is not creating the triggers after the table in postgresql so I switched it off
+            # This command is creating the triggers that will update the modification
             TableModificationTime.create_triggers()
+            # This create_all will create all models that have been found in the tool_python_path
             SQLManager.instance().create_all()
             session.add_all(set_wrapper)
             # save all operations done so far.

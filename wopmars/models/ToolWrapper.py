@@ -26,10 +26,10 @@ class ToolWrapper(Base):
     - mtime_epoch_millis: FLOAT - the total mtime_epoch_millis [ms] tool_python_path execution
     - status: VARCHAR(255) - the final status of the Toolwrapper. it can be:
 
-       - NOT PLANNED: the tool_python_path execution wasn't evene xpected by the user
-       - ALREADY EXECUTED: the tool_python_path has been previously executed in an old workflow and doesn't need to be re-executed
+       - NOT PLANNED: the tool_python_path execution was not even expected by the user
+       - ALREADY EXECUTED: the tool_python_path has been previously executed in an old workflow and does not need to be re-executed
        - EXECUTED: the tool_python_path has been executed
-       - EXECUTION_ERROR: the tool_python_path has encountered an error during the execution
+       - ERROR: the tool_python_path has encountered an error during the execution
     """
 
     __tablename__ = "wom_{}".format(__qualname__)
@@ -106,7 +106,8 @@ class ToolWrapper(Base):
         """
         Parsing method:
 
-        Check if the input file variables names associated with the tool_python_path are ok according to the tool_python_path developer.
+        Check if the input file variables names associated with the tool_python_path are ok according to the
+        tool_python_path developer.
 
         It checks if the input variable names exists or not. If not, throws a WopMarsParsingException.
 
@@ -115,7 +116,8 @@ class ToolWrapper(Base):
 
         :raise WopMarsException: The input are not respected by the user.
         """
-        set_input_file_names = set([f_input.name for f_input in self.relation_typeio_to_fileioinfo if f_input.relation_file_or_tableioinfo_to_typeio.is_input == 1])
+        set_input_file_names = set([f_input.name for f_input in self.relation_typeio_to_fileioinfo
+                                    if f_input.relation_file_or_tableioinfo_to_typeio.is_input == 1])
         # check if the input file names for the ToolWrapper are coherent with the ToolWrapper specifications
         if set_input_file_names != set(self.specify_input_file()):
             raise WopMarsException("The content of the definition file is not valid.",

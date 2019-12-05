@@ -5,9 +5,9 @@ import time
 
 def get_current_time():
     timestamp = time.time()  # epoch mtime_epoch_millis in ms
-    timestamp_millis = timestamp * 1000  # epoch mtime_epoch_millis in ms
+    timestamp_epoch_millis = timestamp * 1000  # epoch mtime_epoch_millis in ms
     timestamp_human = datetime.fromtimestamp(timestamp)  # human readable local mtime_epoch_millis
-    return timestamp_millis, timestamp_human
+    return timestamp_epoch_millis, timestamp_human
 
 
 def get_mtime(path):
