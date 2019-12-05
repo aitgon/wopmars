@@ -26,10 +26,10 @@ class ToolWrapper(Base):
     - mtime_epoch_millis: FLOAT - the total mtime_epoch_millis [ms] tool_python_path execution
     - status: VARCHAR(255) - the final status of the Toolwrapper. it can be:
 
-       - NOT PLANNED: the tool_python_path execution wasn't evene xpected by the user
-       - ALREADY EXECUTED: the tool_python_path has been previously executed in an old workflow and doesn't need to be re-executed
+       - NOT PLANNED: the tool_python_path execution was not even expected by the user
+       - ALREADY EXECUTED: the tool_python_path has been previously executed in an old workflow and does not need to be re-executed
        - EXECUTED: the tool_python_path has been executed
-       - EXECUTION_ERROR: the tool_python_path has encountered an error during the execution
+       - ERROR: the tool_python_path has encountered an error during the execution
     """
 
     __tablename__ = "wom_{}".format(__qualname__)

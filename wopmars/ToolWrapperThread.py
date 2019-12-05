@@ -87,7 +87,7 @@ class ToolWrapperThread(threading.Thread, Observable):
                 self.__tool_wrapper.set_execution_infos(start, time_human, "ALREADY_EXECUTED")
         except Exception as e:
             wopmars_session.rollback()
-            self.__tool_wrapper.set_execution_infos(start, time_human, "EXECUTION_ERROR")
+            self.__tool_wrapper.set_execution_infos(start, time_human, "ERROR")
             raise WopMarsException("Error while executing rule " + self.__tool_wrapper.rule_name +
                                    " (ToolWrapper " + self.__tool_wrapper.tool_python_path + ")",
                                    "Full stack trace: \n" + str(traceback.format_exc()))

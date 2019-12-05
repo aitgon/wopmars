@@ -54,9 +54,9 @@ class TestWopMars(TestCase):
         self.assertEqual(se.exception.code, 0)
 
     def test_db_forceall(self):
-        """This test carries out a normal a forceall and a dryrun and stores the modification times.
-        Then it will test that the modification time of the two first outputs are different and the
-         second and third equal"""
+        """Tests the forceall option in the database. Will carry out different runs in either default or forceall mode
+        that will either increase or keep same the number of rows of the FooBase table"""
+
         pathlib.Path(os.path.join(self.s_root_path, "test/output/output_file1.txt")).touch()
 
         ################################################################################################################

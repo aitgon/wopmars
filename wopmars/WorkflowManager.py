@@ -273,7 +273,7 @@ class WorkflowManager(ToolWrapperObserver):
                     # caught
                     if not hasattr(e, "teb_already_seen"):
                         setattr(e, "teb_already_seen", True)
-                        tool_wrapper.set_execution_infos(status="EXECUTION_ERROR")
+                        tool_wrapper.set_execution_infos(status="ERROR")
                         self.__session.add(tool_wrapper)
                         self.__session.commit()
                     raise e

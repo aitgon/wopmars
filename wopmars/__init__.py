@@ -163,22 +163,20 @@ class WopMars:
             workflow_manager.run()
         except WopMarsException as WE:
             Logger.instance().error(str(WE))
-            session = SQLManager.instance().get_session()
             try:
-                time_unix_ms, time_human = get_current_time()
-                # finish_epoch_millis = time_unix_ms
-                Logger.instance().error("The workflow has encountered an error at: {}".format(time_human))
-                workflow_manager.set_finishing_informations(time_human, "ERROR")
+                timestamp_epoch_millis, timestamp_human = get_current_time()
+                Logger.instance().error("The workflow has encountered an error at: {}".format(timestamp_human))
+                workflow_manager.set_finishing_informations(timestamp_human, "ERROR")
             except AttributeError:
-                session.rollback()
+                SQLManager.instance().get_session().rollback()
                 Logger.instance().error("The execution has not even begun. No informations will be stored in the database.")
             except Exception as e:
                 Logger.instance().error("An error occured during the rollback of the changement of the database which can be now unstable:" +
                                         str(e))
             sys.exit(1)
-        # except Exception as e:
-        #     Logger.instance().error("An unknown error has occured:\n" + str(e))
-        #     sys.exit(1)
+        except Exception as e:
+            Logger.instance().error("An unknown error has occured:\n" + str(e))
+            sys.exit(1)
 
 
 def run():
