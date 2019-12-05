@@ -56,7 +56,8 @@ class ToolWrapperThread(threading.Thread, Observable):
         time_unix_ms, time_human = get_current_time()
         start = time_human
         try:
-            self.__tool_wrapper.set_session(wopmars_session)
+            # self.__tool_wrapper.set_session(wopmars_session)
+            self.__tool_wrapper.session = wopmars_session
             # if the tool need to be executed because its output doesn't exist
             if not self.__dry:
                 Logger.instance().info(

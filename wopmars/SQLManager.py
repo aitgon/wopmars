@@ -64,6 +64,7 @@ class SQLManager(SingletonMixin):
             self.d_database_config['db_database'] = s_database_url.replace("sqlite:///", "")
         # echo=False mute the log of database
         # connect_args have been necessary because of the accession of the same objects in different Threads.
+        self.engine = None
         if self.d_database_config['db_connection']=="sqlite":
             self.engine = create_engine(self.d_database_config['db_url'], echo=False, connect_args={'check_same_thread': False})
         else:
