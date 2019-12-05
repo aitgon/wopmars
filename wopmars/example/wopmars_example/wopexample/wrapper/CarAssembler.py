@@ -31,7 +31,7 @@ class CarAssembler(ToolWrapper):
         }
 
     def run(self):
-        session = self.session()
+        session = self.session
         Piece = self.input_table("piece")
         if not self.option("to_file"):
             Piece_car = self.output_table("piece_car")

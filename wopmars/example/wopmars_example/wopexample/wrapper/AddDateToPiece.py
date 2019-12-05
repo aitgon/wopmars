@@ -16,10 +16,10 @@ class AddDateToPiece(ToolWrapper):
         return ["piece"]
 
     def run(self):
-        session = self.session()
+        session = self.session
         DatedPiece = self.output_table("piece")
 
-        for p in self.session().query(DatedPiece).all():
+        for p in self.session.query(DatedPiece).all():
             date = datetime.datetime.fromtimestamp(time.time() - random.randint(1000000, 100000000))
             p.date = date
             session.add(p)

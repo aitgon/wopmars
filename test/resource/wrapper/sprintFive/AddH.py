@@ -12,8 +12,8 @@ class AddH(ToolWrapper):
 
     def run(self):
         if self.option("del"):
-            self.session().delete_content(self.output_table("FooBaseH"))
+            self.session.delete_content(self.output_table("FooBaseH"))
         for i in range(self.option("rows")):
-            self.session().add(self.output_table("FooBaseH")(name="Add" + str(i)))
+            self.session.add(self.output_table("FooBaseH")(name="Add" + str(i)))
 
-        self.session().commit()
+        self.session.commit()

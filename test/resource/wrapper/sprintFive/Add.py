@@ -15,8 +15,8 @@ class Add(ToolWrapper):
 
     def run(self):
         if self.option("del"):
-            self.session().delete_content(self.output_table("FooBase"))
+            self.session.delete_content(self.output_table("FooBase"))
         for i in range(self.option("rows")):
-            self.session().add(self.output_table("FooBase")(name="Add" + str(i)))
+            self.session.add(self.output_table("FooBase")(name="Add" + str(i)))
 
-        self.session().commit()
+        self.session.commit()

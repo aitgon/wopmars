@@ -11,9 +11,9 @@ class AddWithOrWithoutDeleteBefore(ToolWrapper):
         return ["FooBase", "FooBase2"]
 
     def run(self):
-        self.session().delete_content(self.output_table("FooBase"))
+        self.session.delete_content(self.output_table("FooBase"))
         for i in range(100):
-            self.session().add(self.output_table("FooBase")(name="DeleteThenAdd" + str(i)))
-            self.session().add(self.output_table("FooBase2")(name="Add.py" + str(i)))
+            self.session.add(self.output_table("FooBase")(name="DeleteThenAdd" + str(i)))
+            self.session.add(self.output_table("FooBase2")(name="Add.py" + str(i)))
 
-        self.session().commit()
+        self.session.commit()

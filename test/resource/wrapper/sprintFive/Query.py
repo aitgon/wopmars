@@ -11,4 +11,4 @@ class Query(ToolWrapper):
 
     def run(self):
         print(threading._active)
-        self.session().query(self.input_table("FooBase")).all()
+        self.session.query(self.input_table("FooBase")).all()

@@ -18,7 +18,7 @@ class SparePartsManufacturer(ToolWrapper):
         }
 
     def run(self):
-        session = self.session()
+        session = self.session
         Piece = self.output_table("piece")
 
         with open(self.input_file("pieces")) as wr:

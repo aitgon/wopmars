@@ -68,10 +68,6 @@ class SQLManager(SingletonMixin):
             self.engine = create_engine(self.d_database_config['db_url'], echo=False, connect_args={'check_same_thread': False})
         else:
             self.engine = create_engine(self.d_database_config['db_url'], echo=False)
-        # Below, between "###", code copy-pasted from this post
-        # http://stackoverflow.com/questions/2614984/sqlite-sqlalchemy-how-to-enforce-foreign-keys/7831210#7831210
-        # enforce foreign key constraints
-        ###
 
         def _fk_pragma_on_connect(dbapi_con, con_record):
             if self.d_database_config['db_connection'] == "sqlite":
@@ -110,14 +106,6 @@ class SQLManager(SingletonMixin):
             self.engine.execute(ToolWrapper.__table__.delete())
         if self.engine.has_table(Execution.__tablename__):
             self.engine.execute(Execution.__table__.delete())
-
-    # def get_engine(self):
-    #     """
-    #     Return the engine of the current execution.
-    #
-    #     :return: engine
-    #     """
-    #     return self.engine
 
     def get_session(self):
         """

@@ -30,6 +30,6 @@ class FooWrapper5(ToolWrapper):
         p.wait()
         for i in range(10):
             f = self.output_table("FooBaseP")(name="Foowrapper5 - " + str(i))
-            self.session().add(f)
-        self.session().commit()
+            self.session.add(f)
+        self.session.commit()
         time.sleep(1)

@@ -70,7 +70,7 @@ class ToolWrapper(Base):
         self.__state is the state given to the Toolwrapper to let the
         :class:`~.wopmars.framework.management.WorflowManager.WorkflowManager` knows if the Toolwrapper is
         able to be executed or not.
-        self.__session is the session (WopmarsSession) associated with the Toolwrapper and which will be used in the run method.
+        self.session is the session (WopmarsSession) associated with the Toolwrapper and which will be used in the run method.
         self.__state is an integer which says the actual state of the TooLWrapper: ``NEW``, ``READY``, ``NOT_READY``
 
         :param rule_name: the is_input of the rule
@@ -78,7 +78,7 @@ class ToolWrapper(Base):
         """
         super().__init__(rule_name=rule_name)
         self.__state = ToolWrapper.NEW
-        self.__session = None
+        self.session = None
 
     ### PARSING METHODS
 
@@ -510,7 +510,7 @@ class ToolWrapper(Base):
             self.status = status
 
     def set_session(self, session):
-        self.__session = session
+        self.session = session
 
     def __eq__(self, other):
         """
@@ -789,7 +789,7 @@ class ToolWrapper(Base):
             return None
 
     def session(self):
-        return self.__session
+        return self.session
 
     # def log(self, level, msg):
     #     """

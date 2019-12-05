@@ -20,8 +20,8 @@ class FooWrapperH(ToolWrapper):
         return ["FooBaseH"]
 
     def run(self):
-        q = self.session().query(self.input_table("FooBaseH")).all()
+        q = self.session.query(self.input_table("FooBaseH")).all()
         for r in q:
             r.name2="FooBaseH2 - " + str(r.id)
-            self.session().add(r)
-        self.session().commit()
+            self.session.add(r)
+        self.session.commit()

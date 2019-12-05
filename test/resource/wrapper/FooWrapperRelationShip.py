@@ -21,5 +21,5 @@ class FooWrapperRelationShip(ToolWrapper):
             f4 = self.output_table("FooBase4")(id_foobase3=i+1, id_foobase5=i+1)
             f5 = self.output_table("FooBase5")(id=i+1)
             f6 = self.output_table("FooBase6")(id=i+1)
-            self.session().add_all([f3, f4, f5, f6])
-        self.session().commit()
+            self.session.add_all([f3, f4, f5, f6])
+        self.session.commit()

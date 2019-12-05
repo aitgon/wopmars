@@ -68,7 +68,7 @@ For the complete code, go to the github repository
             }
 
         def run(self):
-            session = self.session()
+            session = self.session
             Piece = self.input_table("piece")
             if not self.option("to_file"):
                 Piece_car = self.output_table("piece_car")
@@ -125,7 +125,7 @@ ORM query and insert
 
 .. code-block:: python
 
-    session = self.session()
+    session = self.session
     engine = session._WopMarsSession__session.bind
     conn = engine.connect()
     mytable_model = self.output_table(MyWrapper.__output_table_mytable)

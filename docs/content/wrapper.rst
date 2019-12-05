@@ -291,10 +291,10 @@ With this model, there is an other `Toolwrapper` provided in the example: ``AddD
             return ["piece"]
 
         def run(self):
-            session = self.session()
+            session = self.session
             DatedPiece = self.output_table("piece")
 
-            for p in self.session().query(DatedPiece).all():
+            for p in self.session.query(DatedPiece).all():
                 date = datetime.datetime.fromtimestamp(time.time() - random.randint(1000000, 100000000))
                 p.date = date
                 session.add(p)
@@ -346,7 +346,7 @@ The SQLAlchemy ORM is very simple but it is also quit slow after 100 objects. In
             # This code is for illustration purpose and has not been tested
             # inside the run of a tool wrapper MyWrapper
             def run(self):
-                session = self.session()
+                session = self.session
                 my_input_model = self.output_table(MyWrapper.__input_table1)
                 query_dic = {'col1': value_1, 'col2': value_2}
                 try: # check if query_dic exists
@@ -366,7 +366,7 @@ Inside the `run` method of the tool wrapper, we need to retrieve a list of objec
             # This code is for illustration purpose and has not been tested
             # inside the run of a tool wrapper MyWrapper
             def run(self):
-                session = self.session()
+                session = self.session
                 engine = session._WopMarsSession__session.bind
                 conn = engine.connect()
                 #
@@ -392,7 +392,7 @@ Inside the `run` method of the tool wrapper, we need to retrieve a list of objec
             # This code is for illustration purpose and has not been tested
             # inside the run of a tool wrapper MyWrapper
             def run(self):
-                session = self.session()
+                session = self.session
                 engine = session._WopMarsSession__session.bind
                 conn = engine.connect()
                 #

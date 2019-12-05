@@ -45,7 +45,7 @@ The value of the tool field are python paths to classes called *wrappers* compat
             }
 
         def run(self):
-            session = self.session()
+            session = self.session
             Piece = self.output_table("piece")
 
             with open(self.input_file("pieces")) as wr:

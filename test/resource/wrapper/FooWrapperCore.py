@@ -22,9 +22,9 @@ class FooWrapperCore(ToolWrapper):
         for i in range(10000):
             inserted_list.append({'id': i, 'is_input': "FooWrapperCore " + str(i)})
         ins = foobase.insert()
-        self.session().execute(ins, inserted_list)
+        self.session.execute(ins, inserted_list)
 
         s = select([foobase])
-        result = self.session().execute(s)
+        result = self.session.execute(s)
         for row in result:
             print(row)
