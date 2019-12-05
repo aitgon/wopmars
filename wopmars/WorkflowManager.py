@@ -89,38 +89,39 @@ class WorkflowManager(ToolWrapperObserver):
         self.__dag_tools = self.__parser.parse()
         # Build the DAG which is willing to be executed according
         self.get_dag_to_exec()
+        # Aitor has removed this command that removed everything before forceall
+        # if OptionManager.instance()["--forceall"] and not OptionManager.instance()["--dry-run"]:
+        #     self.erase_output()
         # Start the execution at the root nodes
-        if OptionManager.instance()["--forceall"] and not OptionManager.instance()["--dry-run"]:
-            self.erase_output()
         self.execute_from()
 
-    def erase_output(self):
-        """
-        Erase the outputs of the DAG that will be executed in order to prevents conflicts.
-        """
-        list_tw = self.__dag_to_exec.nodes()
-        set_files = set()
-        set_tables = set()
-
-        Logger.instance().info("Forced execution implies overwrite existing output. Erasing files and models.")
-        for tw in list_tw:
-           [set_files.add(f.path) for f in tw.relation_typeio_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 0]
-           [set_tables.add(t.table_name) for t in tw.relation_typeio_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 0]
-
-        s = ""
-        for f_path in set_files:
-            s += "\n" + f_path
-            PathFinder.silentremove(f_path)
-        Logger.instance().debug("Removed files:" + s)
-
-        SQLManager.instance().drop_table_content_list(
-            set(TableInputOutputInformation.tablenames).intersection(set_tables))
-
-        s = "\n"
-        s += "\n".join(set_tables)
-        Logger.instance().debug("Removed models content:" + s)
-
-        Logger.instance().info("Output files and models from previous execution have been erased.")
+    # def erase_output(self):
+    #     """
+    #     Erase the outputs of the DAG that will be executed in order to prevents conflicts.
+    #     """
+    #     list_tw = self.__dag_to_exec.nodes()
+    #     set_files = set()
+    #     set_tables = set()
+    #
+    #     Logger.instance().info("Forced execution implies overwrite existing output. Erasing files and models.")
+    #     for tw in list_tw:
+    #        [set_files.add(f.path) for f in tw.relation_typeio_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 0]
+    #        [set_tables.add(t.table_name) for t in tw.relation_typeio_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 0]
+    #
+    #     s = ""
+    #     for f_path in set_files:
+    #         s += "\n" + f_path
+    #         PathFinder.silentremove(f_path)
+    #     Logger.instance().debug("Removed files:" + s)
+    #
+    #     SQLManager.instance().drop_table_content_list(
+    #         set(TableInputOutputInformation.tablenames).intersection(set_tables))
+    #
+    #     s = "\n"
+    #     s += "\n".join(set_tables)
+    #     Logger.instance().debug("Removed models content:" + s)
+    #
+    #     Logger.instance().info("Output files and models from previous execution have been erased.")
 
     def get_dag_to_exec(self):
         """

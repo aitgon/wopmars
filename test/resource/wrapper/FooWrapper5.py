@@ -29,7 +29,7 @@ class FooWrapper5(ToolWrapper):
         # self.session().delete_content(self.output_table("FooBase"))
         for i in range(1000):
             # import pdb; pdb.set_trace()
-            f = self.output_table("FooBase")(name="Foowrapper5 - " + str(i))
+            f = self.output_table("FooBase")(name="Foowrapper5 - {}".format(i))
             self.session().add(f)
         self.session().commit()
         # self.log("info", "coucou")

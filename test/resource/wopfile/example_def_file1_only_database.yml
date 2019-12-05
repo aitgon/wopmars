@@ -1,0 +1,11 @@
+rule rule2:
+    tool: test.resource.wrapper.FooWrapper5
+    input:
+        file:
+            input1: "test/output/output_file1.txt"
+    output:
+        file:
+            output1: "test/output/output_file2.txt"
+        table:
+            FooBase: test.resource.model.FooBase
+
