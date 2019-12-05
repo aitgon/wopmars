@@ -29,7 +29,6 @@ class DAG(nx.DiGraph):
         if set_tools:
             # for each tool
             for tool1 in set_tools:
-                print(tool1)
                 self.add_node(tool1)
                 # for each other tool
                 for tool2 in set_tools.difference(set([tool1])):
