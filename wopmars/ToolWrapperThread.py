@@ -70,7 +70,7 @@ class ToolWrapperThread(threading.Thread, Observable):
                     for out_field in output_file_fields:
                         out_file_path = self.__tool_wrapper.output_file(out_field)
                         out_dir = os.path.dirname(out_file_path)
-                        pathlib.Path(out_dir).mkdir(exist_ok=True)
+                        pathlib.Path(out_dir).mkdir(parents=True, exist_ok=True)
                     self.__tool_wrapper.run()
                     wopmars_session.commit()
                     time_unix_ms, time_human = get_current_time()
