@@ -2,6 +2,7 @@
 Module containing the ToolWrapperThread class.
 """
 import errno
+import pathlib
 import threading
 import os
 import traceback
@@ -65,17 +66,11 @@ class ToolWrapperThread(threading.Thread, Observable):
                 # if you shouldn't simulate
                 if not OptionManager.instance()["--dry-run"]:
                     Logger.instance().info("ToolWrapper: " + str(self.__tool_wrapper.rule_name) + " -> " + self.__tool_wrapper.__class__.__name__ + " started.")
-                    # mkdir -p output dir: before running we need output dir
                     output_file_fields = self.__tool_wrapper.specify_output_file()
                     for out_field in output_file_fields:
                         out_file_path = self.__tool_wrapper.output_file(out_field)
                         out_dir = os.path.dirname(out_file_path)
-                        try:
-                            os.makedirs(out_dir)
-                        except OSError as exception:
-                            if exception.errno != errno.EEXIST:
-                                raise
-                    # end of mkdir -p output dir
+                        pathlib.Path(out_dir).mkdir(exist_ok=True)
                     self.__tool_wrapper.run()
                     wopmars_session.commit()
                     time_unix_ms, time_human = get_current_time()
