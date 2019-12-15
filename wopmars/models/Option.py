@@ -31,7 +31,7 @@ class Option(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255))
     value = Column(String(255))
-    rule_id = Column(Integer, ForeignKey("wom_ToolWrapper.id"))
+    toolwrapper_id = Column(Integer, ForeignKey("wom_ToolWrapper.id"))
 
     # One option is used by one rule
     relation_option_to_toolwrapper = relationship("ToolWrapper", back_populates="relation_toolwrapper_to_option", enable_typechecks=False)
