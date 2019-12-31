@@ -167,9 +167,11 @@ class WorkflowManager(ToolWrapperObserver):
 
         # For the tools that are in the workflow definition file but not in the executed dag, their status is set to
         # "NOT_PLANNED"
-        for tw in set(self.__dag_tools.nodes()).difference(set(self.__dag_to_exec.nodes())):
-            tw.set_execution_infos(status="NOT_PLANNED")
-            self.__session.add(tw)
+        # Update AG: if not planned, it will not be stored
+        for tool_wrapper in set(self.__dag_tools.nodes()).difference(set(self.__dag_to_exec.nodes())):
+            # tw.set_execution_infos(status="NOT_PLANNED")
+            # self.__session.add(tw)
+            self.__session.delete(tool_wrapper)
 
         self.__session.commit()
 

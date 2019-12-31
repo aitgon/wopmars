@@ -48,7 +48,7 @@ class ToolWrapper(Base):
     # One rule has many files
     relation_typeio_to_fileioinfo = relationship("FileInputOutputInformation", back_populates="relation_toolwrapper_to_file_or_tableioinfo")
     # One option is used by many toolwrappers
-    relation_toolwrapper_to_option = relationship("Option", back_populates="relation_option_to_toolwrapper")
+    relation_toolwrapper_to_option = relationship("Option", back_populates="relation_option_to_toolwrapper", cascade="all, delete, delete-orphan")
     # One rule has one execution
     # execution = relationship("Execution", back_populates="rules")
     relation_toolwrapper_to_execution = relationship("Execution", back_populates="relation_execution_to_toolwrapper")

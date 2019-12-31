@@ -34,7 +34,8 @@ class Option(Base):
     toolwrapper_id = Column(Integer, ForeignKey("wom_ToolWrapper.id"))
 
     # One option is used by one rule
-    relation_option_to_toolwrapper = relationship("ToolWrapper", back_populates="relation_toolwrapper_to_option", enable_typechecks=False)
+    relation_option_to_toolwrapper = relationship("ToolWrapper", back_populates="relation_toolwrapper_to_option",
+                                                  enable_typechecks=False)
 
     def correspond(self, carac):
         """
