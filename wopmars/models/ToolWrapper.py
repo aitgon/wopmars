@@ -44,9 +44,9 @@ class ToolWrapper(Base):
     status = Column(String(255), nullable=True, default="NOT_EXECUTED")
 
     # One rule has many tables
-    relation_typeio_to_tableioinfo = relationship("TableInputOutputInformation", back_populates="relation_toolwrapper_to_file_or_tableioinfo")
+    relation_typeio_to_tableioinfo = relationship("TableInputOutputInformation", back_populates="relation_toolwrapper_to_file_or_tableioinfo", cascade="all, delete, delete-orphan")
     # One rule has many files
-    relation_typeio_to_fileioinfo = relationship("FileInputOutputInformation", back_populates="relation_toolwrapper_to_file_or_tableioinfo")
+    relation_typeio_to_fileioinfo = relationship("FileInputOutputInformation", back_populates="relation_toolwrapper_to_file_or_tableioinfo", cascade="all, delete, delete-orphan")
     # One option is used by many toolwrappers
     relation_toolwrapper_to_option = relationship("Option", back_populates="relation_option_to_toolwrapper", cascade="all, delete, delete-orphan")
     # One rule has one execution
