@@ -604,12 +604,12 @@ class ToolWrapper(Base):
         for input_f in [f for f in self.relation_typeio_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
             s += "\\n\t\t" + input_f.name + ": " + str(input_f.path)
         for input_t in [t for t in self.relation_typeio_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
-            s += "\\n\t\tinput_table: " + input_t.name
+            s += "\\n\t\tinput_table: " + input_t.table_name
         s += "\\n"
         for output_f in [f for f in self.relation_typeio_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
             s += "\\n\t\t" + output_f.name + ": " + str(output_f.path)
         for output_t in [t for t in self.relation_typeio_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
-            s += "\\n\t\toutput_table: " + output_t.name
+            s += "\\n\t\toutput_table: " + output_t.table_name
         s += "\""
         return s
 

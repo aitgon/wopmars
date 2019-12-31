@@ -310,11 +310,8 @@ class WorkflowManager(ToolWrapperObserver):
                     input_files_not_ready = tw_list[0].get_input_files_not_ready()
                     self.set_finishing_informations(finish_epoch_millis_datetime, "ERROR")
                     raise WopMarsException("The workflow has failed.",
-                                           "The inputs '{}' have failed for this tool '{}'".format(input_files_not_ready[0], tw_list[0].rule_name))
-                                           # "The inputs are not ready for thisto: " +
-                                           # ", \n".join([t.get_toolwrapper().tool_python_path +
-                                           #            " -> rule: " +
-                                           #            t.get_toolwrapper().is_input for t in self.__list_queue_buffer]) + ". ")
+                                           " The inputs '{}' have failed for this tool '{}'"
+                                           .format(input_files_not_ready[0], tw_list[0].rule_name))
             # If there is one tool that is ready, it means that it is in queue because ressources weren't available.
 
     def set_finishing_informations(self, finished_at, status):
@@ -335,6 +332,17 @@ class WorkflowManager(ToolWrapperObserver):
             modify_exec.status = status
             self.__session.add(modify_exec)
             self.__session.commit()
+
+        import pdb; pdb.set_trace()
+        tw = self.__session.query(ToolWrapper).order_by(ToolWrapper.id.desc()).first()
+        for tool_wrapper in set(self.__dag_to_exec.nodes()):
+            # tw.set_execution_infos(status="NOT_PLANNED")
+            # self.__session.add(tw)
+            delete_q = tool_wrapper.__table__.delete()
+            self.__session.execute(delete_q)
+            self.__session.commit()
+            # self.__session.delete(tool_wrapper)
+            # self.__session.commit()
 
     def all_predecessors_have_run(self, rule):
         """
