@@ -167,9 +167,11 @@ class WorkflowManager(ToolWrapperObserver):
 
         # For the tools that are in the workflow definition file but not in the executed dag, their status is set to
         # "NOT_PLANNED"
-        for tw in set(self.__dag_tools.nodes()).difference(set(self.__dag_to_exec.nodes())):
-            tw.set_execution_infos(status="NOT_PLANNED")
-            self.__session.add(tw)
+        # Update AG: if not planned, it will not be stored
+        for tool_wrapper in set(self.__dag_tools.nodes()).difference(set(self.__dag_to_exec.nodes())):
+            # tw.set_execution_infos(status="NOT_PLANNED")
+            # self.__session.add(tw)
+            self.__session.delete(tool_wrapper)
 
         self.__session.commit()
 
@@ -248,13 +250,12 @@ class WorkflowManager(ToolWrapperObserver):
                 # check if the actual execution of the tool_python_path is necessary
                 # every predecessors of the tool_python_path have to be executed (or simulated)
                 if not OptionManager.instance()["--forceall"] and \
-                        self.is_this_tool_already_done(tool_wrapper) and \
-                        not bool([node for node in self.__dag_to_exec.predecessors(tool_wrapper) if node.status != "EXECUTED" and
-                                        node.status != "ALREADY_EXECUTED"]):
-                    Logger.instance().info("ToolWrapper: " + tool_wrapper.rule_name + " -> " + tool_wrapper.tool_python_path +
-                                           " seemed to have already" +
-                                           " been runned with same" +
-                                           " parameters.")
+                        self.is_this_tool_wrapper_already_executed(tool_wrapper) and \
+                        not bool([tool_wrapper_predecessor for tool_wrapper_predecessor in
+                                  self.__dag_to_exec.predecessors(tool_wrapper) if tool_wrapper_predecessor.status != "EXECUTED" and
+                                        tool_wrapper_predecessor.status != "ALREADY_EXECUTED"]):
+                    Logger.instance().info("ToolWrapper: {} -> {} seemed to have already been run with same parameters."
+                                           .format(tool_wrapper.rule_name, tool_wrapper.tool_python_path))
                     dry = True
 
                 # totodo lucg twthread verification des ressources
@@ -308,11 +309,8 @@ class WorkflowManager(ToolWrapperObserver):
                     input_files_not_ready = tw_list[0].get_input_files_not_ready()
                     self.set_finishing_informations(finish_epoch_millis_datetime, "ERROR")
                     raise WopMarsException("The workflow has failed.",
-                                           "The inputs '{}' have failed for this tool '{}'".format(input_files_not_ready[0], tw_list[0].rule_name))
-                                           # "The inputs are not ready for thisto: " +
-                                           # ", \n".join([t.get_toolwrapper().tool_python_path +
-                                           #            " -> rule: " +
-                                           #            t.get_toolwrapper().is_input for t in self.__list_queue_buffer]) + ". ")
+                                           " The inputs '{}' have failed for this tool '{}'"
+                                           .format(input_files_not_ready[0], tw_list[0].rule_name))
             # If there is one tool that is ready, it means that it is in queue because ressources weren't available.
 
     def set_finishing_informations(self, finished_at, status):
@@ -324,15 +322,56 @@ class WorkflowManager(ToolWrapperObserver):
         :param status: The final status of the workflow
         :type status: str
         """
-        modify_exec = self.__session.query(Execution).order_by(Execution.id.desc()).first()
-        if modify_exec is not None:
-            modify_exec.finished_at = finished_at
-            #modify_exec.mtime_epoch_millis = (modify_exec.finished_at - modify_exec.started_at).total_seconds()
-            # modify_exec.mtime_epoch_millis = modify_exec.finished_at - modify_exec.started_at
-            modify_exec.time = int((modify_exec.finished_at - modify_exec.started_at).total_seconds())
-            modify_exec.status = status
-            self.__session.add(modify_exec)
+
+        execution = self.__session.query(Execution).order_by(Execution.id.desc()).first()
+
+        # for tool_wrapper in set(self.__dag_to_exec.nodes()):
+        #     if tool_wrapper.status == 'ALREADY_EXECUTED' or tool_wrapper.status == 'ERROR':
+        #         self.__session.delete(tool_wrapper)
+        #         self.__session.commit()
+
+        ######################################################################################
+        #
+        # Delete execution if execution ALL tool_wrappers where skipped
+        # that is ALL tool_wrappers of this execution have status == ALREADY_EXECUTED
+        #
+        ######################################################################################
+
+        execution_tool_wrapper_count = self.__session.query(ToolWrapper).filter(
+            ToolWrapper.execution_id == execution.id).count()
+        execution_tool_wrapper_already_executed_count = self.__session.query(ToolWrapper)\
+            .filter(ToolWrapper.execution_id == execution.id)\
+            .filter(ToolWrapper.status == 'ALREADY_EXECUTED').count()
+
+        if execution_tool_wrapper_count == execution_tool_wrapper_already_executed_count:
+            self.__session.delete(execution)
             self.__session.commit()
+
+        ######################################################################################
+        #
+        # Delete execution if --dry-run
+        #
+        ######################################################################################
+
+        elif OptionManager.instance()["--dry-run"]:
+            # pass
+            self.__session.delete(execution)
+            self.__session.commit()
+
+        ######################################################################################
+        #
+        # If NOT all tool_wrappers skipped AND NOT --dry-run, update finished time
+        #
+        ######################################################################################
+
+        else:  # not --dry-run, update finishing time
+
+            if execution is not None:
+                execution.finished_at = finished_at
+                execution.time = int((execution.finished_at - execution.started_at).total_seconds())
+                execution.status = status
+                self.__session.add(execution)
+                self.__session.commit()
 
     def all_predecessors_have_run(self, rule):
         """
@@ -345,38 +384,48 @@ class WorkflowManager(ToolWrapperObserver):
         return bool(self.__dag_to_exec.get_all_predecessors(rule).difference(set([rule])).issubset(set(self.__already_runned)))
 
     @staticmethod
-    def is_this_tool_already_done(rule):
+    def is_this_tool_wrapper_already_executed(tool_wrapper):
         """
         Return True if conditions for saying "The output of this ToolWrapper are already available" are filled.
 
         The conditions are:
             - The ToolWrapper exist in database (named = tw_old)
-            - The tw_old param are the same than the same which is about to start
-            - the tw_old inputs are the same
-            - the tw_old outputs exists with the same is_input and are more recent than inputs
+            - The tool_wrapper_old param are the same as that which is about to start
+            - The old tool_wrapper has output
+            - The old tool_wrapper output is more recent than input
 
-        :param rule: The Toolwrapper to test_bak
-        :type rule: :class:`~.wopmars.main.framework.database.models.ToolWrapper.ToolWrapper`
+        :param tool_wrapper: The tool_wrapper to be tested
+        :type tool_wrapper: :class:`~.wopmars.models.ToolWrapper.ToolWrapper`
         """
         session = SQLManager.instance().get_session()
-        same_rule_list = session.query(ToolWrapper).filter(ToolWrapper.tool_python_path == rule.tool_python_path)\
-            .filter(ToolWrapper.execution_id != rule.execution_id).all()
-        i = 0
-        while i < len(same_rule_list):
-            same = False
-            # two rule are equals if they have the same parameters, the same file names and path
-            # and the same table names and models
-            if same_rule_list[i] == rule and \
-                    same_rule_list[i].does_output_exist() and \
-                    same_rule_list[i].is_output_more_recent_than_input():
-                    same = True
-            if not same:
-                del same_rule_list[i]
-            else:
-                i += 1
 
-        # The elements of the list have been removed if none fit the conditions
-        return bool(same_rule_list)
+        # Get latest tool_wrapper
+        # same_rule_list = session.query(ToolWrapper).filter(ToolWrapper.tool_python_path == tool_wrapper.tool_python_path)\
+        #     .filter(ToolWrapper.execution_id != tool_wrapper.execution_id).all()
+        # i = 0
+        # while i < len(same_rule_list):
+        #     same = False
+        #     # two tool_wrapper are equals if they have the same parameters, the same file names and path
+        #     # and the same table names and models
+        #     if same_rule_list[i] == tool_wrapper and \
+        #             same_rule_list[i].does_output_exist() and \
+        #             same_rule_list[i].is_output_more_recent_than_input():
+        #             same = True
+        #     if not same:
+        #         del same_rule_list[i]
+        #     else:
+        #         i += 1
+
+        # # The elements of the list have been removed if none fit the conditions
+        # return bool(same_rule_list)
+
+        tool_wrapper_old = session.query(ToolWrapper).filter(ToolWrapper.tool_python_path == tool_wrapper.tool_python_path)\
+            .filter(ToolWrapper.execution_id != tool_wrapper.execution_id)\
+            .order_by(ToolWrapper.id.desc()).first()
+
+        return tool_wrapper == tool_wrapper_old \
+               and tool_wrapper_old.does_output_exist() \
+               and tool_wrapper_old.is_output_more_recent_than_input()
 
     def check_buffer(self):
         """
@@ -403,13 +452,15 @@ class WorkflowManager(ToolWrapperObserver):
         # if not OptionManager.instance()["--dry-run"]:
         #     thread_toolwrapper.get_toolwrapper().set_args_time_and_size("output", dry_status)
         if dry_status is False and not OptionManager.instance()["--dry-run"]:
-            Logger.instance().info("ToolWrapper " + str(thread_toolwrapper.get_toolwrapper().rule_name) + " -> " + str(thread_toolwrapper.get_toolwrapper().__class__.__name__) + " has succeed.")
+            Logger.instance().info("ToolWrapper {} -> {} has succeeded."
+                                   .format(str(thread_toolwrapper.get_toolwrapper().rule_name),
+                                           str(thread_toolwrapper.get_toolwrapper().__class__.__name__)))
         # Continue the dag execution from the tool_python_path that just finished.
         self.__already_runned.add(thread_toolwrapper.get_toolwrapper())
         self.__count_exec -= 1
 
         if len(self.__list_queue_buffer):
-            Logger.instance().debug("Fill the queue with the Buffer: " +
+            Logger.instance().debug("Fill the queue with the buffer: " +
                                     str([t.get_toolwrapper().__class__.__name__ for t in self.__list_queue_buffer]))
         i = 0
         for tw_thread in self.__list_queue_buffer:

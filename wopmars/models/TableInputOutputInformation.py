@@ -32,7 +32,7 @@ class TableInputOutputInformation(InputOutput, Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     table_name = Column(String(255), ForeignKey("wom_TableModificationTime.table_name"))
     model_py_path = Column(String(255))
-    toolwrapper_id = Column(Integer, ForeignKey("wom_ToolWrapper.id"))
+    toolwrapper_id = Column(Integer, ForeignKey("wom_ToolWrapper.id", ondelete='CASCADE'))
     is_input = Column(Boolean, ForeignKey("wom_TypeInputOrOutput.is_input"))
     mtime_human = Column(DateTime, nullable=True)
     mtime_epoch_millis = Column(BigInteger, nullable=True)

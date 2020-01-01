@@ -27,5 +27,5 @@ class Execution(Base):
 
     # One execution has many rules
     # rules = relationship("ToolWrapper", back_populates="execution")
-    relation_execution_to_toolwrapper = relationship("ToolWrapper", back_populates="relation_toolwrapper_to_execution")
+    relation_execution_to_toolwrapper = relationship("ToolWrapper", back_populates="relation_toolwrapper_to_execution", cascade="all, delete, delete-orphan")
 

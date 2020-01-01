@@ -123,7 +123,7 @@ class WopmarsSession:
 
         :return: Bool saying if there is something in the session.
         """
-        return bool(self.__session.new) or bool(self.__session.dirty)
+        return bool(self.__session.new) or bool(self.__session.dirty) or bool(self.__session.deleted)
 
     def get_or_create(self, model, defaults=None, **kwargs):
         """
