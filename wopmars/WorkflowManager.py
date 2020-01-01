@@ -250,7 +250,7 @@ class WorkflowManager(ToolWrapperObserver):
                 # check if the actual execution of the tool_python_path is necessary
                 # every predecessors of the tool_python_path have to be executed (or simulated)
                 if not OptionManager.instance()["--forceall"] and \
-                        self.is_this_tool_already_done(tool_wrapper) and \
+                        self.is_this_tool_wrapper_already_executed(tool_wrapper) and \
                         not bool([tool_wrapper_predecessor for tool_wrapper_predecessor in
                                   self.__dag_to_exec.predecessors(tool_wrapper) if tool_wrapper_predecessor.status != "EXECUTED" and
                                         tool_wrapper_predecessor.status != "ALREADY_EXECUTED"]):
@@ -384,38 +384,48 @@ class WorkflowManager(ToolWrapperObserver):
         return bool(self.__dag_to_exec.get_all_predecessors(rule).difference(set([rule])).issubset(set(self.__already_runned)))
 
     @staticmethod
-    def is_this_tool_already_done(rule):
+    def is_this_tool_wrapper_already_executed(tool_wrapper):
         """
         Return True if conditions for saying "The output of this ToolWrapper are already available" are filled.
 
         The conditions are:
             - The ToolWrapper exist in database (named = tw_old)
-            - The tw_old param are the same than the same which is about to start
-            - the tw_old inputs are the same
-            - the tw_old outputs exists with the same is_input and are more recent than inputs
+            - The tool_wrapper_old param are the same as that which is about to start
+            - The old tool_wrapper has output
+            - The old tool_wrapper output is more recent than input
 
-        :param rule: The Toolwrapper to test_bak
-        :type rule: :class:`~.wopmars.main.framework.database.models.ToolWrapper.ToolWrapper`
+        :param tool_wrapper: The tool_wrapper to be tested
+        :type tool_wrapper: :class:`~.wopmars.models.ToolWrapper.ToolWrapper`
         """
         session = SQLManager.instance().get_session()
-        same_rule_list = session.query(ToolWrapper).filter(ToolWrapper.tool_python_path == rule.tool_python_path)\
-            .filter(ToolWrapper.execution_id != rule.execution_id).all()
-        i = 0
-        while i < len(same_rule_list):
-            same = False
-            # two rule are equals if they have the same parameters, the same file names and path
-            # and the same table names and models
-            if same_rule_list[i] == rule and \
-                    same_rule_list[i].does_output_exist() and \
-                    same_rule_list[i].is_output_more_recent_than_input():
-                    same = True
-            if not same:
-                del same_rule_list[i]
-            else:
-                i += 1
 
-        # The elements of the list have been removed if none fit the conditions
-        return bool(same_rule_list)
+        # Get latest tool_wrapper
+        # same_rule_list = session.query(ToolWrapper).filter(ToolWrapper.tool_python_path == tool_wrapper.tool_python_path)\
+        #     .filter(ToolWrapper.execution_id != tool_wrapper.execution_id).all()
+        # i = 0
+        # while i < len(same_rule_list):
+        #     same = False
+        #     # two tool_wrapper are equals if they have the same parameters, the same file names and path
+        #     # and the same table names and models
+        #     if same_rule_list[i] == tool_wrapper and \
+        #             same_rule_list[i].does_output_exist() and \
+        #             same_rule_list[i].is_output_more_recent_than_input():
+        #             same = True
+        #     if not same:
+        #         del same_rule_list[i]
+        #     else:
+        #         i += 1
+
+        # # The elements of the list have been removed if none fit the conditions
+        # return bool(same_rule_list)
+
+        tool_wrapper_old = session.query(ToolWrapper).filter(ToolWrapper.tool_python_path == tool_wrapper.tool_python_path)\
+            .filter(ToolWrapper.execution_id != tool_wrapper.execution_id)\
+            .order_by(ToolWrapper.id.desc()).first()
+
+        return tool_wrapper == tool_wrapper_old \
+               and tool_wrapper_old.does_output_exist() \
+               and tool_wrapper_old.is_output_more_recent_than_input()
 
     def check_buffer(self):
         """
