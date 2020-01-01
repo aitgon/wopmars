@@ -251,12 +251,11 @@ class WorkflowManager(ToolWrapperObserver):
                 # every predecessors of the tool_python_path have to be executed (or simulated)
                 if not OptionManager.instance()["--forceall"] and \
                         self.is_this_tool_already_done(tool_wrapper) and \
-                        not bool([node for node in self.__dag_to_exec.predecessors(tool_wrapper) if node.status != "EXECUTED" and
-                                        node.status != "ALREADY_EXECUTED"]):
-                    Logger.instance().info("ToolWrapper: " + tool_wrapper.rule_name + " -> " + tool_wrapper.tool_python_path +
-                                           " seemed to have already" +
-                                           " been runned with same" +
-                                           " parameters.")
+                        not bool([tool_wrapper_predecessor for tool_wrapper_predecessor in
+                                  self.__dag_to_exec.predecessors(tool_wrapper) if tool_wrapper_predecessor.status != "EXECUTED" and
+                                        tool_wrapper_predecessor.status != "ALREADY_EXECUTED"]):
+                    Logger.instance().info("ToolWrapper: {} -> {} seemed to have already been run with same parameters."
+                                           .format(tool_wrapper.rule_name, tool_wrapper.tool_python_path))
                     dry = True
 
                 # totodo lucg twthread verification des ressources
@@ -323,26 +322,56 @@ class WorkflowManager(ToolWrapperObserver):
         :param status: The final status of the workflow
         :type status: str
         """
-        modify_exec = self.__session.query(Execution).order_by(Execution.id.desc()).first()
-        if modify_exec is not None:
-            modify_exec.finished_at = finished_at
-            #modify_exec.mtime_epoch_millis = (modify_exec.finished_at - modify_exec.started_at).total_seconds()
-            # modify_exec.mtime_epoch_millis = modify_exec.finished_at - modify_exec.started_at
-            modify_exec.time = int((modify_exec.finished_at - modify_exec.started_at).total_seconds())
-            modify_exec.status = status
-            self.__session.add(modify_exec)
+
+        execution = self.__session.query(Execution).order_by(Execution.id.desc()).first()
+
+        # for tool_wrapper in set(self.__dag_to_exec.nodes()):
+        #     if tool_wrapper.status == 'ALREADY_EXECUTED' or tool_wrapper.status == 'ERROR':
+        #         self.__session.delete(tool_wrapper)
+        #         self.__session.commit()
+
+        ######################################################################################
+        #
+        # Delete execution if execution ALL tool_wrappers where skipped
+        # that is ALL tool_wrappers of this execution have status == ALREADY_EXECUTED
+        #
+        ######################################################################################
+
+        execution_tool_wrapper_count = self.__session.query(ToolWrapper).filter(
+            ToolWrapper.execution_id == execution.id).count()
+        execution_tool_wrapper_already_executed_count = self.__session.query(ToolWrapper)\
+            .filter(ToolWrapper.execution_id == execution.id)\
+            .filter(ToolWrapper.status == 'ALREADY_EXECUTED').count()
+
+        if execution_tool_wrapper_count == execution_tool_wrapper_already_executed_count:
+            self.__session.delete(execution)
             self.__session.commit()
 
-        import pdb; pdb.set_trace()
-        tw = self.__session.query(ToolWrapper).order_by(ToolWrapper.id.desc()).first()
-        for tool_wrapper in set(self.__dag_to_exec.nodes()):
-            # tw.set_execution_infos(status="NOT_PLANNED")
-            # self.__session.add(tw)
-            delete_q = tool_wrapper.__table__.delete()
-            self.__session.execute(delete_q)
+        ######################################################################################
+        #
+        # Delete execution if --dry-run
+        #
+        ######################################################################################
+
+        elif OptionManager.instance()["--dry-run"]:
+            # pass
+            self.__session.delete(execution)
             self.__session.commit()
-            # self.__session.delete(tool_wrapper)
-            # self.__session.commit()
+
+        ######################################################################################
+        #
+        # If NOT all tool_wrappers skipped AND NOT --dry-run, update finished time
+        #
+        ######################################################################################
+
+        else:  # not --dry-run, update finishing time
+
+            if execution is not None:
+                execution.finished_at = finished_at
+                execution.time = int((execution.finished_at - execution.started_at).total_seconds())
+                execution.status = status
+                self.__session.add(execution)
+                self.__session.commit()
 
     def all_predecessors_have_run(self, rule):
         """
@@ -413,13 +442,15 @@ class WorkflowManager(ToolWrapperObserver):
         # if not OptionManager.instance()["--dry-run"]:
         #     thread_toolwrapper.get_toolwrapper().set_args_time_and_size("output", dry_status)
         if dry_status is False and not OptionManager.instance()["--dry-run"]:
-            Logger.instance().info("ToolWrapper " + str(thread_toolwrapper.get_toolwrapper().rule_name) + " -> " + str(thread_toolwrapper.get_toolwrapper().__class__.__name__) + " has succeed.")
+            Logger.instance().info("ToolWrapper {} -> {} has succeeded."
+                                   .format(str(thread_toolwrapper.get_toolwrapper().rule_name),
+                                           str(thread_toolwrapper.get_toolwrapper().__class__.__name__)))
         # Continue the dag execution from the tool_python_path that just finished.
         self.__already_runned.add(thread_toolwrapper.get_toolwrapper())
         self.__count_exec -= 1
 
         if len(self.__list_queue_buffer):
-            Logger.instance().debug("Fill the queue with the Buffer: " +
+            Logger.instance().debug("Fill the queue with the buffer: " +
                                     str([t.get_toolwrapper().__class__.__name__ for t in self.__list_queue_buffer]))
         i = 0
         for tw_thread in self.__list_queue_buffer:

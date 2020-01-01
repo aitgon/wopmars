@@ -171,11 +171,11 @@ class WopMars:
                 SQLManager.instance().get_session().rollback()
                 Logger.instance().error("The execution has not even begun. No informations will be stored in the database.")
             except Exception as e:
-                Logger.instance().error("An error occured during the rollback of the changement of the database which can be now unstable:" +
+                Logger.instance().error("An error occurred during the rollback of the changement of the database which can be now unstable:" +
                                         str(e))
             sys.exit(1)
         except Exception as e:
-            Logger.instance().error("An unknown error has occured:\n" + str(e))
+            Logger.instance().error("An unknown error has occurred:\n" + str(e))
             sys.exit(1)
 
 

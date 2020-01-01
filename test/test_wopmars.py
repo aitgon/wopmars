@@ -15,7 +15,7 @@ from wopmars.utils.various import get_current_time
 from wopmars.Base import Base
 
 
-class TestWopMars(TestCase):
+class TestWopmars(TestCase):
 
 
     def setUp(self):
@@ -143,7 +143,7 @@ class TestWopMars(TestCase):
         self.assertTrue(mtime2 == mtime3)
         self.assertEqual(se.exception.code, 0)
 
-    def test_02dry_run(self):
+    def test_dry_run(self):
         cmd_line = ["python", "--dry-run", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-d",
                     PathFinder.get_module_path()]
         with self.assertRaises(SystemExit) as se:

@@ -76,10 +76,10 @@ class ToolWrapperThread(threading.Thread, Observable):
                     time_unix_ms, time_human = get_current_time()
                     self.__tool_wrapper.set_execution_infos(start, time_human, "EXECUTED")
                 else:
-                    Logger.instance().debug("Dry-run mode enabled. Execution skiped.")
+                    Logger.instance().debug("Dry-run mode enabled. Execution skipped.")
                     self.__tool_wrapper.set_execution_infos(status="DRY")
             else:
-                Logger.instance().info("ToolWrapper: " + str(self.__tool_wrapper.rule_name) + " -> " + self.__tool_wrapper.__class__.__name__ + " skiped.")
+                Logger.instance().info("ToolWrapper: " + str(self.__tool_wrapper.rule_name) + " -> " + self.__tool_wrapper.__class__.__name__ + " skipped.")
                 self.__tool_wrapper.set_execution_infos(start, time_human, "ALREADY_EXECUTED")
         except Exception as e:
             wopmars_session.rollback()
