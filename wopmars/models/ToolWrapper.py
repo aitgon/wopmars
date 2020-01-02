@@ -514,7 +514,10 @@ class ToolWrapper(Base):
 
     def __eq__(self, other):
         """
-        Two ToolWrapper objects are equals if all their attributes are equals.
+        Two tool_wrappers are equal for these conditions:
+
+        - Both belong to the same class
+        - Both have the same input and output fields
 
         We check if the files, tables and relation_toolwrapper_to_option are the same.
         :param other: ToolWrapper
@@ -522,10 +525,10 @@ class ToolWrapper(Base):
         :return: Bool: True if the ToolWrappers are equals.
         """
         return (isinstance(other, self.__class__) and
-                self.same_files(other, True) and
-                self.same_tables(other, True) and
-                self.same_files(other, False) and
-                self.same_tables(other, False) and
+                self.same_files(other, is_input=True) and
+                self.same_tables(other, is_input=True) and
+                self.same_files(other, is_input=False) and
+                self.same_tables(other, is_input=False) and
                 self.same_options(other))
 
     def same_files(self, other, is_input):
@@ -539,9 +542,11 @@ class ToolWrapper(Base):
         :return: Bool: True if the files are the same
         """
         for f in [rf for rf in self.relation_typeio_to_fileioinfo if rf.relation_file_or_tableioinfo_to_typeio.is_input == is_input]:
-            is_in = bool([rf for rf in other.relation_typeio_to_fileioinfo if (os.path.abspath(f.path) == os.path.abspath(rf.path) and
-                                                                               f.name == rf.name and
-                                                                               rf.relation_file_or_tableioinfo_to_typeio.is_input == is_input)])
+            is_in = bool([rf for rf in other.relation_typeio_to_fileioinfo if (
+                    # os.path.abspath(f.path) == os.path.abspath(rf.path) and  # AG file path is not a reason for same
+                    f.name == rf.name and  # same file field name
+                    rf.relation_file_or_tableioinfo_to_typeio.is_input == is_input  # files are same input
+            )])
             if not is_in:
                 return False
         return True

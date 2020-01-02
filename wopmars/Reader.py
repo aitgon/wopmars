@@ -305,9 +305,12 @@ class Reader:
             for type in dict_inputs:
                 if type == "file":
                     for s_input in dict_inputs[type]:
+                        # obj_created = FileInputOutputInformation(name=s_input,
+                        #                                          path=os.path.abspath(os.path.join(OptionManager.instance()["--directory"],
+                        #                                                           dict_inputs[type][s_input])))
                         obj_created = FileInputOutputInformation(name=s_input,
-                                                                 path=os.path.abspath(os.path.join(OptionManager.instance()["--directory"],
-                                                                                  dict_inputs[type][s_input])))
+                                                                 path=os.path.join(OptionManager.instance()["--directory"],
+                                                                                  dict_inputs[type][s_input]))
                         dict_dict_dict_elm["dict_input"][type][s_input] = obj_created
                         Logger.instance().debug("Object input file: " + s_input + " created.")
                 elif type == "table":
@@ -319,9 +322,13 @@ class Reader:
             for type in dict_outputs:
                 if type == "file":
                     for s_output in dict_outputs[type]:
-                        obj_created = FileInputOutputInformation(name=s_output,
-                                                                 path=os.path.abspath(os.path.join(OptionManager.instance()["--directory"],
-                                                                                  dict_outputs[type][s_output])))
+                        # obj_created = FileInputOutputInformation(name=s_output,
+                        #                                          path=os.path.abspath(os.path.join(OptionManager.instance()["--directory"],
+                        #                                                           dict_outputs[type][s_output])))
+                        # obj_created = FileInputOutputInformation(name=s_output,
+                        #                                          path=os.path.join(OptionManager.instance()["--directory"],
+                        #                                                           dict_outputs[type][s_output]))
+                        obj_created = FileInputOutputInformation(name=s_output, path=dict_outputs[type][s_output])
                         dict_dict_dict_elm["dict_output"]["file"][s_output] = obj_created
                         Logger.instance().debug("Object output file: " + s_output + " created.")
                 elif type == "table":
@@ -413,13 +420,13 @@ class Reader:
                                     obj_created = None
                                     if key_third_step == "file":
                                         key = key_fourth_step
-                                        str_path_to_file = os.path.join(OptionManager.instance()["--directory"],
-                                                                        self.__dict_workflow_definition[rule][
-                                                                            key_second_step][
-                                                                            key_third_step][
-                                                                            key])
-                                        obj_created = FileInputOutputInformation(name=key,
-                                                                                 path=os.path.abspath(str_path_to_file))
+                                        # str_path_to_file = os.path.join(OptionManager.instance()["--directory"],
+                                        #                                 self.__dict_workflow_definition[rule][
+                                        #                                     key_second_step][key_third_step][key])
+                                        str_path_to_file = self.__dict_workflow_definition[rule][key_second_step][key_third_step][key]
+                                        # obj_created = FileInputOutputInformation(name=key,
+                                        #                                          path=os.path.abspath(str_path_to_file))
+                                        obj_created = FileInputOutputInformation(name=key, path=str_path_to_file)
 
                                     elif key_third_step == "table":
                                         key = key_fourth_step
