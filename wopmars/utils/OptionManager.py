@@ -31,7 +31,8 @@ class OptionManager(dict, SingletonMixin):
 
         schema.validate(self)
 
-        self.make_absolute_paths()
+        # AG do not use absolute path. Maybe later, it can be offered as option
+        # self.make_absolute_paths()
 
     def validate_input_output_params(self):
         if self["--input"] is None:
