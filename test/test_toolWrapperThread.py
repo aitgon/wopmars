@@ -46,8 +46,8 @@ class TestToolWrapperThread(TestCase):
         t1.modification = modification_table_entry
 
         tw1 = FooWrapper5(rule_name="rule1")
-        tw1.relation_typeio_to_fileioinfo.extend([f1, f2])
-        tw1.relation_typeio_to_tableioinfo.append(t1)
+        tw1.relation_toolwrapper_to_fileioinfo.extend([f1, f2])
+        tw1.relation_toolwrapper_to_tableioinfo.append(t1)
 
         f12 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
         f12.relation_file_or_tableioinfo_to_typeio = input_entry
@@ -64,8 +64,8 @@ class TestToolWrapperThread(TestCase):
         t12.modification = modification_table_entry
 
         tw2 = FooWrapper5(rule_name="rule2")
-        tw2.relation_typeio_to_fileioinfo.extend([f12, f22])
-        tw2.relation_typeio_to_tableioinfo.append(t12)
+        tw2.relation_toolwrapper_to_fileioinfo.extend([f12, f22])
+        tw2.relation_toolwrapper_to_tableioinfo.append(t12)
 
         f13 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
         f13.relation_file_or_tableioinfo_to_typeio = input_entry
@@ -82,8 +82,8 @@ class TestToolWrapperThread(TestCase):
         t13.modification = modification_table_entry
 
         tw3 = FooWrapper5(rule_name="rule3")
-        tw3.relation_typeio_to_fileioinfo.extend([f13, f23])
-        tw3.relation_typeio_to_tableioinfo.append(t13)
+        tw3.relation_toolwrapper_to_fileioinfo.extend([f13, f23])
+        tw3.relation_toolwrapper_to_tableioinfo.append(t13)
 
         tt1 = ToolWrapperThread(tw1)
         tt2 = ToolWrapperThread(tw2)
@@ -118,8 +118,8 @@ class TestToolWrapperThread(TestCase):
             o1 = Option(name="rows", value="1000")
 
             tw1 = tw_add(rule_name="rule1")
-            tw1.relation_typeio_to_fileioinfo.append(f1)
-            tw1.relation_typeio_to_tableioinfo.append(t1)
+            tw1.relation_toolwrapper_to_fileioinfo.append(f1)
+            tw1.relation_toolwrapper_to_tableioinfo.append(t1)
             tw1.relation_toolwrapper_to_option.append(o1)
 
             f12 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
@@ -136,8 +136,8 @@ class TestToolWrapperThread(TestCase):
             o12 = Option(name="rows", value="1000")
 
             tw12 = tw_add(rule_name="rule1")
-            tw12.relation_typeio_to_fileioinfo.append(f12)
-            tw12.relation_typeio_to_tableioinfo.append(t12)
+            tw12.relation_toolwrapper_to_fileioinfo.append(f12)
+            tw12.relation_toolwrapper_to_tableioinfo.append(t12)
             tw12.relation_toolwrapper_to_option.append(o12)
 
             f13 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
@@ -154,8 +154,8 @@ class TestToolWrapperThread(TestCase):
             o13 = Option(name="rows", value="1000")
 
             tw13 = tw_add(rule_name="rule1")
-            tw13.relation_typeio_to_fileioinfo.append(f13)
-            tw13.relation_typeio_to_tableioinfo.append(t13)
+            tw13.relation_toolwrapper_to_fileioinfo.append(f13)
+            tw13.relation_toolwrapper_to_tableioinfo.append(t13)
             tw13.relation_toolwrapper_to_option.append(o13)
 
             tt1 = ToolWrapperThread(tw1)
@@ -167,21 +167,21 @@ class TestToolWrapperThread(TestCase):
             t21.relation_file_or_tableioinfo_to_typeio = input_entry
 
             tw21 = tw_query(rule_name="rule1")
-            tw21.relation_typeio_to_tableioinfo.append(t21)
+            tw21.relation_toolwrapper_to_tableioinfo.append(t21)
 
             t22 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
             t22.set_table(FooBase)
             t22.relation_file_or_tableioinfo_to_typeio = input_entry
 
             tw22 = tw_query(rule_name="rule1")
-            tw22.relation_typeio_to_tableioinfo.append(t22)
+            tw22.relation_toolwrapper_to_tableioinfo.append(t22)
 
             t23 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
             t23.set_table(FooBase)
             t23.relation_file_or_tableioinfo_to_typeio = input_entry
 
             tw23 = tw_query(rule_name="rule1")
-            tw23.relation_typeio_to_tableioinfo.append(t23)
+            tw23.relation_toolwrapper_to_tableioinfo.append(t23)
 
             tt4 = ToolWrapperThread(tw21)
             tt5 = ToolWrapperThread(tw22)

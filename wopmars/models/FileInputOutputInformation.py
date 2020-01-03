@@ -35,7 +35,7 @@ class FileInputOutputInformation(InputOutput, Base):
     size = Column(BigInteger, nullable=True)
 
     # One file is in one rule
-    relation_toolwrapper_to_file_or_tableioinfo = relationship("ToolWrapper", back_populates="relation_typeio_to_fileioinfo", enable_typechecks=False)
+    relation_file_or_tableioinfo_to_toolwrapper = relationship("ToolWrapper", back_populates="relation_toolwrapper_to_fileioinfo", enable_typechecks=False)
     # One file has one typeio
     relation_file_or_tableioinfo_to_typeio = relationship("TypeInputOrOutput", back_populates="relation_typeio_to_fileioinfo")
 

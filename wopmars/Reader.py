@@ -541,7 +541,7 @@ class Reader:
                     iofileput_entry.relation_file_or_tableioinfo_to_typeio = input_entry
                     try:
                         # associating file and tool_python_path
-                        user_tool_wrapper.relation_typeio_to_fileioinfo.append(iofileput_entry)
+                        user_tool_wrapper.relation_toolwrapper_to_fileioinfo.append(iofileput_entry)
                     except ObjectDeletedError as e:
                         raise WopMarsException("Error in the tool_python_path class declaration. Please, notice the developer",
                                                "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
@@ -563,10 +563,10 @@ class Reader:
                                                                                   "mtime_epoch_millis": time_unix_ms,
                                                                                   "mtime_human": time_human},
                                                                               table_name=input_t)
-                    iodbput_entry.relation_tablemodiftime_to_tableioinfo = modification_table_entry
+                    iodbput_entry.relation_tableioinfo_to_tablemodiftime = modification_table_entry
                     iodbput_entry.relation_file_or_tableioinfo_to_typeio = input_entry
                     try:
-                        user_tool_wrapper.relation_typeio_to_tableioinfo.append(iodbput_entry)
+                        user_tool_wrapper.relation_toolwrapper_to_tableioinfo.append(iodbput_entry)
                     except ObjectDeletedError as e:
                         raise WopMarsException("Error in the tool_python_path class declaration. Please, notice the developer",
                                                "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
@@ -578,7 +578,7 @@ class Reader:
                     iofileput_entry = dict_dict_dict_elm["dict_output"][elm][output_f]
                     iofileput_entry.relation_file_or_tableioinfo_to_typeio = output_entry
                     try:
-                        user_tool_wrapper.relation_typeio_to_fileioinfo.append(iofileput_entry)
+                        user_tool_wrapper.relation_toolwrapper_to_fileioinfo.append(iofileput_entry)
                     except ObjectDeletedError as e:
                         raise WopMarsException("Error in the tool_python_path class declaration. Please, notice the developer",
                                                "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
@@ -594,10 +594,10 @@ class Reader:
                                                                                   "mtime_epoch_millis": time_unix_ms,
                                                                                   "mtime_human": time_human},
                                                                               table_name=output_t)
-                    iodbput_entry.relation_tablemodiftime_to_tableioinfo = modification_table_entry
+                    iodbput_entry.relation_tableioinfo_to_tablemodiftime = modification_table_entry
                     iodbput_entry.relation_file_or_tableioinfo_to_typeio = output_entry
                     try:
-                        user_tool_wrapper.relation_typeio_to_tableioinfo.append(iodbput_entry)
+                        user_tool_wrapper.relation_toolwrapper_to_tableioinfo.append(iodbput_entry)
                     except ObjectDeletedError as e:
                         raise WopMarsException(
                             "Error in the tool_python_path class declaration. Please, notice the developer",

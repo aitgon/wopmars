@@ -20,7 +20,7 @@ class TableModificationTime(Base):
     mtime_epoch_millis = Column(BigInteger, nullable=False)
 
     # One table_io_info has one table_modif_time
-    relation_typeio_to_tableioinfo = relationship("TableInputOutputInformation", back_populates="relation_tablemodiftime_to_tableioinfo")
+    relation_tablemodiftime_to_tableioinfo = relationship("TableInputOutputInformation", back_populates="relation_tableioinfo_to_tablemodiftime")
 
     def __repr__(self):
         return "<Modification on " + str(self.table_name) + ": " + str(self.mtime_epoch_millis) + ">"

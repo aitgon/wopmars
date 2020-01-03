@@ -36,7 +36,7 @@ class TestDAG(TestCase):
         f2.relation_file_or_tableioinfo_to_typeio = output_entry
 
         self.__toolwrapper_first = FooWrapper2(rule_name="rule1")
-        self.__toolwrapper_first.relation_typeio_to_fileioinfo.extend([f1, f2])
+        self.__toolwrapper_first.relation_toolwrapper_to_fileioinfo.extend([f1, f2])
 
         f1 = FileInputOutputInformation(name="input1", path="file2.txt")
         f1.relation_file_or_tableioinfo_to_typeio = input_entry
@@ -45,7 +45,7 @@ class TestDAG(TestCase):
         f2.relation_file_or_tableioinfo_to_typeio = output_entry
 
         self.__toolwrapper_second = FooWrapper2(rule_name="rule2")
-        self.__toolwrapper_second.relation_typeio_to_fileioinfo.extend([f1, f2])
+        self.__toolwrapper_second.relation_toolwrapper_to_fileioinfo.extend([f1, f2])
 
         f1 = FileInputOutputInformation(name="input1", path="file2.txt")
         f1.relation_file_or_tableioinfo_to_typeio = input_entry
@@ -54,7 +54,7 @@ class TestDAG(TestCase):
         f2.relation_file_or_tableioinfo_to_typeio = output_entry
 
         self.__toolwrapper_third = FooWrapper2(rule_name="rule3")
-        self.__toolwrapper_third.relation_typeio_to_fileioinfo.extend([f1, f2])
+        self.__toolwrapper_third.relation_toolwrapper_to_fileioinfo.extend([f1, f2])
 
         f1 = FileInputOutputInformation(name="input1", path="file3.txt")
         f1.relation_file_or_tableioinfo_to_typeio = input_entry
@@ -66,7 +66,7 @@ class TestDAG(TestCase):
         f3.relation_file_or_tableioinfo_to_typeio = output_entry
 
         self.__toolwrapper_fourth = FooWrapper8(rule_name="rule4")
-        self.__toolwrapper_fourth.relation_typeio_to_fileioinfo.extend([f1, f2, f3])
+        self.__toolwrapper_fourth.relation_toolwrapper_to_fileioinfo.extend([f1, f2, f3])
 
         list_tool = [self.__toolwrapper_first,
                      self.__toolwrapper_second,

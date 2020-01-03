@@ -110,8 +110,8 @@ class TestReader(TestCase):
         t1.relation_file_or_tableioinfo_to_typeio = input_entry
 
         tw1 = FooWrapperPackaged(rule_name="rule1")
-        tw1.relation_typeio_to_fileioinfo.extend([f1, f2])
-        tw1.relation_typeio_to_tableioinfo.append(t1)
+        tw1.relation_toolwrapper_to_fileioinfo.extend([f1, f2])
+        tw1.relation_toolwrapper_to_tableioinfo.append(t1)
 
         self.assertEqual(result, tw1)
 
@@ -184,21 +184,21 @@ class TestReader(TestCase):
         t2bis.relation_file_or_tableioinfo_to_typeio = input_entry
 
         tw1 = FooWrapper4(rule_name="rule1")
-        tw1.relation_typeio_to_fileioinfo.extend([f1, f2])
+        tw1.relation_toolwrapper_to_fileioinfo.extend([f1, f2])
         tw2 = FooWrapper5(rule_name="rule2")
-        tw2.relation_typeio_to_fileioinfo.extend([f3, f4])
-        tw2.relation_typeio_to_tableioinfo.extend([t1])
+        tw2.relation_toolwrapper_to_fileioinfo.extend([f3, f4])
+        tw2.relation_toolwrapper_to_tableioinfo.extend([t1])
         tw3 = FooWrapper6(rule_name="rule3")
-        tw3.relation_typeio_to_fileioinfo.extend([f3bis, f5, f6])
+        tw3.relation_toolwrapper_to_fileioinfo.extend([f3bis, f5, f6])
         tw4 = FooWrapper7(rule_name="rule4")
-        tw4.relation_typeio_to_tableioinfo.extend([t1bis, t2])
+        tw4.relation_toolwrapper_to_tableioinfo.extend([t1bis, t2])
         tw5 = FooWrapper8(rule_name="rule5")
-        tw5.relation_typeio_to_fileioinfo.extend([f8, f7, f9])
+        tw5.relation_toolwrapper_to_fileioinfo.extend([f8, f7, f9])
         tw6 = FooWrapper9(rule_name="rule6")
-        tw6.relation_typeio_to_fileioinfo.extend([f10, f11])
-        tw6.relation_typeio_to_tableioinfo.extend([t2bis])
+        tw6.relation_toolwrapper_to_fileioinfo.extend([f10, f11])
+        tw6.relation_toolwrapper_to_tableioinfo.extend([t2bis])
         tw7 = FooWrapper10(rule_name="rule7")
-        tw7.relation_typeio_to_fileioinfo.extend([f12, f13, f14, f15])
+        tw7.relation_toolwrapper_to_fileioinfo.extend([f12, f13, f14, f15])
 
         expected = set([tw1, tw2, tw3, tw4, tw5, tw6, tw7])
 

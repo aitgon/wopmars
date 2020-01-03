@@ -44,9 +44,9 @@ class ToolWrapper(Base):
     status = Column(String(255), nullable=True, default="NOT_EXECUTED")
 
     # One rule has many tables
-    relation_typeio_to_tableioinfo = relationship("TableInputOutputInformation", back_populates="relation_toolwrapper_to_file_or_tableioinfo", cascade="all, delete, delete-orphan")
+    relation_toolwrapper_to_tableioinfo = relationship("TableInputOutputInformation", back_populates="relation_file_or_tableioinfo_to_toolwrapper", cascade="all, delete, delete-orphan")
     # One rule has many files
-    relation_typeio_to_fileioinfo = relationship("FileInputOutputInformation", back_populates="relation_toolwrapper_to_file_or_tableioinfo", cascade="all, delete, delete-orphan")
+    relation_toolwrapper_to_fileioinfo = relationship("FileInputOutputInformation", back_populates="relation_file_or_tableioinfo_to_toolwrapper", cascade="all, delete, delete-orphan")
     # One option is used by many toolwrappers
     relation_toolwrapper_to_option = relationship("Option", back_populates="relation_option_to_toolwrapper", cascade="all, delete, delete-orphan")
     # One rule has one execution
@@ -116,7 +116,7 @@ class ToolWrapper(Base):
 
         :raise WopMarsException: The input are not respected by the user.
         """
-        set_input_file_names = set([f_input.name for f_input in self.relation_typeio_to_fileioinfo
+        set_input_file_names = set([f_input.name for f_input in self.relation_toolwrapper_to_fileioinfo
                                     if f_input.relation_file_or_tableioinfo_to_typeio.is_input == 1])
         # check if the input file names for the ToolWrapper are coherent with the ToolWrapper specifications
         if set_input_file_names != set(self.specify_input_file()):
@@ -129,7 +129,7 @@ class ToolWrapper(Base):
                                    "\n\t'{0}'".format("'\n\t'".join(set_input_file_names))
                                    )
 
-        set_input_table = set([t_input for t_input in self.relation_typeio_to_tableioinfo if t_input.relation_file_or_tableioinfo_to_typeio.is_input == 1])
+        set_input_table = set([t_input for t_input in self.relation_toolwrapper_to_tableioinfo if t_input.relation_file_or_tableioinfo_to_typeio.is_input == 1])
         set_input_table_names = set([t_input.table_name for t_input in set_input_table])
 
         # check if the input table names for the ToolWrapper are coherent with the ToolWrapper specifications
@@ -180,17 +180,17 @@ class ToolWrapper(Base):
 
         :raises WopMarsException: The output are not respected by the user.
         """
-        if set([f_output.name for f_output in self.relation_typeio_to_fileioinfo if f_output.relation_file_or_tableioinfo_to_typeio.is_input == 0]) != set(self.specify_output_file()):
+        if set([f_output.name for f_output in self.relation_toolwrapper_to_fileioinfo if f_output.relation_file_or_tableioinfo_to_typeio.is_input == 0]) != set(self.specify_output_file()):
             raise WopMarsException("The content of the definition file is not valid.",
                                    "The given output variable names for " + self.__class__.__name__ +
                                    " (rule " + str(self.rule_name) + ")" +
                                    " are not correct, they should be: " +
                                    "\n\t'{0}'".format("'\n\t'".join(self.specify_output_file())) +
                                    "\n" + "They are:" +
-                                   "\n\t'{0}'".format("'\n\t'".join([f.name for f in self.relation_typeio_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 0]))
+                                   "\n\t'{0}'".format("'\n\t'".join([f.name for f in self.relation_toolwrapper_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 0]))
                                    )
 
-        set_output_table = set([t_output for t_output in self.relation_typeio_to_tableioinfo if t_output.relation_file_or_tableioinfo_to_typeio.is_input == 0])
+        set_output_table = set([t_output for t_output in self.relation_toolwrapper_to_tableioinfo if t_output.relation_file_or_tableioinfo_to_typeio.is_input == 0])
         set_output_table_names = set([t_input.table_name for t_input in set_output_table])
         if set_output_table_names != set(self.specify_output_table()):
             raise WopMarsException("The content of the definition file is not valid.",
@@ -273,13 +273,13 @@ class ToolWrapper(Base):
         :param other: ToolWrapper that is possibly a predecessor of "self"
         :return: bool True if "self" follows "other"
         """
-        for rule_f_path in [f.path for f in self.relation_typeio_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
-            for rule_f2_path in [f.path for f in other.relation_typeio_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
+        for rule_f_path in [f.path for f in self.relation_toolwrapper_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
+            for rule_f2_path in [f.path for f in other.relation_toolwrapper_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
                 if rule_f_path == rule_f2_path:
                     return True
 
-        for rule_t_name in [t.model_py_path for t in self.relation_typeio_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
-            for rule_t2_name in [t.model_py_path for t in other.relation_typeio_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
+        for rule_t_name in [t.model_py_path for t in self.relation_toolwrapper_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
+            for rule_t2_name in [t.model_py_path for t in other.relation_toolwrapper_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
                 if rule_t_name == rule_t2_name:
                     return True
 
@@ -294,7 +294,7 @@ class ToolWrapper(Base):
         :return: bool - True if inputs are ready.
         """
         input_files_not_ready = []
-        input_files = [f for f in self.relation_typeio_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 1]
+        input_files = [f for f in self.relation_toolwrapper_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 1]
         for i in input_files:
             if not i.is_ready():
                 input_files_not_ready.append(i)
@@ -306,7 +306,7 @@ class ToolWrapper(Base):
 
         :return: bool - True if inputs are ready.
         """
-        input_files = [f for f in self.relation_typeio_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 1]
+        input_files = [f for f in self.relation_toolwrapper_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 1]
         Logger.instance().debug("Inputs files of " + str(self.__class__.__name__) + ": " + str([i.name for i in input_files]))
         for i in input_files:
             if not i.is_ready():
@@ -315,7 +315,7 @@ class ToolWrapper(Base):
                 return False
             Logger.instance().debug("Input: " + str(i.name) + " is ready.")
 
-        input_tables = [t for t in self.relation_typeio_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 1]
+        input_tables = [t for t in self.relation_toolwrapper_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 1]
         Logger.instance().debug("Inputs tables of " + str(self.__class__.__name__) + ": " + str([i.table_name for i in input_tables]))
         for i in input_tables:
             if not i.is_ready():
@@ -327,25 +327,25 @@ class ToolWrapper(Base):
         self.__state = ToolWrapper.READY
         return True
 
-    def set_args_time_and_size(self, type, dry=False):
+    def set_args_time_and_size(self, is_input, dry=False):
         """
         WorkflowManager method:
 
         The mtime_epoch_millis and the size of the files are set according to the actual mtime_epoch_millis of last modification and size of the system files
 
         The mtime_epoch_millis of the tables are set according to the mtime_epoch_millis of last modification notified in the modification_table table
-        If the type of InputOutput is "output" and the execution is "not dry", the mtime_epoch_millis in modification_table is set to the
+        If the is_input of InputOutput is "output" and the execution is "not dry", the mtime_epoch_millis in modification_table is set to the
         current mtime_epoch_millis.mtime_epoch_millis().
 
         # totodo LucG modify it to take commits into account instead of the status of 'output' of a table
 
-        :param type: "input" or "output"
-        :type type: str
+        :param is_input: "input" or "output"
+        :is_input is_input: bool
         :param dry: Say if the execution has been simulated.
-        :type dry: bool
+        :is_input dry: bool
         """
         session = SQLManager.instance().get_session()
-        for f in [f for f in self.relation_typeio_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == type]:
+        for f in [f for f in self.relation_toolwrapper_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == is_input]:
             try:
                 mtime_epoch_millis, mtime_human = get_mtime(f.path)
                 f.mtime_human = mtime_human
@@ -358,7 +358,7 @@ class ToolWrapper(Base):
                 if not OptionManager.instance()["--dry-run"]:
                     session.rollback()
                     raise WopMarsException("Error during the execution of the workflow",
-                                           "The " + type + " file " + str(f.path) + " of rule " + str(self.rule_name) +
+                                           "The " + is_input + " file " + str(f.path) + " of rule " + str(self.rule_name) +
                                            " doesn't exist")
                 else:
                     # in dry-run mode, input/output files might not exist
@@ -367,20 +367,21 @@ class ToolWrapper(Base):
             f.used_at = mtime_epoch_millis
             f.size = size
             session.add(f)
-            if type == 1:
+            if is_input == 1:
                 Logger.instance().debug("Input file " + str(f) + " used.")
-            elif type == 0 and dry:
+            elif is_input == 0 and dry:
                 Logger.instance().debug("Output file " + str(f) + " has been loaded from previous execution.")
-            elif type == 0 and not dry:
+            elif is_input == 0 and not dry:
                 Logger.instance().debug("Output file " + str(f) + " has been created.")
         # this commit is due to a bug that i couldn't figure out: the session empty itself between the two loops...
         # this is not good at all since it may lead to inconsistence in the database
         session.commit()
 
-        for t in [t for t in self.relation_typeio_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == type]:
-            t.mtime_human = t.relation_tablemodiftime_to_tableioinfo.mtime_human
-            t.mtime_epoch_millis = t.relation_tablemodiftime_to_tableioinfo.mtime_epoch_millis
-            # t.used_at = t.relation_tablemodiftime_to_tableioinfo.mtime_epoch_millis
+        for t in [tableioinfo for tableioinfo in self.relation_toolwrapper_to_tableioinfo
+                  if tableioinfo.relation_file_or_tableioinfo_to_typeio.is_input == is_input]:
+            t.mtime_human = t.relation_tableioinfo_to_tablemodiftime.mtime_human
+            t.mtime_epoch_millis = t.relation_tableioinfo_to_tablemodiftime.mtime_epoch_millis
+            # t.used_at = t.relation_tableioinfo_to_tablemodiftime.mtime_epoch_millis
             session.add(t)
         session.commit()
 
@@ -395,13 +396,13 @@ class ToolWrapper(Base):
             - The file have the same is_input, the same lastm modification mtime_epoch_millis and the same size
 
         :param other: an other Toolwrapper which maybe as the same inputs
-        :type other: :class:`~.wopmars.framework.database.relation_typeio_to_tableioinfo.ToolWrapper.ToolWrapper`
+        :type other: :class:`~.wopmars.framework.database.relation_toolwrapper_to_tableioinfo.ToolWrapper.ToolWrapper`
 
         :return: bool
         """
-        for t in [t for t in self.relation_typeio_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
+        for t in [t for t in self.relation_toolwrapper_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
             is_same = False
-            for t2 in [t2 for t2 in other.relation_typeio_to_tableioinfo if t2.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
+            for t2 in [t2 for t2 in other.relation_toolwrapper_to_tableioinfo if t2.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
                 # two tables are the same if they have the same model/table_name/modification mtime_epoch_millis
                 if (t.model_py_path == t2.model_py_path and
                     t.table_name == t2.table_name and
@@ -411,9 +412,9 @@ class ToolWrapper(Base):
             if not is_same:
                 return False
 
-        for f in [f for f in self.relation_typeio_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
+        for f in [f for f in self.relation_toolwrapper_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
             is_same = False
-            for f2 in [f2 for f2 in other.relation_typeio_to_fileioinfo if f2.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
+            for f2 in [f2 for f2 in other.relation_toolwrapper_to_fileioinfo if f2.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
                 # two files are the same if they have the same is_input, path, size and modification mtime_epoch_millis
                 if (f.name == f2.name and
                         f.path == f2.path and
@@ -434,10 +435,10 @@ class ToolWrapper(Base):
 
         :return: Bool: True if the output is actually more recent than input
         """
-        most_recent_input = max([get_mtime(f.path)[0] for f in self.relation_typeio_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 1]
-                                + [t.relation_tablemodiftime_to_tableioinfo.mtime_epoch_millis for t in self.relation_typeio_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 1])
-        oldest_output = min([get_mtime(f.path)[0] for f in self.relation_typeio_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 0]
-                            + [t.relation_tablemodiftime_to_tableioinfo.mtime_epoch_millis for t in self.relation_typeio_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 0])
+        most_recent_input = max([get_mtime(f.path)[0] for f in self.relation_toolwrapper_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 1]
+                                + [tableioinfo.relation_tableioinfo_to_tablemodiftime.mtime_epoch_millis for tableioinfo in self.relation_toolwrapper_to_tableioinfo if tableioinfo.relation_file_or_tableioinfo_to_typeio.is_input == 1])
+        oldest_output = min([get_mtime(fileioinfo.path)[0] for fileioinfo in self.relation_toolwrapper_to_fileioinfo if fileioinfo.relation_file_or_tableioinfo_to_typeio.is_input == 0]
+                            + [t.relation_tableioinfo_to_tablemodiftime.mtime_epoch_millis for t in self.relation_toolwrapper_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 0])
         # in seconds since the begining of mtime_epoch_millis (computer), the oldest thing has a lower number of seconds
         return most_recent_input < oldest_output
 
@@ -451,16 +452,16 @@ class ToolWrapper(Base):
 
         :return: bool
         """
-        for t in [t for t in self.relation_typeio_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
+        for t in [t for t in self.relation_toolwrapper_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
             is_same = False
-            for t2 in [t2 for t2 in other.relation_typeio_to_tableioinfo if t2.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
+            for t2 in [t2 for t2 in other.relation_toolwrapper_to_tableioinfo if t2.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
                 if t.model_py_path == t2.model_py_path and t.table_name == t2.table_name:
                     is_same = True
                     break
             if not is_same:
                 return False
 
-        for f in [f for f in self.relation_typeio_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
+        for f in [f for f in self.relation_toolwrapper_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
             is_same = False
             for f2 in [f2 for f2 in other.relation_typeio_to_fileioinfo if f2.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
                 if (f.name == f2.name and
@@ -480,11 +481,11 @@ class ToolWrapper(Base):
 
         :return: Bool: True if outputs exist.
         """
-        for of in [f for f in self.relation_typeio_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
+        for of in [f for f in self.relation_toolwrapper_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
             if not os.path.exists(of.path):
                 return False
 
-        for ot in [t for t in self.relation_typeio_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
+        for ot in [t for t in self.relation_toolwrapper_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
             if not SQLManager.instance().get_session().query(ot.get_table()).count():
                 return False
         return True
@@ -541,8 +542,8 @@ class ToolWrapper(Base):
         :type is_input: str
         :return: Bool: True if the files are the same
         """
-        for f in [rf for rf in self.relation_typeio_to_fileioinfo if rf.relation_file_or_tableioinfo_to_typeio.is_input == is_input]:
-            is_in = bool([rf for rf in other.relation_typeio_to_fileioinfo if (
+        for f in [rf for rf in self.relation_toolwrapper_to_fileioinfo if rf.relation_file_or_tableioinfo_to_typeio.is_input == is_input]:
+            is_in = bool([rf for rf in other.relation_toolwrapper_to_fileioinfo if (
                     # os.path.abspath(f.path) == os.path.abspath(rf.path) and  # AG file path is not a reason for same
                     f.name == rf.name and  # same file field name
                     rf.relation_file_or_tableioinfo_to_typeio.is_input == is_input  # files are same input
@@ -561,10 +562,10 @@ class ToolWrapper(Base):
         :type is_input: str
         :return: Bool: True if the tables are the same
         """
-        for t in [t for t in self.relation_typeio_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == is_input]:
-            is_in = bool([t for t in other.relation_typeio_to_tableioinfo if (t.model_py_path == t.model_py_path and
-                                                      t.relation_file_or_tableioinfo_to_typeio.is_input == is_input and
-                                                      t.table_name == t.table_name)])
+        for t in [t for t in self.relation_toolwrapper_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == is_input]:
+            is_in = bool([t for t in other.relation_toolwrapper_to_tableioinfo if (t.model_py_path == t.model_py_path and
+                                                                                   t.relation_file_or_tableioinfo_to_typeio.is_input == is_input and
+                                                                                   t.table_name == t.table_name)])
             if not is_in:
                 return False
         return True
@@ -606,22 +607,22 @@ class ToolWrapper(Base):
         s += "\\n"
         s += "tool: " + self.__class__.__name__
         s += "\\n"
-        for input_f in [f for f in self.relation_typeio_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
+        for input_f in [f for f in self.relation_toolwrapper_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
             s += "\\n\t\t" + input_f.name + ": " + str(input_f.path)
-        for input_t in [t for t in self.relation_typeio_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
+        for input_t in [t for t in self.relation_toolwrapper_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
             s += "\\n\t\tinput_table: " + input_t.table_name
         s += "\\n"
-        for output_f in [f for f in self.relation_typeio_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
+        for output_f in [f for f in self.relation_toolwrapper_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
             s += "\\n\t\t" + output_f.name + ": " + str(output_f.path)
-        for output_t in [t for t in self.relation_typeio_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
+        for output_t in [t for t in self.relation_toolwrapper_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
             s += "\\n\t\toutput_table: " + output_t.table_name
         s += "\""
         return s
 
     def dot_label(self):
         """Label for the dot dag"""
-        inputs_list_str = [str(i).replace(":", "") for i in self.relation_typeio_to_fileioinfo + self.relation_typeio_to_tableioinfo if i.relation_file_or_tableioinfo_to_typeio.is_input == 1]
-        outputs_list_str = [str(o).replace(":", "") for o in self.relation_typeio_to_fileioinfo + self.relation_typeio_to_tableioinfo if o.relation_file_or_tableioinfo_to_typeio.is_input == 0]
+        inputs_list_str = [str(i).replace(":", "") for i in self.relation_toolwrapper_to_fileioinfo + self.relation_toolwrapper_to_tableioinfo if i.relation_file_or_tableioinfo_to_typeio.is_input == 1]
+        outputs_list_str = [str(o).replace(":", "") for o in self.relation_toolwrapper_to_fileioinfo + self.relation_toolwrapper_to_tableioinfo if o.relation_file_or_tableioinfo_to_typeio.is_input == 0]
         params_list_str = [str(p).replace(":","") for p in self.relation_toolwrapper_to_option]
         s = ""
         s += "ToolWrapper " + self.rule_name + "\n"
@@ -632,8 +633,8 @@ class ToolWrapper(Base):
         return(s)
 
     def __str__(self):
-        inputs_list_str = [str(i) for i in self.relation_typeio_to_fileioinfo + self.relation_typeio_to_tableioinfo if i.relation_file_or_tableioinfo_to_typeio.is_input == 1]
-        outputs_list_str = [str(o) for o in self.relation_typeio_to_fileioinfo + self.relation_typeio_to_tableioinfo if o.relation_file_or_tableioinfo_to_typeio.is_input == 0]
+        inputs_list_str = [str(i) for i in self.relation_toolwrapper_to_fileioinfo + self.relation_toolwrapper_to_tableioinfo if i.relation_file_or_tableioinfo_to_typeio.is_input == 1]
+        outputs_list_str = [str(o) for o in self.relation_toolwrapper_to_fileioinfo + self.relation_toolwrapper_to_tableioinfo if o.relation_file_or_tableioinfo_to_typeio.is_input == 0]
         params_list_str = [str(p) for p in self.relation_toolwrapper_to_option]
         s = ""
         s += "ToolWrapper " + str(self.rule_name) + ":" + "\n"
@@ -719,7 +720,7 @@ class ToolWrapper(Base):
         :return:
         """
         try:
-            return [f.path for f in self.relation_typeio_to_fileioinfo if f.name == key and f.relation_file_or_tableioinfo_to_typeio.is_input == 1][0]
+            return [f.path for f in self.relation_toolwrapper_to_fileioinfo if f.name == key and f.relation_file_or_tableioinfo_to_typeio.is_input == 1][0]
         except IndexError:
             raise WopMarsException("Error during the execution of the ToolWrapper " + str(self.tool_python_path) +
                                    " (rule " + self.rule_name + ").",
@@ -733,7 +734,7 @@ class ToolWrapper(Base):
         :return:
         """
         try:
-            return [t for t in self.relation_typeio_to_tableioinfo if t.table_name == key and t.relation_file_or_tableioinfo_to_typeio.is_input == 1][0].get_table()
+            return [t for t in self.relation_toolwrapper_to_tableioinfo if t.table_name == key and t.relation_file_or_tableioinfo_to_typeio.is_input == 1][0].get_table()
         except IndexError:
             raise WopMarsException("Error during the execution of the ToolWrapper " + str(self.tool_python_path) +
                                    " (rule " + self.rule_name + ").",
@@ -747,7 +748,7 @@ class ToolWrapper(Base):
         :return:
         """
         try:
-            return [f.path for f in self.relation_typeio_to_fileioinfo if f.name == key and f.relation_file_or_tableioinfo_to_typeio.is_input == 0][0]
+            return [f.path for f in self.relation_toolwrapper_to_fileioinfo if f.name == key and f.relation_file_or_tableioinfo_to_typeio.is_input == 0][0]
         except IndexError:
             raise WopMarsException("Error during the execution of the ToolWrapper " + str(self.tool_python_path) +
                                    " (rule " + self.rule_name + ").",
@@ -761,7 +762,7 @@ class ToolWrapper(Base):
         :return:
         """
         try:
-            return [t for t in self.relation_typeio_to_tableioinfo if t.table_name == key and t.relation_file_or_tableioinfo_to_typeio.is_input == 0][0].get_table()
+            return [t for t in self.relation_toolwrapper_to_tableioinfo if t.table_name == key and t.relation_file_or_tableioinfo_to_typeio.is_input == 0][0].get_table()
         except IndexError:
             raise WopMarsException("Error during the execution of the ToolWrapper " + str(self.tool_python_path) +
                                    " (rule " + self.rule_name + ").",
