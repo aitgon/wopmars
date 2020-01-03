@@ -448,7 +448,7 @@ class ToolWrapper(Base):
                                    for input_tableioinfo in self.relation_toolwrapper_to_tableioinfo
                                    if input_tableioinfo.relation_file_or_tableioinfo_to_typeio.is_input == 1]
         # newest is supposed to have largest epoch time
-        newest_input = max(newest_input_file, newest_input_table)
+        newest_input = max(newest_input_file + newest_input_table)
 
         oldest_output_file = [get_mtime(output_fileioinfo.path)[0] for output_fileioinfo in self.relation_toolwrapper_to_fileioinfo
                               if output_fileioinfo.relation_file_or_tableioinfo_to_typeio.is_input == 0]
@@ -456,7 +456,7 @@ class ToolWrapper(Base):
                                for output_tableioinfo in self.relation_toolwrapper_to_tableioinfo
                                if output_tableioinfo.relation_file_or_tableioinfo_to_typeio.is_input == 0]
         # newest is supposed to have smallest epoch time
-        oldest_output = min(oldest_output_file, oldest_output_table)
+        oldest_output = min(oldest_output_file + oldest_output_table)
 
         return newest_input < oldest_output
 
