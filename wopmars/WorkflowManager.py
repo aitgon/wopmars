@@ -386,13 +386,12 @@ class WorkflowManager(ToolWrapperObserver):
     @staticmethod
     def is_this_tool_wrapper_already_executed(tool_wrapper):
         """
-        Return True if conditions for saying "The output of this ToolWrapper are already available" are filled.
+        Check if this tool wrapper is already executed.
 
         The conditions are:
-            - The ToolWrapper exist in database (named = tw_old)
-            - The tool_wrapper_old param are the same as that which is about to start
-            - The old tool_wrapper has output
-            - The old tool_wrapper output is more recent than input
+            - The tool_wrapper outputs exist
+            - The tool_wrapper outputs are more recent than inputs
+            - If tool_wrapper exist in the database, then it checks if there are the same parameter values
 
         :param tool_wrapper: The tool_wrapper to be tested
         :type tool_wrapper: :class:`~.wopmars.models.ToolWrapper.ToolWrapper`
@@ -419,13 +418,25 @@ class WorkflowManager(ToolWrapperObserver):
         # # The elements of the list have been removed if none fit the conditions
         # return bool(same_rule_list)
 
+        # return tool_wrapper == tool_wrapper_old \
+        #        and tool_wrapper_old.does_output_exist() \
+        #        and tool_wrapper_old.is_output_more_recent_than_input()
+
+        is_already_executed = False  # Default, not executed
+
+        # Check if output of tool_wrapper exist and output is more recent than input
+        is_already_executed = tool_wrapper.output_file_exists() and tool_wrapper.output_table_exists() \
+                           and tool_wrapper.is_output_more_recent_than_input()
+
         tool_wrapper_old = session.query(ToolWrapper).filter(ToolWrapper.tool_python_path == tool_wrapper.tool_python_path)\
             .filter(ToolWrapper.execution_id != tool_wrapper.execution_id)\
             .order_by(ToolWrapper.id.desc()).first()
 
-        return tool_wrapper == tool_wrapper_old \
-               and tool_wrapper_old.does_output_exist() \
-               and tool_wrapper_old.is_output_more_recent_than_input()
+        if not (tool_wrapper_old is None):  # If tool_wrapper exists in the database, check if same parameter values
+
+            is_already_executed = is_already_executed and (tool_wrapper == tool_wrapper_old)
+
+        return is_already_executed
 
     def check_buffer(self):
         """

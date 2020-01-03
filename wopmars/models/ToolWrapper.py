@@ -435,12 +435,30 @@ class ToolWrapper(Base):
 
         :return: Bool: True if the output is actually more recent than input
         """
-        most_recent_input = max([get_mtime(f.path)[0] for f in self.relation_toolwrapper_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 1]
-                                + [tableioinfo.relation_tableioinfo_to_tablemodiftime.mtime_epoch_millis for tableioinfo in self.relation_toolwrapper_to_tableioinfo if tableioinfo.relation_file_or_tableioinfo_to_typeio.is_input == 1])
-        oldest_output = min([get_mtime(fileioinfo.path)[0] for fileioinfo in self.relation_toolwrapper_to_fileioinfo if fileioinfo.relation_file_or_tableioinfo_to_typeio.is_input == 0]
-                            + [t.relation_tableioinfo_to_tablemodiftime.mtime_epoch_millis for t in self.relation_toolwrapper_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 0])
-        # in seconds since the begining of mtime_epoch_millis (computer), the oldest thing has a lower number of seconds
-        return most_recent_input < oldest_output
+        # most_recent_input = max([get_mtime(f.path)[0] for f in self.relation_toolwrapper_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 1]
+        #                         + [tableioinfo.relation_tableioinfo_to_tablemodiftime.mtime_epoch_millis for tableioinfo in self.relation_toolwrapper_to_tableioinfo if tableioinfo.relation_file_or_tableioinfo_to_typeio.is_input == 1])
+        # oldest_output = min([get_mtime(fileioinfo.path)[0] for fileioinfo in self.relation_toolwrapper_to_fileioinfo if fileioinfo.relation_file_or_tableioinfo_to_typeio.is_input == 0]
+        #                     + [t.relation_tableioinfo_to_tablemodiftime.mtime_epoch_millis for t in self.relation_toolwrapper_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 0])
+        # # in seconds since the begining of mtime_epoch_millis (computer), the oldest thing has a lower number of seconds
+        # return most_recent_input < oldest_output
+
+        newest_input_file = [get_mtime(input_fileioinfo.path)[0] for input_fileioinfo in self.relation_toolwrapper_to_fileioinfo
+                                  if input_fileioinfo.relation_file_or_tableioinfo_to_typeio.is_input == 1]
+        newest_input_table = [input_tableioinfo.relation_tableioinfo_to_tablemodiftime.mtime_epoch_millis
+                                   for input_tableioinfo in self.relation_toolwrapper_to_tableioinfo
+                                   if input_tableioinfo.relation_file_or_tableioinfo_to_typeio.is_input == 1]
+        # newest is supposed to have largest epoch time
+        newest_input = max(newest_input_file, newest_input_table)
+
+        oldest_output_file = [get_mtime(output_fileioinfo.path)[0] for output_fileioinfo in self.relation_toolwrapper_to_fileioinfo
+                              if output_fileioinfo.relation_file_or_tableioinfo_to_typeio.is_input == 0]
+        oldest_output_table = [output_tableioinfo.relation_tableioinfo_to_tablemodiftime.mtime_epoch_millis
+                               for output_tableioinfo in self.relation_toolwrapper_to_tableioinfo
+                               if output_tableioinfo.relation_file_or_tableioinfo_to_typeio.is_input == 0]
+        # newest is supposed to have smallest epoch time
+        oldest_output = min(oldest_output_file, oldest_output_table)
+
+        return newest_input < oldest_output
 
     def same_output_than(self, other):
         """
@@ -472,21 +490,46 @@ class ToolWrapper(Base):
                 return False
         return True
 
-    def does_output_exist(self):
-        """
-        Check if the output of the ToolWrapper exists.
+    # def does_output_exist(self):
+    #     """
+    #     Check if the output of the ToolWrapper exists.
+    #
+    #     For files, it means that the file exists on the system.
+    #     For tables, it means that the table is not empty.
+    #
+    #     :return: Bool: True if outputs exist.
+    #     """
+    #     for of in [f for f in self.relation_toolwrapper_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
+    #         if not os.path.exists(of.path):
+    #             return False
+    #
+    #     for ot in [t for t in self.relation_toolwrapper_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
+    #         if not SQLManager.instance().get_session().query(ot.get_table()).count():
+    #             return False
+    #     return True
 
-        For files, it means that the file exists on the system.
-        For tables, it means that the table is not empty.
+    def output_file_exists(self):
+        """
+        Check if the file exists in the system.
 
         :return: Bool: True if outputs exist.
         """
-        for of in [f for f in self.relation_toolwrapper_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
-            if not os.path.exists(of.path):
+        for output_file in [this_file for this_file in self.relation_toolwrapper_to_fileioinfo
+                            if this_file.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
+            if not os.path.exists(output_file.path):
                 return False
+        return True
 
-        for ot in [t for t in self.relation_toolwrapper_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
-            if not SQLManager.instance().get_session().query(ot.get_table()).count():
+    def output_table_exists(self):
+        """
+        Check if the table is not empty.
+
+        :return: Bool: True if outputs exist.
+        """
+
+        for output_table in [table for table in self.relation_toolwrapper_to_tableioinfo
+                             if table.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
+            if not SQLManager.instance().get_session().query(output_table.get_table()).count():
                 return False
         return True
 
