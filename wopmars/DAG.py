@@ -12,38 +12,38 @@ class DAG(nx.DiGraph):
     This class inherits from networkx.DiGraph class and is able to represent a DAG of tool nodes. It takes a set of
     :class:`~.wopmars.framework.database.tables.ToolWrapper` and analyse it to extract dependencies between them.
     """    
-    def __init__(self, set_tools=None):
+    def __init__(self, tool_wrapper_set=None):
         """
         The DAG can be build from a set of tools, analyzing the successors of each of them.
 
         ToolWrappers has a method "follows()" wich allow to know if one tool has a dependency for one other. The tools
         of the set_tools are compared each other to extract the dependencies.
         
-        :param set_tools: A set of tools
+        :param tool_wrapper_set: A set of tools
         """
         # the DAG is a DiGraph
         super().__init__()
         # A nx digraph to store the dot graph
         self.dot_digraph = nx.DiGraph()
         Logger.instance().info("Building the execution DAG...")
-        if set_tools:
+        if tool_wrapper_set:
             # for each tool
-            for tool1 in set_tools:
-                self.add_node(tool1)
+            for tool_wrapper1 in tool_wrapper_set:
+                self.add_node(tool_wrapper1)
                 # for each other tool
-                for tool2 in set_tools.difference(set([tool1])):
+                for tool_wrapper2 in tool_wrapper_set.difference(set([tool_wrapper1])):
                     # is there a dependency between tool1 and tool2?
-                    if tool1.follows(tool2):
-                        self.add_edge(tool2, tool1)
-        if set_tools:
+                    if tool_wrapper1.follows(tool_wrapper2):
+                        self.add_edge(tool_wrapper2, tool_wrapper1)
+        if tool_wrapper_set:
             # for each tool
-            for tool1 in set_tools:
-                self.dot_digraph.add_node(tool1.dot_label())
+            for tool_wrapper1 in tool_wrapper_set:
+                self.dot_digraph.add_node(tool_wrapper1.dot_label())
                 # for each other tool
-                for tool2 in set_tools.difference(set([tool1])):
+                for tool_wrapper2 in tool_wrapper_set.difference(set([tool_wrapper1])):
                     # is there a dependency between tool1 and tool2?
-                    if tool1.follows(tool2):
-                        self.dot_digraph.add_edge(tool2.dot_label(), tool1.dot_label())
+                    if tool_wrapper1.follows(tool_wrapper2):
+                        self.dot_digraph.add_edge(tool_wrapper2.dot_label(), tool_wrapper1.dot_label())
         Logger.instance().debug("DAG built.")
 
     def write_dot(self, path):
@@ -74,7 +74,6 @@ class DAG(nx.DiGraph):
         if node is None:
             # in_degree is the number of incoming edges to a node. If the degree is 0, then the node is at the root
             # of the DAG.
-            # return [n for n, d in self.in_degree().items() if d == 0]
             return [n for n, d in list(self.in_degree()) if d == 0]
         else:
             s = list(super().successors(node))

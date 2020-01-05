@@ -80,8 +80,6 @@ class ToolWrapper(Base):
         self.__state = ToolWrapper.NEW
         self.session = None
 
-    ### PARSING METHODS
-
     def is_content_respected(self):
         """
         Parsing method:
@@ -92,126 +90,104 @@ class ToolWrapper(Base):
         Call of the methods:
 
         - :meth:`~.wopmars.framework.database.ToolWrapper.ToolWrapper.is_options_respected`
-        - :meth:`~.wopmars.framework.database.ToolWrapper.ToolWrapper.is_input_respected`
+        - :meth:`~.wopmars.framework.database.ToolWrapper.ToolWrapper.is_input_or_output_respected`
         - :meth:`~.wopmars.framework.database.ToolWrapper.ToolWrapper.is_output_respected`
         """
-        # the relation_toolwrapper_to_option have to be checked first because they can alter the behavior of the is_input_respected and
+        # the relation_toolwrapper_to_option have to be checked first because they can alter the behavior of the is_input_or_output_respected and
         # is_output_respected methods
         self.is_options_respected()
 
-        self.is_input_respected()
-        self.is_output_respected()
+        # Check whether input is respected
+        self.is_input_or_output_respected(is_input=True)
+        # Check whether output is respected
+        self.is_input_or_output_respected(is_input=False)
 
-    def is_input_respected(self):
+    def is_input_or_output_respected(self, is_input):
         """
         Parsing method:
 
-        Check if the input file variables names associated with the tool_python_path are ok according to the
-        tool_python_path developer.
-
-        It checks if the input variable names exists or not. If not, throws a WopMarsParsingException.
+        Check if the input (is_input=1) or output (is_input=0) file and table variables names associated with the
+        tool_wrapper are respected. If not, throws a WopMarsParsingException.
 
         This method calls the :meth:`~.wopmars.framework.database.ToolWrapper.ToolWrapper.specify_input_file` method
         which have been written by the tool_python_path developer.
 
         :raise WopMarsException: The input are not respected by the user.
         """
-        set_input_file_names = set([f_input.name for f_input in self.relation_toolwrapper_to_fileioinfo
-                                    if f_input.relation_file_or_tableioinfo_to_typeio.is_input == 1])
-        # check if the input file names for the ToolWrapper are coherent with the ToolWrapper specifications
-        if set_input_file_names != set(self.specify_input_file()):
-            raise WopMarsException("The content of the definition file is not valid.",
-                                   "The given input file variable names for " + self.__class__.__name__ +
-                                   " (rule " + str(self.rule_name) + ")" +
-                                   " are not correct, they should be: " +
-                                   "\n\t'{0}'".format("'\n\t'".join(self.specify_input_file())) +
-                                   "\n" + "They are:" +
-                                   "\n\t'{0}'".format("'\n\t'".join(set_input_file_names))
-                                   )
 
-        set_input_table = set([t_input for t_input in self.relation_toolwrapper_to_tableioinfo if t_input.relation_file_or_tableioinfo_to_typeio.is_input == 1])
-        set_input_table_names = set([t_input.table_name for t_input in set_input_table])
+        fileioinfo_name_set = set([fileioinfo.name for fileioinfo in self.relation_toolwrapper_to_fileioinfo
+                                    if fileioinfo.relation_file_or_tableioinfo_to_typeio.is_input == is_input])
 
-        # check if the input table names for the ToolWrapper are coherent with the ToolWrapper specifications
-        # this condition may be a duplicate...
-        # toodo LucG to fix?
-        if set_input_table_names != set(self.specify_input_table()):
-            raise WopMarsException("The content of the definition file is not valid.",
-                                   "The given input table variable names for " + self.__class__.__name__ +
-                                   " (rule " + str(self.rule_name) + ")" +
-                                   " are not correct, they should be: " +
-                                   "\n\t'{0}'".format("'\n\t'".join(self.specify_input_table())) +
-                                   "\n" + "They are:" +
-                                   "\n\t'{0}'".format("'\n\t'".join(set_input_table_names))
-                                   )
+        tableio_tablename_set = set([tableioinfo.table_name for tableioinfo in self.relation_toolwrapper_to_tableioinfo
+                                     if tableioinfo.relation_file_or_tableioinfo_to_typeio.is_input == is_input])
 
-        for t_input in set_input_table:
-            s_tablename = t_input.table_name
-            if s_tablename not in self.specify_input_table():
-                raise WopMarsException("The content of the definition file is not valid.",
-                                       "The given input tablenames for " +
-                                       self.__class__.__name__ + " (rule " + str(self.rule_name) + ")" +
-                                       " is not correct. it should be in: " +
-                                       "\n\t'{0}'".format("'\n\t'".join(self.specify_input_table())) +
-                                       "\n" + "It is:" +
-                                       "\n\t'" + s_tablename
-                                       )
-            s_tablename_of_model = t_input.get_table().__tablename__
-            if s_tablename_of_model not in self.specify_input_table():
-                raise WopMarsException("The content of the definition file is not valid.",
-                                       "The given table_name of model for " +
-                                       self.__class__.__name__ +
-                                       " (rule " + str(self.rule_name) + ")" +
-                                       " is not correct. it should be in: " +
-                                       "\n\t'{0}'".format("'\n\t'".join(self.specify_input_table())) +
-                                       "\n" + "It is:" +
-                                       "\n\t'" + s_tablename_of_model
-                                       )
+        if is_input:
 
-    def is_output_respected(self):
-        """
-        Parsing method:
+            ############################################################################################################
+            #
+            # Input files
+            #
+            ############################################################################################################
 
-        Check if the output dictionary given in the constructor is properly formed for the tool.
+            tool_wrapper_specified_files = self.specify_input_file()
 
-        It checks if the output variable names exists or not. If not, throws a WopMarsParsingException.
+            if fileioinfo_name_set != set(tool_wrapper_specified_files):
+                msg_err = "The given input file variable names for {} (rule {}) are not correct." \
+                          " They should be: {}" \
+                          " They are: {}"\
+                    .format(self.__class__.__name__, str(self.rule_name), "'\n\t'".join(tool_wrapper_specified_files),
+                            "'\n\t'".join(fileioinfo_name_set))
+                raise WopMarsException(msg_err)
 
-        This method calls the "specify_output_file" method which have been written by the tool_python_path developer.
+            ############################################################################################################
+            #
+            # Input tables
+            #
+            ############################################################################################################
 
-        :raises WopMarsException: The output are not respected by the user.
-        """
-        if set([f_output.name for f_output in self.relation_toolwrapper_to_fileioinfo if f_output.relation_file_or_tableioinfo_to_typeio.is_input == 0]) != set(self.specify_output_file()):
-            raise WopMarsException("The content of the definition file is not valid.",
-                                   "The given output variable names for " + self.__class__.__name__ +
-                                   " (rule " + str(self.rule_name) + ")" +
-                                   " are not correct, they should be: " +
-                                   "\n\t'{0}'".format("'\n\t'".join(self.specify_output_file())) +
-                                   "\n" + "They are:" +
-                                   "\n\t'{0}'".format("'\n\t'".join([f.name for f in self.relation_toolwrapper_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 0]))
-                                   )
+            tool_wrapper_specified_tables = self.specify_input_table()
 
-        set_output_table = set([t_output for t_output in self.relation_toolwrapper_to_tableioinfo if t_output.relation_file_or_tableioinfo_to_typeio.is_input == 0])
-        set_output_table_names = set([t_input.table_name for t_input in set_output_table])
-        if set_output_table_names != set(self.specify_output_table()):
-            raise WopMarsException("The content of the definition file is not valid.",
-                                   "The given output table variable names for " + self.__class__.__name__ +
-                                   " (rule " + str(self.rule_name) + ")" +
-                                   " are not correct, they should be: " +
-                                   "\n\t'{0}'".format("'\n\t'".join(self.specify_output_table())) +
-                                   "\n" + "They are:" +
-                                   "\n\t'{0}'".format("'\n\t'".join(set_output_table_names))
-                                   )
-        for t_output in set_output_table:
-            s_tablename = t_output.table_name
-            if s_tablename not in self.specify_output_table():
-                raise WopMarsException("The content of the definition file is not valid.",
-                                       "The given output tablenames for " +
-                                       self.__class__.__name__ + " (rule " + str(self.rule_name) + ")" +
-                                       " is not correct. it should be in: " +
-                                       "\n\t'{0}'".format("'\n\t'".join(self.specify_output_table())) +
-                                       "\n" + "It is:" +
-                                       "\n\t'" + s_tablename
-                                       )   
+            if tableio_tablename_set != set(tool_wrapper_specified_tables):
+                msg_err = "The given input file variable names for {} (rule {}) are not correct." \
+                          " They should be: {}" \
+                          " They are: {}"\
+                    .format(self.__class__.__name__, str(self.rule_name), "'\n\t'".join(tool_wrapper_specified_tables),
+                            "'\n\t'".join(tableio_tablename_set))
+                raise WopMarsException(msg_err)
+
+        else:
+
+            ############################################################################################################
+            #
+            # Output files
+            #
+            ############################################################################################################
+
+            tool_wrapper_specified_files = self.specify_output_file()
+
+            if fileioinfo_name_set != set(tool_wrapper_specified_files):
+                msg_err = "The given output file variable names for {} (rule {}) are not correct." \
+                          " They should be: {}" \
+                          " They are: {}"\
+                    .format(self.__class__.__name__, str(self.rule_name), "'\n\t'".join(tool_wrapper_specified_files),
+                            "'\n\t'".join(fileioinfo_name_set))
+                raise WopMarsException(msg_err)
+
+            ############################################################################################################
+            #
+            # Output tables
+            #
+            ############################################################################################################
+
+            tool_wrapper_specified_tables = self.specify_output_table()
+
+            if tableio_tablename_set != set(tool_wrapper_specified_tables):
+                msg_err = "The given output file variable names for {} (rule {}) are not correct." \
+                          " They should be: {}" \
+                          " They are: {}"\
+                    .format(self.__class__.__name__, str(self.rule_name), "'\n\t'".join(tool_wrapper_specified_tables),
+                            "'\n\t'".join(tableio_tablename_set))
+                raise WopMarsException(msg_err)
 
     def is_options_respected(self):
         """
@@ -435,14 +411,9 @@ class ToolWrapper(Base):
 
         :return: Bool: True if the output is actually more recent than input
         """
-        # most_recent_input = max([get_mtime(f.path)[0] for f in self.relation_toolwrapper_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 1]
-        #                         + [tableioinfo.relation_tableioinfo_to_tablemodiftime.mtime_epoch_millis for tableioinfo in self.relation_toolwrapper_to_tableioinfo if tableioinfo.relation_file_or_tableioinfo_to_typeio.is_input == 1])
-        # oldest_output = min([get_mtime(fileioinfo.path)[0] for fileioinfo in self.relation_toolwrapper_to_fileioinfo if fileioinfo.relation_file_or_tableioinfo_to_typeio.is_input == 0]
-        #                     + [t.relation_tableioinfo_to_tablemodiftime.mtime_epoch_millis for t in self.relation_toolwrapper_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 0])
-        # # in seconds since the begining of mtime_epoch_millis (computer), the oldest thing has a lower number of seconds
-        # return most_recent_input < oldest_output
 
-        newest_input_file = [get_mtime(input_fileioinfo.path)[0] for input_fileioinfo in self.relation_toolwrapper_to_fileioinfo
+        newest_input_file = [get_mtime(input_fileioinfo.path)[0]
+                             for input_fileioinfo in self.relation_toolwrapper_to_fileioinfo
                                   if input_fileioinfo.relation_file_or_tableioinfo_to_typeio.is_input == 1]
         newest_input_table = [input_tableioinfo.relation_tableioinfo_to_tablemodiftime.mtime_epoch_millis
                                    for input_tableioinfo in self.relation_toolwrapper_to_tableioinfo
@@ -450,7 +421,8 @@ class ToolWrapper(Base):
         # newest is supposed to have largest epoch time
         newest_input = max(newest_input_file + newest_input_table)
 
-        oldest_output_file = [get_mtime(output_fileioinfo.path)[0] for output_fileioinfo in self.relation_toolwrapper_to_fileioinfo
+        oldest_output_file = [get_mtime(output_fileioinfo.path)[0]
+                              for output_fileioinfo in self.relation_toolwrapper_to_fileioinfo
                               if output_fileioinfo.relation_file_or_tableioinfo_to_typeio.is_input == 0]
         oldest_output_table = [output_tableioinfo.relation_tableioinfo_to_tablemodiftime.mtime_epoch_millis
                                for output_tableioinfo in self.relation_toolwrapper_to_tableioinfo
@@ -489,24 +461,6 @@ class ToolWrapper(Base):
             if not is_same:
                 return False
         return True
-
-    # def does_output_exist(self):
-    #     """
-    #     Check if the output of the ToolWrapper exists.
-    #
-    #     For files, it means that the file exists on the system.
-    #     For tables, it means that the table is not empty.
-    #
-    #     :return: Bool: True if outputs exist.
-    #     """
-    #     for of in [f for f in self.relation_toolwrapper_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
-    #         if not os.path.exists(of.path):
-    #             return False
-    #
-    #     for ot in [t for t in self.relation_toolwrapper_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
-    #         if not SQLManager.instance().get_session().query(ot.get_table()).count():
-    #             return False
-    #     return True
 
     def output_file_exists(self):
         """
@@ -552,9 +506,6 @@ class ToolWrapper(Base):
             self.run_duration_secs = (self.finished_at - self.started_at).total_seconds()
         if status is not None:
             self.status = status
-
-    def set_session(self, session):
-        self.session = session
 
     def __eq__(self, other):
         """
@@ -695,7 +646,7 @@ class ToolWrapper(Base):
             s += "\t\t" + "\n\t\t".join(params_list_str)
         return s
 
-    # ###### Method that worker developper should implement#######
+    ###### Method that worker developper should implement #######
 
     def specify_input_file(self):
         """
@@ -839,25 +790,3 @@ class ToolWrapper(Base):
 
     def session(self):
         return self.session
-
-    # def log(self, level, msg):
-    #     """
-    #     use by the tool_python_path developer in order to have a dedicated logger.
-    #
-    #     :param level: The level of logging you need: "debug", "info", "warning", "error"
-    #     :type level: str
-    #     :param msg: The actual string to log.
-    #     :type msg: str
-    #     """
-    #     if level == "debug":
-    #         Logger.instance().toolwrapper_debug(msg, self.tool_python_path)
-    #     elif level == "info":
-    #         Logger.instance().toolwrapper_info(msg, self.tool_python_path)
-    #     elif level == "warning":
-    #         Logger.instance().toolwrapper_debug(msg, self.tool_python_path)
-    #     elif level == "error":
-    #         Logger.instance().toolwrapper_error(msg, self.tool_python_path)
-    #     else:
-    #         raise WopMarsException("Error in the Toolwrapper definition of method run()",
-    #                                "The is no logging level associated with " + str(level) + ". " +
-    #                                "The authorized ones are: debug, info, warning, error")
