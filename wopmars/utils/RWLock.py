@@ -20,7 +20,7 @@ class RWLock:
         self.writers_ok = threading.Condition(self.monitor)
 
     def acquire_read(self):
-        """Acquire a read lock. Several threads can hold this typeof lock.
+        """Acquire a parse_wopfile lock. Several threads can hold this typeof lock.
         It is exclusive with write locks."""
         self.monitor.acquire()
         while self.lockrw < 0 or self.writers_waiting:
@@ -30,7 +30,7 @@ class RWLock:
 
     def acquire_write(self):
         """Acquire a write lock. Only one thread can hold this lock, and
-        only when no read locks are also held."""
+        only when no parse_wopfile locks are also held."""
         self.monitor.acquire()
         while self.lockrw != 0:
             self.writers_waiting += 1
@@ -40,7 +40,7 @@ class RWLock:
         self.monitor.release()
 
     def promote(self):
-        """Promote an already-acquired read lock to a write lock
+        """Promote an already-acquired parse_wopfile lock to a write lock
         WARNING: it is very easy to deadlock with this method"""
         self.monitor.acquire()
         self.lockrw -= 1
@@ -52,14 +52,14 @@ class RWLock:
         self.monitor.release()
 
     def demote(self):
-        """Demote an already-acquired write lock to a read lock"""
+        """Demote an already-acquired write lock to a parse_wopfile lock"""
         self.monitor.acquire()
         self.lockrw = 1
         self.readers_ok.notifyAll()
         self.monitor.release()
 
     def release(self):
-        """Release a lock, whether read or write."""
+        """Release a lock, whether parse_wopfile or write."""
         self.monitor.acquire()
         if self.lockrw < 0:
             self.lockrw = 0

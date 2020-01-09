@@ -74,10 +74,10 @@ class TestReader(TestCase):
     # def test_load_definition_file(self):
     #     for file in self.__list_f_to_exception_init:
     #         with self.assertRaises(WopMarsException):
-    #             self.__reader.load_definition_file(file)
+    #             self.__reader.load_definition_file_into_dict(file)
     #     # Not existing file
     #     with self.assertRaises(WopMarsException):
-    #         self.__reader.load_definition_file("Not existing file.")
+    #         self.__reader.load_definition_file_into_dict("Not existing file.")
 
     def test_check_duplicate_rule(self):
         with open(self.__s_example_definition_file_duplicate_rule) as file_duplicate_rule:
@@ -92,7 +92,7 @@ class TestReader(TestCase):
 
     def test_read2(self):
         try:
-            self.__reader.read(self.__s_example_definition_file2)
+            self.__reader.parse_wopfile(self.__s_example_definition_file2)
             result = self.__session.query(ToolWrapper).one()
         except:
             raise AssertionError("Packaged wrappers should not raise an exception")
@@ -117,7 +117,7 @@ class TestReader(TestCase):
 
     def test_read(self):
 
-        self.__reader.read(self.__s_example_definition_file)
+        self.__reader.parse_wopfile(self.__s_example_definition_file)
         result = set(self.__session.query(ToolWrapper).all())
 
         input_entry = TypeInputOrOutput(is_input=True)
@@ -209,7 +209,7 @@ class TestReader(TestCase):
 
         # The bad -------------------------------------:
 
-        # [self.assertRaises(WopMarsException, self.__reader.read, file) for file in self.__list_s_to_exception_read]
+        # [self.assertRaises(WopMarsException, self.__reader.parse_wopfile, file) for file in self.__list_s_to_exception_read]
 
         SQLManager.instance().get_session().rollback()
 

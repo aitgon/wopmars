@@ -65,7 +65,7 @@ Now, let's look in the `Wopfile`
             max_price: 2000
 
 
-There are two rules named `Rule1` and `Rule2`. It means that the workflow is composed of two steps. For each rule, the used *Toolwrapper*, its parameters (if needed), inputs and outputs are specified. If you look closely at the values of these inputs and outputs, you can notice that the output of the `Rule1` has the exact same value than the input of the `Rule2`: ``wopexamplesnp.model..Piece``. It means that the `Rule1` will write into the table associated with the Model `Piece` and the `Rule2` will read these writes. Therefore, `Rule2` won't run before `Rule1` because there is a *dependency relation* between them.
+There are two rules named `Rule1` and `Rule2`. It means that the workflow is composed of two steps. For each rule, the used *Toolwrapper*, its parameters (if needed), inputs and outputs are specified. If you look closely at the values of these inputs and outputs, you can notice that the output of the `Rule1` has the exact same value than the input of the `Rule2`: ``wopexamplesnp.model..Piece``. It means that the `Rule1` will write into the table associated with the Model `Piece` and the `Rule2` will parse_wopfile these writes. Therefore, `Rule2` won't run before `Rule1` because there is a *dependency relation* between them.
 
 .. note::
 

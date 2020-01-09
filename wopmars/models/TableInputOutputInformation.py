@@ -176,7 +176,8 @@ class TableInputOutputInformation(InputOutput, Base):
         return id(self)
 
     def __repr__(self):
-        return '<Table ({}):\"{}; used at:{}>"'.format(self.relation_file_or_tableioinfo_to_typeio.is_input, str(self.table_name), str(self.mtime_epoch_millis))
+        return "<class {}; tablename: {}; model_py_path: {}; used_at: {}>"\
+            .format(self.__class__.__name__, self.table_name, self.model_py_path, self.mtime_epoch_millis)
 
     def __str__(self):
         return "<Table: " + self.table_name + "; model: " + self.model_py_path + ">"
