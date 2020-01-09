@@ -552,11 +552,12 @@ class Reader:
                     # table_entry = TableInputOutputInformation(is_input=dict_dict_dict_elm["dict_input"][elm][input_t], tablename=input_t)
                     # insert in the database the mtime_epoch_millis of last modification of a developper-side table
                     time_unix_ms, time_human = get_current_time()
+                    model_py_path_suffix = dict_dict_dict_elm["dict_input"][elm][input_t].model_py_path.split('.')[-1]
                     modification_table_entry, created = session.get_or_create(TableModificationTime,
                                                                               defaults={
                                                                                   "mtime_epoch_millis": time_unix_ms,
                                                                                   "mtime_human": time_human},
-                                                                              table_name=input_t)
+                                                                              table_name=model_py_path_suffix)
                     iodbput_entry.relation_tableioinfo_to_tablemodiftime = modification_table_entry
                     iodbput_entry.relation_file_or_tableioinfo_to_typeio = input_entry
                     try:
