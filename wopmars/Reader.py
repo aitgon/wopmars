@@ -305,10 +305,7 @@ class Reader:
             for type in dict_inputs:
                 if type == "file":
                     for s_input in dict_inputs[type]:
-                        # obj_created = FileInputOutputInformation(name=s_input,
-                        #                                          path=os.path.abspath(os.path.join(OptionManager.instance()["--directory"],
-                        #                                                           dict_inputs[type][s_input])))
-                        obj_created = FileInputOutputInformation(name=s_input,
+                        obj_created = FileInputOutputInformation(file_key=s_input,
                                                                  path=os.path.join(OptionManager.instance()["--directory"],
                                                                                   dict_inputs[type][s_input]))
                         dict_dict_dict_elm["dict_input"][type][s_input] = obj_created
@@ -322,13 +319,7 @@ class Reader:
             for type in dict_outputs:
                 if type == "file":
                     for s_output in dict_outputs[type]:
-                        # obj_created = FileInputOutputInformation(name=s_output,
-                        #                                          path=os.path.abspath(os.path.join(OptionManager.instance()["--directory"],
-                        #                                                           dict_outputs[type][s_output])))
-                        # obj_created = FileInputOutputInformation(name=s_output,
-                        #                                          path=os.path.join(OptionManager.instance()["--directory"],
-                        #                                                           dict_outputs[type][s_output]))
-                        obj_created = FileInputOutputInformation(name=s_output, path=dict_outputs[type][s_output])
+                        obj_created = FileInputOutputInformation(file_key=s_output, path=dict_outputs[type][s_output])
                         dict_dict_dict_elm["dict_output"]["file"][s_output] = obj_created
                         Logger.instance().debug("Object output file: " + s_output + " created.")
                 elif type == "table":
@@ -424,9 +415,7 @@ class Reader:
                                         #                                 self.__wopfile_content_dict[rule][
                                         #                                     key_second_step][key_third_step][key])
                                         str_path_to_file = self.__wopfile_content_dict[rule_header][yml_key_level_2nd][yml_key_level_3rd][yml_key]
-                                        # obj_created = FileInputOutputInformation(name=key,
-                                        #                                          path=os.path.abspath(str_path_to_file))
-                                        obj_created = FileInputOutputInformation(name=yml_key, path=str_path_to_file)
+                                        obj_created = FileInputOutputInformation(file_key=yml_key, path=str_path_to_file)
 
                                     elif yml_key_level_3rd == "table":
                                         yml_key = key_fourth_step

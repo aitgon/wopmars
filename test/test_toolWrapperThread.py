@@ -32,10 +32,10 @@ class TestToolWrapperThread(TestCase):
         input_entry = TypeInputOrOutput(is_input=True)
         output_entry = TypeInputOrOutput(is_input=False)
 
-        f1 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
+        f1 = FileInputOutputInformation(file_key="input1", path="test/resource/input_files/input_file1.txt")
         f1.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f2 = FileInputOutputInformation(name="output1", path="test/output/output_file1.txt")
+        f2 = FileInputOutputInformation(file_key="output1", path="test/output/output_file1.txt")
         f2.relation_file_or_tableioinfo_to_typeio = output_entry
 
         t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
@@ -49,10 +49,10 @@ class TestToolWrapperThread(TestCase):
         tw1.relation_toolwrapper_to_fileioinfo.extend([f1, f2])
         tw1.relation_toolwrapper_to_tableioinfo.append(t1)
 
-        f12 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
+        f12 = FileInputOutputInformation(file_key="input1", path="test/resource/input_files/input_file1.txt")
         f12.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f22 = FileInputOutputInformation(name="output1", path="test/output/output_file1.txt")
+        f22 = FileInputOutputInformation(file_key="output1", path="test/output/output_file1.txt")
         f22.relation_file_or_tableioinfo_to_typeio = output_entry
 
         t12 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
@@ -67,10 +67,10 @@ class TestToolWrapperThread(TestCase):
         tw2.relation_toolwrapper_to_fileioinfo.extend([f12, f22])
         tw2.relation_toolwrapper_to_tableioinfo.append(t12)
 
-        f13 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
+        f13 = FileInputOutputInformation(file_key="input1", path="test/resource/input_files/input_file1.txt")
         f13.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f23 = FileInputOutputInformation(name="output1", path="test/output/output_file1.txt")
+        f23 = FileInputOutputInformation(file_key="output1", path="test/output/output_file1.txt")
         f23.relation_file_or_tableioinfo_to_typeio = output_entry
 
         t13 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
@@ -105,7 +105,7 @@ class TestToolWrapperThread(TestCase):
             input_entry = TypeInputOrOutput(is_input=True)
             output_entry = TypeInputOrOutput(is_input=False)
 
-            f1 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
+            f1 = FileInputOutputInformation(file_key="input1", path="test/resource/input_files/input_file1.txt")
             f1.relation_file_or_tableioinfo_to_typeio = input_entry
 
             t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
@@ -122,7 +122,7 @@ class TestToolWrapperThread(TestCase):
             tw1.relation_toolwrapper_to_tableioinfo.append(t1)
             tw1.relation_toolwrapper_to_option.append(o1)
 
-            f12 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
+            f12 = FileInputOutputInformation(file_key="input1", path="test/resource/input_files/input_file1.txt")
             f12.relation_file_or_tableioinfo_to_typeio = input_entry
 
             t12 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
@@ -140,7 +140,7 @@ class TestToolWrapperThread(TestCase):
             tw12.relation_toolwrapper_to_tableioinfo.append(t12)
             tw12.relation_toolwrapper_to_option.append(o12)
 
-            f13 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
+            f13 = FileInputOutputInformation(file_key="input1", path="test/resource/input_files/input_file1.txt")
             f13.relation_file_or_tableioinfo_to_typeio = input_entry
 
             t13 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
