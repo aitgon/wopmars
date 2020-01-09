@@ -25,11 +25,11 @@ class TestTableInputOutputInformation(TestCase):
             self.__local_session.close()
             raise e
 
-        self.__io_base_existing = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
+        self.__io_base_existing = TableInputOutputInformation(model_py_path="FooBase", table_key="FooBase")
         self.__io_base_existing.set_table(FooBase)
-        self.__io_base_existing2 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
+        self.__io_base_existing2 = TableInputOutputInformation(model_py_path="FooBase", table_key="FooBase")
         self.__io_base_existing2.set_table(FooBase)
-        self.__io_base_existing3 = TableInputOutputInformation(model_py_path="FooBase2", table_name="FooBase2")
+        self.__io_base_existing3 = TableInputOutputInformation(model_py_path="FooBase2", table_key="FooBase2")
         self.__io_base_existing3.set_table(FooBase2)
 
     def tearDown(self):

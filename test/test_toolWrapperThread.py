@@ -38,7 +38,7 @@ class TestToolWrapperThread(TestCase):
         f2 = FileInputOutputInformation(file_key="output1", path="test/output/output_file1.txt")
         f2.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
+        t1 = TableInputOutputInformation(model_py_path="FooBase", table_key="FooBase")
         t1.set_table(FooBase)
         t1.relation_file_or_tableioinfo_to_typeio = output_entry
         timestamp_millis, timestamp_human = get_current_time()
@@ -55,7 +55,7 @@ class TestToolWrapperThread(TestCase):
         f22 = FileInputOutputInformation(file_key="output1", path="test/output/output_file1.txt")
         f22.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        t12 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
+        t12 = TableInputOutputInformation(model_py_path="FooBase", table_key="FooBase")
         t12.set_table(FooBase)
         t12.relation_file_or_tableioinfo_to_typeio = output_entry
         timestamp_millis, timestamp_human = get_current_time()
@@ -73,7 +73,7 @@ class TestToolWrapperThread(TestCase):
         f23 = FileInputOutputInformation(file_key="output1", path="test/output/output_file1.txt")
         f23.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        t13 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
+        t13 = TableInputOutputInformation(model_py_path="FooBase", table_key="FooBase")
         t13.set_table(FooBase)
         t13.relation_file_or_tableioinfo_to_typeio = output_entry
         timestamp_millis, timestamp_human = get_current_time()
@@ -108,7 +108,7 @@ class TestToolWrapperThread(TestCase):
             f1 = FileInputOutputInformation(file_key="input1", path="test/resource/input_files/input_file1.txt")
             f1.relation_file_or_tableioinfo_to_typeio = input_entry
 
-            t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
+            t1 = TableInputOutputInformation(model_py_path="FooBase", table_key="FooBase")
             t1.set_table(FooBase)
             t1.relation_file_or_tableioinfo_to_typeio = output_entry
             timestamp_millis, timestamp_human = get_current_time()
@@ -125,7 +125,7 @@ class TestToolWrapperThread(TestCase):
             f12 = FileInputOutputInformation(file_key="input1", path="test/resource/input_files/input_file1.txt")
             f12.relation_file_or_tableioinfo_to_typeio = input_entry
 
-            t12 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
+            t12 = TableInputOutputInformation(model_py_path="FooBase", table_key="FooBase")
             t12.set_table(FooBase)
             t12.relation_file_or_tableioinfo_to_typeio = output_entry
             timestamp_millis, timestamp_human = get_current_time()
@@ -143,7 +143,7 @@ class TestToolWrapperThread(TestCase):
             f13 = FileInputOutputInformation(file_key="input1", path="test/resource/input_files/input_file1.txt")
             f13.relation_file_or_tableioinfo_to_typeio = input_entry
 
-            t13 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
+            t13 = TableInputOutputInformation(model_py_path="FooBase", table_key="FooBase")
             t13.set_table(FooBase)
             t13.relation_file_or_tableioinfo_to_typeio = output_entry
             timestamp_millis, timestamp_human = get_current_time()
@@ -162,21 +162,21 @@ class TestToolWrapperThread(TestCase):
             tt2 = ToolWrapperThread(tw12)
             tt3 = ToolWrapperThread(tw13)
 
-            t21 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
+            t21 = TableInputOutputInformation(model_py_path="FooBase", table_key="FooBase")
             t21.set_table(FooBase)
             t21.relation_file_or_tableioinfo_to_typeio = input_entry
 
             tw21 = tw_query(rule_name="rule1")
             tw21.relation_toolwrapper_to_tableioinfo.append(t21)
 
-            t22 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
+            t22 = TableInputOutputInformation(model_py_path="FooBase", table_key="FooBase")
             t22.set_table(FooBase)
             t22.relation_file_or_tableioinfo_to_typeio = input_entry
 
             tw22 = tw_query(rule_name="rule1")
             tw22.relation_toolwrapper_to_tableioinfo.append(t22)
 
-            t23 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
+            t23 = TableInputOutputInformation(model_py_path="FooBase", table_key="FooBase")
             t23.set_table(FooBase)
             t23.relation_file_or_tableioinfo_to_typeio = input_entry
 

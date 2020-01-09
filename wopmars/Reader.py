@@ -22,7 +22,6 @@ from wopmars.models.TableModificationTime import TableModificationTime
 from wopmars.models.Option import Option
 from wopmars.models.TypeInputOrOutput import TypeInputOrOutput
 from wopmars.utils.DictUtils import DictUtils
-
 from wopmars.utils.Logger import Logger
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.WopMarsException import WopMarsException
