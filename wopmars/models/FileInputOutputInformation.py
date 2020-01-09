@@ -26,7 +26,7 @@ class FileInputOutputInformation(InputOutput, Base):
     __tablename__ = "wom_{}".format(__qualname__)
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(255))
+    file_key = Column(String(255))
     path = Column(String(255))
     toolwrapper_id = Column(Integer, ForeignKey("wom_ToolWrapper.id", ondelete='CASCADE'))
     is_input = Column(Boolean, ForeignKey("wom_TypeInputOrOutput.is_input"))
@@ -45,17 +45,17 @@ class FileInputOutputInformation(InputOutput, Base):
 
         :return: boolean: True if it exists, false if not
         """
-        Logger.instance().debug("Checking if " + self.name + " is ready: " + self.path)
+        Logger.instance().debug("Checking if " + self.file_key + " is ready: " + self.path)
         return os.path.isfile(self.path)
 
     def __eq__(self, other):
-        return os.path.abspath(self.path) == os.path.abspath(other.path) and self.name == other.name
+        return os.path.abspath(self.path) == os.path.abspath(other.path) and self.file_key == other.file_key
 
     def __hash__(self):
         return id(self)
 
     def __repr__(self):
-        return "<class '{}' File (%s): %s: %s; size: %s; mtime_epoch_millis: %s>" % (self.relation_file_or_tableioinfo_to_typeio.is_input, self.name, self.path, self.size, self.mtime_epoch_millis)
+        return "<class '{}' File (%s): %s: %s; size: %s; mtime_epoch_millis: %s>" % (self.relation_file_or_tableioinfo_to_typeio.is_input, self.file_key, self.path, self.size, self.mtime_epoch_millis)
 
     def __str__(self):
-        return "file: " + self.name + ": " + self.path
+        return "file: " + self.file_key + ": " + self.path

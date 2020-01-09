@@ -22,7 +22,6 @@ from wopmars.models.TableModificationTime import TableModificationTime
 from wopmars.models.Option import Option
 from wopmars.models.TypeInputOrOutput import TypeInputOrOutput
 from wopmars.utils.DictUtils import DictUtils
-
 from wopmars.utils.Logger import Logger
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.WopMarsException import WopMarsException
@@ -42,9 +41,9 @@ class Reader:
     store them in the database. Those stored informations are what we call the "history" of **WoPMaRS**.
     """
     def __init__(self):
-        self.__dict_workflow_definition = None
+        self.__wopfile_content_dict = None
 
-    def load_definition_file(self, s_definition_file):
+    def load_definition_file_into_dict(self, wopfile_path):
         """
         Open the definition file and load it's content in a dictionnary thanks to the ``yaml`` library. ``yaml`` can
         raise an exception if the yaml specifications are not respected or if there is duplicates at the same level of
@@ -53,17 +52,17 @@ class Reader:
         The check of the grammar of the definition file is done during this step but no tests are performed regarding
         to the actual content of the definition file.
 
-        :param s_definition_file: Path to the definition file
-        :type s_definition_file: str
+        :param wopfile_path: Path to the definition file
+        :type wopfile_path: str
         :raises WopMarsException: The yaml specifications are not respected
         """
         # Tests about grammar and syntax are performed here (file's existence is also tested here)
         try:
-            with open(s_definition_file, 'r') as def_file:
+            with open(wopfile_path, 'r') as def_file:
                 s_def_file_content = def_file.read()
             try:
                 # The workflow definition file is loaded as-it in memory by the pyyaml library
-                Logger.instance().info("Reading the Wopfile: " + str(s_definition_file))
+                Logger.instance().info("Reading the Wopfile: " + str(wopfile_path))
                 # Replace jinja2 variables with environment variable values
                 #s_def_file_content = jinja2.Environment().from_string(s_def_file_content).render(os.environ)
                 # Parse the file to find duplicates rule names (it is a double check with the following step)
@@ -72,10 +71,10 @@ class Reader:
                 yaml.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, Reader.no_duplicates_constructor)
                 # The whole content of the definition file is loaded in this dict.
                 # yaml.load return None if there is no content in the String
-                self.__dict_workflow_definition = yaml.load(s_def_file_content, Loader=yaml.SafeLoader) or {}
-                if self.__dict_workflow_definition == {}:
+                self.__wopfile_content_dict = yaml.load(s_def_file_content, Loader=yaml.SafeLoader) or {}
+                if self.__wopfile_content_dict == {}:
                     Logger.instance().warning("The workflow definition file is empty")
-                Logger.instance().debug("\n" + DictUtils.pretty_repr(self.__dict_workflow_definition))
+                Logger.instance().debug("\n" + DictUtils.pretty_repr(self.__wopfile_content_dict))
                 Logger.instance().debug("Read complete.")
                 Logger.instance().info("Checking whether the file is well formed...")
                 # raise an exception if there is a problem with the grammar
@@ -90,7 +89,7 @@ class Reader:
                                        str(CE))
         except FileNotFoundError:
             raise WopMarsException("Error while parsing the configuration file: \n\tInput error:",
-                                   "The specified file at " + s_definition_file + " doesn't exist.")
+                                   "The specified file at " + wopfile_path + " doesn't exist.")
 
     # Code from the github: https://gist.github.com/pypt/94d747fe5180851196eb
     @staticmethod
@@ -203,7 +202,7 @@ class Reader:
         regex_step3 = re.compile(r"(^file$)|(^table$)")
 
         # The words found are tested against the regex to see if they match or not
-        for s_key_step1 in self.__dict_workflow_definition:
+        for s_key_step1 in self.__wopfile_content_dict:
             bool_toolwrapper = False
             # The first level of indentation should only contain rules
             if not regex_step1.search(s_key_step1):
@@ -215,7 +214,7 @@ class Reader:
                                        "and contains only one word after the 'rule' keyword" +
                                        "\nexemple:" + exemple_file_def)
 
-            for s_key_step2 in self.__dict_workflow_definition[s_key_step1]:
+            for s_key_step2 in self.__wopfile_content_dict[s_key_step1]:
                 # the second level of indentation should only contain elements of rule
                 if not regex_step2.search(s_key_step2):
                     raise WopMarsException("Error while parsing the configuration file: \n\t"
@@ -226,7 +225,7 @@ class Reader:
                                            "'tool', 'params', 'input' or 'output'" +
                                            "\nexemple:" + exemple_file_def)
                 elif s_key_step2 == "input" or s_key_step2 == "output":
-                    for s_key_step3 in self.__dict_workflow_definition[s_key_step1][s_key_step2]:
+                    for s_key_step3 in self.__wopfile_content_dict[s_key_step1][s_key_step2]:
                         if not regex_step3.search(s_key_step3):
                             raise WopMarsException("Error while parsing the configuration file: \n\t"
                                                    "The grammar of the WopMars's definition file is not respected:",
@@ -236,8 +235,8 @@ class Reader:
                                                    "'file' or 'table'" +
                                                    "\nexemple:" + exemple_file_def)
                         elif s_key_step3 == "file":
-                            for s_variable_name in self.__dict_workflow_definition[s_key_step1][s_key_step2][s_key_step3]:
-                                if type(self.__dict_workflow_definition[s_key_step1][s_key_step2][s_key_step3][s_variable_name]) != str:
+                            for s_variable_name in self.__wopfile_content_dict[s_key_step1][s_key_step2][s_key_step3]:
+                                if type(self.__wopfile_content_dict[s_key_step1][s_key_step2][s_key_step3][s_variable_name]) != str:
                                     raise WopMarsException("Error while parsing the configuration file: \n\t" +
                                                            "The grammar of the WopMars's definition file is not respected:",
                                                            "The line containing:'" + str(s_variable_name) + "'" +
@@ -245,7 +244,7 @@ class Reader:
                                                            " doesn't match the grammar: it should be the string containing the path to the file."
                                                            "\nexemple:" + exemple_file_def)
                         elif s_key_step3 == "table":
-                            for s_tablename in self.__dict_workflow_definition[s_key_step1][s_key_step2][s_key_step3]:
+                            for s_tablename in self.__wopfile_content_dict[s_key_step1][s_key_step2][s_key_step3]:
                                 if type(s_tablename) != str:
                                     raise WopMarsException("Error while parsing the configuration file: \n\t"
                                                            "The grammar of the WopMars's definition file is not respected:",
@@ -272,7 +271,7 @@ class Reader:
 
     def load_one_toolwrapper(self, s_toolwrapper, s_dict_inputs, s_dict_outputs, s_dict_params):
         """
-        Method called when the ``tool`` command is used. It is equivalent to the :meth:`~.wopmars.framework.parsing.Reader.Reader.read` method but create a workflow
+        Method called when the ``tool`` command is used. It is equivalent to the :meth:`~.wopmars.framework.parsing.Reader.Reader.parse_wopfile` method but create a workflow
         with only one tool_python_path. The workflow is also stored inside the database.
 
         :param s_toolwrapper: The is_input of the tool_python_path (will be imported)
@@ -305,36 +304,31 @@ class Reader:
             for type in dict_inputs:
                 if type == "file":
                     for s_input in dict_inputs[type]:
-                        # obj_created = FileInputOutputInformation(name=s_input,
-                        #                                          path=os.path.abspath(os.path.join(OptionManager.instance()["--directory"],
-                        #                                                           dict_inputs[type][s_input])))
-                        obj_created = FileInputOutputInformation(name=s_input,
+                        obj_created = FileInputOutputInformation(file_key=s_input,
                                                                  path=os.path.join(OptionManager.instance()["--directory"],
                                                                                   dict_inputs[type][s_input]))
                         dict_dict_dict_elm["dict_input"][type][s_input] = obj_created
                         Logger.instance().debug("Object input file: " + s_input + " created.")
                 elif type == "table":
                     for s_input in dict_inputs[type]:
-                        obj_created = TableInputOutputInformation(model_py_path=dict_inputs[type][s_input],
-                                                                  table_name=s_input)
+                        model_py_path = dict_inputs[type][s_input]
+                        table_name = model_py_path.split('.')[-1]
+                        obj_created = TableInputOutputInformation(model_py_path=model_py_path, table_key=s_input,
+                                                                  table_name=table_name)
                         dict_dict_dict_elm["dict_input"][type][s_input] = obj_created
                         Logger.instance().debug("Object input table: " + s_input + " created.")
             for type in dict_outputs:
                 if type == "file":
                     for s_output in dict_outputs[type]:
-                        # obj_created = FileInputOutputInformation(name=s_output,
-                        #                                          path=os.path.abspath(os.path.join(OptionManager.instance()["--directory"],
-                        #                                                           dict_outputs[type][s_output])))
-                        # obj_created = FileInputOutputInformation(name=s_output,
-                        #                                          path=os.path.join(OptionManager.instance()["--directory"],
-                        #                                                           dict_outputs[type][s_output]))
-                        obj_created = FileInputOutputInformation(name=s_output, path=dict_outputs[type][s_output])
+                        obj_created = FileInputOutputInformation(file_key=s_output, path=dict_outputs[type][s_output])
                         dict_dict_dict_elm["dict_output"]["file"][s_output] = obj_created
                         Logger.instance().debug("Object output file: " + s_output + " created.")
                 elif type == "table":
                     for s_output in dict_outputs[type]:
-                        obj_created = TableInputOutputInformation(model_py_path=dict_outputs[type][s_output],
-                                                                  table_name=s_output)
+                        model_py_path = dict_inputs[type][s_input]
+                        table_name = model_py_path.split('.')[-1]
+                        obj_created = TableInputOutputInformation(model_py_path=model_py_path, table_key=s_output,
+                                                                  table_name=table_name)
                         dict_dict_dict_elm["dict_output"]["table"][s_output] = obj_created
                         Logger.instance().debug("Object output table: " + s_output + " created.")
             for s_param in dict_params:
@@ -368,7 +362,7 @@ class Reader:
             raise WopMarsException("Error while parsing the configuration file. The database has not been setUp Correctly.",
                                    str(e))
 
-    def read(self, s_definition_file):
+    def parse_wopfile(self, wopfile_path):
         """
         Reads the file given and insert the rules of the workflow in the database.
 
@@ -376,10 +370,10 @@ class Reader:
         during the instanciation of the tools.
 
         :param: s_definition_file: String containing the path to the definition file.
-        :type s_definition_file: str
+        :type wopfile_path: str
         :raise: WopmarsException: The content is not validated
         """
-        self.load_definition_file(s_definition_file)
+        self.load_definition_file_into_dict(wopfile_path)
 
         session = SQLManager.instance().get_session()
 
@@ -393,60 +387,60 @@ class Reader:
             output_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.is_input == False).one()
             set_wrapper = set()
             # Encounter a rule block
-            for rule in self.__dict_workflow_definition:
+            for rule_header in self.__wopfile_content_dict:
                 str_wrapper_name = None
                 # the is_input of the rule is extracted after the "rule" keyword. There shouldn't be a ":" but it costs nothing.
-                str_rule_name = rule.split()[-1].strip(":")
-                Logger.instance().debug("Encounter rule " + str_rule_name + ": \n" +
-                                        str(DictUtils.pretty_repr(self.__dict_workflow_definition[rule])))
+                rule_name_str = rule_header.split()[-1].strip(":")
+                Logger.instance().debug("Encounter rule " + rule_name_str + ": \n" +
+                                        str(DictUtils.pretty_repr(self.__wopfile_content_dict[rule_header])))
                 # The dict of "input"s, "output"s and "params" is re-initialized for each wrapper
                 dict_dict_dict_elm = dict(dict_input={"file": {}, "table": {}},
                                           dict_params={},
                                           dict_output={"file": {}, "table": {}})
-                for key_second_step in self.__dict_workflow_definition[rule]:
+                for yml_key_level_2nd in self.__wopfile_content_dict[rule_header]:
                     # key_second_step is supposed to be "tool", "input", "output" or "params"
-                    if type(self.__dict_workflow_definition[rule][key_second_step]) == dict:
+                    # if type(self.__wopfile_content_dict[rule_header][yml_key_level_2nd]) == dict:
+                    if yml_key_level_2nd in {"input", "output", "params"}:
                         # if it is a dict, then inputs, outputs or params are coming
-                        for key_third_step in self.__dict_workflow_definition[rule][key_second_step]:
+                        for yml_key_level_3rd in self.__wopfile_content_dict[rule_header][yml_key_level_2nd]:
                             # totodo LucG tabling modification of the indentation levels + appearance of models in file
-                            if key_second_step == "params":
-                                key = key_third_step
-                                value = self.__dict_workflow_definition[rule][key_second_step][key_third_step]
-                                obj_created = Option(name=key,
-                                                     value=value)
-                                dict_dict_dict_elm["dict_params"][key] = obj_created
+                            if yml_key_level_2nd == "params":
+                                yml_key = yml_key_level_3rd
+                                value = self.__wopfile_content_dict[rule_header][yml_key_level_2nd][yml_key_level_3rd]
+                                obj_created = Option(name=yml_key, value=value)
+                                dict_dict_dict_elm["dict_params"][yml_key] = obj_created
                             else:
-                                for key_fourth_step in self.__dict_workflow_definition[rule][key_second_step][key_third_step]:
+                                for key_fourth_step in self.__wopfile_content_dict[rule_header][yml_key_level_2nd][yml_key_level_3rd]:
                                     obj_created = None
-                                    if key_third_step == "file":
-                                        key = key_fourth_step
+                                    if yml_key_level_3rd == "file":
+                                        yml_key = key_fourth_step
                                         # str_path_to_file = os.path.join(OptionManager.instance()["--directory"],
-                                        #                                 self.__dict_workflow_definition[rule][
+                                        #                                 self.__wopfile_content_dict[rule][
                                         #                                     key_second_step][key_third_step][key])
-                                        str_path_to_file = self.__dict_workflow_definition[rule][key_second_step][key_third_step][key]
-                                        # obj_created = FileInputOutputInformation(name=key,
-                                        #                                          path=os.path.abspath(str_path_to_file))
-                                        obj_created = FileInputOutputInformation(name=key, path=str_path_to_file)
+                                        str_path_to_file = self.__wopfile_content_dict[rule_header][yml_key_level_2nd][yml_key_level_3rd][yml_key]
+                                        obj_created = FileInputOutputInformation(file_key=yml_key, path=str_path_to_file)
 
-                                    elif key_third_step == "table":
-                                        key = key_fourth_step
-                                        modelname = self.__dict_workflow_definition[rule][
-                                            key_second_step][
-                                            key_third_step][
-                                            key]
-                                        obj_created = TableInputOutputInformation(model_py_path=modelname, table_name=key)
+                                    elif yml_key_level_3rd == "table":
+                                        yml_key = key_fourth_step
+                                        modelname = self.__wopfile_content_dict[rule_header][yml_key_level_2nd][
+                                            yml_key_level_3rd][
+                                            yml_key]
+                                        model_py_path = modelname
+                                        table_name = model_py_path.split('.')[-1]
+                                        obj_created = TableInputOutputInformation(model_py_path=model_py_path,
+                                                                                  table_key=yml_key, table_name=table_name)
 
-                                        dict_dict_dict_elm["dict_" + key_second_step][
-                                            key_third_step][
-                                            key] = self.__dict_workflow_definition[rule][key_second_step][key_third_step][key]
+                                        dict_dict_dict_elm["dict_" + yml_key_level_2nd][
+                                            yml_key_level_3rd][
+                                            yml_key] = self.__wopfile_content_dict[rule_header][yml_key_level_2nd][yml_key_level_3rd][yml_key]
                                     # all elements of the current rule block are stored in there
                                     # key_second_step is input or output here
-                                    dict_dict_dict_elm["dict_" + key_second_step][key_third_step][key] = obj_created
-                                    Logger.instance().debug("Object " + key_second_step + " " + key_third_step + ": " +
-                                                            key + " created.")
+                                    dict_dict_dict_elm["dict_" + yml_key_level_2nd][yml_key_level_3rd][yml_key] = obj_created
+                                    Logger.instance().debug("Object " + yml_key_level_2nd + " " + yml_key_level_3rd + ": " +
+                                                            yml_key + " created.")
                     else:
                         # if the step is not a dict, then it is supposed to be the "tool" line
-                        str_wrapper_name = self.__dict_workflow_definition[rule][key_second_step]
+                        str_wrapper_name = self.__wopfile_content_dict[rule_header][yml_key_level_2nd]
                 # At this point, "dict_dict_dict_elm" is like this:
                 # {
                 #     'dict_params': {
@@ -463,7 +457,7 @@ class Reader:
                 # }
 
                 # Instantiate the refered class and add it to the set of objects
-                wrapper_entry = self.create_toolwrapper_entry(str_rule_name, str_wrapper_name, dict_dict_dict_elm, input_entry, output_entry)
+                wrapper_entry = self.create_toolwrapper_entry(rule_name_str, str_wrapper_name, dict_dict_dict_elm, input_entry, output_entry)
                 # Associating a tool_python_path to an execution
                 wrapper_entry.relation_toolwrapper_to_execution = execution
                 set_wrapper.add(wrapper_entry)
@@ -589,11 +583,13 @@ class Reader:
                     session.commit()
                     iodbput_entry = dict_dict_dict_elm["dict_output"][elm][output_t]
                     time_unix_ms, time_human = get_current_time()
+                    # This corresponds the __tablename__ of the database in the database
+                    model_py_path_suffix = dict_dict_dict_elm["dict_output"][elm][output_t].model_py_path.split('.')[-1]
                     modification_table_entry, created = session.get_or_create(TableModificationTime,
                                                                               defaults={
                                                                                   "mtime_epoch_millis": time_unix_ms,
                                                                                   "mtime_human": time_human},
-                                                                              table_name=output_t)
+                                                                              table_name=model_py_path_suffix)
                     iodbput_entry.relation_tableioinfo_to_tablemodiftime = modification_table_entry
                     iodbput_entry.relation_file_or_tableioinfo_to_typeio = output_entry
                     try:

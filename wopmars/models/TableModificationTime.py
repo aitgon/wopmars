@@ -42,23 +42,23 @@ class TableModificationTime(Base):
                               "mtime_human = datetime('now', 'localtime') " \
                                       "WHERE table_name = '{user_table_name}'; END;".format(**data)
                     # elif SQLManager.instance().__dict__['d_database_config']['db_connection'] == 'mysql':
-                    #     sql_trigger = "CREATE TRIGGER IF NOT EXISTS {table_name}_{statement} AFTER {statement} " \
-                    #       "ON {table_name} for each row UPDATE wom_table_modification_time SET " \
+                    #     sql_trigger = "CREATE TRIGGER IF NOT EXISTS {table_key}_{statement} AFTER {statement} " \
+                    #       "ON {table_key} for each row UPDATE wom_table_modification_time SET " \
                     #                   "mtime_epoch_millis = ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000) " \
-                    #       "WHERE table_name = '{table_name}';".format(**data)
+                    #       "WHERE table_key = '{table_key}';".format(**data)
                     #     obj_ddl = DDL(sql_trigger)
-                    #     SQLManager.instance().create_trigger(Base.metadata.tables[table_name], obj_ddl)
+                    #     SQLManager.instance().create_trigger(Base.metadata.tables[table_key], obj_ddl)
                     # elif SQLManager.instance().__dict__['d_database_config']['db_connection'] == 'postgresql':
                     #     sql_trigger = """
-                    #         CREATE OR REPLACE FUNCTION {table_name}_{statement}() RETURNS TRIGGER AS ${table_name}_{statement}$
+                    #         CREATE OR REPLACE FUNCTION {table_key}_{statement}() RETURNS TRIGGER AS ${table_key}_{statement}$
                     #         BEGIN
-                    #         UPDATE wom_table_modification_time SET mtime_epoch_millis = extract(epoch from now())*1000 WHERE table_name = '{table_name}';
+                    #         UPDATE wom_table_modification_time SET mtime_epoch_millis = extract(epoch from now())*1000 WHERE table_key = '{table_key}';
                     #         RETURN NULL; -- result is ignored since this is an AFTER trigger
                     #         END;
-                    #         ${table_name}_{statement}$ LANGUAGE plpgsql;
-                    #         DROP TRIGGER IF EXISTS {table_name}_{statement} ON "{table_name}";
-                    #         CREATE TRIGGER {table_name}_{statement} AFTER INSERT ON "{table_name}"
-                    #         FOR EACH ROW EXECUTE PROCEDURE {table_name}_{statement}();
+                    #         ${table_key}_{statement}$ LANGUAGE plpgsql;
+                    #         DROP TRIGGER IF EXISTS {table_key}_{statement} ON "{table_key}";
+                    #         CREATE TRIGGER {table_key}_{statement} AFTER INSERT ON "{table_key}"
+                    #         FOR EACH ROW EXECUTE PROCEDURE {table_key}_{statement}();
                     #         """.format(**data)
                     obj_ddl = DDL(sql_trigger)
                     SQLManager.instance().create_trigger(Base.metadata.tables[user_table_name], obj_ddl)

@@ -37,7 +37,7 @@ class Parser:
         Organize the parsing of the Workflow Definition File or the Tool if only one tool is provided thanks to the
         tool command.
 
-        Call the "read()" or the "load_one_toolwrapper" (depending on the use or not of tool command) method of the
+        Call the "parse_wopfile()" or the "load_one_toolwrapper" (depending on the use or not of tool command) method of the
         reader to insert in database the set of objects of the workflow.
 
         Then, the toolwrappers of the last execution are got back before calling the dag to build itself from the set of tools.
@@ -50,7 +50,7 @@ class Parser:
         :return: the DAG
         """
         if not OptionManager.instance()["tool"]:
-            self.__reader.read(OptionManager.instance()["--wopfile"])
+            self.__reader.parse_wopfile(OptionManager.instance()["--wopfile"])
         else:
             self.__reader.load_one_toolwrapper(OptionManager.instance()["TOOLWRAPPER"],
                                                OptionManager.instance()["--input"],

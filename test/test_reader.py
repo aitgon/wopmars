@@ -74,10 +74,10 @@ class TestReader(TestCase):
     # def test_load_definition_file(self):
     #     for file in self.__list_f_to_exception_init:
     #         with self.assertRaises(WopMarsException):
-    #             self.__reader.load_definition_file(file)
+    #             self.__reader.load_definition_file_into_dict(file)
     #     # Not existing file
     #     with self.assertRaises(WopMarsException):
-    #         self.__reader.load_definition_file("Not existing file.")
+    #         self.__reader.load_definition_file_into_dict("Not existing file.")
 
     def test_check_duplicate_rule(self):
         with open(self.__s_example_definition_file_duplicate_rule) as file_duplicate_rule:
@@ -92,7 +92,7 @@ class TestReader(TestCase):
 
     def test_read2(self):
         try:
-            self.__reader.read(self.__s_example_definition_file2)
+            self.__reader.parse_wopfile(self.__s_example_definition_file2)
             result = self.__session.query(ToolWrapper).one()
         except:
             raise AssertionError("Packaged wrappers should not raise an exception")
@@ -100,13 +100,14 @@ class TestReader(TestCase):
         input_entry = TypeInputOrOutput(is_input=True)
         output_entry = TypeInputOrOutput(is_input=False)
 
-        f1 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
+        f1 = FileInputOutputInformation(file_key="input1", path="test/resource/input_files/input_file1.txt")
         f1.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f2 = FileInputOutputInformation(name="output1", path="test/output/output_file1.txt")
+        f2 = FileInputOutputInformation(file_key="output1", path="test/output/output_file1.txt")
         f2.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        t1 = TableInputOutputInformation(model_py_path="test.resource.model.fooPackage.FooBasePackaged", table_name="FooBasePackaged")
+        t1 = TableInputOutputInformation(model_py_path="test.resource.model.fooPackage.FooBasePackaged",
+                                         table_key="FooBasePackaged", table_name="FooBasePackaged")
         t1.relation_file_or_tableioinfo_to_typeio = input_entry
 
         tw1 = FooWrapperPackaged(rule_name="rule1")
@@ -117,70 +118,70 @@ class TestReader(TestCase):
 
     def test_read(self):
 
-        self.__reader.read(self.__s_example_definition_file)
+        self.__reader.parse_wopfile(self.__s_example_definition_file)
         result = set(self.__session.query(ToolWrapper).all())
 
         input_entry = TypeInputOrOutput(is_input=True)
         output_entry = TypeInputOrOutput(is_input=False)
 
-        f1 = FileInputOutputInformation(name="input1", path="test/resource/input_files/input_file1.txt")
+        f1 = FileInputOutputInformation(file_key="input1", path="test/resource/input_files/input_file1.txt")
         f1.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f2 = FileInputOutputInformation(name="output1", path="test/output/output_file1.txt")
+        f2 = FileInputOutputInformation(file_key="output1", path="test/output/output_file1.txt")
         f2.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        f3 = FileInputOutputInformation(name="input1", path="test/output/output_file1.txt")
+        f3 = FileInputOutputInformation(file_key="input1", path="test/output/output_file1.txt")
         f3.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f3bis = FileInputOutputInformation(name="input1", path="test/output/output_file1.txt")
+        f3bis = FileInputOutputInformation(file_key="input1", path="test/output/output_file1.txt")
         f3bis.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f4 = FileInputOutputInformation(name="output1", path="test/output/output_file2.txt")
+        f4 = FileInputOutputInformation(file_key="output1", path="test/output/output_file2.txt")
         f4.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        f5 = FileInputOutputInformation(name="output1", path="test/output/output_file3.txt")
+        f5 = FileInputOutputInformation(file_key="output1", path="test/output/output_file3.txt")
         f5.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        f6 = FileInputOutputInformation(name="output2", path="test/output/output_file4.txt")
+        f6 = FileInputOutputInformation(file_key="output2", path="test/output/output_file4.txt")
         f6.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        f7 = FileInputOutputInformation(name="input1", path="test/output/output_file3.txt")
+        f7 = FileInputOutputInformation(file_key="input1", path="test/output/output_file3.txt")
         f7.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f8 = FileInputOutputInformation(name="input2", path="test/output/output_file2.txt")
+        f8 = FileInputOutputInformation(file_key="input2", path="test/output/output_file2.txt")
         f8.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f9 = FileInputOutputInformation(name="output1", path="test/output/output_file5.txt")
+        f9 = FileInputOutputInformation(file_key="output1", path="test/output/output_file5.txt")
         f9.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        f10 = FileInputOutputInformation(name="input1", path="test/output/output_file4.txt")
+        f10 = FileInputOutputInformation(file_key="input1", path="test/output/output_file4.txt")
         f10.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f11 = FileInputOutputInformation(name="output1", path="test/output/output_file6.txt")
+        f11 = FileInputOutputInformation(file_key="output1", path="test/output/output_file6.txt")
         f11.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        f12 = FileInputOutputInformation(name="input1", path="test/output/output_file1.txt")
+        f12 = FileInputOutputInformation(file_key="input1", path="test/output/output_file1.txt")
         f12.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f13 = FileInputOutputInformation(name="input2", path="test/output/output_file5.txt")
+        f13 = FileInputOutputInformation(file_key="input2", path="test/output/output_file5.txt")
         f13.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f14 = FileInputOutputInformation(name="input3", path="test/output/output_file6.txt")
+        f14 = FileInputOutputInformation(file_key="input3", path="test/output/output_file6.txt")
         f14.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f15 = FileInputOutputInformation(name="output1", path="test/output/output_file7.txt")
+        f15 = FileInputOutputInformation(file_key="output1", path="test/output/output_file7.txt")
         f15.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        t1 = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
+        t1 = TableInputOutputInformation(model_py_path="FooBase", table_key="FooBase", table_name="FooBase")
         t1.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        t1bis = TableInputOutputInformation(model_py_path="FooBase", table_name="FooBase")
+        t1bis = TableInputOutputInformation(model_py_path="FooBase", table_key="FooBase", table_name="FooBase")
         t1bis.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        t2 = TableInputOutputInformation(model_py_path="FooBase2", table_name="FooBase2")
+        t2 = TableInputOutputInformation(model_py_path="FooBase2", table_key="FooBase2", table_name="FooBase2")
         t2.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        t2bis = TableInputOutputInformation(model_py_path="FooBase2", table_name="FooBase2")
+        t2bis = TableInputOutputInformation(model_py_path="FooBase2", table_key="FooBase2", table_name="FooBase2")
         t2bis.relation_file_or_tableioinfo_to_typeio = input_entry
 
         tw1 = FooWrapper4(rule_name="rule1")
@@ -209,7 +210,7 @@ class TestReader(TestCase):
 
         # The bad -------------------------------------:
 
-        # [self.assertRaises(WopMarsException, self.__reader.read, file) for file in self.__list_s_to_exception_read]
+        # [self.assertRaises(WopMarsException, self.__reader.parse_wopfile, file) for file in self.__list_s_to_exception_read]
 
         SQLManager.instance().get_session().rollback()
 

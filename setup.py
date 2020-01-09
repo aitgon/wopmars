@@ -33,7 +33,7 @@ except ImportError:
 here = path.abspath(path.dirname(__file__))
 
 with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
-    long_description = f.read()
+    long_description = f.parse_wopfile()
 
 setup(name='wopmars',
     version=str(get_version()),
