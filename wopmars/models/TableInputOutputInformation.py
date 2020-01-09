@@ -30,7 +30,8 @@ class TableInputOutputInformation(InputOutput, Base):
     __tablename__ = "wom_{}".format(__qualname__)
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    table_key = Column(String(255), ForeignKey("wom_TableModificationTime.table_name"))
+    table_key = Column(String(255))
+    table_name = Column(String(255), ForeignKey("wom_TableModificationTime.table_name"))
     model_py_path = Column(String(255))
     toolwrapper_id = Column(Integer, ForeignKey("wom_ToolWrapper.id", ondelete='CASCADE'))
     is_input = Column(Boolean, ForeignKey("wom_TypeInputOrOutput.is_input"))
@@ -49,7 +50,7 @@ class TableInputOutputInformation(InputOutput, Base):
     # al the table names met since the begining of this instance of WopMaRS
     tablenames = set()
 
-    def __init__(self, model_py_path, table_key):
+    def __init__(self, model_py_path, table_key, table_name):
         """
         self.__table is initialized to None and will contain the model of this TableInputOutputInformation object.
 
@@ -59,7 +60,7 @@ class TableInputOutputInformation(InputOutput, Base):
         :type table_key: str
         """
         # The file containing the table should be in PYTHONPATH
-        Base.__init__(self, model_py_path=model_py_path, table_key=table_key)
+        Base.__init__(self, model_py_path=model_py_path, table_key=table_key, table_name=table_name)
         Logger.instance().debug(str(model_py_path) + " model_py_path loaded. Tablename: " + str(table_key))
         self.__table = None
 

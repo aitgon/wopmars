@@ -145,19 +145,18 @@ class ToolWrapper(Base):
             ############################################################################################################
             #
             # Input tables
-            # I have inactivate this control, because it mixes they yml key of the table and the model tablename
             #
             ############################################################################################################
 
-            # tool_wrapper_specified_tables = self.specify_input_table()
-            #
-            # if tableio_tablename_set != set(tool_wrapper_specified_tables):
-            #     msg_err = "The given input file variable names for {} (rule {}) are not correct." \
-            #               " They should be: {}" \
-            #               " They are: {}"\
-            #         .format(self.__class__.__name__, str(self.rule_name), "'\n\t'".join(tool_wrapper_specified_tables),
-            #                 "'\n\t'".join(tableio_tablename_set))
-            #     raise WopMarsException(msg_err)
+            tool_wrapper_specified_tables = self.specify_input_table()
+
+            if tableio_tablename_set != set(tool_wrapper_specified_tables):
+                msg_err = "The given input file variable names for {} (rule {}) are not correct." \
+                          " They should be: {}" \
+                          " They are: {}"\
+                    .format(self.__class__.__name__, str(self.rule_name), "'\n\t'".join(tool_wrapper_specified_tables),
+                            "'\n\t'".join(tableio_tablename_set))
+                raise WopMarsException(msg_err)
 
         else:
 
@@ -180,19 +179,18 @@ class ToolWrapper(Base):
             ############################################################################################################
             #
             # Output tables
-            # I have inactivate this control, because it mixes they yml key of the table and the model tablename
             #
             ############################################################################################################
 
-            # tool_wrapper_specified_tables = self.specify_output_table()
-            #
-            # if tableio_tablename_set != set(tool_wrapper_specified_tables):
-            #     msg_err = "The given output table variable names for {} (rule {}) are not correct." \
-            #               " They should be: {}" \
-            #               " They are: {}"\
-            #         .format(self.__class__.__name__, str(self.rule_name), "'\n\t'".join(tool_wrapper_specified_tables),
-            #                 "'\n\t'".join(tableio_tablename_set))
-            #     raise WopMarsException(msg_err)
+            tool_wrapper_specified_tables = self.specify_output_table()
+
+            if tableio_tablename_set != set(tool_wrapper_specified_tables):
+                msg_err = "The given output table variable names for {} (rule {}) are not correct." \
+                          " They should be: {}" \
+                          " They are: {}"\
+                    .format(self.__class__.__name__, str(self.rule_name), "'\n\t'".join(tool_wrapper_specified_tables),
+                            "'\n\t'".join(tableio_tablename_set))
+                raise WopMarsException(msg_err)
 
     def is_options_respected(self):
         """

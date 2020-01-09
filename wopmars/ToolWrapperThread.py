@@ -1,7 +1,6 @@
 """
 Module containing the ToolWrapperThread class.
 """
-import errno
 import pathlib
 import threading
 import os

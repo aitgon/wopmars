@@ -106,7 +106,8 @@ class TestReader(TestCase):
         f2 = FileInputOutputInformation(file_key="output1", path="test/output/output_file1.txt")
         f2.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        t1 = TableInputOutputInformation(model_py_path="test.resource.model.fooPackage.FooBasePackaged", table_key="FooBasePackaged")
+        t1 = TableInputOutputInformation(model_py_path="test.resource.model.fooPackage.FooBasePackaged",
+                                         table_key="FooBasePackaged", table_name="FooBasePackaged")
         t1.relation_file_or_tableioinfo_to_typeio = input_entry
 
         tw1 = FooWrapperPackaged(rule_name="rule1")
@@ -171,16 +172,16 @@ class TestReader(TestCase):
         f15 = FileInputOutputInformation(file_key="output1", path="test/output/output_file7.txt")
         f15.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        t1 = TableInputOutputInformation(model_py_path="FooBase", table_key="FooBase")
+        t1 = TableInputOutputInformation(model_py_path="FooBase", table_key="FooBase", table_name="FooBase")
         t1.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        t1bis = TableInputOutputInformation(model_py_path="FooBase", table_key="FooBase")
+        t1bis = TableInputOutputInformation(model_py_path="FooBase", table_key="FooBase", table_name="FooBase")
         t1bis.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        t2 = TableInputOutputInformation(model_py_path="FooBase2", table_key="FooBase2")
+        t2 = TableInputOutputInformation(model_py_path="FooBase2", table_key="FooBase2", table_name="FooBase2")
         t2.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        t2bis = TableInputOutputInformation(model_py_path="FooBase2", table_key="FooBase2")
+        t2bis = TableInputOutputInformation(model_py_path="FooBase2", table_key="FooBase2", table_name="FooBase2")
         t2bis.relation_file_or_tableioinfo_to_typeio = input_entry
 
         tw1 = FooWrapper4(rule_name="rule1")
