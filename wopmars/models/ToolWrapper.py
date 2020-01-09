@@ -118,7 +118,7 @@ class ToolWrapper(Base):
         fileioinfo_name_set = set([fileioinfo.file_key for fileioinfo in self.relation_toolwrapper_to_fileioinfo
                                     if fileioinfo.relation_file_or_tableioinfo_to_typeio.is_input == is_input])
 
-        tableio_tablename_set = set([tableioinfo.table_name for tableioinfo in self.relation_toolwrapper_to_tableioinfo
+        tableio_tablename_set = set([tableioinfo.table_key for tableioinfo in self.relation_toolwrapper_to_tableioinfo
                                      if tableioinfo.relation_file_or_tableioinfo_to_typeio.is_input == is_input])
 
         # tableio_tablename_set = set([tableioinfo.model_py_path.split('.')[-1] for tableioinfo in self.relation_toolwrapper_to_tableioinfo
@@ -297,13 +297,13 @@ class ToolWrapper(Base):
             Logger.instance().debug("Input: " + str(i.file_key) + " is ready.")
 
         input_tables = [t for t in self.relation_toolwrapper_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 1]
-        Logger.instance().debug("Inputs tables of " + str(self.__class__.__name__) + ": " + str([i.table_name for i in input_tables]))
+        Logger.instance().debug("Inputs tables of " + str(self.__class__.__name__) + ": " + str([i.table_key for i in input_tables]))
         for i in input_tables:
             if not i.is_ready():
-                Logger.instance().debug("Input: " + str(i.table_name) + " is not ready.")
+                Logger.instance().debug("Input: " + str(i.table_key) + " is not ready.")
                 self.__state = ToolWrapper.NOT_READY
                 return False
-            Logger.instance().debug("Input: " + str(i.table_name) + " is ready.")
+            Logger.instance().debug("Input: " + str(i.table_key) + " is ready.")
 
         self.__state = ToolWrapper.READY
         return True
@@ -384,9 +384,9 @@ class ToolWrapper(Base):
         for t in [t for t in self.relation_toolwrapper_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
             is_same = False
             for t2 in [t2 for t2 in other.relation_toolwrapper_to_tableioinfo if t2.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
-                # two tables are the same if they have the same model/table_name/modification mtime_epoch_millis
+                # two tables are the same if they have the same model/table_key/modification mtime_epoch_millis
                 if (t.model_py_path == t2.model_py_path and
-                    t.table_name == t2.table_name and
+                    t.table_key == t2.table_key and
                        t.mtime_epoch_millis == t2.mtime_epoch_millis):
                     is_same = True
                     break
@@ -450,7 +450,7 @@ class ToolWrapper(Base):
         for t in [t for t in self.relation_toolwrapper_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
             is_same = False
             for t2 in [t2 for t2 in other.relation_toolwrapper_to_tableioinfo if t2.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
-                if t.model_py_path == t2.model_py_path and t.table_name == t2.table_name:
+                if t.model_py_path == t2.model_py_path and t.table_key == t2.table_key:
                     is_same = True
                     break
             if not is_same:
@@ -564,7 +564,7 @@ class ToolWrapper(Base):
         for t in [t for t in self.relation_toolwrapper_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == is_input]:
             is_in = bool([t for t in other.relation_toolwrapper_to_tableioinfo if (t.model_py_path == t.model_py_path and
                                                                                    t.relation_file_or_tableioinfo_to_typeio.is_input == is_input and
-                                                                                   t.table_name == t.table_name)])
+                                                                                   t.table_key == t.table_key)])
             if not is_in:
                 return False
         return True
@@ -609,12 +609,12 @@ class ToolWrapper(Base):
         for input_f in [f for f in self.relation_toolwrapper_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
             s += "\\n\t\t" + input_f.file_key + ": " + str(input_f.path)
         for input_t in [t for t in self.relation_toolwrapper_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
-            s += "\\n\t\tinput_table: " + input_t.table_name
+            s += "\\n\t\tinput_table: " + input_t.table_key
         s += "\\n"
         for output_f in [f for f in self.relation_toolwrapper_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
             s += "\\n\t\t" + output_f.file_key + ": " + str(output_f.path)
         for output_t in [t for t in self.relation_toolwrapper_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
-            s += "\\n\t\toutput_table: " + output_t.table_name
+            s += "\\n\t\toutput_table: " + output_t.table_key
         s += "\""
         return s
 
@@ -733,7 +733,7 @@ class ToolWrapper(Base):
         :return:
         """
         try:
-            return [t for t in self.relation_toolwrapper_to_tableioinfo if t.table_name == key and t.relation_file_or_tableioinfo_to_typeio.is_input == 1][0].get_table()
+            return [t for t in self.relation_toolwrapper_to_tableioinfo if t.table_key == key and t.relation_file_or_tableioinfo_to_typeio.is_input == 1][0].get_table()
         except IndexError:
             raise WopMarsException("Error during the execution of the ToolWrapper " + str(self.tool_python_path) +
                                    " (rule " + self.rule_name + ").",
@@ -761,7 +761,7 @@ class ToolWrapper(Base):
         :return:
         """
         try:
-            return [t for t in self.relation_toolwrapper_to_tableioinfo if t.table_name == key and t.relation_file_or_tableioinfo_to_typeio.is_input == 0][0].get_table()
+            return [t for t in self.relation_toolwrapper_to_tableioinfo if t.table_key == key and t.relation_file_or_tableioinfo_to_typeio.is_input == 0][0].get_table()
         except IndexError:
             raise WopMarsException("Error during the execution of the ToolWrapper " + str(self.tool_python_path) +
                                    " (rule " + self.rule_name + ").",

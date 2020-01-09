@@ -313,7 +313,7 @@ class Reader:
                 elif type == "table":
                     for s_input in dict_inputs[type]:
                         obj_created = TableInputOutputInformation(model_py_path=dict_inputs[type][s_input],
-                                                                  table_name=s_input)
+                                                                  table_key=s_input)
                         dict_dict_dict_elm["dict_input"][type][s_input] = obj_created
                         Logger.instance().debug("Object input table: " + s_input + " created.")
             for type in dict_outputs:
@@ -325,7 +325,7 @@ class Reader:
                 elif type == "table":
                     for s_output in dict_outputs[type]:
                         obj_created = TableInputOutputInformation(model_py_path=dict_outputs[type][s_output],
-                                                                  table_name=s_output)
+                                                                  table_key=s_output)
                         dict_dict_dict_elm["dict_output"]["table"][s_output] = obj_created
                         Logger.instance().debug("Object output table: " + s_output + " created.")
             for s_param in dict_params:
@@ -422,7 +422,7 @@ class Reader:
                                         modelname = self.__wopfile_content_dict[rule_header][yml_key_level_2nd][
                                             yml_key_level_3rd][
                                             yml_key]
-                                        obj_created = TableInputOutputInformation(model_py_path=modelname, table_name=yml_key)
+                                        obj_created = TableInputOutputInformation(model_py_path=modelname, table_key=yml_key)
 
                                         dict_dict_dict_elm["dict_" + yml_key_level_2nd][
                                             yml_key_level_3rd][

@@ -42,7 +42,7 @@ class TestToolWrapperThread(TestCase):
         t1.set_table(FooBase)
         t1.relation_file_or_tableioinfo_to_typeio = output_entry
         timestamp_millis, timestamp_human = get_current_time()
-        modification_table_entry = TableModificationTime(mtime_epoch_millis=timestamp_millis, table_name=t1.table_name)
+        modification_table_entry = TableModificationTime(mtime_epoch_millis=timestamp_millis, table_name=t1.table_key)
         t1.modification = modification_table_entry
 
         tw1 = FooWrapper5(rule_name="rule1")
@@ -60,7 +60,7 @@ class TestToolWrapperThread(TestCase):
         t12.relation_file_or_tableioinfo_to_typeio = output_entry
         timestamp_millis, timestamp_human = get_current_time()
         modification_table_entry = TableModificationTime(
-            mtime_epoch_millis=timestamp_millis, table_name=t12.table_name)
+            mtime_epoch_millis=timestamp_millis, table_name=t12.table_key)
         t12.modification = modification_table_entry
 
         tw2 = FooWrapper5(rule_name="rule2")
@@ -78,7 +78,7 @@ class TestToolWrapperThread(TestCase):
         t13.relation_file_or_tableioinfo_to_typeio = output_entry
         timestamp_millis, timestamp_human = get_current_time()
         modification_table_entry = TableModificationTime(
-            mtime_epoch_millis=timestamp_millis, table_name=t13.table_name)
+            mtime_epoch_millis=timestamp_millis, table_name=t13.table_key)
         t13.modification = modification_table_entry
 
         tw3 = FooWrapper5(rule_name="rule3")
@@ -112,7 +112,7 @@ class TestToolWrapperThread(TestCase):
             t1.set_table(FooBase)
             t1.relation_file_or_tableioinfo_to_typeio = output_entry
             timestamp_millis, timestamp_human = get_current_time()
-            modification_table_entry = TableModificationTime(mtime_epoch_millis=timestamp_millis, table_name=t1.table_name)
+            modification_table_entry = TableModificationTime(mtime_epoch_millis=timestamp_millis, table_name=t1.table_key)
             t1.modification = modification_table_entry
 
             o1 = Option(name="rows", value="1000")
@@ -130,7 +130,7 @@ class TestToolWrapperThread(TestCase):
             t12.relation_file_or_tableioinfo_to_typeio = output_entry
             timestamp_millis, timestamp_human = get_current_time()
             modification_table_entry = TableModificationTime(mtime_epoch_millis=timestamp_millis,
-                                                             table_name=t12.table_name)
+                                                             table_name=t12.table_key)
             t12.modification = modification_table_entry
 
             o12 = Option(name="rows", value="1000")
@@ -148,7 +148,7 @@ class TestToolWrapperThread(TestCase):
             t13.relation_file_or_tableioinfo_to_typeio = output_entry
             timestamp_millis, timestamp_human = get_current_time()
             modification_table_entry = TableModificationTime(mtime_epoch_millis=timestamp_millis,
-                                                             table_name=t13.table_name)
+                                                             table_name=t13.table_key)
             t13.modification = modification_table_entry
 
             o13 = Option(name="rows", value="1000")
