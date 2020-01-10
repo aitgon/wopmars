@@ -5,7 +5,7 @@ The Models
 
     A data model is an abstract representation of data. In the field of the OOP and the work with a relational database, we can consider a model like a class which represent a data type in the database (usually a row in a table). The model have to describe the types of each field and their relations with the other tables (meanning other models).
     
-For the rest of this section, I assume that you have parse_wopfile and understood the secion `"Declare a Mapping" <http://docs.sqlalchemy.org/en/latest/orm/tutorial.html#declare-a-mapping>`_ of the SQLAlchemy tutorial.
+For the rest of this section, I assume that you have iterate_wopfile_yml_dic_and_insert_rules_in_db and understood the secion `"Declare a Mapping" <http://docs.sqlalchemy.org/en/latest/orm/tutorial.html#declare-a-mapping>`_ of the SQLAlchemy tutorial.
 
 A model have to be associated with a database. This is why the models used in WopMars have to inherit from the class ``Base``. ``Base`` is a class which will be associated itself with a SQLite database (a file) and which contains every information related: the tables, the relations, etc..
 

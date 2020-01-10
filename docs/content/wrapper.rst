@@ -71,7 +71,7 @@ The class ``SparePartsManufacturer`` takes a file in input but doesn't produce a
 Describing tables: ``specify_input_table`` and ``specify_output_table``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**WopMars** makes its `Toolwrapper` able to parse_wopfile and write entries in a database. Like for the files, the `tool wrappers` have to specify in which table of the database they will parse_wopfile (input tables) and in which they will write (output tables). So, the ``Toolwrapper`` class implements the methods ``specify_input_table`` and ``specify_output_table``. However, this time, the Strings contained in the returned list are associated with both the variables containing the table models and the name of the tables itself.
+**WopMars** makes its `Toolwrapper` able to iterate_wopfile_yml_dic_and_insert_rules_in_db and write entries in a database. Like for the files, the `tool wrappers` have to specify in which table of the database they will iterate_wopfile_yml_dic_and_insert_rules_in_db (input tables) and in which they will write (output tables). So, the ``Toolwrapper`` class implements the methods ``specify_input_table`` and ``specify_output_table``. However, this time, the Strings contained in the returned list are associated with both the variables containing the table models and the name of the tables itself.
 
 The final user have to write the same table names as keys in the `table` part of the definition file (see :doc:`Wopfile section </content/wopfile>`) and the path to the models associated with those tables as the values to specify which one the `Toolwrapper` should use. Usually, a `Toolwrapper` is closely related to a specific model but we can imagine that if two models are similar for a given `Toolwrapper`, it could use one or the other independantly (for example, if a model B inherit from the model A, then every `Toolwrapper` able to use A should be able to use B too).
 
@@ -330,7 +330,7 @@ In your learning of Python, you may have encountered the famous ``os.system("com
 Reading/writing to the database
 ...............................
 
-Reading and writing to the database has to be carried out through the WopMars session. The WopMars session implements a lock system to prevent database inconsistencies. There are three implemented methods to parse_wopfile/write to the database with the wopmars session.
+Reading and writing to the database has to be carried out through the WopMars session. The WopMars session implements a lock system to prevent database inconsistencies. There are three implemented methods to iterate_wopfile_yml_dic_and_insert_rules_in_db/write to the database with the wopmars session.
 
 - SQLAlchemy ORM
 - SQLAlchemy core

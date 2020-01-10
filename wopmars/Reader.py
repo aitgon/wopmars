@@ -41,9 +41,9 @@ class Reader:
     store them in the database. Those stored informations are what we call the "history" of **WoPMaRS**.
     """
     def __init__(self):
-        self.__wopfile_content_dict = None
+        self.__wopfile_yml_dict = None
 
-    def load_definition_file_into_dict(self, wopfile_path):
+    def load_wopfile_as_yml_dic(self, wopfile_path):
         """
         Open the definition file and load it's content in a dictionnary thanks to the ``yaml`` library. ``yaml`` can
         raise an exception if the yaml specifications are not respected or if there is duplicates at the same level of
@@ -59,22 +59,22 @@ class Reader:
         # Tests about grammar and syntax are performed here (file's existence is also tested here)
         try:
             with open(wopfile_path, 'r') as def_file:
-                s_def_file_content = def_file.read()
+                wopfile_content_str = def_file.read()
             try:
                 # The workflow definition file is loaded as-it in memory by the pyyaml library
                 Logger.instance().info("Reading the Wopfile: " + str(wopfile_path))
                 # Replace jinja2 variables with environment variable values
                 #s_def_file_content = jinja2.Environment().from_string(s_def_file_content).render(os.environ)
                 # Parse the file to find duplicates rule names (it is a double check with the following step)
-                Reader.check_duplicate_rules(s_def_file_content)
+                Reader.check_duplicate_rules(wopfile_content_str)
                 # Allows to raise an exception if duplicate keys are found on the same document hirearchy level.
                 yaml.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, Reader.no_duplicates_constructor)
                 # The whole content of the definition file is loaded in this dict.
                 # yaml.load return None if there is no content in the String
-                self.__wopfile_content_dict = yaml.load(s_def_file_content, Loader=yaml.SafeLoader) or {}
-                if self.__wopfile_content_dict == {}:
+                self.__wopfile_yml_dict = yaml.load(wopfile_content_str, Loader=yaml.SafeLoader) or {}
+                if self.__wopfile_yml_dict == {}:
                     Logger.instance().warning("The workflow definition file is empty")
-                Logger.instance().debug("\n" + DictUtils.pretty_repr(self.__wopfile_content_dict))
+                Logger.instance().debug("\n" + DictUtils.pretty_repr(self.__wopfile_yml_dict))
                 Logger.instance().debug("Read complete.")
                 Logger.instance().info("Checking whether the file is well formed...")
                 # raise an exception if there is a problem with the grammar
@@ -108,7 +108,7 @@ class Reader:
         return loader.construct_mapping(node, deep)
 
     @staticmethod
-    def check_duplicate_rules(s_workflow_file):
+    def check_duplicate_rules(wopfile_content_str):
         """
         This method raises an exception if the workflow definition file contains duplicate rule names.
 
@@ -132,13 +132,13 @@ class Reader:
                     params:
                         etc..
 
-        :param s_workflow_file: The content of the definition file
-        :type s_workflow_file: str
+        :param wopfile_content_str: The content of the definition file
+        :type wopfile_content_str: str
         :raises WopMarsException: There is a duplicate rule is_input
         """
         Logger.instance().debug("Looking for duplicate rules...")
         # All rules are found using this regex.
-        rules = re.findall(r'rule (.+?):', str(s_workflow_file))
+        rules = re.findall(r'rule (.+?):', str(wopfile_content_str))
         seen = set()
         # for each rule is_input
         for r in rules:
@@ -202,7 +202,7 @@ class Reader:
         regex_step3 = re.compile(r"(^file$)|(^table$)")
 
         # The words found are tested against the regex to see if they match or not
-        for s_key_step1 in self.__wopfile_content_dict:
+        for s_key_step1 in self.__wopfile_yml_dict:
             bool_toolwrapper = False
             # The first level of indentation should only contain rules
             if not regex_step1.search(s_key_step1):
@@ -214,7 +214,7 @@ class Reader:
                                        "and contains only one word after the 'rule' keyword" +
                                        "\nexemple:" + exemple_file_def)
 
-            for s_key_step2 in self.__wopfile_content_dict[s_key_step1]:
+            for s_key_step2 in self.__wopfile_yml_dict[s_key_step1]:
                 # the second level of indentation should only contain elements of rule
                 if not regex_step2.search(s_key_step2):
                     raise WopMarsException("Error while parsing the configuration file: \n\t"
@@ -225,7 +225,7 @@ class Reader:
                                            "'tool', 'params', 'input' or 'output'" +
                                            "\nexemple:" + exemple_file_def)
                 elif s_key_step2 == "input" or s_key_step2 == "output":
-                    for s_key_step3 in self.__wopfile_content_dict[s_key_step1][s_key_step2]:
+                    for s_key_step3 in self.__wopfile_yml_dict[s_key_step1][s_key_step2]:
                         if not regex_step3.search(s_key_step3):
                             raise WopMarsException("Error while parsing the configuration file: \n\t"
                                                    "The grammar of the WopMars's definition file is not respected:",
@@ -235,8 +235,8 @@ class Reader:
                                                    "'file' or 'table'" +
                                                    "\nexemple:" + exemple_file_def)
                         elif s_key_step3 == "file":
-                            for s_variable_name in self.__wopfile_content_dict[s_key_step1][s_key_step2][s_key_step3]:
-                                if type(self.__wopfile_content_dict[s_key_step1][s_key_step2][s_key_step3][s_variable_name]) != str:
+                            for s_variable_name in self.__wopfile_yml_dict[s_key_step1][s_key_step2][s_key_step3]:
+                                if type(self.__wopfile_yml_dict[s_key_step1][s_key_step2][s_key_step3][s_variable_name]) != str:
                                     raise WopMarsException("Error while parsing the configuration file: \n\t" +
                                                            "The grammar of the WopMars's definition file is not respected:",
                                                            "The line containing:'" + str(s_variable_name) + "'" +
@@ -244,7 +244,7 @@ class Reader:
                                                            " doesn't match the grammar: it should be the string containing the path to the file."
                                                            "\nexemple:" + exemple_file_def)
                         elif s_key_step3 == "table":
-                            for s_tablename in self.__wopfile_content_dict[s_key_step1][s_key_step2][s_key_step3]:
+                            for s_tablename in self.__wopfile_yml_dict[s_key_step1][s_key_step2][s_key_step3]:
                                 if type(s_tablename) != str:
                                     raise WopMarsException("Error while parsing the configuration file: \n\t"
                                                            "The grammar of the WopMars's definition file is not respected:",
@@ -271,7 +271,7 @@ class Reader:
 
     def load_one_toolwrapper(self, s_toolwrapper, s_dict_inputs, s_dict_outputs, s_dict_params):
         """
-        Method called when the ``tool`` command is used. It is equivalent to the :meth:`~.wopmars.framework.parsing.Reader.Reader.parse_wopfile` method but create a workflow
+        Method called when the ``tool`` command is used. It is equivalent to the :meth:`~.wopmars.framework.parsing.Reader.Reader.iterate_wopfile_yml_dic_and_insert_rules_in_db` method but create a workflow
         with only one tool_python_path. The workflow is also stored inside the database.
 
         :param s_toolwrapper: The is_input of the tool_python_path (will be imported)
@@ -338,7 +338,7 @@ class Reader:
                 Logger.instance().debug("Object option: " + s_param + " created.")
 
             # Instantiate the refered class
-            wrapper_entry = self.create_toolwrapper_entry("rule_" + s_toolwrapper, s_toolwrapper,
+            wrapper_entry = self.create_tool_wrapper_inst("rule_" + s_toolwrapper, s_toolwrapper,
                                                           dict_dict_dict_elm, input_entry, output_entry)
             wrapper_entry.relation_toolwrapper_to_execution = execution
             Logger.instance().debug("Object tool_python_path: " + s_toolwrapper + " created.")
@@ -362,7 +362,7 @@ class Reader:
             raise WopMarsException("Error while parsing the configuration file. The database has not been setUp Correctly.",
                                    str(e))
 
-    def parse_wopfile(self, wopfile_path):
+    def iterate_wopfile_yml_dic_and_insert_rules_in_db(self, wopfile_path):
         """
         Reads the file given and insert the rules of the workflow in the database.
 
@@ -373,7 +373,7 @@ class Reader:
         :type wopfile_path: str
         :raise: WopmarsException: The content is not validated
         """
-        self.load_definition_file_into_dict(wopfile_path)
+        self.load_wopfile_as_yml_dic(wopfile_path)
 
         session = SQLManager.instance().get_session()
 
@@ -385,63 +385,59 @@ class Reader:
             # get the types database entries that should have been created previously
             input_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.is_input == True).one()
             output_entry = session.query(TypeInputOrOutput).filter(TypeInputOrOutput.is_input == False).one()
-            set_wrapper = set()
+            tool_wrapper_set = set()
             # Encounter a rule block
-            for rule_header in self.__wopfile_content_dict:
-                str_wrapper_name = None
+            for yml_key_level1 in self.__wopfile_yml_dict:
+                tool_wrapper_py_path = None
                 # the is_input of the rule is extracted after the "rule" keyword. There shouldn't be a ":" but it costs nothing.
-                rule_name_str = rule_header.split()[-1].strip(":")
+                rule_name_str = yml_key_level1.split()[-1].strip(":")
                 Logger.instance().debug("Encounter rule " + rule_name_str + ": \n" +
-                                        str(DictUtils.pretty_repr(self.__wopfile_content_dict[rule_header])))
-                # The dict of "input"s, "output"s and "params" is re-initialized for each wrapper
-                dict_dict_dict_elm = dict(dict_input={"file": {}, "table": {}},
-                                          dict_params={},
-                                          dict_output={"file": {}, "table": {}})
-                for yml_key_level_2nd in self.__wopfile_content_dict[rule_header]:
+                                        str(DictUtils.pretty_repr(self.__wopfile_yml_dict[yml_key_level1])))
+                # The dict of "input"s, "output"s and "params" is re-initialized for each tool wrapper
+                tool_wrapper_inst_dic = dict(dict_input={"file": {}, "table": {}}, dict_params={}, dict_output={"file": {}, "table": {}})
+                for yml_key_level2 in self.__wopfile_yml_dict[yml_key_level1]:
                     # key_second_step is supposed to be "tool", "input", "output" or "params"
-                    # if type(self.__wopfile_content_dict[rule_header][yml_key_level_2nd]) == dict:
-                    if yml_key_level_2nd in {"input", "output", "params"}:
+                    # if type(self.__wopfile_yml_dict[rule_header][yml_key_level_2nd]) == dict:
+                    if yml_key_level2 in {"input", "output", "params"}:
                         # if it is a dict, then inputs, outputs or params are coming
-                        for yml_key_level_3rd in self.__wopfile_content_dict[rule_header][yml_key_level_2nd]:
-                            # totodo LucG tabling modification of the indentation levels + appearance of models in file
-                            if yml_key_level_2nd == "params":
-                                yml_key = yml_key_level_3rd
-                                value = self.__wopfile_content_dict[rule_header][yml_key_level_2nd][yml_key_level_3rd]
-                                obj_created = Option(name=yml_key, value=value)
-                                dict_dict_dict_elm["dict_params"][yml_key] = obj_created
-                            else:
-                                for key_fourth_step in self.__wopfile_content_dict[rule_header][yml_key_level_2nd][yml_key_level_3rd]:
-                                    obj_created = None
-                                    if yml_key_level_3rd == "file":
-                                        yml_key = key_fourth_step
+                        for yml_key_level3 in self.__wopfile_yml_dict[yml_key_level1][yml_key_level2]:
+                            if yml_key_level2 == "params":
+                                # yml_key = yml_key_level3
+                                value = self.__wopfile_yml_dict[yml_key_level1][yml_key_level2][yml_key_level3]
+                                option_inst = Option(name=yml_key_level3, value=value)
+                                tool_wrapper_inst_dic["dict_params"][yml_key_level3] = option_inst
+                            else: # file or table
+                                for yml_key_level4 in self.__wopfile_yml_dict[yml_key_level1][yml_key_level2][yml_key_level3]:
+                                    file_or_table_inst = None
+                                    if yml_key_level3 == "file":
+                                        # yml_key = yml_key_level4
                                         # str_path_to_file = os.path.join(OptionManager.instance()["--directory"],
-                                        #                                 self.__wopfile_content_dict[rule][
+                                        #                                 self.__wopfile_yml_dict[rule][
                                         #                                     key_second_step][key_third_step][key])
-                                        str_path_to_file = self.__wopfile_content_dict[rule_header][yml_key_level_2nd][yml_key_level_3rd][yml_key]
-                                        obj_created = FileInputOutputInformation(file_key=yml_key, path=str_path_to_file)
+                                        str_path_to_file = self.__wopfile_yml_dict[yml_key_level1][yml_key_level2][yml_key_level3][yml_key_level4]
+                                        file_or_table_inst = FileInputOutputInformation(file_key=yml_key_level4, path=str_path_to_file)
 
-                                    elif yml_key_level_3rd == "table":
-                                        yml_key = key_fourth_step
-                                        modelname = self.__wopfile_content_dict[rule_header][yml_key_level_2nd][
-                                            yml_key_level_3rd][
+                                    elif yml_key_level3 == "table":
+                                        yml_key = yml_key_level4
+                                        modelname = self.__wopfile_yml_dict[yml_key_level1][yml_key_level2][
+                                            yml_key_level3][
                                             yml_key]
                                         model_py_path = modelname
                                         table_name = model_py_path.split('.')[-1]
-                                        obj_created = TableInputOutputInformation(model_py_path=model_py_path,
-                                                                                  table_key=yml_key, table_name=table_name)
+                                        file_or_table_inst = TableInputOutputInformation(model_py_path=model_py_path,
+                                                                                  table_key=yml_key_level4, table_name=table_name)
 
-                                        dict_dict_dict_elm["dict_" + yml_key_level_2nd][
-                                            yml_key_level_3rd][
-                                            yml_key] = self.__wopfile_content_dict[rule_header][yml_key_level_2nd][yml_key_level_3rd][yml_key]
                                     # all elements of the current rule block are stored in there
                                     # key_second_step is input or output here
-                                    dict_dict_dict_elm["dict_" + yml_key_level_2nd][yml_key_level_3rd][yml_key] = obj_created
-                                    Logger.instance().debug("Object " + yml_key_level_2nd + " " + yml_key_level_3rd + ": " +
-                                                            yml_key + " created.")
+                                    # tool_wrapper_inst_dic["dict_" + yml_key_level2][yml_key_level3][yml_key] = obj_created
+                                    tool_wrapper_inst_dic["dict_" + yml_key_level2][yml_key_level3][yml_key_level4] \
+                                        = file_or_table_inst
+                                    Logger.instance().debug("Object " + yml_key_level2 + " " + yml_key_level3 + ": " +
+                                                            yml_key_level4 + " created.")
                     else:
                         # if the step is not a dict, then it is supposed to be the "tool" line
-                        str_wrapper_name = self.__wopfile_content_dict[rule_header][yml_key_level_2nd]
-                # At this point, "dict_dict_dict_elm" is like this:
+                        tool_wrapper_py_path = self.__wopfile_yml_dict[yml_key_level1][yml_key_level2]
+                # At this point, "tool_wrapper_inst_dic" is like this:
                 # {
                 #     'dict_params': {
                 #         'option1': Option('option1', 'valueofoption1')
@@ -456,12 +452,13 @@ class Reader:
                 #     },
                 # }
 
-                # Instantiate the refered class and add it to the set of objects
-                wrapper_entry = self.create_toolwrapper_entry(rule_name_str, str_wrapper_name, dict_dict_dict_elm, input_entry, output_entry)
+                # Instantiate the referred class and add it to the set of objects
+                tool_wrapper_inst = self.create_tool_wrapper_inst(rule_name_str, tool_wrapper_py_path, tool_wrapper_inst_dic,
+                                                              input_entry, output_entry)
                 # Associating a tool_python_path to an execution
-                wrapper_entry.relation_toolwrapper_to_execution = execution
-                set_wrapper.add(wrapper_entry)
-                Logger.instance().debug("Object tool_python_path: " + str_wrapper_name + " created.")
+                tool_wrapper_inst.relation_toolwrapper_to_execution = execution
+                tool_wrapper_set.add(tool_wrapper_inst)
+                Logger.instance().debug("Instance tool_python_path: " + tool_wrapper_py_path + " created.")
                 # commit/rollback trick to clean the session - SQLAchemy bug suspected
                 session.commit()
                 session.rollback()
@@ -474,18 +471,18 @@ class Reader:
             TableModificationTime.create_triggers()
             # This create_all will create all models that have been found in the tool_python_path
             SQLManager.instance().create_all()
-            session.add_all(set_wrapper)
+            session.add_all(tool_wrapper_set)
             # save all operations done so far.
             session.commit()
-            for tw in set_wrapper:
-                tw.is_content_respected()
+            for tool_wrapper in tool_wrapper_set:
+                tool_wrapper.is_content_respected()
 
         except NoResultFound as e:
             session.rollback()
             raise WopMarsException("Error while parsing the configuration file. The database has not been setUp Correctly.",
                                    str(e))
 
-    def create_toolwrapper_entry(self, rule_name, tool_python_path, dict_dict_dict_elm, input_entry, output_entry):
+    def create_tool_wrapper_inst(self, rule_name, tool_python_path, dict_dict_dict_elm, input_entry, output_entry):
         """
         Actual creating of the Toolwrapper object.
 
@@ -512,7 +509,7 @@ class Reader:
         try:
             mod = importlib.import_module(tool_python_path)
             # Building the class object
-            toolwrapper_class = eval("mod." + tool_python_path.split('.')[-1])
+            ToolWrapper_class = eval("mod." + tool_python_path.split('.')[-1])
         except AttributeError:
             raise WopMarsException("Error while parsing the configuration file: \n\t",
                                    "The class " + tool_python_path + " doesn't exist.")
@@ -524,7 +521,7 @@ class Reader:
                 raise WopMarsException("Error while parsing the configuration file:",
                                        tool_python_path + " module contains an ImportError: " + str(IE))
         # Initialize the instance of the user ToolWrapper
-        user_tool_wrapper = toolwrapper_class(rule_name=rule_name)
+        tool_wrapper_inst = ToolWrapper_class(rule_name=rule_name)
 
         # associating ToolWrapper instances with their files / models
         for elm in dict_dict_dict_elm["dict_input"]:
@@ -535,7 +532,7 @@ class Reader:
                     iofileput_entry.relation_file_or_tableioinfo_to_typeio = input_entry
                     try:
                         # associating file and tool_python_path
-                        user_tool_wrapper.relation_toolwrapper_to_fileioinfo.append(iofileput_entry)
+                        tool_wrapper_inst.relation_toolwrapper_to_fileioinfo.append(iofileput_entry)
                     except ObjectDeletedError as e:
                         raise WopMarsException("Error in the tool_python_path class declaration. Please, notice the developer",
                                                "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
@@ -561,7 +558,7 @@ class Reader:
                     iodbput_entry.relation_tableioinfo_to_tablemodiftime = modification_table_entry
                     iodbput_entry.relation_file_or_tableioinfo_to_typeio = input_entry
                     try:
-                        user_tool_wrapper.relation_toolwrapper_to_tableioinfo.append(iodbput_entry)
+                        tool_wrapper_inst.relation_toolwrapper_to_tableioinfo.append(iodbput_entry)
                     except ObjectDeletedError as e:
                         raise WopMarsException("Error in the tool_python_path class declaration. Please, notice the developer",
                                                "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
@@ -573,7 +570,7 @@ class Reader:
                     iofileput_entry = dict_dict_dict_elm["dict_output"][elm][output_f]
                     iofileput_entry.relation_file_or_tableioinfo_to_typeio = output_entry
                     try:
-                        user_tool_wrapper.relation_toolwrapper_to_fileioinfo.append(iofileput_entry)
+                        tool_wrapper_inst.relation_toolwrapper_to_fileioinfo.append(iofileput_entry)
                     except ObjectDeletedError as e:
                         raise WopMarsException("Error in the tool_python_path class declaration. Please, notice the developer",
                                                "The error is probably caused by the lack of the 'polymorphic_identity' attribute"
@@ -594,7 +591,7 @@ class Reader:
                     iodbput_entry.relation_tableioinfo_to_tablemodiftime = modification_table_entry
                     iodbput_entry.relation_file_or_tableioinfo_to_typeio = output_entry
                     try:
-                        user_tool_wrapper.relation_toolwrapper_to_tableioinfo.append(iodbput_entry)
+                        tool_wrapper_inst.relation_toolwrapper_to_tableioinfo.append(iodbput_entry)
                     except ObjectDeletedError as e:
                         raise WopMarsException(
                             "Error in the tool_python_path class declaration. Please, notice the developer",
@@ -604,7 +601,7 @@ class Reader:
 
         for opt in dict_dict_dict_elm["dict_params"]:
             # associating option and tool_python_path
-            user_tool_wrapper.relation_toolwrapper_to_option.append(dict_dict_dict_elm["dict_params"][opt])
+            tool_wrapper_inst.relation_toolwrapper_to_option.append(dict_dict_dict_elm["dict_params"][opt])
 
         # toolwrapper_wrapper.is_content_respected()
-        return user_tool_wrapper
+        return tool_wrapper_inst

@@ -20,7 +20,7 @@ class SQLManager(SingletonMixin):
     The class SQLManager is responsible of all operations performed on the database.
 
     The SQLManager is a synchronized Singleton which may be accessible from any thread, at any mtime_epoch_millis. This is allowed
-    by the SingletonMixin superclass and a parse_wopfile/write lock.
+    by the SingletonMixin superclass and a iterate_wopfile_yml_dic_and_insert_rules_in_db/write lock.
 
     Provides a WopmarsSession through the method "get_session". The session is used to perform calls to the database.
     Provides the engine if necessary through "get_engine".
@@ -162,9 +162,9 @@ class SQLManager(SingletonMixin):
         result = None
         try:
             Logger.instance().debug("Executing query on session " + str(query.session) + ": \n" + str(query) + ";")
-            Logger.instance().debug("WopmarsQuery " + str(query.session) + " want the parse_wopfile-lock on SQLManager")
+            Logger.instance().debug("WopmarsQuery " + str(query.session) + " want the iterate_wopfile_yml_dic_and_insert_rules_in_db-lock on SQLManager")
             self.__lock.acquire_read()
-            Logger.instance().debug("\"" + str(query.session) + "\" has taken the parse_wopfile lock on SQLManager.")
+            Logger.instance().debug("\"" + str(query.session) + "\" has taken the iterate_wopfile_yml_dic_and_insert_rules_in_db lock on SQLManager.")
             # switch case according to the demanded method.
             # in each condition, we call the superclass associated method: superclass is Query from sqlalchemy
             if method == "all":
@@ -185,7 +185,7 @@ class SQLManager(SingletonMixin):
         finally:
             # Always release the lock
             self.__lock.release()
-            Logger.instance().debug("\"" + str(query.session) + "\" has released the parse_wopfile lock on SQLManager.")
+            Logger.instance().debug("\"" + str(query.session) + "\" has released the iterate_wopfile_yml_dic_and_insert_rules_in_db lock on SQLManager.")
         return result
 
     def execute(self, session, statement, *args, **kwargs):
