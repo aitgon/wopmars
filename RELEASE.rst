@@ -1,3 +1,8 @@
+CHANGES IN VERSION 0.0.8 (Feb 7, 2020)
+-------------------------
+
+- BUG: many bugs fixed
+
 CHANGES IN VERSION 0.0.7 (Sept 7, 2019)
 -------------------------
 
