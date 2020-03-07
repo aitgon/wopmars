@@ -1,3 +1,8 @@
+CHANGES IN VERSION 0.0.9 (Mar 7, 2020)
+-------------------------
+
+- BUG: fixed bug where different input files were not take into account to re-execute toolwrapper
+
 CHANGES IN VERSION 0.0.8 (Feb 7, 2020)
 -------------------------
 

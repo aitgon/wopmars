@@ -541,7 +541,7 @@ class ToolWrapper(Base):
         """
         for f in [rf for rf in self.relation_toolwrapper_to_fileioinfo if rf.relation_file_or_tableioinfo_to_typeio.is_input == is_input]:
             is_in = bool([rf for rf in other.relation_toolwrapper_to_fileioinfo if (
-                    # os.path.abspath(f.path) == os.path.abspath(rf.path) and  # AG file path is not a reason for same
+                    os.path.abspath(f.path) == os.path.abspath(rf.path) and # same absolute path
                     f.file_key == rf.file_key and  # same file field name
                     rf.relation_file_or_tableioinfo_to_typeio.is_input == is_input  # files are same input
             )])
