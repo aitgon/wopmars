@@ -2,7 +2,7 @@
 Module containing the SQLManager class.
 """
 from sqlalchemy.orm import sessionmaker, scoped_session
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, select
 from sqlalchemy.schema import sort_tables
 from sqlalchemy import event
 
@@ -81,6 +81,40 @@ class SQLManager(SingletonMixin):
         self.__Session = scoped_session(sessionmaker(bind=self.engine, autoflush=True, autocommit=False))
         # The lock
         self.__lock = RWLock()
+
+    def clean_up_unexecuted(self):
+
+        from wopmars.models.Option import Option
+        from wopmars.models.TableInputOutputInformation import TableInputOutputInformation
+        from wopmars.models.FileInputOutputInformation import FileInputOutputInformation
+        from wopmars.models.ToolWrapper import ToolWrapper
+        from wopmars.models.Execution import Execution
+
+        if self.engine.has_table(ToolWrapper.__tablename__):
+
+            toolwrapper_result_tuple =  self.engine.execute(select([ToolWrapper.__table__.c.id]).where(ToolWrapper.status == 'NOT_EXECUTED')).fetchall()
+            for toolwrapper_id_row in toolwrapper_result_tuple:
+                self.engine.execute(Option.__table__.delete().where(Option.toolwrapper_id == toolwrapper_id_row[0]))
+            for toolwrapper_id_row in toolwrapper_result_tuple:
+                self.engine.execute(TableInputOutputInformation.__table__.delete().where(TableInputOutputInformation.toolwrapper_id == toolwrapper_id_row[0]))
+            for toolwrapper_id_row in toolwrapper_result_tuple:
+                self.engine.execute(FileInputOutputInformation.__table__.delete().where(FileInputOutputInformation.toolwrapper_id == toolwrapper_id_row[0]))
+            for toolwrapper_id_row in toolwrapper_result_tuple:
+                self.engine.execute(ToolWrapper.__table__.delete().where(ToolWrapper.id == toolwrapper_id_row[0]))
+
+            toolwrapper_result_tuple =  self.engine.execute(select([ToolWrapper.__table__.c.id]).where(ToolWrapper.status == 'ALREADY_EXECUTED')).fetchall()
+            for toolwrapper_id_row in toolwrapper_result_tuple:
+                self.engine.execute(Option.__table__.delete().where(Option.toolwrapper_id == toolwrapper_id_row[0]))
+            for toolwrapper_id_row in toolwrapper_result_tuple:
+                self.engine.execute(TableInputOutputInformation.__table__.delete().where(TableInputOutputInformation.toolwrapper_id == toolwrapper_id_row[0]))
+            for toolwrapper_id_row in toolwrapper_result_tuple:
+                self.engine.execute(FileInputOutputInformation.__table__.delete().where(FileInputOutputInformation.toolwrapper_id == toolwrapper_id_row[0]))
+            for toolwrapper_id_row in toolwrapper_result_tuple:
+                self.engine.execute(ToolWrapper.__table__.delete().where(ToolWrapper.id == toolwrapper_id_row[0]))
+
+        if self.engine.has_table(Execution.__tablename__):
+
+                self.engine.execute(Execution.__table__.delete().where(Execution.status == None))
 
     def clear_wopmars_history(self):
         """
