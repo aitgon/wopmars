@@ -1,3 +1,8 @@
+CHANGES IN VERSION 0.0.10 (Mar 9, 2020)
+-------------------------
+
+- BUG: error if wopmars history execution status null but pointed by wopmars tool_wrapper
+
 CHANGES IN VERSION 0.0.9 (Mar 7, 2020)
 -------------------------
 
