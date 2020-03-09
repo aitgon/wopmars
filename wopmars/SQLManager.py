@@ -82,13 +82,13 @@ class SQLManager(SingletonMixin):
         # The lock
         self.__lock = RWLock()
 
-    def clean_up_unexecuted(self):
+    def clean_up_unexecuted_tool_wrappers(self):
 
         from wopmars.models.Option import Option
         from wopmars.models.TableInputOutputInformation import TableInputOutputInformation
         from wopmars.models.FileInputOutputInformation import FileInputOutputInformation
         from wopmars.models.ToolWrapper import ToolWrapper
-        from wopmars.models.Execution import Execution
+        # from wopmars.models.Execution import Execution
 
         if self.engine.has_table(ToolWrapper.__tablename__):
 
@@ -102,7 +102,7 @@ class SQLManager(SingletonMixin):
             for toolwrapper_id_row in toolwrapper_result_tuple:
                 self.engine.execute(ToolWrapper.__table__.delete().where(ToolWrapper.id == toolwrapper_id_row[0]))
 
-            toolwrapper_result_tuple =  self.engine.execute(select([ToolWrapper.__table__.c.id]).where(ToolWrapper.status == 'ALREADY_EXECUTED')).fetchall()
+            toolwrapper_result_tuple = self.engine.execute(select([ToolWrapper.__table__.c.id]).where(ToolWrapper.status == 'ALREADY_EXECUTED')).fetchall()
             for toolwrapper_id_row in toolwrapper_result_tuple:
                 self.engine.execute(Option.__table__.delete().where(Option.toolwrapper_id == toolwrapper_id_row[0]))
             for toolwrapper_id_row in toolwrapper_result_tuple:
@@ -112,9 +112,9 @@ class SQLManager(SingletonMixin):
             for toolwrapper_id_row in toolwrapper_result_tuple:
                 self.engine.execute(ToolWrapper.__table__.delete().where(ToolWrapper.id == toolwrapper_id_row[0]))
 
-        if self.engine.has_table(Execution.__tablename__):
-
-                self.engine.execute(Execution.__table__.delete().where(Execution.status == None))
+        # if self.engine.has_table(Execution.__tablename__):
+        #
+        #         self.engine.execute(Execution.__table__.delete().where(Execution.status == None))
 
     def clear_wopmars_history(self):
         """
