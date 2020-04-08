@@ -121,7 +121,7 @@ class OptionManager(dict, SingletonMixin):
             OptionManager.instance()["--database"] = os.environ['DB_URL']
         #
         OptionManager.instance()["--directory"] = PathFinder.get_module_path()
-        OptionManager.instance()["--clear-history"] = False
+        OptionManager.instance()["--cleanup-metadata"] = False
         os.chdir(OptionManager.instance()["--directory"])
         # OptionManager.instance()["--tool_python_path-log"] = False
 

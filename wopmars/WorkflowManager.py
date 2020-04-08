@@ -77,7 +77,7 @@ class WorkflowManager(ToolWrapperObserver):
         # This create_all is supposed to only create workflow-management side models (called "wom_*")
         SQLManager.instance().create_all()
 
-        # if OptionManager.instance()["--clear-history"]:
+        # if OptionManager.instance()["--cleanup-metadata"]:
         #     Logger.instance().info("Deleting WoPMaRS history...")
         #     SQLManager.instance().drop_table_content_list(SQLManager.wopmars_history_tables)
 
@@ -197,51 +197,83 @@ class WorkflowManager(ToolWrapperObserver):
         # # toTODO LucG THIS METHOD IS NOT THREAD-SAFE (peut etre que si, à voir)
         #
 
+        ################################################################################################################
+        #
+        # Main while
         # If no tools have been added to the queue:
         #  - All tools have been executed and the queue is empty, so nothing happens
-        #  - There were remaing tools in the queue but they weren't ready, so they are tested again
+        #  - There were remaining tools in the queue but they weren't ready, so they are tested again
+        #
+        ################################################################################################################
+
         while not self.__queue_exec.empty():
             Logger.instance().debug("Queue size: " + str(self.__queue_exec.qsize()))
             Logger.instance().debug("Queue content: " + str(["rule: " + tt.get_toolwrapper().rule_name + "->" +
                                                              tt.get_toolwrapper().tool_python_path for tt in self.__queue_exec.get_queue_tuple()]))
+
+            ############################################################################################################
+            #
             # get the first element of the queue to execute
+            #
+            ############################################################################################################
+
             tool_wrapper_thread = self.__queue_exec.get()
             tool_wrapper = tool_wrapper_thread.get_toolwrapper()
+
             Logger.instance().debug("Current rule: " + tool_wrapper.rule_name + "->" + tool_wrapper.tool_python_path)
             # check if the predecessors of a rule have been already executed: a rule shouldn't be executed if
             # its predecessors have not been executed yet
             if not self.all_predecessors_have_run(tool_wrapper):
-                Logger.instance().debug("Predecessors of rule: " + tool_wrapper.rule_name + " have not been executed yet.")
-            # for running, either the inputs have to be ready or the dry-run mode is enabled
+               Logger.instance().debug("Predecessors of rule: " + tool_wrapper.rule_name + " have not been executed yet.")
+
+            ############################################################################################################
+            #
+            # Ready for running, either inputs are ready or dry-run mode is enabled
+            #
+            ############################################################################################################
+
             elif tool_wrapper.are_inputs_ready() or OptionManager.instance()["--dry-run"]:
                 # the state of inputs (table and file) are set in the db here.
                 tool_wrapper.set_args_time_and_size(1)
                 Logger.instance().debug("ToolWrapper ready: " + tool_wrapper.tool_python_path)
                 dry = False
-                # if forceall option, then the tool is reexecuted anyway
+
+                ############################################################################################################
+                #
+                # Will set to dry (ie. will not execute) if all these conditions are true
+                # - not in forceall mode
+                # - tool already executed previously
+                # - some predecessors of this tool wrapper has not been executed
+                #
+                ############################################################################################################
+
                 # check if the actual execution of the tool_python_path is necessary
                 # every predecessors of the tool_python_path have to be executed (or simulated)
-                if not OptionManager.instance()["--forceall"] and \
-                        self.is_this_tool_wrapper_already_executed(tool_wrapper) and \
-                        not bool([tool_wrapper_predecessor for tool_wrapper_predecessor in
-                                  self.__dag_to_exec.predecessors(tool_wrapper) if tool_wrapper_predecessor.status != "EXECUTED" and
-                                        tool_wrapper_predecessor.status != "ALREADY_EXECUTED"]):
-                    Logger.instance().info("ToolWrapper: {} -> {} seemed to have already been run with same parameters."
-                                           .format(tool_wrapper.rule_name, tool_wrapper.tool_python_path))
-                    dry = True
+                # will not execute and set to dry if all these options
 
-                # totodo lucg twthread verification des ressources
+                if not OptionManager.instance()["--forceall"]:  # if not in forceall option
+                    if self.is_this_tool_wrapper_already_executed(tool_wrapper):  # this tool wrapper already executed
+                        # some predecessors of this tool wrapper has not been executed
+                        if not bool([tool_wrapper_predecessor for tool_wrapper_predecessor
+                                     in self.__dag_to_exec.predecessors(tool_wrapper)
+                                     if tool_wrapper_predecessor.status != "EXECUTED"
+                                        and tool_wrapper_predecessor.status != "ALREADY_EXECUTED"]):
+                            Logger.instance().info("ToolWrapper: {} -> {} seems to have already been run with same parameters."
+                                                   .format(tool_wrapper.rule_name, tool_wrapper.tool_python_path))
+                            dry = True
+
+                # totodo lucg twthread verification des resources
                 tool_wrapper_thread.subscribe(self)
                 self.__count_exec += 1
                 # totodo lucg twthread methode start
                 tool_wrapper_thread.set_dry(dry)
                 try:
-                    # be carefull here: the execution of the toolthreads is recursive meaning that calls to function may
+                    # be careful here: the execution of the toolthreads is recursive meaning that calls to function may
                     # be stacked (run -> notify success -> run(next tool) -> notify success(next tool) -> etc....
                     # totodo lucg twthread methode start
                     tool_wrapper_thread.run()
                 except Exception as e:
-                    # as mentionned above, there may be recursive calls to this function, so every exception can
+                    # as mentioned above, there may be recursive calls to this function, so every exception can
                     # pass here multiple times: this attribute is used for recognizing exception that have already been
                     # caught
                     if not hasattr(e, "teb_already_seen"):

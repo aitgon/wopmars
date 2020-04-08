@@ -699,7 +699,7 @@ class ToolWrapper(Base):
 
     def run(self):
         """
-        Should be implemented by the tool_python_path developper.
+        Should be implemented by the tool_python_path developer.
 
         The core function of the ToolWrapper is this method. It wraps the actual execution of the tool underlying the ToolWrapper.
 

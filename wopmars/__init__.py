@@ -17,7 +17,7 @@ Arguments:
 Options:
   -D --database=DATABASE       REQUIRED: Set the path to the database, e.g -D sqlite:///db.sqlite
   -w --wopfile=DEFINITION_FILE REQUIRED: Set the path to the definition file.
-  -c --clear-history           Clear WoPMaRS history. Should be used in case of bug which seem to be related to the history. Be carefull, clearing history will result in a re-execution of the whole workflow.
+  -c --cleanup-metadata           Clear WoPMaRS history. Should be used in case of bug which seem to be related to the history. Be carefull, clearing history will result in a re-execution of the whole workflow.
   -d --directory=DIR           Specify working directory (relative paths in the wopfile will use this as their origin). [default: $CWD].
   -F --forceall                Force the execution of the workflow, without checking for previous executions.
   -S RULE --since=RULE    Execute the workflow from the given RULE.
@@ -61,7 +61,7 @@ from wopmars.utils.various import get_mtime, get_current_time
 # totodo LucG option pour reset les resultats (supprimer le contenu de la database) / fresh run
 # totodo LucG ajouter un flag NOT_FINISHED aux executions
 
-__version__='0.0.2'
+# __version__ = '0.0.2'
 
 class WopMars:
 
@@ -99,7 +99,7 @@ class WopMars:
                 "tool": Use(bool),
                 "example": Use(bool),
                 "example_snp": Use(bool),
-                "--clear-history": Use(bool),
+                "--cleanup-metadata": Use(bool),
             })
             # The option values are validated using schema library
             OptionManager.instance().validate(schema_option)
@@ -155,16 +155,16 @@ class WopMars:
 
         ################################################################################################################
         #
-        # --clear-history (clear history and exit)
+        # --cleanup-metadata (clear history and exit)
         #
         ################################################################################################################
 
-        if OptionManager.instance()["--clear-history"]:
+        if OptionManager.instance()["--cleanup-metadata"]:
             Logger.instance().info("Deleting Wopmars history...")
             # Check if sqlite db path exists
             if pathlib.Path(SQLManager.instance().d_database_config['db_database']).is_file():
                 SQLManager.instance().clear_wopmars_history()
-            if OptionManager.instance()["--clear-history"]:
+            if OptionManager.instance()["--cleanup-metadata"]:
                 sys.exit(0)
 
         try:
