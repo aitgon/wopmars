@@ -72,7 +72,10 @@ class ToolWrapperThread(threading.Thread, Observable):
                 if OptionManager.instance()["--dry-run"]:  # dry run
                     Logger.instance().debug("Dry-run mode enabled. Execution skipped.")
                     self.__tool_wrapper.set_execution_infos(status="DRY")
-                else:  # dry run
+                else:  # normal execution
+                    # if OptionManager.instance()["--touch"]:  # dry run
+                    #     Logger.instance().debug("Touch mode enabled.")
+                    #     self.__tool_wrapper.touch()
                     Logger.instance().info("ToolWrapper: " + str(self.__tool_wrapper.rule_name) + " -> "
                                            + self.__tool_wrapper.__class__.__name__ + " started.")
                     output_file_fields = self.__tool_wrapper.specify_output_file()
@@ -80,10 +83,28 @@ class ToolWrapperThread(threading.Thread, Observable):
                         out_file_path = self.__tool_wrapper.output_file(out_field)
                         out_dir = os.path.dirname(out_file_path)
                         pathlib.Path(out_dir).mkdir(parents=True, exist_ok=True)
-                    self.__tool_wrapper.run()
+
+                    ####################################################################################################
+                    #
+                    # Touch output files of tool wrapper
+                    #
+                    ####################################################################################################
+
+                    if OptionManager.instance()["--touch"]:  # Just touch
+                        self.__tool_wrapper.touch()
+
+                    ####################################################################################################
+                    #
+                    # Normal run of tool wrapper
+                    #
+                    ####################################################################################################
+
+                    else:  # Run
+                        self.__tool_wrapper.run()
                     wopmars_session.commit()
                     time_unix_ms, time_human = get_current_time()
                     self.__tool_wrapper.set_execution_infos(start, time_human, "EXECUTED")
+
         except Exception as e:
             wopmars_session.rollback()
             self.__tool_wrapper.set_execution_infos(start, time_human, "ERROR")

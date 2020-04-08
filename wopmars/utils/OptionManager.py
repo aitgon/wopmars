@@ -111,6 +111,7 @@ class OptionManager(dict, SingletonMixin):
         OptionManager.instance()["--until"] = None
         OptionManager.instance()["--forceall"] = None
         OptionManager.instance()["--dry-run"] = None
+        OptionManager.instance()["--touch"] = None
         OptionManager.instance()["tool"] = None
         OptionManager.instance()["--database"] = "sqlite:///" + os.path.join(PathFinder.get_module_path(),
                                                                              "test/output", mod_name + ".sqlite")

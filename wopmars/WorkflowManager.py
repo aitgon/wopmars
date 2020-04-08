@@ -251,7 +251,7 @@ class WorkflowManager(ToolWrapperObserver):
                 # every predecessors of the tool_python_path have to be executed (or simulated)
                 # will not execute and set to dry if all these options
 
-                if not OptionManager.instance()["--forceall"]:  # if not in forceall option
+                if not OptionManager.instance()["--forceall"] and not OptionManager.instance()["--touch"]:  # if not in forceall option
                     if self.is_this_tool_wrapper_already_executed(tool_wrapper):  # this tool wrapper already executed
                         # some predecessors of this tool wrapper has not been executed
                         if not bool([tool_wrapper_predecessor for tool_wrapper_predecessor

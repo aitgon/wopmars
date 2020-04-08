@@ -13,7 +13,7 @@ from wopmars import WopMars
 
 from wopmars.utils.various import get_current_time
 from wopmars.Base import Base
-
+from wopmars.models.TableModificationTime import TableModificationTime
 
 class TestWopmars(TestCase):
 
@@ -44,7 +44,7 @@ class TestWopmars(TestCase):
         OptionManager._drop()
         SQLManager._drop()
 
-    def test_01run(self):
+    def test_run(self):
         cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-d", PathFinder.get_module_path()]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
@@ -52,6 +52,65 @@ class TestWopmars(TestCase):
         self.assertTrue(os.path.exists(os.path.join(self.s_root_path, 'test/output/output_file2.txt')))
         self.assertTrue(os.path.exists(os.path.join(self.s_root_path, 'test/output/output_file7.txt')))
         self.assertEqual(se.exception.code, 0)
+
+    def test_run_touch(self):
+
+        ################################################################################################################
+        #
+        # Normal run
+        #
+        ################################################################################################################
+
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-d", PathFinder.get_module_path(), "-U", "rule2"]
+        with self.assertRaises(SystemExit) as se:
+            WopMars().run(cmd_line)
+        # self.assertTrue(os.path.exists(os.path.join(self.s_root_path, 'test/output/output_file1.txt')))
+        # self.assertEqual(se.exception.code, 0)
+        output_file1_mtime = os.path.getmtime(os.path.join(self.s_root_path, 'test/output/output_file1.txt'))
+        foobase_mtime = SQLManager.instance().get_session().query(TableModificationTime)\
+            .filter_by(table_name='FooBase').first().mtime_epoch_millis
+
+        ################################################################################################################
+        #
+        # Dry-run
+        #
+        ################################################################################################################
+
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv",
+                    "-d", PathFinder.get_module_path(), "-U", "rule2 --dry-run"]
+        with self.assertRaises(SystemExit) as se:
+            WopMars().run(cmd_line)
+        # self.assertTrue(os.path.exists(os.path.join(self.s_root_path, 'test/output/output_file1.txt')))
+        # self.assertEqual(se.exception.code, 0)
+        output_file1_mtime_after_dry = os.path.getmtime(os.path.join(self.s_root_path, 'test/output/output_file1.txt'))
+        foobase_mtime_after_dry = SQLManager.instance().get_session().query(TableModificationTime)\
+            .filter_by(table_name='FooBase').first().mtime_epoch_millis
+
+        ################################################################################################################
+        #
+        # Touch output files
+        #
+        ################################################################################################################
+
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-d", PathFinder.get_module_path(),
+                    "-U", "rule2", "--touch"]
+        with self.assertRaises(SystemExit) as se:
+            WopMars().run(cmd_line)
+        output_file1_mtime_after_touch = os.path.getmtime(os.path.join(self.s_root_path, 'test/output/output_file1.txt'))
+        foobase_mtime_after_touch = SQLManager.instance().get_session().query(TableModificationTime)\
+            .filter_by(table_name='FooBase').first().mtime_epoch_millis
+
+        ################################################################################################################
+        #
+        # Assert that modification times have been updated
+        #
+        ################################################################################################################
+
+        self.assertEqual(output_file1_mtime, output_file1_mtime_after_dry)
+        self.assertEqual(foobase_mtime, foobase_mtime_after_dry)
+
+        self.assertLess(output_file1_mtime, output_file1_mtime_after_touch)
+        self.assertLess(foobase_mtime, foobase_mtime_after_touch)
 
     def test_db_forceall(self):
         """Tests the forceall option in the database. Will carry out different runs in either default or forceall mode

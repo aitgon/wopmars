@@ -1,8 +1,8 @@
 """WopMars: Workflow Python Manager for Reproducible Science.
 
 Usage:
-  wopmars (-D DATABASE) (-w DEFINITION_FILE) [-n] [-F] [-v...] [-d DIR] [-g FILE] [-L FILE] [-S RULE | -U RULE] [-c]
-  wopmars tool TOOLWRAPPER [-i DICT] [-o DICT] [-P DICT] [-F] [-D DATABASE] [-v...] [-d DIR] [-L FILE] [-g FILE] [-c]
+  wopmars (-D DATABASE) (-w DEFINITION_FILE) [-n] [-F] [-v...] [-d DIR] [-g FILE] [-L FILE] [-S RULE | -U RULE] [-c] [-t]
+  wopmars tool TOOLWRAPPER [-i DICT] [-o DICT] [-P DICT] [-F] [-D DATABASE] [-v...] [-d DIR] [-L FILE] [-g FILE] [-c] [-t]
   wopmars example [-d DIR]
   wopmars example_snp [-d DIR]
 
@@ -26,6 +26,7 @@ Options:
   -i --input=DICT              Set the input of the tool_python_path you want to use in the dictionary format.
   -L FILE --log=FILE           Write logs in FILE file [default: $HOME/.wopmars/wopmars.log].
   -n --dry-run                 Only display what would have been done.
+  -t --touch                 Only display what would have been done.
   -o --output=DICT             Set the output of the tool_python_path you want to use in the dictionary format.
   -P --params=DICT             Set the parameters of the tool_python_path you want to use in the dictionary format.
   -U RULE --until=RULE    Execute the workflow to the given RULE.
@@ -91,6 +92,7 @@ class WopMars:
                 "--until": Or(None, str),
                 "--forceall": Use(bool),
                 "--dry-run": Use(bool),
+                "--touch": Use(bool),
                 "--directory": Use(PathFinder.create_workingdir),
                 "--input": Use(DictUtils.str_to_dict),
                 "--output": Use(DictUtils.str_to_dict),
