@@ -107,8 +107,8 @@ class OptionManager(dict, SingletonMixin):
         OptionManager.instance()["--dot"] = None
         # OptionManager.instance()["--log"] = None
         # OptionManager.instance()["--printtools"] = True
-        OptionManager.instance()["--sourcerule"] = None
-        OptionManager.instance()["--targetrule"] = None
+        OptionManager.instance()["--since"] = None
+        OptionManager.instance()["--until"] = None
         OptionManager.instance()["--forceall"] = None
         OptionManager.instance()["--dry-run"] = None
         OptionManager.instance()["tool"] = None

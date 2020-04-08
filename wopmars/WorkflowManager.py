@@ -50,7 +50,7 @@ class WorkflowManager(ToolWrapperObserver):
         The list_queue_buffer will be filled with the tool threads that the WorkflowManager couldn't execute.
         The count_exec is a counter that keep trace of the number of tools that are currently executed.
         The dag_tools will contain the dag representing the workflow.
-        The dag_to_exec is basically the same dag than dag_tools or a subgraph depending on the options --sourcerule or --targetrule
+        The dag_to_exec is basically the same dag than dag_tools or a subgraph depending on the options --since or --until
         given by the user.
         The session is used to get back the session without calling again SQLManager.
         """
@@ -97,7 +97,7 @@ class WorkflowManager(ToolWrapperObserver):
 
     def get_dag_to_exec(self):
         """
-        Set the dag to exec in terms of --sourcerule option and --targetrule option.
+        Set the dag to exec in terms of --since option and --until option.
 
         The source rule is checked first (there should not be both set because of the checks at the begining of the software)
 
@@ -107,26 +107,26 @@ class WorkflowManager(ToolWrapperObserver):
         The set of obtained rules are used to build the "dag_to_exec". The nodes returned by get_all_successors and
         get_all_predecessors are implicitly all related.
         """
-        if OptionManager.instance()["--sourcerule"] is not None:
+        if OptionManager.instance()["--since"] is not None:
             try:
                 # Get the rule asked by the user as 'sourcerule'
-                node_from_rule = [n for n in self.__dag_tools if n.rule_name == OptionManager.instance()["--sourcerule"]][0]
+                node_from_rule = [n for n in self.__dag_tools if n.rule_name == OptionManager.instance()["--since"]][0]
             except IndexError:
                 raise WopMarsException(
-                    "The given rule to start from: " + OptionManager.instance()["--sourcerule"] + " doesn't exist.")
+                    "The given rule to start from: " + OptionManager.instance()["--since"] + " doesn't exist.")
 
             self.__dag_to_exec = DAG(self.__dag_tools.get_all_successors(node_from_rule))
-            Logger.instance().info("Running the workflow from rule " + str(OptionManager.instance()["--sourcerule"]) +
+            Logger.instance().info("Running the workflow from rule " + str(OptionManager.instance()["--since"]) +
                                    " -> " + node_from_rule.tool_python_path)
-        elif OptionManager.instance()["--targetrule"] is not None:
+        elif OptionManager.instance()["--until"] is not None:
             try:
                 # Get the rule asked by the user as 'targetrule'
-                node_from_rule = [n for n in self.__dag_tools if n.rule_name == OptionManager.instance()["--targetrule"]][0]
+                node_from_rule = [n for n in self.__dag_tools if n.rule_name == OptionManager.instance()["--until"]][0]
             except IndexError:
                 raise WopMarsException(
-                    "The given rule to go to: " + OptionManager.instance()["--targetrule"] + " doesn't exist.")
+                    "The given rule to go to: " + OptionManager.instance()["--until"] + " doesn't exist.")
             self.__dag_to_exec = DAG(self.__dag_tools.get_all_predecessors(node_from_rule))
-            Logger.instance().info("Running the workflow to the rule " + str(OptionManager.instance()["--targetrule"]) +
+            Logger.instance().info("Running the workflow to the rule " + str(OptionManager.instance()["--until"]) +
                                    " -> " + node_from_rule.tool_python_path)
         else:
             self.__dag_to_exec = self.__dag_tools

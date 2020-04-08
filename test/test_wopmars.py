@@ -163,7 +163,7 @@ class TestWopmars(TestCase):
         self.assertEqual(se.exception.code, 1)
 
     def test_04run_sourcerule_fail(self):
-        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "--sourcerule", "failure"]
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "--since", "failure"]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
         self.assertFalse(os.path.exists(os.path.join(self.s_root_path, 'test/output/output_file1.txt')))
@@ -178,7 +178,7 @@ class TestWopmars(TestCase):
         p.wait()
         p=subprocess.Popen(["touch", os.path.join(self.s_root_path, "test/output/output_file4.txt")])
         p.wait()
-        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-d", PathFinder.get_module_path(), "-vv", "--sourcerule", "rule2"]
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-d", PathFinder.get_module_path(), "-vv", "--since", "rule2"]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 0)
@@ -299,7 +299,7 @@ class TestWopmars(TestCase):
 
     def test_run_target_rule(self):
         # SQLManager.instance().create_all()
-        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "--targetrule", "rule3"]
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "--until", "rule3"]
         with self.assertRaises(SystemExit) as se:
            WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 0)
