@@ -50,7 +50,7 @@ class WorkflowManager(ToolWrapperObserver):
         The list_queue_buffer will be filled with the tool threads that the WorkflowManager couldn't execute.
         The count_exec is a counter that keep trace of the number of tools that are currently executed.
         The dag_tools will contain the dag representing the workflow.
-        The dag_to_exec is basically the same dag than dag_tools or a subgraph depending on the options --sourcerule or --targetrule
+        The dag_to_exec is basically the same dag than dag_tools or a subgraph depending on the options --since or --until
         given by the user.
         The session is used to get back the session without calling again SQLManager.
         """
@@ -77,7 +77,7 @@ class WorkflowManager(ToolWrapperObserver):
         # This create_all is supposed to only create workflow-management side models (called "wom_*")
         SQLManager.instance().create_all()
 
-        # if OptionManager.instance()["--clear-history"]:
+        # if OptionManager.instance()["--cleanup-metadata"]:
         #     Logger.instance().info("Deleting WoPMaRS history...")
         #     SQLManager.instance().drop_table_content_list(SQLManager.wopmars_history_tables)
 
@@ -97,7 +97,7 @@ class WorkflowManager(ToolWrapperObserver):
 
     def get_dag_to_exec(self):
         """
-        Set the dag to exec in terms of --sourcerule option and --targetrule option.
+        Set the dag to exec in terms of --since option and --until option.
 
         The source rule is checked first (there should not be both set because of the checks at the begining of the software)
 
@@ -107,26 +107,26 @@ class WorkflowManager(ToolWrapperObserver):
         The set of obtained rules are used to build the "dag_to_exec". The nodes returned by get_all_successors and
         get_all_predecessors are implicitly all related.
         """
-        if OptionManager.instance()["--sourcerule"] is not None:
+        if OptionManager.instance()["--since"] is not None:
             try:
                 # Get the rule asked by the user as 'sourcerule'
-                node_from_rule = [n for n in self.__dag_tools if n.rule_name == OptionManager.instance()["--sourcerule"]][0]
+                node_from_rule = [n for n in self.__dag_tools if n.rule_name == OptionManager.instance()["--since"]][0]
             except IndexError:
                 raise WopMarsException(
-                    "The given rule to start from: " + OptionManager.instance()["--sourcerule"] + " doesn't exist.")
+                    "The given rule to start from: " + OptionManager.instance()["--since"] + " doesn't exist.")
 
             self.__dag_to_exec = DAG(self.__dag_tools.get_all_successors(node_from_rule))
-            Logger.instance().info("Running the workflow from rule " + str(OptionManager.instance()["--sourcerule"]) +
+            Logger.instance().info("Running the workflow from rule " + str(OptionManager.instance()["--since"]) +
                                    " -> " + node_from_rule.tool_python_path)
-        elif OptionManager.instance()["--targetrule"] is not None:
+        elif OptionManager.instance()["--until"] is not None:
             try:
                 # Get the rule asked by the user as 'targetrule'
-                node_from_rule = [n for n in self.__dag_tools if n.rule_name == OptionManager.instance()["--targetrule"]][0]
+                node_from_rule = [n for n in self.__dag_tools if n.rule_name == OptionManager.instance()["--until"]][0]
             except IndexError:
                 raise WopMarsException(
-                    "The given rule to go to: " + OptionManager.instance()["--targetrule"] + " doesn't exist.")
+                    "The given rule to go to: " + OptionManager.instance()["--until"] + " doesn't exist.")
             self.__dag_to_exec = DAG(self.__dag_tools.get_all_predecessors(node_from_rule))
-            Logger.instance().info("Running the workflow to the rule " + str(OptionManager.instance()["--targetrule"]) +
+            Logger.instance().info("Running the workflow to the rule " + str(OptionManager.instance()["--until"]) +
                                    " -> " + node_from_rule.tool_python_path)
         else:
             self.__dag_to_exec = self.__dag_tools
@@ -197,51 +197,83 @@ class WorkflowManager(ToolWrapperObserver):
         # # toTODO LucG THIS METHOD IS NOT THREAD-SAFE (peut etre que si, à voir)
         #
 
+        ################################################################################################################
+        #
+        # Main while
         # If no tools have been added to the queue:
         #  - All tools have been executed and the queue is empty, so nothing happens
-        #  - There were remaing tools in the queue but they weren't ready, so they are tested again
+        #  - There were remaining tools in the queue but they weren't ready, so they are tested again
+        #
+        ################################################################################################################
+
         while not self.__queue_exec.empty():
             Logger.instance().debug("Queue size: " + str(self.__queue_exec.qsize()))
             Logger.instance().debug("Queue content: " + str(["rule: " + tt.get_toolwrapper().rule_name + "->" +
                                                              tt.get_toolwrapper().tool_python_path for tt in self.__queue_exec.get_queue_tuple()]))
+
+            ############################################################################################################
+            #
             # get the first element of the queue to execute
+            #
+            ############################################################################################################
+
             tool_wrapper_thread = self.__queue_exec.get()
             tool_wrapper = tool_wrapper_thread.get_toolwrapper()
+
             Logger.instance().debug("Current rule: " + tool_wrapper.rule_name + "->" + tool_wrapper.tool_python_path)
             # check if the predecessors of a rule have been already executed: a rule shouldn't be executed if
             # its predecessors have not been executed yet
             if not self.all_predecessors_have_run(tool_wrapper):
-                Logger.instance().debug("Predecessors of rule: " + tool_wrapper.rule_name + " have not been executed yet.")
-            # for running, either the inputs have to be ready or the dry-run mode is enabled
+               Logger.instance().debug("Predecessors of rule: " + tool_wrapper.rule_name + " have not been executed yet.")
+
+            ############################################################################################################
+            #
+            # Ready for running, either inputs are ready or dry-run mode is enabled
+            #
+            ############################################################################################################
+
             elif tool_wrapper.are_inputs_ready() or OptionManager.instance()["--dry-run"]:
                 # the state of inputs (table and file) are set in the db here.
                 tool_wrapper.set_args_time_and_size(1)
                 Logger.instance().debug("ToolWrapper ready: " + tool_wrapper.tool_python_path)
                 dry = False
-                # if forceall option, then the tool is reexecuted anyway
+
+                ############################################################################################################
+                #
+                # Will set to dry (ie. will not execute) if all these conditions are true
+                # - not in forceall mode
+                # - tool already executed previously
+                # - some predecessors of this tool wrapper has not been executed
+                #
+                ############################################################################################################
+
                 # check if the actual execution of the tool_python_path is necessary
                 # every predecessors of the tool_python_path have to be executed (or simulated)
-                if not OptionManager.instance()["--forceall"] and \
-                        self.is_this_tool_wrapper_already_executed(tool_wrapper) and \
-                        not bool([tool_wrapper_predecessor for tool_wrapper_predecessor in
-                                  self.__dag_to_exec.predecessors(tool_wrapper) if tool_wrapper_predecessor.status != "EXECUTED" and
-                                        tool_wrapper_predecessor.status != "ALREADY_EXECUTED"]):
-                    Logger.instance().info("ToolWrapper: {} -> {} seemed to have already been run with same parameters."
-                                           .format(tool_wrapper.rule_name, tool_wrapper.tool_python_path))
-                    dry = True
+                # will not execute and set to dry if all these options
 
-                # totodo lucg twthread verification des ressources
+                if not OptionManager.instance()["--forceall"] and not OptionManager.instance()["--touch"]:  # if not in forceall option
+                    if self.is_this_tool_wrapper_already_executed(tool_wrapper):  # this tool wrapper already executed
+                        # some predecessors of this tool wrapper has not been executed
+                        if not bool([tool_wrapper_predecessor for tool_wrapper_predecessor
+                                     in self.__dag_to_exec.predecessors(tool_wrapper)
+                                     if tool_wrapper_predecessor.status != "EXECUTED"
+                                        and tool_wrapper_predecessor.status != "ALREADY_EXECUTED"]):
+                            Logger.instance().info("ToolWrapper: {} -> {} seems to have already been run with same parameters."
+                                                   .format(tool_wrapper.rule_name, tool_wrapper.tool_python_path))
+                            dry = True
+
+                # totodo lucg twthread verification des resources
                 tool_wrapper_thread.subscribe(self)
                 self.__count_exec += 1
                 # totodo lucg twthread methode start
                 tool_wrapper_thread.set_dry(dry)
                 try:
-                    # be carefull here: the execution of the toolthreads is recursive meaning that calls to function may
+                    # be careful here: the execution of the toolthreads is recursive meaning that calls to function may
                     # be stacked (run -> notify success -> run(next tool) -> notify success(next tool) -> etc....
                     # totodo lucg twthread methode start
                     tool_wrapper_thread.run()
                 except Exception as e:
-                    # as mentionned above, there may be recursive calls to this function, so every exception can
+                    # as mentioned above, there may be recursive calls to this function, so every exception can
                     # pass here multiple times: this attribute is used for recognizing exception that have already been
                     # caught
                     if not hasattr(e, "teb_already_seen"):

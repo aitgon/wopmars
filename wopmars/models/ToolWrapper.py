@@ -1,4 +1,5 @@
 import os
+import pathlib
 
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
@@ -9,7 +10,8 @@ from wopmars.models.Option import Option
 from wopmars.utils.Logger import Logger
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.WopMarsException import WopMarsException
-from wopmars.utils.various import get_mtime
+from wopmars.utils.various import get_mtime, get_current_time
+from wopmars.models.TableModificationTime import TableModificationTime
 
 
 class ToolWrapper(Base):
@@ -630,8 +632,10 @@ class ToolWrapper(Base):
         return(s)
 
     def __str__(self):
-        inputs_list_str = [str(i) for i in self.relation_toolwrapper_to_fileioinfo + self.relation_toolwrapper_to_tableioinfo if i.relation_file_or_tableioinfo_to_typeio.is_input == 1]
-        outputs_list_str = [str(o) for o in self.relation_toolwrapper_to_fileioinfo + self.relation_toolwrapper_to_tableioinfo if o.relation_file_or_tableioinfo_to_typeio.is_input == 0]
+        inputs_list_str = [str(i) for i in self.relation_toolwrapper_to_fileioinfo +
+                           self.relation_toolwrapper_to_tableioinfo if i.relation_file_or_tableioinfo_to_typeio.is_input == 1]
+        outputs_list_str = [str(o) for o in self.relation_toolwrapper_to_fileioinfo +
+                            self.relation_toolwrapper_to_tableioinfo if o.relation_file_or_tableioinfo_to_typeio.is_input == 0]
         params_list_str = [str(p) for p in self.relation_toolwrapper_to_option]
         s = ""
         s += "ToolWrapper " + str(self.rule_name) + ":" + "\n"
@@ -649,7 +653,43 @@ class ToolWrapper(Base):
             s += "\t\t" + "\n\t\t".join(params_list_str)
         return s
 
-    ###### Method that worker developper should implement #######
+    def touch(self):
+        """Updates modification time of output table or file"""
+
+        ################################################################################################################
+        #
+        # Touch output table
+        #
+        ################################################################################################################
+
+        for output_table in [table for table in self.relation_toolwrapper_to_tableioinfo
+                             if table.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
+            out_table_inst = SQLManager.instance().get_session().query(TableModificationTime).filter_by(table_name=output_table.table_key).first()
+            timestamp_epoch_millis, timestamp_human = get_current_time()
+            out_table_inst.mtime_epoch_millis = timestamp_epoch_millis
+            out_table_inst.mtime_human = timestamp_human
+            SQLManager.instance().get_session().commit()
+
+        ################################################################################################################
+        #
+        # Touch output file
+        #
+        ################################################################################################################
+
+        for output_file in [this_file for this_file in self.relation_toolwrapper_to_fileioinfo
+                            if this_file.relation_file_or_tableioinfo_to_typeio.is_input == 0]:
+            if not (OptionManager.instance()["--directory"] is None):
+                output_file_path = os.path.join(OptionManager.instance()["--directory"], output_file.path)
+            else:
+                output_file_path = output_file.path
+            if os.path.exists(output_file_path):
+                pathlib.Path(output_file_path).touch(exist_ok=True)
+
+    ################################################################################################################
+    #
+    # Methods that the developer should implement
+    #
+    ################################################################################################################
 
     def specify_input_file(self):
         """
@@ -699,7 +739,7 @@ class ToolWrapper(Base):
 
     def run(self):
         """
-        Should be implemented by the tool_python_path developper.
+        Should be implemented by the tool_python_path developer.
 
         The core function of the ToolWrapper is this method. It wraps the actual execution of the tool underlying the ToolWrapper.
 
