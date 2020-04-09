@@ -107,10 +107,11 @@ class OptionManager(dict, SingletonMixin):
         OptionManager.instance()["--dot"] = None
         # OptionManager.instance()["--log"] = None
         # OptionManager.instance()["--printtools"] = True
-        OptionManager.instance()["--sourcerule"] = None
-        OptionManager.instance()["--targetrule"] = None
+        OptionManager.instance()["--since"] = None
+        OptionManager.instance()["--until"] = None
         OptionManager.instance()["--forceall"] = None
         OptionManager.instance()["--dry-run"] = None
+        OptionManager.instance()["--touch"] = None
         OptionManager.instance()["tool"] = None
         OptionManager.instance()["--database"] = "sqlite:///" + os.path.join(PathFinder.get_module_path(),
                                                                              "test/output", mod_name + ".sqlite")
@@ -121,7 +122,7 @@ class OptionManager(dict, SingletonMixin):
             OptionManager.instance()["--database"] = os.environ['DB_URL']
         #
         OptionManager.instance()["--directory"] = PathFinder.get_module_path()
-        OptionManager.instance()["--clear-history"] = False
+        OptionManager.instance()["--cleanup-metadata"] = False
         os.chdir(OptionManager.instance()["--directory"])
         # OptionManager.instance()["--tool_python_path-log"] = False
 

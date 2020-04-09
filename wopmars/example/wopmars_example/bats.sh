@@ -33,7 +33,7 @@ let piece_car_modif_time2=$(sqlite3 wopmarsexample/db.sqlite "select mtime_epoch
 @test "wopmars clear history" {
 
 # Third run with force: executes
-wopmars -d wopmarsexample -w wopmarsexample/Wopfile -D "sqlite:///wopmarsexample/db.sqlite" --clear-history
+wopmars -d wopmarsexample -w wopmarsexample/Wopfile -D "sqlite:///wopmarsexample/db.sqlite" --cleanup-metadata
 nb_rows=$(sqlite3 wopmarsexample/db.sqlite "select count() from wom_TableModificationTime")
 
 [[ "$nb_rows" -eq "0" ]]

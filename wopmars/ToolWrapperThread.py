@@ -59,27 +59,52 @@ class ToolWrapperThread(threading.Thread, Observable):
             # self.__tool_wrapper.set_session(wopmars_session)
             self.__tool_wrapper.session = wopmars_session
             # if the tool need to be executed because its output doesn't exist
-            if not self.__dry:
+            if self.__dry:  # tool_wrapper skipped
+                Logger.instance().info("ToolWrapper skipped: {} -> {}"
+                                       .format(self.__tool_wrapper.rule_name, self.__tool_wrapper.__class__.__name__))
+                # Logger.instance().info("ToolWrapper: " + str(self.__tool_wrapper.rule_name) +
+                #                        " -> " + self.__tool_wrapper.__class__.__name__ + " skipped.")
+                self.__tool_wrapper.set_execution_infos(start, time_human, "ALREADY_EXECUTED")
+            else:
                 Logger.instance().info(
                     "\n" + str(self.__tool_wrapper) + "\n" + "command line: \n\t" + self.get_command_line())
                 # if you shouldn't simulate
-                if not OptionManager.instance()["--dry-run"]:
-                    Logger.instance().info("ToolWrapper: " + str(self.__tool_wrapper.rule_name) + " -> " + self.__tool_wrapper.__class__.__name__ + " started.")
+                if OptionManager.instance()["--dry-run"]:  # dry run
+                    Logger.instance().debug("Dry-run mode enabled. Execution skipped.")
+                    self.__tool_wrapper.set_execution_infos(status="DRY")
+                else:  # normal execution
+                    # if OptionManager.instance()["--touch"]:  # dry run
+                    #     Logger.instance().debug("Touch mode enabled.")
+                    #     self.__tool_wrapper.touch()
+                    Logger.instance().info("ToolWrapper: " + str(self.__tool_wrapper.rule_name) + " -> "
+                                           + self.__tool_wrapper.__class__.__name__ + " started.")
                     output_file_fields = self.__tool_wrapper.specify_output_file()
                     for out_field in output_file_fields:
                         out_file_path = self.__tool_wrapper.output_file(out_field)
                         out_dir = os.path.dirname(out_file_path)
                         pathlib.Path(out_dir).mkdir(parents=True, exist_ok=True)
-                    self.__tool_wrapper.run()
+
+                    ####################################################################################################
+                    #
+                    # Touch output files of tool wrapper
+                    #
+                    ####################################################################################################
+
+                    if OptionManager.instance()["--touch"]:  # Just touch
+                        self.__tool_wrapper.touch()
+
+                    ####################################################################################################
+                    #
+                    # Normal run of tool wrapper
+                    #
+                    ####################################################################################################
+
+                    else:  # Run
+                        self.__tool_wrapper.run()
                     wopmars_session.commit()
                     time_unix_ms, time_human = get_current_time()
                     self.__tool_wrapper.set_execution_infos(start, time_human, "EXECUTED")
-                else:
-                    Logger.instance().debug("Dry-run mode enabled. Execution skipped.")
-                    self.__tool_wrapper.set_execution_infos(status="DRY")
-            else:
-                Logger.instance().info("ToolWrapper: " + str(self.__tool_wrapper.rule_name) + " -> " + self.__tool_wrapper.__class__.__name__ + " skipped.")
-                self.__tool_wrapper.set_execution_infos(start, time_human, "ALREADY_EXECUTED")
+
         except Exception as e:
             wopmars_session.rollback()
             self.__tool_wrapper.set_execution_infos(start, time_human, "ERROR")
