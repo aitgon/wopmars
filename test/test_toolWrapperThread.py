@@ -14,7 +14,7 @@ from wopmars.models.Option import Option
 from wopmars.models.TypeInputOrOutput import TypeInputOrOutput
 from wopmars.ToolWrapperThread import ToolWrapperThread
 from wopmars.utils.OptionManager import OptionManager
-from wopmars.utils.PathFinder import PathFinder
+from wopmars.utils.PathManager import PathManager
 from wopmars.utils.various import get_current_time
 
 
@@ -206,7 +206,7 @@ class TestToolWrapperThread(TestCase):
     def tearDown(self):
         SQLManager.instance().get_session().close()
         SQLManager.instance().drop_all()
-        PathFinder.silentremove("test/output/")
+        PathManager.silentremove("test/output/")
 
 if __name__ == '__main__':
     unittest.main()

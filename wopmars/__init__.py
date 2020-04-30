@@ -54,7 +54,7 @@ from wopmars.WorkflowManager import WorkflowManager
 from wopmars.utils.DictUtils import DictUtils
 from wopmars.utils.Logger import Logger
 from wopmars.utils.OptionManager import OptionManager
-from wopmars.utils.PathFinder import PathFinder
+from wopmars.utils.PathManager import PathManager
 from wopmars.utils.WopMarsException import WopMarsException
 from wopmars.utils.various import get_mtime, get_current_time
 
@@ -83,21 +83,21 @@ class WopMars:
         try:
             schema_option = Schema({
                 '--wopfile': Or("Wopfile", str),
-                '--database': Use(PathFinder.check_database_valid_url),
+                '--database': Use(PathManager.check_database_valid_url),
                 '-v': Or(0, And(int, lambda n: 1 <= n <= 2)),
-                '--dot': Or(None, And(Use(PathFinder.check_valid_path), Use(PathFinder.check_pygraphviz))),
-                "--log": Use(PathFinder.check_valid_path),
+                '--dot': Or(None, And(Use(PathManager.check_valid_path), Use(PathManager.check_pygraphviz))),
+                "--log": Use(PathManager.check_valid_path),
                 # '--printtools': Use(bool),
                 "--since": Or(None, str),
                 "--until": Or(None, str),
                 "--forceall": Use(bool),
                 "--dry-run": Use(bool),
                 "--touch": Use(bool),
-                "--directory": Use(PathFinder.create_workingdir),
+                "--directory": Use(PathManager.create_workingdir),
                 "--input": Use(DictUtils.str_to_dict),
                 "--output": Use(DictUtils.str_to_dict),
                 "--params": Use(DictUtils.str_to_dict),
-                "TOOLWRAPPER": Or(None, Use(PathFinder.is_in_python_path)),
+                "TOOLWRAPPER": Or(None, Use(PathManager.is_in_python_path)),
                 "tool": Use(bool),
                 "example": Use(bool),
                 "example_snp": Use(bool),

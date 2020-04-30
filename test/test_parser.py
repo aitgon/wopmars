@@ -16,7 +16,7 @@ from wopmars.models.TypeInputOrOutput import TypeInputOrOutput
 from wopmars.DAG import DAG
 from wopmars.Parser import Parser
 from wopmars.utils.OptionManager import OptionManager
-from wopmars.utils.PathFinder import PathFinder
+from wopmars.utils.PathManager import PathManager
 from wopmars.utils.WopMarsException import WopMarsException
 
 
@@ -29,13 +29,13 @@ class TestParser(TestCase):
         session.get_or_create(TypeInputOrOutput, defaults={"is_input": True}, is_input=True)
         session.get_or_create(TypeInputOrOutput, defaults={"is_input": False}, is_input=False)
         session.commit()
-        self.__s_root_path = PathFinder.get_module_path()
+        self.__s_root_path = PathManager.get_module_path()
         self.__parser = Parser()
 
     def tearDown(self):
         SQLManager.instance().get_session().close()
         SQLManager.instance().drop_all()
-        PathFinder.dir_content_remove("test/output")
+        PathManager.dir_content_remove("test/output")
         OptionManager._drop()
         SQLManager._drop()
 

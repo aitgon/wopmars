@@ -5,7 +5,7 @@ from unittest import TestCase
 from wopmars.SQLManager import SQLManager
 from wopmars.WorkflowManager import WorkflowManager
 from wopmars.utils.OptionManager import OptionManager
-from wopmars.utils.PathFinder import PathFinder
+from wopmars.utils.PathManager import PathManager
 from wopmars.utils.WopMarsException import WopMarsException
 
 
@@ -14,7 +14,7 @@ class TestWorkflowManager(TestCase):
     def setUp(self):
         OptionManager.initial_test_setup()
         SQLManager.instance().create_all()
-        s_root_path = PathFinder.get_module_path()
+        s_root_path = PathManager.get_module_path()
 
         self.__s_path_to_example_definition_file_finishing = os.path.join(s_root_path, "test/resource/wopfile/example_def_file1.yml")
         self.__s_path_to_example_definition_file_that_end_with_error = os.path.join(s_root_path, "test/resource/wopfile/example_def_file5_never_ready.yml")
@@ -24,7 +24,7 @@ class TestWorkflowManager(TestCase):
     def tearDown(self):
         SQLManager.instance().get_session().close()
         SQLManager.instance().drop_all()
-        PathFinder.dir_content_remove("test/output")
+        PathManager.dir_content_remove("test/output")
         OptionManager._drop()
         SQLManager._drop()
 

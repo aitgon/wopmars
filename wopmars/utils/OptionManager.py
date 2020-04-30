@@ -3,7 +3,7 @@ Module containing the OptionManager class.
 """
 import os
 
-from wopmars.utils.PathFinder import PathFinder
+from wopmars.utils.PathManager import PathManager
 from wopmars.utils.Singleton import SingletonMixin
 
 
@@ -113,7 +113,7 @@ class OptionManager(dict, SingletonMixin):
         OptionManager.instance()["--dry-run"] = None
         OptionManager.instance()["--touch"] = None
         OptionManager.instance()["tool"] = None
-        OptionManager.instance()["--database"] = "sqlite:///" + os.path.join(PathFinder.get_module_path(),
+        OptionManager.instance()["--database"] = "sqlite:///" + os.path.join(PathManager.get_module_path(),
                                                                              "test/output", mod_name + ".sqlite")
         #
         # If DB set in environment variable, for instance for MySQL, then override default database value
@@ -121,7 +121,7 @@ class OptionManager(dict, SingletonMixin):
         if 'DB_URL' in os.environ:
             OptionManager.instance()["--database"] = os.environ['DB_URL']
         #
-        OptionManager.instance()["--directory"] = PathFinder.get_module_path()
+        OptionManager.instance()["--directory"] = PathManager.get_module_path()
         OptionManager.instance()["--cleanup-metadata"] = False
         os.chdir(OptionManager.instance()["--directory"])
         # OptionManager.instance()["--tool_python_path-log"] = False

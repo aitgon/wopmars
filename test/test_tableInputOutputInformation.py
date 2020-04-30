@@ -7,12 +7,12 @@ from test.resource.model.FooBase2 import FooBase2
 from wopmars.SQLManager import SQLManager
 from wopmars.models.TableInputOutputInformation import TableInputOutputInformation
 from wopmars.utils.OptionManager import OptionManager
-from wopmars.utils.PathFinder import PathFinder
+from wopmars.utils.PathManager import PathManager
 
 
 class TestTableInputOutputInformation(TestCase):
     def setUp(self):
-        self.s_root_path = PathFinder.get_module_path()
+        self.s_root_path = PathManager.get_module_path()
         OptionManager.initial_test_setup()
         SQLManager.instance().create_all()
         self.__local_session = SQLManager.instance().get_session()
@@ -35,7 +35,7 @@ class TestTableInputOutputInformation(TestCase):
     def tearDown(self):
         SQLManager.instance().get_session().close()
         SQLManager.instance().drop_all()
-        PathFinder.dir_content_remove(os.path.join(self.s_root_path, "test/output"))
+        PathManager.dir_content_remove(os.path.join(self.s_root_path, "test/output"))
         OptionManager._drop()
         SQLManager._drop()
 

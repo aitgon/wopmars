@@ -17,7 +17,7 @@ from wopmars.models.ToolWrapper import ToolWrapper
 from wopmars.models.TypeInputOrOutput import TypeInputOrOutput
 from wopmars.Reader import Reader
 from wopmars.utils.OptionManager import OptionManager
-from wopmars.utils.PathFinder import PathFinder
+from wopmars.utils.PathManager import PathManager
 from wopmars.utils.SetUtils import SetUtils
 from wopmars.utils.WopMarsException import WopMarsException
 
@@ -34,7 +34,7 @@ class TestReader(TestCase):
         self.__session = SQLManager.instance().get_session()
         self.__reader = Reader()
 
-        self.__s_root_path = PathFinder.get_module_path()
+        self.__s_root_path = PathManager.get_module_path()
 
         # The good -------------------------------:
 
@@ -216,9 +216,9 @@ class TestReader(TestCase):
 
     def tearDown(self):
         SQLManager.instance().get_session().close()
-        s_root_path = PathFinder.get_module_path()
+        s_root_path = PathManager.get_module_path()
         SQLManager.instance().drop_all()
-        PathFinder.dir_content_remove(os.path.join(s_root_path, "test/output"))
+        PathManager.dir_content_remove(os.path.join(s_root_path, "test/output"))
         OptionManager._drop()
         SQLManager._drop()
 

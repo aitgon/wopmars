@@ -7,14 +7,14 @@ import importlib
 import os
 
 
-class PathFinder:
+class PathManager:
     """
     Static class for finding paths
     """
     @staticmethod
     def get_module_path():
         """
-        Find the Src directory of the project
+        Find the root directory of the package
 
         :return: the path leading to the src file of the project
         """
@@ -92,7 +92,7 @@ class PathFinder:
     def dir_content_remove(path):
         for f in os.listdir(path):
             if not f.startswith("."):
-                PathFinder.silentremove(os.path.join(path, f))
+                PathManager.silentremove(os.path.join(path, f))
 
     @staticmethod
     def is_in_python_path(name):

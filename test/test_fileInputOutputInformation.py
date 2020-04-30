@@ -5,14 +5,14 @@ from unittest import TestCase
 from wopmars.SQLManager import SQLManager
 from wopmars.models.FileInputOutputInformation import FileInputOutputInformation
 from wopmars.utils.OptionManager import OptionManager
-from wopmars.utils.PathFinder import PathFinder
+from wopmars.utils.PathManager import PathManager
 
 
 class TestFileInputOutputInformation(TestCase):
     def setUp(self):
         OptionManager.initial_test_setup()
 
-        self.s_root_path = PathFinder.get_module_path()
+        self.s_root_path = PathManager.get_module_path()
         s_path_to_example_existing_file = os.path.join(self.s_root_path, "test/resource/input_files/example_existing_file.txt")
         s_path_to_example_existing_file2 = os.path.join(self.s_root_path, "test/resource/input_files/example_existing_file2.txt")
         s_path_to_example_not_existing_file = os.path.join(self.s_root_path, "test/resource/input_files/example_not_existing_file.txt")
@@ -36,7 +36,7 @@ class TestFileInputOutputInformation(TestCase):
     def tearDown(self):
         SQLManager.instance().get_session().close()
         SQLManager.instance().drop_all()
-        PathFinder.dir_content_remove(os.path.join(self.s_root_path, "test/output"))
+        PathManager.dir_content_remove(os.path.join(self.s_root_path, "test/output"))
         OptionManager._drop()
         SQLManager._drop()
 

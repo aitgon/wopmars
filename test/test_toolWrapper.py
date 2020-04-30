@@ -15,7 +15,7 @@ from wopmars.models.Option import Option
 from wopmars.models.ToolWrapper import ToolWrapper
 from wopmars.models.TypeInputOrOutput import TypeInputOrOutput
 from wopmars.utils.OptionManager import OptionManager
-from wopmars.utils.PathFinder import PathFinder
+from wopmars.utils.PathManager import PathManager
 from wopmars.utils.WopMarsException import WopMarsException
 from wopmars.utils.various import get_current_time
 from wopmars.utils.various import get_mtime
@@ -25,7 +25,7 @@ class TestToolWrapper(TestCase):
 
     def setUp(self):
         OptionManager.initial_test_setup()
-        self.s_root_path = PathFinder.get_module_path()
+        self.s_root_path = PathManager.get_module_path()
         SQLManager.instance().create_all()
 
         set_tw_to_add = set()
@@ -234,7 +234,7 @@ class TestToolWrapper(TestCase):
 
         ### ToolWrappers for are_input_ready
 
-        s_root_path = PathFinder.get_module_path()
+        s_root_path = PathManager.get_module_path()
 
         s_path_to_example_file_that_exists = os.path.join(s_root_path, "test/resource/input_files/input_file1.txt")
 
@@ -360,7 +360,7 @@ class TestToolWrapper(TestCase):
         modif = TableModificationTime(table_name="FooBase", mtime_epoch_millis=moment, mtime_human=mtime_human)
         modif.relation_tablemodiftime_to_tableioinfo.append(t1)
 
-        root = PathFinder.get_module_path()
+        root = PathManager.get_module_path()
         path_f1 = os.path.join(root, "test/output/path1")
         time.sleep(2)
         p = subprocess.Popen(["touch", path_f1])
@@ -395,7 +395,7 @@ class TestToolWrapper(TestCase):
     def tearDown(self):
         SQLManager.instance().get_session().close()
         SQLManager.instance().drop_all()
-        PathFinder.dir_content_remove(os.path.join(self.s_root_path, "test/output"))
+        PathManager.dir_content_remove(os.path.join(self.s_root_path, "test/output"))
         OptionManager._drop()
         SQLManager._drop()
 

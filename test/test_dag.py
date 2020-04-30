@@ -9,7 +9,7 @@ from wopmars.models.ToolWrapper import ToolWrapper
 from wopmars.models.TypeInputOrOutput import TypeInputOrOutput
 from wopmars.DAG import DAG
 from wopmars.utils.OptionManager import OptionManager
-from wopmars.utils.PathFinder import PathFinder
+from wopmars.utils.PathManager import PathManager
 
 
 class TestDAG(TestCase):
@@ -100,7 +100,7 @@ class TestDAG(TestCase):
         SQLManager.instance().get_session().close() 
         SQLManager.instance().drop_all()
         OptionManager._drop()
-        PathFinder.silentremove("test/output/output_file1.txt")
+        PathManager.silentremove("test/output/output_file1.txt")
         SQLManager._drop()
 
     def test_init(self):
