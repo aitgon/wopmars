@@ -103,19 +103,19 @@ class Logger(SingletonMixin):
                 self.__logger.addHandler(self.__file_handler_stderr)
 
     def debug(self, msg):
-        formatter_stream = logging.Formatter(ColorPrint.cyan(self.formatter_str))
+        formatter_stream = logging.Formatter(ColorPrint.blue(self.formatter_str))
         self.stream_handler_stderr.setFormatter(formatter_stream)
         self.stream_handler_stdout.setFormatter(formatter_stream)
         self.__logger.debug(msg)
 
     def info(self, msg):
-        formatter_stream = logging.Formatter(ColorPrint.blue(self.formatter_str))
+        formatter_stream = logging.Formatter(ColorPrint.green(self.formatter_str))
         self.stream_handler_stderr.setFormatter(formatter_stream)
         self.stream_handler_stdout.setFormatter(formatter_stream)
         self.__logger.info(msg)
 
     def warning(self, msg):
-        formatter_stream = logging.Formatter(ColorPrint.magenta(self.formatter_str))
+        formatter_stream = logging.Formatter(ColorPrint.yellow(self.formatter_str))
         self.stream_handler_stderr.setFormatter(formatter_stream)
         self.stream_handler_stdout.setFormatter(formatter_stream)
         self.__logger.warning(msg)
@@ -127,31 +127,7 @@ class Logger(SingletonMixin):
         self.__logger.error(msg)
 
     def critical(self, msg):
-        formatter_stream = logging.Formatter(ColorPrint.red_reverse(self.formatter_str))
+        formatter_stream = logging.Formatter(ColorPrint.red(self.formatter_str))
         self.stream_handler_stderr.setFormatter(formatter_stream)
         self.stream_handler_stdout.setFormatter(formatter_stream)
         self.__logger.critical(msg)
-
-    # def toolwrapper_debug(self, msg, tw_name):
-    #     if OptionManager.instance()["--tool_python_path-log"]:
-    #         self.__tw_streamhandler.setFormatter(
-    #             logging.Formatter(ColorPrint.green(tw_name + ' ::  %(levelname)s :: %(asctime)s :: %(message)s')))
-    #         self.__tw_logger.debug(msg)
-    #
-    # def toolwrapper_info(self, msg, tw_name):
-    #     if OptionManager.instance()["--tool_python_path-log"]:
-    #         self.__tw_streamhandler.setFormatter(
-    #             logging.Formatter(ColorPrint.green(tw_name + ' :: %(levelname)s :: %(asctime)s :: %(message)s')))
-    #         self.__tw_logger.info(msg)
-    #
-    # def toolwrapper_warning(self, msg, tw_name):
-    #     if OptionManager.instance()["--tool_python_path-log"]:
-    #         self.__tw_streamhandler.setFormatter(
-    #             logging.Formatter(ColorPrint.green(tw_name + ' :: %(levelname)s :: %(asctime)s :: %(message)s')))
-    #         self.__tw_logger.warning(msg)
-    #
-    # def toolwrapper_error(self, msg, tw_name):
-    #     if OptionManager.instance()["--tool_python_path-log"]:
-    #         self.__tw_streamhandler.setFormatter(logging.Formatter(ColorPrint.green(tw_name + ' :: %(asctime)s :: %(levelname)s :: %(message)s')))
-    #         self.__tw_logger.error(msg)
-
