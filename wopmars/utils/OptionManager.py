@@ -83,12 +83,12 @@ class OptionManager(dict, SingletonMixin):
 
     def validate_log(self):
         if self["--log"]:
-            if self["--log"][0] == "$":
-                self["--log"] = "~/.wopmars/wopmars.log"
-            elif self["--log"][-1] == "/":
-                self["--log"] += "wopmars.log"
-            elif self["--log"][-4:] != '.log':
-                self["--log"] += ".log"
+            # if self["--log"][0] == "$":
+            #     self["--log"] = "~/.wopmars/wopmars.log"
+            # elif self["--log"][-1] == "/":
+            #     self["--log"] += "wopmars.log"
+            # elif self["--log"][-4:] != '.log':
+            #     self["--log"] += ".log"
             self["--log"] = os.path.expanduser(self["--log"])
 
 

@@ -24,7 +24,7 @@ Options:
   -g FILE --dot=FILE           Write dot representing the workflow in the FILE file (with .dot extension). This option needs to install WopMars with pygraphviz (pip install wopmars[pygraphviz])
   -h --help                    Show this help.
   -i --input=DICT              Set the input of the tool_python_path you want to use in the dictionary format.
-  -L FILE --log=FILE           Write logs in FILE file [default: $HOME/.wopmars/wopmars.log].
+  -L FILE --log=FILE           Write logs in FILE file.
   -n --dry-run                 Only display what would have been done.
   -t --touch                 Only display what would have been done.
   -o --output=DICT             Set the output of the tool_python_path you want to use in the dictionary format.
