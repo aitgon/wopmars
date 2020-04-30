@@ -1,11 +1,10 @@
 # -*- coding: UTF-8 -*-
 
-__author__ = "Luc Giffon, Lionel Spinelli, Aitor Gonzalez"
-__copyright__ = "Since copyright 2017, Luc Giffon, Lionel Spinelli, Aitor Gonzalez"
+__author__ = "Aitor Gonzalez, Luc Giffon, Lionel Spinelli"
+__copyright__ = "Copyright: since 2017, Aitor Gonzalez, Luc Giffon, Lionel Spinelli"
 __email__ = "aitor.gonzalez@univ-amu.fr"
 __license__ = "MIT"
 
-#import wopmars
 from codecs import open
 from os import path
 import sys
@@ -19,8 +18,8 @@ def get_version():
     config.read(os.path.join('.', 'setup.cfg'))
     return config.get('metadata', 'version')
 
-if sys.version_info < (3, 3):
-    print("At least Python 3.3 is required.\n", file=sys.stderr)
+if sys.version_info < (3, 7):
+    print("At least Python 3.7 is required.\n", file=sys.stderr)
     exit(1)
 
 try:
@@ -51,12 +50,9 @@ setup(name='wopmars',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         'Operating System :: POSIX :: Linux',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Topic :: Database :: Front-Ends',
-        'Topic :: Scientific/Engineering :: Bio-Informatics',
+        'Topic :: Scientific/Engineering :: Bioinformatics',
         'Topic :: Scientific/Engineering :: Information Analysis',
         'Topic :: Software Development',
     ],
