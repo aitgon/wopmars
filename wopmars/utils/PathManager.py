@@ -5,6 +5,7 @@ multiple-lined
 import errno
 import importlib
 import os
+import pathlib
 
 
 class PathManager:
@@ -12,29 +13,41 @@ class PathManager:
     Static class for finding paths
     """
     @staticmethod
-    def get_module_path():
+    def get_package_path():
         """
         Find the root directory of the package
 
         :return: the path leading to the src file of the project
         """
 
-        module_path = os.path.join(os.path.dirname(__file__), "../..")
-        return module_path
+        package_path = os.path.join(os.path.dirname(__file__), "../..")
+        return package_path
+
+    @staticmethod
+    def get_test_path():
+        """
+        Find the tests output of the project
+
+        :return: the output leading to the tests output of the project
+        """
+
+        test_dir_path = os.path.join(os.path.dirname(__file__), "../../test")
+        pathlib.Path(test_dir_path).mkdir(parents=True, exist_ok=True)
+        return test_dir_path
 
     @staticmethod
     def check_pygraphviz(path):
         importlib.import_module("pygraphviz")
 
-    @staticmethod
-    def create_workingdir(path):
-        try:
-            os.makedirs(path)
-            return True
-        except OSError as exception:
-            if exception.errno != errno.EEXIST:
-                raise
-                return True
+    # @staticmethod
+    # def create_workingdir(path):
+    #     try:
+    #         os.makedirs(path)
+    #         return True
+    #     except OSError as exception:
+    #         if exception.errno != errno.EEXIST:
+    #             raise
+    #             return True
 
     @staticmethod
     def check_database_valid_url(url):
@@ -48,7 +61,7 @@ class PathManager:
         """
         db_connection = url.split("://")[0]
         if db_connection == "sqlite":
-            sqlite_db_path=url.replace("sqlite:///", "")
+            sqlite_db_path = url.replace("sqlite:///", "")
             if not os.path.isabs(sqlite_db_path):
                 sqlite_db_path = os.path.join(os.getcwd(), sqlite_db_path)
             try:
@@ -77,22 +90,28 @@ class PathManager:
             raise FileNotFoundError
 
     @staticmethod
-    def silentremove(path):
+    def unlink(path):
         """
         Remove a file that may not exist.
-        :param path:
-        :return:
+
+        Parameters
+        ----------
+        path
+
+        Returns
+        -------
+
         """
         try:
-            os.remove(path)
-        except OSError:
+            pathlib.Path(path).unlink()
+        except FileNotFoundError:
             pass
 
     @staticmethod
     def dir_content_remove(path):
         for f in os.listdir(path):
             if not f.startswith("."):
-                PathManager.silentremove(os.path.join(path, f))
+                PathManager.unlink(os.path.join(path, f))
 
     @staticmethod
     def is_in_python_path(name):

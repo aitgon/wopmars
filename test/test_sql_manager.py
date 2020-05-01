@@ -30,9 +30,12 @@ class ConcurrentRollBackingThread(threading.Thread):
 
 
 class TestSQLManager(TestCase):
+
     def setUp(self):
-        OptionManager.initial_test_setup()
-        SQLManager.instance().create_all()
+
+        OptionManager.initial_test_setup()  # Set test arguments
+        SQLManager.instance().create_all()  # Create database with tables
+
         self.__local_session = SQLManager.instance().get_session()
 
         SQLManager()

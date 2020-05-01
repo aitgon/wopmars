@@ -1,4 +1,5 @@
 import os
+import shutil
 import subprocess
 import time
 import unittest
@@ -24,9 +25,10 @@ from wopmars.utils.various import get_mtime
 class TestToolWrapper(TestCase):
 
     def setUp(self):
-        OptionManager.initial_test_setup()
-        self.s_root_path = PathManager.get_module_path()
-        SQLManager.instance().create_all()
+
+        self.test_path = PathManager.get_test_path()
+        OptionManager.initial_test_setup()  # Set test arguments
+        SQLManager.instance().create_all()  # Create database with tables
 
         set_tw_to_add = set()
         self.__session = SQLManager.instance().get_session()
@@ -34,7 +36,7 @@ class TestToolWrapper(TestCase):
         self.input_entry = TypeInputOrOutput(is_input=True)
         self.output_entry = TypeInputOrOutput(is_input=False)
 
-        ### Toolwrappers for __eq__ test_bak
+        # Toolwrappers for __eq__ test_bak
         opt1 = Option(name="param1", value="1")
 
         f1 = FileInputOutputInformation(file_key="input1", path="file1.txt")
@@ -71,7 +73,7 @@ class TestToolWrapper(TestCase):
         self.__toolwrapper3.relation_toolwrapper_to_fileioinfo.extend([f1, f2])
         self.__toolwrapper3.relation_toolwrapper_to_option.append(opt1)
 
-        ### ToolWrappers for content_respected
+        # ToolWrappers for content_respected
         opt1 = Option(name="param1", value="2")
 
         f1 = FileInputOutputInformation(file_key="input1", path="file1.txt")
@@ -212,7 +214,7 @@ class TestToolWrapper(TestCase):
         self.__foowrapper_wrong_content5.relation_toolwrapper_to_fileioinfo.extend([f1, f2])
         self.__foowrapper_wrong_content5.relation_toolwrapper_to_tableioinfo.extend([t1, t2])
 
-        ### TooLWrappers for follows
+        # TooLWrappers for follows
 
         f1 = FileInputOutputInformation(file_key="input1", path="file1.txt")
         f1.relation_file_or_tableioinfo_to_typeio = self.input_entry
@@ -232,11 +234,9 @@ class TestToolWrapper(TestCase):
         self.__toolwrapper_second = FooWrapper2(rule_name="rule2")
         self.__toolwrapper_second.relation_toolwrapper_to_fileioinfo.extend([f1, f2])
 
-        ### ToolWrappers for are_input_ready
+        # ToolWrappers for are_input_ready
 
-        s_root_path = PathManager.get_module_path()
-
-        s_path_to_example_file_that_exists = os.path.join(s_root_path, "test/resource/input_files/input_file1.txt")
+        s_path_to_example_file_that_exists = os.path.join(self.test_path, "resource/input_files/input_file1.txt")
 
         f1 = FileInputOutputInformation(file_key="input1", path=s_path_to_example_file_that_exists)
         f1.relation_file_or_tableioinfo_to_typeio = self.input_entry
@@ -349,7 +349,6 @@ class TestToolWrapper(TestCase):
 
     def test_is_output_ok(self):
 
-
         mtime_epoch_millis, mtime_human = get_current_time()
         moment = mtime_epoch_millis
         t1 = TableInputOutputInformation(model_py_path="FooBase", table_key="FooBase", table_name="FooBase")
@@ -360,8 +359,7 @@ class TestToolWrapper(TestCase):
         modif = TableModificationTime(table_name="FooBase", mtime_epoch_millis=moment, mtime_human=mtime_human)
         modif.relation_tablemodiftime_to_tableioinfo.append(t1)
 
-        root = PathManager.get_module_path()
-        path_f1 = os.path.join(root, "test/output/path1")
+        path_f1 = os.path.join(self.test_path, "outdir/path1")
         time.sleep(2)
         p = subprocess.Popen(["touch", path_f1])
         p.wait()
@@ -395,7 +393,7 @@ class TestToolWrapper(TestCase):
     def tearDown(self):
         SQLManager.instance().get_session().close()
         SQLManager.instance().drop_all()
-        PathManager.dir_content_remove(os.path.join(self.s_root_path, "test/output"))
+        shutil.rmtree(os.path.join(self.test_path, "outdir"), ignore_errors=True)
         OptionManager._drop()
         SQLManager._drop()
 

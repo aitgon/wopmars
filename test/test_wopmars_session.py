@@ -11,17 +11,17 @@ from wopmars.utils.PathManager import PathManager
 
 
 class TestWopMarsSession(TestCase):
+
     def setUp(self):
-        OptionManager.initial_test_setup()
-        self.s_root_path = PathManager.get_module_path()
-        SQLManager.instance().create_all()
+
+        OptionManager.initial_test_setup()  # Set test arguments
+        SQLManager.instance().create_all()  # Create database with tables)
         self.__session = SQLManager.instance().get_session()
 
     def tearDown(self):
         self.__session.rollback()
         SQLManager.instance().get_session().close()
         SQLManager.instance().drop_all()
-        PathManager.dir_content_remove(os.path.join(self.s_root_path, "test/output"))
         OptionManager._drop()
         SQLManager._drop()
 

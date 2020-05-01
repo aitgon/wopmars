@@ -1,4 +1,5 @@
 import os
+import shutil
 import unittest
 from unittest import TestCase
 
@@ -10,12 +11,12 @@ from wopmars.utils.PathManager import PathManager
 
 class TestFileInputOutputInformation(TestCase):
     def setUp(self):
-        OptionManager.initial_test_setup()
+        self.test_path = PathManager.get_test_path()  # Get test path
+        OptionManager.initial_test_setup()  # Set test arguments
 
-        self.s_root_path = PathManager.get_module_path()
-        s_path_to_example_existing_file = os.path.join(self.s_root_path, "test/resource/input_files/example_existing_file.txt")
-        s_path_to_example_existing_file2 = os.path.join(self.s_root_path, "test/resource/input_files/example_existing_file2.txt")
-        s_path_to_example_not_existing_file = os.path.join(self.s_root_path, "test/resource/input_files/example_not_existing_file.txt")
+        s_path_to_example_existing_file = os.path.join(self.test_path, "resource/input_files/example_existing_file.txt")
+        s_path_to_example_existing_file2 = os.path.join(self.test_path, "resource/input_files/example_existing_file2.txt")
+        s_path_to_example_not_existing_file = os.path.join(self.test_path, "resource/input_files/example_not_existing_file.txt")
 
         self.__io_file_existing = FileInputOutputInformation(file_key="existing_file", path=s_path_to_example_existing_file)
         self.__io_file_existing2 = FileInputOutputInformation(file_key="existing_file", path=s_path_to_example_existing_file)
@@ -36,7 +37,7 @@ class TestFileInputOutputInformation(TestCase):
     def tearDown(self):
         SQLManager.instance().get_session().close()
         SQLManager.instance().drop_all()
-        PathManager.dir_content_remove(os.path.join(self.s_root_path, "test/output"))
+        shutil.rmtree(os.path.join(self.test_path, "outdir"), ignore_errors=True)
         OptionManager._drop()
         SQLManager._drop()
 

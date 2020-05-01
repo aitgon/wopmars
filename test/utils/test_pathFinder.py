@@ -6,7 +6,7 @@ from wopmars.utils.PathManager import PathManager
 
 class TestPathFinder(TestCase):
     #def test_find_src(self):
-    #    self.assertEqual(PathManager.get_module_path("/home/user/wopmars/toto/tata"), "/home/user/wopmars/")
+    #    self.assertEqual(PathManager.get_package_path("/home/user/wopmars/toto/tata"), "/home/user/wopmars/")
 
     def test_check_valid_path(self):
         self.assertIsNone(PathManager.check_valid_path(None))

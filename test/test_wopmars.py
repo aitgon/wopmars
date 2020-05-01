@@ -1,4 +1,5 @@
 import pathlib
+import shutil
 from unittest import TestCase
 
 import os
@@ -6,51 +7,44 @@ import subprocess
 import unittest
 
 from wopmars import OptionManager
+from wopmars import WopMars
+from wopmars.Base import Base
 from wopmars.SQLManager import SQLManager
 from wopmars.models.Execution import Execution
-from wopmars.utils.PathManager import PathManager
-from wopmars import WopMars
-
-from wopmars.utils.various import get_current_time
-from wopmars.Base import Base
 from wopmars.models.TableModificationTime import TableModificationTime
+from wopmars.utils.PathManager import PathManager
+from wopmars.utils.various import get_current_time
+
 
 class TestWopmars(TestCase):
 
-
     def setUp(self):
-        self.s_root_path = PathManager.get_module_path()
-        os.chdir(self.s_root_path)
-        #
-        # Intial test options
-        #
-        OptionManager.initial_test_setup()
+        self.test_path = PathManager.get_test_path()  # Get test path
+        OptionManager.initial_test_setup()  # Set test arguments
         self.__db_url = OptionManager.instance()["--database"]
-        if 'DB_URL' in os.environ:
-            self.__db_url = os.environ['DB_URL']
-        #
-        self.__example_def_file1 = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file1.yml")
+
+        self.__example_def_file1 = os.path.join(self.test_path, "resource/wopfile/example_def_file1.yml")
         self.__example_def_file1_only_database = \
-            os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file1_only_database.yml")
-        self.__example_def_file2_only_files = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file2_only_files.yml")
-        self.__example_def_file4 = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file4.yml")
-        self.__example_def_file5_never_ready = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file5_never_ready.yml")
-        self.__example_def_file_input_not_ready = os.path.join(self.s_root_path, "test/resource/wopfile/example_def_file_input_not_ready.yml")
+            os.path.join(self.test_path, "resource/wopfile/example_def_file1_only_database.yml")
+        self.__example_def_file2_only_files = os.path.join(self.test_path, "resource/wopfile/example_def_file2_only_files.yml")
+        self.__example_def_file4 = os.path.join(self.test_path, "resource/wopfile/example_def_file4.yml")
+        self.__example_def_file5_never_ready = os.path.join(self.test_path, "resource/wopfile/example_def_file5_never_ready.yml")
+        self.__example_def_file_input_not_ready = os.path.join(self.test_path, "resource/wopfile/example_def_file_input_not_ready.yml")
 
     def tearDown(self):
         SQLManager.instance().get_session().close()
         SQLManager.instance().drop_all()
-        PathManager.dir_content_remove(os.path.join(self.s_root_path, "test/output"))
+        shutil.rmtree(os.path.join(self.test_path, "outdir"), ignore_errors=True)
         OptionManager._drop()
         SQLManager._drop()
 
     def test_run(self):
-        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-d", PathManager.get_module_path()]
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-d", self.test_path]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
-        self.assertTrue(os.path.exists(os.path.join(self.s_root_path, 'test/output/output_file1.txt')))
-        self.assertTrue(os.path.exists(os.path.join(self.s_root_path, 'test/output/output_file2.txt')))
-        self.assertTrue(os.path.exists(os.path.join(self.s_root_path, 'test/output/output_file7.txt')))
+        self.assertTrue(os.path.exists(os.path.join(self.test_path, 'outdir/output_file1.txt')))
+        self.assertTrue(os.path.exists(os.path.join(self.test_path, 'outdir/output_file2.txt')))
+        self.assertTrue(os.path.exists(os.path.join(self.test_path, 'outdir/output_file7.txt')))
         self.assertEqual(se.exception.code, 0)
 
     def test_run_touch(self):
@@ -63,12 +57,12 @@ class TestWopmars(TestCase):
         #
         ################################################################################################################
 
-        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-d", PathManager.get_module_path(), "-U", "rule2"]
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-d", self.test_path, "-U", "rule2"]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
-        # self.assertTrue(os.path.exists(os.path.join(self.s_root_path, 'test/output/output_file1.txt')))
+        # self.assertTrue(os.path.exists(os.path.join(self.test_path, 'outdir/output_file1.txt')))
         # self.assertEqual(se.exception.code, 0)
-        output_file1_mtime = os.path.getmtime(os.path.join(self.s_root_path, 'test/output/output_file1.txt'))
+        output_file1_mtime = os.path.getmtime(os.path.join(self.test_path, 'outdir/output_file1.txt'))
         foobase_mtime = SQLManager.instance().get_session().query(TableModificationTime)\
             .filter_by(table_name='FooBase').first().mtime_epoch_millis
 
@@ -79,12 +73,12 @@ class TestWopmars(TestCase):
         ################################################################################################################
 
         cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv",
-                    "-d", PathManager.get_module_path(), "-U", "rule2 --dry-run"]
+                    "-d", self.test_path, "-U", "rule2 --dry-run"]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
-        # self.assertTrue(os.path.exists(os.path.join(self.s_root_path, 'test/output/output_file1.txt')))
+        # self.assertTrue(os.path.exists(os.path.join(self.test_path, 'outdir/output_file1.txt')))
         # self.assertEqual(se.exception.code, 0)
-        output_file1_mtime_after_dry = os.path.getmtime(os.path.join(self.s_root_path, 'test/output/output_file1.txt'))
+        output_file1_mtime_after_dry = os.path.getmtime(os.path.join(self.test_path, 'outdir/output_file1.txt'))
         foobase_mtime_after_dry = SQLManager.instance().get_session().query(TableModificationTime)\
             .filter_by(table_name='FooBase').first().mtime_epoch_millis
 
@@ -94,11 +88,11 @@ class TestWopmars(TestCase):
         #
         ################################################################################################################
 
-        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-d", PathManager.get_module_path(),
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-d", self.test_path,
                     "-U", "rule2", "--touch"]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
-        output_file1_mtime_after_touch = os.path.getmtime(os.path.join(self.s_root_path, 'test/output/output_file1.txt'))
+        output_file1_mtime_after_touch = os.path.getmtime(os.path.join(self.test_path, 'outdir/output_file1.txt'))
         foobase_mtime_after_touch = SQLManager.instance().get_session().query(TableModificationTime)\
             .filter_by(table_name='FooBase').first().mtime_epoch_millis
 
@@ -118,7 +112,7 @@ class TestWopmars(TestCase):
         """Tests the forceall option in the database. Will carry out different runs in either default or forceall mode
         that will either increase or keep same the number of rows of the FooBase table"""
 
-        pathlib.Path(os.path.join(self.s_root_path, "test/output/output_file1.txt")).touch()
+        pathlib.Path(os.path.join(self.test_path, "outdir/output_file1.txt")).touch()
 
         ################################################################################################################
         #
@@ -127,7 +121,7 @@ class TestWopmars(TestCase):
         ################################################################################################################
 
         cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1_only_database, "-vv",
-                    "-d", PathManager.get_module_path()]
+                    "-d", self.test_path]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
         foobase_model = Base.metadata.tables['FooBase']
@@ -142,7 +136,7 @@ class TestWopmars(TestCase):
         ################################################################################################################
 
         cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1_only_database, "-vv",
-                    "-d", PathManager.get_module_path()]
+                    "-d", self.test_path]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
         row_count = SQLManager.instance().get_session().query(foobase_model).count()
@@ -156,7 +150,7 @@ class TestWopmars(TestCase):
         ################################################################################################################
 
         cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1_only_database, "-vv",
-                    "-d", PathManager.get_module_path(), "--forceall"]
+                    "-d", self.test_path, "--forceall"]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
         row_count = SQLManager.instance().get_session().query(foobase_model).count()
@@ -170,7 +164,7 @@ class TestWopmars(TestCase):
         ################################################################################################################
 
         cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1_only_database, "-vv",
-                    "-d", PathManager.get_module_path()]
+                    "-d", self.test_path]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
         row_count = SQLManager.instance().get_session().query(foobase_model).count()
@@ -181,23 +175,23 @@ class TestWopmars(TestCase):
         """This test carries out a normal a forceall and a dryrun and stores the modification times.
         Then it will test that the modification time of the two first outputs are different and the
          second and third equal"""
-        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-d", PathManager.get_module_path()]
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-d", self.test_path]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
         # Test that modification date of first run is different from second forced run
-        mtime1 = os.path.getmtime(os.path.join(self.s_root_path, 'test/output/output_file7.txt'))
+        mtime1 = os.path.getmtime(os.path.join(self.test_path, 'outdir/output_file7.txt'))
         # Run forceall
         cmd_line_force = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv",
-                    "-d", PathManager.get_module_path(), "--forceall"]
+                    "-d", self.test_path, "--forceall"]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line_force)
-        mtime2 = os.path.getmtime(os.path.join(self.s_root_path, 'test/output/output_file7.txt'))
+        mtime2 = os.path.getmtime(os.path.join(self.test_path, 'outdir/output_file7.txt'))
         # Run dry-run
         cmd_line_dry_run = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv",
-                    "-d", PathManager.get_module_path(), "--dry-run"]
+                    "-d", self.test_path, "--dry-run"]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line_dry_run)
-        mtime3 = os.path.getmtime(os.path.join(self.s_root_path, 'test/output/output_file7.txt'))
+        mtime3 = os.path.getmtime(os.path.join(self.test_path, 'outdir/output_file7.txt'))
         # Assert first two modification times are different
         # Assert second and third modification times same
         self.assertTrue(mtime1 != mtime2)
@@ -206,40 +200,40 @@ class TestWopmars(TestCase):
 
     def test_dry_run(self):
         cmd_line = ["python", "--dry-run", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "-d",
-                    PathManager.get_module_path()]
+                    self.test_path]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
         # The test is that these files do not exist
-        self.assertFalse(os.path.exists(os.path.join(self.s_root_path, 'test/output/output_file1.txt')))
-        self.assertFalse(os.path.exists(os.path.join(self.s_root_path, 'test/output/output_file2.txt')))
-        self.assertFalse(os.path.exists(os.path.join(self.s_root_path, 'test/output/output_file7.txt')))
+        self.assertFalse(os.path.exists(os.path.join(self.test_path, 'outdir/output_file1.txt')))
+        self.assertFalse(os.path.exists(os.path.join(self.test_path, 'outdir/output_file2.txt')))
+        self.assertFalse(os.path.exists(os.path.join(self.test_path, 'outdir/output_file7.txt')))
         self.assertEqual(se.exception.code, 0)
 
     def test_03run_that_fail(self):
         cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file5_never_ready, "-vv", "-d",
-                    PathManager.get_module_path()]
+                    self.test_path]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
-        self.assertFalse(os.path.exists(os.path.join(self.s_root_path, 'resources/never_done.txt')))
+        self.assertFalse(os.path.exists(os.path.join(self.test_path, 'resources/never_done.txt')))
         self.assertEqual(se.exception.code, 1)
 
     def test_04run_sourcerule_fail(self):
         cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv", "--since", "failure"]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
-        self.assertFalse(os.path.exists(os.path.join(self.s_root_path, 'test/output/output_file1.txt')))
+        self.assertFalse(os.path.exists(os.path.join(self.test_path, 'outdir/output_file1.txt')))
         self.assertEqual(se.exception.code, 1)
 
     def test_05run_sourcerule_succeed(self):
-        p=subprocess.Popen(["touch", os.path.join(self.s_root_path, "test/output/output_file1.txt")])
+        p=subprocess.Popen(["touch", os.path.join(self.test_path, "outdir/output_file1.txt")])
         p.wait()
-        p=subprocess.Popen(["touch", os.path.join(self.s_root_path, "test/output/output_file2.txt")])
+        p=subprocess.Popen(["touch", os.path.join(self.test_path, "outdir/output_file2.txt")])
         p.wait()
-        p=subprocess.Popen(["touch", os.path.join(self.s_root_path, "test/output/output_file3.txt")])
+        p=subprocess.Popen(["touch", os.path.join(self.test_path, "outdir/output_file3.txt")])
         p.wait()
-        p=subprocess.Popen(["touch", os.path.join(self.s_root_path, "test/output/output_file4.txt")])
+        p=subprocess.Popen(["touch", os.path.join(self.test_path, "outdir/output_file4.txt")])
         p.wait()
-        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-d", PathManager.get_module_path(), "-vv", "--since", "rule2"]
+        cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-d", self.test_path, "-vv", "--since", "rule2"]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 0)
@@ -261,7 +255,8 @@ class TestWopmars(TestCase):
         end = time_unix_ms
         runtime2 = end - start
         self.assertGreater(runtime1 * 1.5, runtime2)
-        PathManager.silentremove("test/output/output_file1.txt")
+        # pathlib.Path('outdir/output_file1.txt').unlink()
+        PathManager.unlink("outdir/output_file1.txt")
 
     def test_07dry_drun_skipping(self):
         cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file2_only_files, "-vv"]
@@ -275,7 +270,7 @@ class TestWopmars(TestCase):
         cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv"]
         with self.assertRaises(SystemExit):
            WopMars().run(cmd_line)
-        PathManager.silentremove("test/output/output_file7.txt")
+        PathManager.unlink("outdir/output_file7.txt")
         with self.assertRaises(SystemExit):
            WopMars().run(cmd_line + ["-n"])
 
@@ -296,7 +291,7 @@ class TestWopmars(TestCase):
         end = time_unix_ms
         runtime2 = end - start
         self.assertGreater(runtime1 * 1.5, runtime2)
-        PathManager.silentremove("test/output/output_file1.txt")
+        PathManager.unlink("outdir/output_file1.txt")
         time_unix_ms, time_human = get_current_time()
         start = time_unix_ms
         with self.assertRaises(SystemExit):
@@ -323,16 +318,16 @@ class TestWopmars(TestCase):
 
     def test_run_packaged_wrappers(self):
         cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file4, "-vv", "-d",
-                    PathManager.get_module_path()]
+                    self.test_path]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 0)
 
     def test_run_one_tool(self):
         cmd_line = ["python", "tool", "test.resource.wrapper.FooWrapper4",
-                  "-i", "{'file': {'input1': 'test/resource/input_files/input_file1.txt'}}",
-                  "-o", "{'file': {'output1': 'test/output/output1.txt'}}", "-D", self.__db_url, "-vv", "-d",
-                    PathManager.get_module_path()]
+                  "-i", "{'file': {'input1': 'resource/input_files/input_file1.txt'}}",
+                  "-o", "{'file': {'output1': 'outdir/output1.txt'}}", "-D", self.__db_url, "-vv", "-d",
+                    self.test_path]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 0)
@@ -341,16 +336,16 @@ class TestWopmars(TestCase):
     # def test_core(self):
     #     cmd_line = ["python", "tool", "test.resource.wrapper.FooWrapperCore",
     #               "-o", "{'table': {'FooBase7': 'test.resource.model.FooBase7'}}",
-    #               "-vv", "-D", self.__db_url, "-d", PathManager.get_module_path()]
+    #               "-vv", "-D", self.__db_url, "-d", self.test_path]
     #     with self.assertRaises(SystemExit) as se:
     #        WopMars().run(cmd_line)
     #     self.assertEqual(se.exception.code, 0)
 
     def test_clear_history(self):
         cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv",
-                    "-d", PathManager.get_module_path()]
+                    "-d", self.test_path]
         cmd_line_clear_history = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-vv",
-                    "-d", PathManager.get_module_path(), "--cleanup-metadata"]
+                    "-d", self.test_path, "--cleanup-metadata"]
         with self.assertRaises(SystemExit):
             WopMars().run(cmd_line)
         with self.assertRaises(SystemExit):
@@ -372,7 +367,6 @@ class TestWopmars(TestCase):
            WopMars().run(cmd_line)
         self.assertEqual(se.exception.code, 1)
 
+
 if __name__ == "__main__":
     unittest.main()
-
-

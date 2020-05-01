@@ -5,6 +5,7 @@ from wopmars.utils.WopMarsException import WopMarsException
 
 
 class TestOption(TestCase):
+
     def setUp(self):
         self.__option_string1 = Option(name="option1", value="value1")
         self.__option_string2 = Option(name="option1", value="value1")

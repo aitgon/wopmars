@@ -1,4 +1,5 @@
 import os
+import shutil
 import unittest
 from unittest import TestCase
 
@@ -23,19 +24,20 @@ from wopmars.utils.WopMarsException import WopMarsException
 class TestParser(TestCase):
     def setUp(self):
         OptionManager.initial_test_setup()
-
         SQLManager.instance().create_all()
         session = SQLManager.instance().get_session()
         session.get_or_create(TypeInputOrOutput, defaults={"is_input": True}, is_input=True)
         session.get_or_create(TypeInputOrOutput, defaults={"is_input": False}, is_input=False)
         session.commit()
-        self.__s_root_path = PathManager.get_module_path()
+        self.__test_path = PathManager.get_test_path()
+        # self.__test_path = PathManager.get_package_path()
         self.__parser = Parser()
 
     def tearDown(self):
         SQLManager.instance().get_session().close()
         SQLManager.instance().drop_all()
-        PathManager.dir_content_remove("test/output")
+        # PathManager.dir_content_remove("outdir")
+        shutil.rmtree("outdir", ignore_errors=True)
         OptionManager._drop()
         SQLManager._drop()
 
@@ -46,52 +48,52 @@ class TestParser(TestCase):
         input_entry = TypeInputOrOutput(is_input=True)
         output_entry = TypeInputOrOutput(is_input=False)
 
-        f1 = FileInputOutputInformation(file_key="input1", path="test/resource/input_files/input_file1.txt")
+        f1 = FileInputOutputInformation(file_key="input1", path="resource/input_files/input_file1.txt")
         f1.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f2 = FileInputOutputInformation(file_key="output1", path="test/output/output_file1.txt")
+        f2 = FileInputOutputInformation(file_key="output1", path="outdir/output_file1.txt")
         f2.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        f3 = FileInputOutputInformation(file_key="input1", path="test/output/output_file1.txt")
+        f3 = FileInputOutputInformation(file_key="input1", path="outdir/output_file1.txt")
         f3.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f3bis = FileInputOutputInformation(file_key="input1", path="test/output/output_file1.txt")
+        f3bis = FileInputOutputInformation(file_key="input1", path="outdir/output_file1.txt")
         f3bis.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f4 = FileInputOutputInformation(file_key="output1", path="test/output/output_file2.txt")
+        f4 = FileInputOutputInformation(file_key="output1", path="outdir/output_file2.txt")
         f4.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        f5 = FileInputOutputInformation(file_key="output1", path="test/output/output_file3.txt")
+        f5 = FileInputOutputInformation(file_key="output1", path="outdir/output_file3.txt")
         f5.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        f6 = FileInputOutputInformation(file_key="output2", path="test/output/output_file4.txt")
+        f6 = FileInputOutputInformation(file_key="output2", path="outdir/output_file4.txt")
         f6.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        f7 = FileInputOutputInformation(file_key="input1", path="test/output/output_file3.txt")
+        f7 = FileInputOutputInformation(file_key="input1", path="outdir/output_file3.txt")
         f7.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f8 = FileInputOutputInformation(file_key="input2", path="test/output/output_file2.txt")
+        f8 = FileInputOutputInformation(file_key="input2", path="outdir/output_file2.txt")
         f8.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f9 = FileInputOutputInformation(file_key="output1", path="test/output/output_file5.txt")
+        f9 = FileInputOutputInformation(file_key="output1", path="outdir/output_file5.txt")
         f9.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        f10 = FileInputOutputInformation(file_key="input1", path="test/output/output_file4.txt")
+        f10 = FileInputOutputInformation(file_key="input1", path="outdir/output_file4.txt")
         f10.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f11 = FileInputOutputInformation(file_key="output1", path="test/output/output_file6.txt")
+        f11 = FileInputOutputInformation(file_key="output1", path="outdir/output_file6.txt")
         f11.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        f12 = FileInputOutputInformation(file_key="input1", path="test/output/output_file1.txt")
+        f12 = FileInputOutputInformation(file_key="input1", path="outdir/output_file1.txt")
         f12.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f13 = FileInputOutputInformation(file_key="input2", path="test/output/output_file5.txt")
+        f13 = FileInputOutputInformation(file_key="input2", path="outdir/output_file5.txt")
         f13.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f14 = FileInputOutputInformation(file_key="input3", path="test/output/output_file6.txt")
+        f14 = FileInputOutputInformation(file_key="input3", path="outdir/output_file6.txt")
         f14.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f15 = FileInputOutputInformation(file_key="output1", path="test/output/output_file7.txt")
+        f15 = FileInputOutputInformation(file_key="output1", path="outdir/output_file7.txt")
         f15.relation_file_or_tableioinfo_to_typeio = output_entry
 
         t1 = TableInputOutputInformation(model_py_path="FooBase", table_key="FooBase", table_name="FooBase")
@@ -128,17 +130,17 @@ class TestParser(TestCase):
         OptionManager.instance()["--dot"] = None
 
         dag_expected = DAG(set_toolwrappers)
-        OptionManager.instance()["--wopfile"] = os.path.join(self.__s_root_path, "test/resource/wopfile/example_def_file1.yml")
+        OptionManager.instance()["--wopfile"] = os.path.join(self.__test_path, "resource/wopfile/example_def_file1.yml")
         dag_obtained = self.__parser.parse()
         self.assertEqual(dag_expected, dag_obtained)
 
-        OptionManager.instance()["--wopfile"] = os.path.join(self.__s_root_path, "test/resource/wopfile/example_def_file_not_a_dag.yml")
+        OptionManager.instance()["--wopfile"] = os.path.join(self.__test_path, "resource/wopfile/example_def_file_not_a_dag.yml")
         with self.assertRaises(WopMarsException):
             self.__parser.parse()
 
         # Verify the dot file ----------------:
-        OptionManager.instance()["--wopfile"] = os.path.join(self.__s_root_path, "test/resource/wopfile/example_def_file1.yml")
-        #dot_path = os.path.join(self.__s_root_path, "test_bak.dot")
+        OptionManager.instance()["--wopfile"] = os.path.join(self.__test_path, "resource/wopfile/example_def_file1.yml")
+        #dot_path = os.path.join(self.__package_path, "test_bak.dot")
         #OptionManager.instance()["--dot"] = dot_path
         self.__parser.parse()
         #self.assertTrue(os.path.isfile(dot_path))

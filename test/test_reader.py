@@ -1,4 +1,6 @@
 import os
+import pathlib
+import shutil
 import unittest
 from unittest import TestCase
 
@@ -25,8 +27,10 @@ from wopmars.utils.WopMarsException import WopMarsException
 class TestReader(TestCase):
 
     def setUp(self):
-        OptionManager.initial_test_setup()
-        SQLManager.instance().create_all()
+
+        OptionManager.initial_test_setup()  # Set test arguments
+        SQLManager.instance().create_all()  # Create database with tables
+
         session = SQLManager.instance().get_session()
         session.get_or_create(TypeInputOrOutput, defaults={"is_input": True}, is_input=True)
         session.get_or_create(TypeInputOrOutput, defaults={"is_input": False}, is_input=False)
@@ -34,39 +38,39 @@ class TestReader(TestCase):
         self.__session = SQLManager.instance().get_session()
         self.__reader = Reader()
 
-        self.__s_root_path = PathManager.get_module_path()
+        self.__testdir_path = PathManager.get_test_path()
 
         # The good -------------------------------:
 
-        self.__s_example_definition_file = os.path.join(self.__s_root_path, "test/resource/wopfile/example_def_file1.yml")
-        self.__s_example_definition_file2 = os.path.join(self.__s_root_path, "test/resource/wopfile/example_def_file3.yml")
+        self.__s_example_definition_file = os.path.join(self.__testdir_path, "resource/wopfile/example_def_file1.yml")
+        self.__s_example_definition_file2 = os.path.join(self.__testdir_path, "resource/wopfile/example_def_file3.yml")
 
         # The ugly (malformed file) --------------------:
 
-        self.__s_example_definition_file_duplicate_rule = os.path.join(self.__s_root_path, "test/resource/wopfile/example_def_file_duplicate_rule.yml")
+        self.__s_example_definition_file_duplicate_rule = os.path.join(self.__testdir_path, "resource/wopfile/example_def_file_duplicate_rule.yml")
 
         self.__list_f_to_exception_init = [
-            os.path.join(self.__s_root_path, s_path) for s_path in [
-                "test/resource/wopfile/example_def_file_wrong_yaml.yml",
-                "test/resource/wopfile/example_def_file_duplicate_rule.yml",
-                "test/resource/wopfile/example_def_file_wrong_grammar.yml",
-                "test/resource/wopfile/example_def_file_wrong_grammar2.yml",
-                "test/resource/wopfile/example_def_file_wrong_grammar3.yml",
-                "test/resource/wopfile/example_def_file_wrong_grammar4.yml"
+            os.path.join(self.__testdir_path, s_path) for s_path in [
+                "resource/wopfile/example_def_file_wrong_yaml.yml",
+                "resource/wopfile/example_def_file_duplicate_rule.yml",
+                "resource/wopfile/example_def_file_wrong_grammar.yml",
+                "resource/wopfile/example_def_file_wrong_grammar2.yml",
+                "resource/wopfile/example_def_file_wrong_grammar3.yml",
+                "resource/wopfile/example_def_file_wrong_grammar4.yml"
                 ]
         ]
 
         # The bad (invalid file) ----------------------:
 
         self.__list_s_to_exception_read = [
-            os.path.join(self.__s_root_path, s_path) for s_path in [
-                "test/resource/wopfile/example_def_file1.yml",
-                "test/resource/wopfile/example_def_file_wrong_content2.yml",
-                "test/resource/wopfile/example_def_file_wrong_content3.yml",
-                "test/resource/wopfile/example_def_file_wrong_content4.yml",
-                "test/resource/wopfile/example_def_file_wrong_content5.yml",
-                "test/resource/wopfile/example_def_file_wrong_class_name.yml",
-                "test/resource/wopfile/example_def_file_wrong_rule.yml",
+            os.path.join(self.__testdir_path, s_path) for s_path in [
+                "resource/wopfile/example_def_file1.yml",
+                "resource/wopfile/example_def_file_wrong_content2.yml",
+                "resource/wopfile/example_def_file_wrong_content3.yml",
+                "resource/wopfile/example_def_file_wrong_content4.yml",
+                "resource/wopfile/example_def_file_wrong_content5.yml",
+                "resource/wopfile/example_def_file_wrong_class_name.yml",
+                "resource/wopfile/example_def_file_wrong_rule.yml",
             ]
         ]
 
@@ -100,13 +104,13 @@ class TestReader(TestCase):
         input_entry = TypeInputOrOutput(is_input=True)
         output_entry = TypeInputOrOutput(is_input=False)
 
-        f1 = FileInputOutputInformation(file_key="input1", path="test/resource/input_files/input_file1.txt")
+        f1 = FileInputOutputInformation(file_key="input1", path="resource/input_files/input_file1.txt")
         f1.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f2 = FileInputOutputInformation(file_key="output1", path="test/output/output_file1.txt")
+        f2 = FileInputOutputInformation(file_key="output1", path="outdir/output_file1.txt")
         f2.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        t1 = TableInputOutputInformation(model_py_path="test.resource.model.fooPackage.FooBasePackaged",
+        t1 = TableInputOutputInformation(model_py_path="resource.model.fooPackage.FooBasePackaged",
                                          table_key="FooBasePackaged", table_name="FooBasePackaged")
         t1.relation_file_or_tableioinfo_to_typeio = input_entry
 
@@ -124,52 +128,52 @@ class TestReader(TestCase):
         input_entry = TypeInputOrOutput(is_input=True)
         output_entry = TypeInputOrOutput(is_input=False)
 
-        f1 = FileInputOutputInformation(file_key="input1", path="test/resource/input_files/input_file1.txt")
+        f1 = FileInputOutputInformation(file_key="input1", path="resource/input_files/input_file1.txt")
         f1.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f2 = FileInputOutputInformation(file_key="output1", path="test/output/output_file1.txt")
+        f2 = FileInputOutputInformation(file_key="output1", path="outdir/output_file1.txt")
         f2.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        f3 = FileInputOutputInformation(file_key="input1", path="test/output/output_file1.txt")
+        f3 = FileInputOutputInformation(file_key="input1", path="outdir/output_file1.txt")
         f3.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f3bis = FileInputOutputInformation(file_key="input1", path="test/output/output_file1.txt")
+        f3bis = FileInputOutputInformation(file_key="input1", path="outdir/output_file1.txt")
         f3bis.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f4 = FileInputOutputInformation(file_key="output1", path="test/output/output_file2.txt")
+        f4 = FileInputOutputInformation(file_key="output1", path="outdir/output_file2.txt")
         f4.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        f5 = FileInputOutputInformation(file_key="output1", path="test/output/output_file3.txt")
+        f5 = FileInputOutputInformation(file_key="output1", path="outdir/output_file3.txt")
         f5.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        f6 = FileInputOutputInformation(file_key="output2", path="test/output/output_file4.txt")
+        f6 = FileInputOutputInformation(file_key="output2", path="outdir/output_file4.txt")
         f6.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        f7 = FileInputOutputInformation(file_key="input1", path="test/output/output_file3.txt")
+        f7 = FileInputOutputInformation(file_key="input1", path="outdir/output_file3.txt")
         f7.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f8 = FileInputOutputInformation(file_key="input2", path="test/output/output_file2.txt")
+        f8 = FileInputOutputInformation(file_key="input2", path="outdir/output_file2.txt")
         f8.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f9 = FileInputOutputInformation(file_key="output1", path="test/output/output_file5.txt")
+        f9 = FileInputOutputInformation(file_key="output1", path="outdir/output_file5.txt")
         f9.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        f10 = FileInputOutputInformation(file_key="input1", path="test/output/output_file4.txt")
+        f10 = FileInputOutputInformation(file_key="input1", path="outdir/output_file4.txt")
         f10.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f11 = FileInputOutputInformation(file_key="output1", path="test/output/output_file6.txt")
+        f11 = FileInputOutputInformation(file_key="output1", path="outdir/output_file6.txt")
         f11.relation_file_or_tableioinfo_to_typeio = output_entry
 
-        f12 = FileInputOutputInformation(file_key="input1", path="test/output/output_file1.txt")
+        f12 = FileInputOutputInformation(file_key="input1", path="outdir/output_file1.txt")
         f12.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f13 = FileInputOutputInformation(file_key="input2", path="test/output/output_file5.txt")
+        f13 = FileInputOutputInformation(file_key="input2", path="outdir/output_file5.txt")
         f13.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f14 = FileInputOutputInformation(file_key="input3", path="test/output/output_file6.txt")
+        f14 = FileInputOutputInformation(file_key="input3", path="outdir/output_file6.txt")
         f14.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f15 = FileInputOutputInformation(file_key="output1", path="test/output/output_file7.txt")
+        f15 = FileInputOutputInformation(file_key="output1", path="outdir/output_file7.txt")
         f15.relation_file_or_tableioinfo_to_typeio = output_entry
 
         t1 = TableInputOutputInformation(model_py_path="FooBase", table_key="FooBase", table_name="FooBase")
@@ -204,7 +208,6 @@ class TestReader(TestCase):
         expected = set([tw1, tw2, tw3, tw4, tw5, tw6, tw7])
 
         # The good ------------------------------------:
-
         self.assertTrue((SetUtils.all_elm_of_one_set_in_one_other(result, expected) and
                          SetUtils.all_elm_of_one_set_in_one_other(expected, result)))
 
@@ -216,11 +219,10 @@ class TestReader(TestCase):
 
     def tearDown(self):
         SQLManager.instance().get_session().close()
-        s_root_path = PathManager.get_module_path()
         SQLManager.instance().drop_all()
-        PathManager.dir_content_remove(os.path.join(s_root_path, "test/output"))
         OptionManager._drop()
         SQLManager._drop()
+        shutil.rmtree(os.path.join(PathManager.get_test_path(), "output"), ignore_errors=True)
 
 
 if __name__ == "__main__":

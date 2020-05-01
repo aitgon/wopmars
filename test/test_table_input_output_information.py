@@ -1,4 +1,5 @@
 import os
+import shutil
 import unittest
 from unittest import TestCase
 
@@ -11,10 +12,13 @@ from wopmars.utils.PathManager import PathManager
 
 
 class TestTableInputOutputInformation(TestCase):
+
     def setUp(self):
-        self.s_root_path = PathManager.get_module_path()
-        OptionManager.initial_test_setup()
-        SQLManager.instance().create_all()
+
+        self.test_path = PathManager.get_test_path()
+        OptionManager.initial_test_setup()  # Set test arguments
+        SQLManager.instance().create_all()  # Create database with tables
+
         self.__local_session = SQLManager.instance().get_session()
         try:
             for i in range(10):
@@ -35,7 +39,8 @@ class TestTableInputOutputInformation(TestCase):
     def tearDown(self):
         SQLManager.instance().get_session().close()
         SQLManager.instance().drop_all()
-        PathManager.dir_content_remove(os.path.join(self.s_root_path, "test/output"))
+        # PathManager.dir_content_remove(os.path.join(self.test_path, "outdir"))
+        shutil.rmtree("outdir", ignore_errors=True)
         OptionManager._drop()
         SQLManager._drop()
 
