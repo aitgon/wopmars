@@ -274,7 +274,9 @@ class TestWopmars(TestCase):
         with self.assertRaises(SystemExit):
            WopMars().run(cmd_line + ["-n"])
 
-    def test_run6(self):
+    def test_run_rerun_runtime(self):
+
+        # Slow run
         cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-v"]
         time_unix_ms, time_human = get_current_time()
         start = time_unix_ms
@@ -283,6 +285,8 @@ class TestWopmars(TestCase):
         time_unix_ms, time_human = get_current_time()
         end = time_unix_ms
         runtime1 = end - start
+
+        # Fast run run2<run1
         time_unix_ms, time_human = get_current_time()
         start = time_unix_ms
         with self.assertRaises(SystemExit):
@@ -291,6 +295,8 @@ class TestWopmars(TestCase):
         end = time_unix_ms
         runtime2 = end - start
         self.assertGreater(runtime1 * 1.5, runtime2)
+
+        # Middle run: run3>run2
         PathManager.unlink("outdir/output_file1.txt")
         time_unix_ms, time_human = get_current_time()
         start = time_unix_ms
@@ -298,8 +304,8 @@ class TestWopmars(TestCase):
             WopMars().run(cmd_line)
         time_unix_ms, time_human = get_current_time()
         end = time_unix_ms
-        runtime2 = end - start
-        self.assertTrue(runtime1 * 0.4 <= runtime2 <= runtime1 * 1.4)
+        runtime3 = end - start
+        self.assertLess(runtime2, runtime3)
 
     def get_best_factor(self, full_exec_time, rule_count, maximum_ratio=1):
         average_rule_time = full_exec_time / rule_count
