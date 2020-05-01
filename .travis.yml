@@ -33,6 +33,8 @@ install:
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION pkg_name --file requirements.txt
   - source activate test-environment
 
+script:
+  python -m unittest
 
 #language: python
 #python:
