@@ -18,9 +18,8 @@ def get_version():
     config.read(os.path.join('.', 'setup.cfg'))
     return config.get('metadata', 'version')
 
-if sys.version_info < (3, 7):
-    print("At least Python 3.7 is required.\n", file=sys.stderr)
-    exit(1)
+if sys.version_info < (3, 6):
+    print("Python version >= 3.6 required.")
 
 try:
     from setuptools import setup, find_packages
@@ -34,6 +33,24 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.rst'), encoding='utf-8') as fin:
     long_description = fin.read()
 
+CLASSIFIERS = """\
+Development Status :: 4 - Beta
+Intended Audience :: Developers
+Intended Audience :: Science/Research
+License :: OSI Approved :: MIT License
+Programming Language :: Python
+Programming Language :: Python :: 3
+Programming Language :: Python :: 3.6
+Programming Language :: Python :: 3.7
+Programming Language :: Python :: 3.8
+Programming Language :: Python :: 3 :: Only
+Topic :: Database :: Front-Ends
+Topic :: Scientific/Engineering :: Bioinformatics
+Topic :: Scientific/Engineering :: Information Analysis
+Topic :: Software Development
+Operating System :: POSIX :: Linux
+"""
+
 setup(name='wopmars',
     version=str(get_version()),
     description='Workflow Python Manager for Reproducible Science',
@@ -42,20 +59,7 @@ setup(name='wopmars',
     author=__author__,
     author_email=__email__,
     license=__license__,
-    classifiers=[
-        'Development Status :: 4 - Beta',
-        'Environment :: Console',
-        'Intended Audience :: Developers',
-        'Intended Audience :: Science/Research',
-        'License :: OSI Approved :: MIT License',
-        'Natural Language :: English',
-        'Operating System :: POSIX :: Linux',
-        'Programming Language :: Python :: 3.7',
-        'Topic :: Database :: Front-Ends',
-        'Topic :: Scientific/Engineering :: Bioinformatics',
-        'Topic :: Scientific/Engineering :: Information Analysis',
-        'Topic :: Software Development',
-    ],
+    classifierss=[_f for _f in CLASSIFIERS.split('\n') if _f],
     download_url='https://github.com/aitgon/wopmars/archive/%s.tar.gz'%str(get_version()),
     keywords='workflow manager python object-oriented reproducible science database framework',
     packages=find_packages(exclude=['log', 'doc', '*.test_bak.*', 'soutenance', 'rapport']),
