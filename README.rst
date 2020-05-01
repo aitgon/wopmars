@@ -1,8 +1,8 @@
 WopMars: Workflow Python Manager for Reproducible Science
 ---------------------------------------------------------------
 
-.. image:: https://travis-ci.org/aitgon/wopmars.svg?branch=master
-    :target: https://travis-ci.org/aitgon/wopmars
+.. image:: https://img.shields.io/pypi/v/wopmars.svg
+    :target: https://pypi.python.org/pypi/wopmarst
 
 .. image:: https://img.shields.io/pypi/pyversions/wopmars.svg
     :target: https://www.python.org
@@ -10,8 +10,8 @@ WopMars: Workflow Python Manager for Reproducible Science
 .. image:: https://readthedocs.org/projects/wopmars/badge/?version=latest
     :target: http://wopmars.readthedocs.io/en/latest/?badge=latest
 
-.. image:: https://img.shields.io/pypi/v/wopmars.svg
-    :target: https://pypi.python.org/pypi/wopmarst
+.. image:: https://travis-ci.org/aitgon/wopmars.svg?branch=master
+    :target: https://travis-ci.org/aitgon/wopmars
 
 .. image:: https://codecov.io/gh/aitgon/wopmars/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/aitgon/wopmars
