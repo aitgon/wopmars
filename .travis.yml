@@ -1,26 +1,9 @@
-# Ref: https://levelup.gitconnected.com/continuous-deployment-with-travis-and-conda-f385fec1a3f
 language: python
-
-matrix:
-  # This will launch a separate build for each Python version you add
-  # Feel free to add extra environment variables as needed
-  include:
-    - python: 3.6
-    - python: 3.7
-
-before_install:
-  - sudo apt-get update
-  # Install the latest version of Miniconda
-  - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
-      wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
-    else
-      wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-    fi
-  - bash miniconda.sh -b -p $HOME/miniconda
-  - export PATH=/home/travis/miniconda/bin:$PATH
-  - conda update --yes conda  # Update CONDA without command line prompt
-
-#install:
+python:
+  # We don't actually use the Travis Python, but this keeps it organized.
+  - "3.6"
+  - "3.7"
+install:
   - sudo apt-get update
   # We do this conditionally because it saves us some downloading if the
   # version is the same.
@@ -44,37 +27,6 @@ before_install:
   - python setup.py install
 
 script:
+  # Your tests script goes here
   python -m unittest
-
-#language: python
-#python:
-#  # We don't actually use the Travis Python, but this keeps it organized.
-#  - "3.6"
-#  - "3.7"
-#install:
-#  - sudo apt-get update
-#  # We do this conditionally because it saves us some downloading if the
-#  # version is the same.
-#  - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
-#      wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
-#    else
-#      wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-#    fi
-#  - bash miniconda.sh -b -p $HOME/miniconda
-#  - source "$HOME/miniconda/etc/profile.d/conda.sh"
-#  - hash -r
-#  - conda config --set always_yes yes --set changeps1 no
-#  - conda update -q conda
-#  # Useful for debugging any issues with conda
-#  - conda info -a
-
-#  # Replace dep1 dep2 ... with your dependencies
-#  - conda create -q -n tests-environment python=3.7 SQLAlchemy>=1.1.11 networkx>=2.4
-#  - conda activate tests-environment
-#  - pip install -r requirements.txt
-#  - python setup.py install
-
-#script:
-#  # Your tests script goes here
-#  python -m unittest
 
