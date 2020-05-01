@@ -9,29 +9,39 @@ matrix:
     - python: 3.7
 
 before_install:
+  - sudo apt-get update
   # Install the latest version of Miniconda
-  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
-  - chmod +x miniconda.sh
-  - ./miniconda.sh -b
+  - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
+      wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
+    else
+      wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+    fi
+  - bash miniconda.sh -b -p $HOME/miniconda
   - export PATH=/home/travis/miniconda/bin:$PATH
   - conda update --yes conda  # Update CONDA without command line prompt
 
-install:
-  - conda install conda-build
-  # You can add any CONDA channels you may need here. CONDA supports
-  # both the commands add and append. The only difference is that 
-  # the add command places the channel at the front of the priority 
-  # list, while append does the opposite.
-  - conda config --add channels conda-forge
+#install:
+  - sudo apt-get update
+  # We do this conditionally because it saves us some downloading if the
+  # version is the same.
+  - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
+      wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
+    else
+      wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+    fi
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - source "$HOME/miniconda/etc/profile.d/conda.sh"
+  - hash -r
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q conda
+  # Useful for debugging any issues with conda
+  - conda info -a
 
-  # Build the conda recipe for this package
-  - conda build -q conda-recipe --python=$TRAVIS_PYTHON_VERSION --output-folder bld-dir
-  # Add the built package as a channel with highest priority
-  - conda config --add channels "file://`pwd`/bld-dir"
-
-  # Create and activate the test environment
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION pkg_name --file requirements.txt
-  - source activate test-environment
+  # Replace dep1 dep2 ... with your dependencies
+  - conda create -q -n tests-environment
+  - conda activate tests-environment
+  - pip install -r requirements.txt
+  - python setup.py install
 
 script:
   python -m unittest
