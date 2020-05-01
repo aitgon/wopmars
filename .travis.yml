@@ -25,9 +25,13 @@ install:
   - conda create -q -n tests-environment
   - conda activate tests-environment
   - pip install -r requirements.txt
+  - pip install coverage
   - python setup.py install
 
 script:
   # Your tests script goes here
-  python -m unittest
+  - python -m unittest discover
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
 
