@@ -11,8 +11,8 @@ from wopmars.utils.PathManager import PathManager
 
 class TestFileInputOutputInformation(TestCase):
     def setUp(self):
-        self.test_path = PathManager.get_test_path()  # Get test path
-        OptionManager.initial_test_setup()  # Set test arguments
+        self.test_path = PathManager.get_test_path()  # Get tests path
+        OptionManager.initial_test_setup()  # Set tests arguments
 
         s_path_to_example_existing_file = os.path.join(self.test_path, "resource/input_files/example_existing_file.txt")
         s_path_to_example_existing_file2 = os.path.join(self.test_path, "resource/input_files/example_existing_file2.txt")

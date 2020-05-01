@@ -2,10 +2,10 @@ import time
 import unittest
 from unittest import TestCase
 
-from wopmars.test.resource.model.FooBase import FooBase
-from wopmars.test.resource.wrapper.FooWrapper5 import FooWrapper5
-from wopmars.test.resource.wrapper.sprintFive.Add import Add
-from wopmars.test.resource.wrapper.sprintFive.Query import Query
+from wopmars.tests.resource.model.FooBase import FooBase
+from wopmars.tests.resource.wrapper.FooWrapper5 import FooWrapper5
+from wopmars.tests.resource.wrapper.sprintFive.Add import Add
+from wopmars.tests.resource.wrapper.sprintFive.Query import Query
 from wopmars.SQLManager import SQLManager
 from wopmars.models.TableInputOutputInformation import TableInputOutputInformation
 from wopmars.models.FileInputOutputInformation import FileInputOutputInformation
@@ -21,7 +21,7 @@ from wopmars.utils.various import get_current_time
 class TestToolWrapperThread(TestCase):
 
     def setUp(self):
-        OptionManager.initial_test_setup()  # Set test arguments
+        OptionManager.initial_test_setup()  # Set tests arguments
         SQLManager.instance().create_all()  # Create database with tables
 
         [SQLManager.instance().get_session().add(FooBase(name="foo " + str(i))) for i in range(10000)]
@@ -100,7 +100,7 @@ class TestToolWrapperThread(TestCase):
         self.assertEqual(len(SQLManager.instance().get_session().query(FooBase).filter(FooBase.name.like('Foowrapper5 - %')).all()), 3000)
 
     def test_run_commit_vs_query(self):
-        # this test does not work with mysql and postgresql
+        # this tests does not work with mysql and postgresql
         if not SQLManager.instance().engine.url.drivername in ['mysql', 'postgresql']:
             input_entry = TypeInputOrOutput(is_input=True)
             output_entry = TypeInputOrOutput(is_input=False)
@@ -206,7 +206,7 @@ class TestToolWrapperThread(TestCase):
     def tearDown(self):
         SQLManager.instance().get_session().close()
         SQLManager.instance().drop_all()
-        PathManager.unlink("test/outdir")
+        PathManager.unlink("tests/outdir")
 
 if __name__ == '__main__':
     unittest.main()

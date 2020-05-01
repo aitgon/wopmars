@@ -19,8 +19,8 @@ from wopmars.utils.various import get_current_time
 class TestWopmars(TestCase):
 
     def setUp(self):
-        self.test_path = PathManager.get_test_path()  # Get test path
-        OptionManager.initial_test_setup()  # Set test arguments
+        self.test_path = PathManager.get_test_path()  # Get tests path
+        OptionManager.initial_test_setup()  # Set tests arguments
         self.__db_url = OptionManager.instance()["--database"]
 
         self.__example_def_file1 = os.path.join(self.test_path, "resource/wopfile/example_def_file1.yml")
@@ -49,7 +49,7 @@ class TestWopmars(TestCase):
 
     def test_run_touch(self):
 
-        """This is a test for the touch function"""
+        """This is a tests for the touch function"""
 
         ################################################################################################################
         #
@@ -172,8 +172,8 @@ class TestWopmars(TestCase):
         self.assertEqual(se.exception.code, 0)
 
     def test_forceall_dryrun(self):
-        """This test carries out a normal a forceall and a dryrun and stores the modification times.
-        Then it will test that the modification time of the two first outputs are different and the
+        """This tests carries out a normal a forceall and a dryrun and stores the modification times.
+        Then it will tests that the modification time of the two first outputs are different and the
          second and third equal"""
         cmd_line = ["python", "-D", self.__db_url, "-w", self.__example_def_file1, "-v", "-d", self.test_path]
         with self.assertRaises(SystemExit) as se:
@@ -203,7 +203,7 @@ class TestWopmars(TestCase):
                     self.test_path]
         with self.assertRaises(SystemExit) as se:
             WopMars().run(cmd_line)
-        # The test is that these files do not exist
+        # The tests is that these files do not exist
         self.assertFalse(os.path.exists(os.path.join(self.test_path, 'outdir/output_file1.txt')))
         self.assertFalse(os.path.exists(os.path.join(self.test_path, 'outdir/output_file2.txt')))
         self.assertFalse(os.path.exists(os.path.join(self.test_path, 'outdir/output_file7.txt')))
@@ -324,7 +324,7 @@ class TestWopmars(TestCase):
         self.assertEqual(se.exception.code, 0)
 
     def test_run_one_tool(self):
-        cmd_line = ["python", "tool", "wopmars.test.resource.wrapper.FooWrapper4",
+        cmd_line = ["python", "tool", "wopmars.tests.resource.wrapper.FooWrapper4",
                   "-i", "{'file': {'input1': 'resource/input_files/input_file1.txt'}}",
                   "-o", "{'file': {'output1': 'outdir/output1.txt'}}", "-D", self.__db_url, "-v", "-d",
                     self.test_path]
@@ -334,8 +334,8 @@ class TestWopmars(TestCase):
 
     # AG Do not know why but it is not working
     # def test_core(self):
-    #     cmd_line = ["python", "tool", "test.resource.wrapper.FooWrapperCore",
-    #               "-o", "{'table': {'FooBase7': 'test.resource.model.FooBase7'}}",
+    #     cmd_line = ["python", "tool", "tests.resource.wrapper.FooWrapperCore",
+    #               "-o", "{'table': {'FooBase7': 'tests.resource.model.FooBase7'}}",
     #               "-v", "-D", self.__db_url, "-d", self.test_path]
     #     with self.assertRaises(SystemExit) as se:
     #        WopMars().run(cmd_line)

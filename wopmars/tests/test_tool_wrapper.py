@@ -5,9 +5,9 @@ import time
 import unittest
 from unittest import TestCase
 
-from wopmars.test.resource.model.FooBase import FooBase
-from wopmars.test.resource.wrapper.FooWrapper2 import FooWrapper2
-from wopmars.test.resource.wrapper.FooWrapper3 import FooWrapper3
+from wopmars.tests.resource.model.FooBase import FooBase
+from wopmars.tests.resource.wrapper.FooWrapper2 import FooWrapper2
+from wopmars.tests.resource.wrapper.FooWrapper3 import FooWrapper3
 from wopmars.SQLManager import SQLManager
 from wopmars.models.TableInputOutputInformation import TableInputOutputInformation
 from wopmars.models.FileInputOutputInformation import FileInputOutputInformation
@@ -27,7 +27,7 @@ class TestToolWrapper(TestCase):
     def setUp(self):
 
         self.test_path = PathManager.get_test_path()
-        OptionManager.initial_test_setup()  # Set test arguments
+        OptionManager.initial_test_setup()  # Set tests arguments
         SQLManager.instance().create_all()  # Create database with tables
 
         set_tw_to_add = set()
@@ -291,7 +291,7 @@ class TestToolWrapper(TestCase):
         toolwrapper_ready2 = FooWrapper2(rule_name="rule2")
         toolwrapper_ready2.relation_toolwrapper_to_tableioinfo.append(t1)
         self.assertTrue(toolwrapper_ready2.are_inputs_ready())
-        # this test does not work with mysql and postgresql
+        # this tests does not work with mysql and postgresql
         if not SQLManager.instance().engine.url.drivername in ['mysql', 'postgresql']:
             SQLManager.instance().drop(FooBase.__tablename__)
             self.assertFalse(toolwrapper_ready2.are_inputs_ready())

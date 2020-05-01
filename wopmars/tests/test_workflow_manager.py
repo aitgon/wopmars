@@ -14,7 +14,7 @@ class TestWorkflowManager(TestCase):
 
     def setUp(self):
 
-        OptionManager.initial_test_setup()  # Set test arguments
+        OptionManager.initial_test_setup()  # Set tests arguments
         SQLManager.instance().create_all()  # Create database with tables
         self.test_path = PathManager.get_test_path()
 

@@ -3,7 +3,7 @@ Module containing the FooWrapper1 class
 """
 
 import time
-from wopmars.test.resource.model import FooBase2
+from wopmars.tests.resource.model import FooBase2
 from wopmars.models.ToolWrapper import ToolWrapper
 
 class FooWrapper7(ToolWrapper):

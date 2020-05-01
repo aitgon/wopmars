@@ -1,5 +1,5 @@
 rule rule1:
-    tool: test.resource.wrapper.FooWrapper4
+    tool: tests.resource.wrapper.FooWrapper4
     input:
         file:
             input1: "resource/input_files/input_File_coucou.txt"

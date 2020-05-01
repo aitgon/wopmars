@@ -1,10 +1,10 @@
 rule rule1:
-    tool: wopmars.test.resource.wrapper.fooPackage.FooWrapperPackaged
+    tool: wopmars.tests.resource.wrapper.fooPackage.FooWrapperPackaged
     input:
         file:
             input1: "resource/input_files/input_file1.txt"
         table:
-            FooBasePackaged: wopmars.test.resource.wrapper.fooPackage.FooBasePackaged
+            FooBasePackaged: wopmars.tests.resource.wrapper.fooPackage.FooBasePackaged
     output:
         file:
             output1: "outdir/output_file1.txt"

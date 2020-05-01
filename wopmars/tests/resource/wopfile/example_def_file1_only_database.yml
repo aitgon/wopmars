@@ -1,5 +1,5 @@
 rule rule2:
-    tool: wopmars.test.resource.wrapper.FooWrapper5
+    tool: wopmars.tests.resource.wrapper.FooWrapper5
     input:
         file:
             input1: "outdir/output_file1.txt"
@@ -7,5 +7,5 @@ rule rule2:
         file:
             output1: "outdir/output_file2.txt"
         table:
-            FooBase: wopmars.test.resource.model.FooBase
+            FooBase: wopmars.tests.resource.model.FooBase
 

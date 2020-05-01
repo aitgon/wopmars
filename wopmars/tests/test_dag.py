@@ -1,8 +1,8 @@
 import unittest
 from unittest import TestCase
 
-from wopmars.test.resource.wrapper.FooWrapper2 import FooWrapper2
-from wopmars.test.resource.wrapper.FooWrapper8 import FooWrapper8
+from wopmars.tests.resource.wrapper.FooWrapper2 import FooWrapper2
+from wopmars.tests.resource.wrapper.FooWrapper8 import FooWrapper8
 from wopmars.SQLManager import SQLManager
 from wopmars.models.FileInputOutputInformation import FileInputOutputInformation
 from wopmars.models.ToolWrapper import ToolWrapper
@@ -15,7 +15,7 @@ from wopmars.utils.PathManager import PathManager
 class TestDAG(TestCase):
 
     def setUp(self):
-        OptionManager.initial_test_setup()  # Set test arguments
+        OptionManager.initial_test_setup()  # Set tests arguments
         SQLManager.instance().create_all()  # Create database with tables
         #        first
         #       /    \
@@ -100,7 +100,7 @@ class TestDAG(TestCase):
         SQLManager.instance().get_session().close() 
         SQLManager.instance().drop_all()
         OptionManager._drop()
-        PathManager.unlink("test/outdir/output_file1.txt")
+        PathManager.unlink("tests/outdir/output_file1.txt")
         SQLManager._drop()
 
     def test_init(self):

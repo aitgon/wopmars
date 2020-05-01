@@ -2,8 +2,8 @@ import shutil
 import unittest
 from unittest import TestCase
 
-from wopmars.test.resource.model.FooBase import FooBase
-from wopmars.test.resource.model.FooBase2 import FooBase2
+from wopmars.tests.resource.model.FooBase import FooBase
+from wopmars.tests.resource.model.FooBase2 import FooBase2
 from wopmars.SQLManager import SQLManager
 from wopmars.models.TableInputOutputInformation import TableInputOutputInformation
 from wopmars.utils.OptionManager import OptionManager
@@ -15,7 +15,7 @@ class TestTableInputOutputInformation(TestCase):
     def setUp(self):
 
         self.test_path = PathManager.get_test_path()
-        OptionManager.initial_test_setup()  # Set test arguments
+        OptionManager.initial_test_setup()  # Set tests arguments
         SQLManager.instance().create_all()  # Create database with tables
 
         self.__local_session = SQLManager.instance().get_session()

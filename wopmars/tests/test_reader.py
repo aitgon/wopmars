@@ -3,14 +3,14 @@ import shutil
 import unittest
 from unittest import TestCase
 
-from wopmars.test.resource.wrapper.FooWrapper10 import FooWrapper10
-from wopmars.test.resource.wrapper.FooWrapper4 import FooWrapper4
-from wopmars.test.resource.wrapper.FooWrapper5 import FooWrapper5
-from wopmars.test.resource.wrapper.FooWrapper6 import FooWrapper6
-from wopmars.test.resource.wrapper.FooWrapper7 import FooWrapper7
-from wopmars.test.resource.wrapper.FooWrapper8 import FooWrapper8
-from wopmars.test.resource.wrapper.FooWrapper9 import FooWrapper9
-from wopmars.test.resource.wrapper.fooPackage.FooWrapperPackaged import FooWrapperPackaged
+from wopmars.tests.resource.wrapper.FooWrapper10 import FooWrapper10
+from wopmars.tests.resource.wrapper.FooWrapper4 import FooWrapper4
+from wopmars.tests.resource.wrapper.FooWrapper5 import FooWrapper5
+from wopmars.tests.resource.wrapper.FooWrapper6 import FooWrapper6
+from wopmars.tests.resource.wrapper.FooWrapper7 import FooWrapper7
+from wopmars.tests.resource.wrapper.FooWrapper8 import FooWrapper8
+from wopmars.tests.resource.wrapper.FooWrapper9 import FooWrapper9
+from wopmars.tests.resource.wrapper.fooPackage.FooWrapperPackaged import FooWrapperPackaged
 from wopmars.SQLManager import SQLManager
 from wopmars.models.TableInputOutputInformation import TableInputOutputInformation
 from wopmars.models.FileInputOutputInformation import FileInputOutputInformation
@@ -27,7 +27,7 @@ class TestReader(TestCase):
 
     def setUp(self):
 
-        OptionManager.initial_test_setup()  # Set test arguments
+        OptionManager.initial_test_setup()  # Set tests arguments
         SQLManager.instance().create_all()  # Create database with tables
 
         session = SQLManager.instance().get_session()
@@ -73,7 +73,7 @@ class TestReader(TestCase):
             ]
         ]
 
-    # Fix this test for Travis
+    # Fix this tests for Travis
     # def test_load_definition_file(self):
     #     for file in self.__list_f_to_exception_init:
     #         with self.assertRaises(WopMarsException):

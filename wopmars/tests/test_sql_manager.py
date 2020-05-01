@@ -2,7 +2,7 @@ import threading
 import unittest
 from unittest import TestCase
 
-from wopmars.test.resource.model.FooBase import FooBase
+from wopmars.tests.resource.model.FooBase import FooBase
 from wopmars.SQLManager import SQLManager
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.Logger import Logger
@@ -34,7 +34,7 @@ class TestSQLManager(TestCase):
 
     def setUp(self):
 
-        OptionManager.initial_test_setup()  # Set test arguments
+        OptionManager.initial_test_setup()  # Set tests arguments
         SQLManager.instance().create_all()  # Create database with tables
 
         self.__local_session = SQLManager.instance().get_session()
