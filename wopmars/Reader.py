@@ -76,7 +76,7 @@ class Reader:
                     Logger.instance().warning("The workflow definition file is empty")
                 Logger.instance().debug("\n" + DictUtils.pretty_repr(self.__wopfile_yml_dict))
                 Logger.instance().debug("Read complete.")
-                Logger.instance().info("Checking whether the file is well formed...")
+                Logger.instance().debug("Checking whether the file is well formed...")
                 # raise an exception if there is a problem with the grammar
                 self.is_grammar_respected()
                 Logger.instance().debug("File well formed.")

@@ -2,8 +2,9 @@
 Module containing the OptionManager class.
 """
 import os
+import pathlib
 
-from wopmars.utils.PathFinder import PathFinder
+from wopmars.utils.PathManager import PathManager
 from wopmars.utils.Singleton import SingletonMixin
 
 
@@ -102,27 +103,19 @@ class OptionManager(dict, SingletonMixin):
         return s
 
     @staticmethod
-    def initial_test_setup(mod_name="db"):
-        OptionManager.instance()["-v"] = 4
+    def initial_test_setup():
+        OptionManager.instance()["-v"] = 1
         OptionManager.instance()["--dot"] = None
-        # OptionManager.instance()["--log"] = None
-        # OptionManager.instance()["--printtools"] = True
         OptionManager.instance()["--since"] = None
         OptionManager.instance()["--until"] = None
         OptionManager.instance()["--forceall"] = None
         OptionManager.instance()["--dry-run"] = None
         OptionManager.instance()["--touch"] = None
         OptionManager.instance()["tool"] = None
-        OptionManager.instance()["--database"] = "sqlite:///" + os.path.join(PathFinder.get_module_path(),
-                                                                             "test/output", mod_name + ".sqlite")
-        #
-        # If DB set in environment variable, for instance for MySQL, then override default database value
-        #
-        if 'DB_URL' in os.environ:
-            OptionManager.instance()["--database"] = os.environ['DB_URL']
-        #
-        OptionManager.instance()["--directory"] = PathFinder.get_module_path()
+        test_db_path = os.path.join(PathManager.get_test_path(), "outdir")
+        pathlib.Path(test_db_path).mkdir(parents=True, exist_ok=True)
+        OptionManager.instance()["--database"] = "sqlite:///{}".format(os.path.join(test_db_path, 'db.sqlite'))
+        OptionManager.instance()["--directory"] = PathManager.get_test_path()
         OptionManager.instance()["--cleanup-metadata"] = False
         os.chdir(OptionManager.instance()["--directory"])
-        # OptionManager.instance()["--tool_python_path-log"] = False
 
