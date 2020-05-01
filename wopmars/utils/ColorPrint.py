@@ -12,20 +12,12 @@ class ColorPrint:
 
     @staticmethod
     def green(text):
-        return colored(text, 'green', attrs=['bold'])
+        return colored(text, 'green', attrs=['dark'])
 
     @staticmethod
     def red(text):
-        return colored(text, 'red', attrs=['bold'])
-
-    @staticmethod
-    def cyan(text):
-        return colored(text, 'cyan', attrs=['bold'])
+        return colored(text, 'red', attrs=[])
 
     @staticmethod
     def blue(text):
         return colored(text, 'blue', attrs=['bold'])
-
-    @staticmethod
-    def magenta(text):
-        return colored(text, 'magenta', attrs=['bold'])

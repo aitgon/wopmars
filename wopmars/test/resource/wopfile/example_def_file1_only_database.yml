@@ -1,0 +1,11 @@
+rule rule2:
+    tool: wopmars.test.resource.wrapper.FooWrapper5
+    input:
+        file:
+            input1: "outdir/output_file1.txt"
+    output:
+        file:
+            output1: "outdir/output_file2.txt"
+        table:
+            FooBase: wopmars.test.resource.model.FooBase
+

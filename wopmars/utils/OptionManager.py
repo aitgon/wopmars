@@ -104,7 +104,7 @@ class OptionManager(dict, SingletonMixin):
 
     @staticmethod
     def initial_test_setup():
-        OptionManager.instance()["-v"] = 4
+        OptionManager.instance()["-v"] = 1
         OptionManager.instance()["--dot"] = None
         OptionManager.instance()["--since"] = None
         OptionManager.instance()["--until"] = None

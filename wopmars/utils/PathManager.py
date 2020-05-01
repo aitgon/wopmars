@@ -31,7 +31,7 @@ class PathManager:
         :return: the output leading to the tests output of the project
         """
 
-        test_dir_path = os.path.join(os.path.dirname(__file__), "../../test")
+        test_dir_path = os.path.join(os.path.dirname(__file__), "../test")
         pathlib.Path(test_dir_path).mkdir(parents=True, exist_ok=True)
         return test_dir_path
 
