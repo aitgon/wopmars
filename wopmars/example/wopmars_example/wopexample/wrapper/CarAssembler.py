@@ -6,7 +6,7 @@ from wopmars.models.ToolWrapper import ToolWrapper
 
 class CarAssembler(ToolWrapper):
     __mapper_args__ = {
-        "polymorphic_identity": "wopmars.example.CarAssembler"
+        "polymorphic_identity": __module__
     }
 
     def specify_output_file(self):

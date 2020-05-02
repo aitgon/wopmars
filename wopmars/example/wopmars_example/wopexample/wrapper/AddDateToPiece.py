@@ -6,7 +6,7 @@ from wopmars.models.ToolWrapper import ToolWrapper
 
 class AddDateToPiece(ToolWrapper):
     __mapper_args__ = {
-        "polymorphic_identity": "wopmars.example.AddDateToPiece"
+        "polymorphic_identity": __module__
     }
 
     def specify_input_table(self):

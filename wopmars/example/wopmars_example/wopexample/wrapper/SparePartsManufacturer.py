@@ -3,7 +3,7 @@ from wopmars.models.ToolWrapper import ToolWrapper
 
 class SparePartsManufacturer(ToolWrapper):
     __mapper_args__ = {
-        "polymorphic_identity": "wopmars.example.SparePartsManufacturer"
+        "polymorphic_identity": __module__
     }
 
     def specify_input_file(self):
