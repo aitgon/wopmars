@@ -64,9 +64,9 @@ class TestExample(TestCase):
 
         # import pdb; pdb.set_trace()
         # The ORM method does not work in Travis
-        # conn = sqlite3.connect(sqlite_path)
-        # cursor = conn.execute('select * from Piece;')
-        # self.assertEqual(20, len(cursor.fetchall()))
-        # conn.close()
-        
+        conn = sqlite3.connect(sqlite_path)
+        cursor = conn.execute('select * from Piece;')
+        self.assertEqual(20, len(cursor.fetchall()))
+        conn.close()
+
 
