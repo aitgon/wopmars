@@ -342,7 +342,7 @@ class TestWopmars(TestCase):
     # def test_core(self):
     #     cmd_line = ["python", "tool", "tests.resource.wrapper.FooWrapperCore",
     #               "-o", "{'table': {'FooBase7': 'tests.resource.model.FooBase7'}}",
-    #               "-v", "-D", self.__db_url, "-d", self.test_path]
+    #               "-v", "-D", self.db, "-d", self.test_path]
     #     with self.assertRaises(SystemExit) as se:
     #        WopMars().run(cmd_line)
     #     self.assertEqual(se.exception.code, 0)
