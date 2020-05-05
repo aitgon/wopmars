@@ -22,6 +22,7 @@ class TestExample(TestCase):
 
     def tearDown(self):
 
+        subprocess.run(shlex.split("python -m pip uninstall wopexamplecar -y"))
         shutil.rmtree(self.example_path, ignore_errors=True)
         os.chdir(self.__cwd)
 
@@ -37,7 +38,9 @@ class TestExample(TestCase):
         cmd_args_list = shlex.split(cmd)
         subprocess.run(cmd_args_list)
         os.chdir(self.example_path)
-        pip.main(['install', '-e', '.', '--upgrade', '-q'])
+        # import pdb; pdb.set_trace()
+        # pip.main(['install', '-e', '.', '--upgrade', '-q']) # not working in travis
+        subprocess.run(shlex.split("python -m pip install ."))
 
         ################################################################################################################
         #
