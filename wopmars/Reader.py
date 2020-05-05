@@ -62,7 +62,7 @@ class Reader:
                 wopfile_content_str = def_file.read()
             try:
                 # The workflow definition file is loaded as-it in memory by the pyyaml library
-                Logger.instance().info("Reading the Wopfile: " + str(wopfile_path))
+                Logger.instance().info("Reading the Wopfile.yml: " + str(wopfile_path))
                 # Replace jinja2 variables with environment variable values
                 #s_def_file_content = jinja2.Environment().from_string(s_def_file_content).render(os.environ)
                 # Parse the file to find duplicates rule names (it is a double check with the following step)

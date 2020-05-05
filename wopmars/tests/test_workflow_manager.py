@@ -29,7 +29,7 @@ class TestWorkflowManager(TestCase):
 
         SQLManager.instance().get_session().close()
         SQLManager.instance().drop_all()
-        shutil.rmtree(os.path.join(self.test_path, "outdir"), ignore_errors=True)
+        shutil.rmtree(os.path.join(self.test_path, "outdir_path"), ignore_errors=True)
         OptionManager._drop()
         SQLManager._drop()
 

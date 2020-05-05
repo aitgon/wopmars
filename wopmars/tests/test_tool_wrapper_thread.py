@@ -35,7 +35,7 @@ class TestToolWrapperThread(TestCase):
         f1 = FileInputOutputInformation(file_key="input1", path="resource/input_files/input_file1.txt")
         f1.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f2 = FileInputOutputInformation(file_key="output1", path="outdir/output_file1.txt")
+        f2 = FileInputOutputInformation(file_key="output1", path="outdir_path/output_file1.txt")
         f2.relation_file_or_tableioinfo_to_typeio = output_entry
 
         t1 = TableInputOutputInformation(model_py_path="FooBase", table_key="FooBase", table_name="FooBase")
@@ -52,7 +52,7 @@ class TestToolWrapperThread(TestCase):
         f12 = FileInputOutputInformation(file_key="input1", path="resource/input_files/input_file1.txt")
         f12.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f22 = FileInputOutputInformation(file_key="output1", path="outdir/output_file1.txt")
+        f22 = FileInputOutputInformation(file_key="output1", path="outdir_path/output_file1.txt")
         f22.relation_file_or_tableioinfo_to_typeio = output_entry
 
         t12 = TableInputOutputInformation(model_py_path="FooBase", table_key="FooBase", table_name="FooBase")
@@ -70,7 +70,7 @@ class TestToolWrapperThread(TestCase):
         f13 = FileInputOutputInformation(file_key="input1", path="resource/input_files/input_file1.txt")
         f13.relation_file_or_tableioinfo_to_typeio = input_entry
 
-        f23 = FileInputOutputInformation(file_key="output1", path="outdir/output_file1.txt")
+        f23 = FileInputOutputInformation(file_key="output1", path="outdir_path/output_file1.txt")
         f23.relation_file_or_tableioinfo_to_typeio = output_entry
 
         t13 = TableInputOutputInformation(model_py_path="FooBase", table_key="FooBase", table_name="FooBase")
@@ -206,7 +206,7 @@ class TestToolWrapperThread(TestCase):
     def tearDown(self):
         SQLManager.instance().get_session().close()
         SQLManager.instance().drop_all()
-        PathManager.unlink("tests/outdir")
+        PathManager.unlink("tests/outdir_path")
 
 if __name__ == '__main__':
     unittest.main()

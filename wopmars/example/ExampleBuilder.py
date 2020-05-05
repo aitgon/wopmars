@@ -18,8 +18,8 @@ class ExampleBuilder:
         """
         This builds the car example.
         """
-        src_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "wopmars_example")
-        dst_path = os.path.join(OptionManager.instance()["--directory"], "wopmarsexample")
+        src_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "wopexample")
+        dst_path = os.path.join(OptionManager.instance()["--directory"], "wopexample")
 
         shutil.rmtree(dst_path, ignore_errors=True)
         shutil.copytree(src_path, dst_path)
@@ -31,14 +31,14 @@ class ExampleBuilder:
     #     """
     #     This builds the car example.
     #     """
-    #     cwd = os.path.join(OptionManager.instance()["--directory"], "wopmars_example")
+    #     __cwd = os.path.join(OptionManager.instance()["--directory"], "wopmars_example")
     #     example_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "wopmars_example")
     #
-    #     # copy the folder wopmars_example in cwd
-    #     ExampleBuilder.copy(example_directory, cwd)
+    #     # copy the folder wopmars_example in __cwd
+    #     ExampleBuilder.copy(example_directory, __cwd)
     #
     #     # empty.txt is an empty text file used in order to take into account the output directory
-    #     os.remove(os.path.join(cwd, "output/empty.txt"))
+    #     os.remove(os.path.join(__cwd, "output/empty.txt"))
 
     # def build_snp(self):
     #     self.build_file_architecture_snp()
@@ -47,14 +47,14 @@ class ExampleBuilder:
     #     """
     #     This builds the snp example.
     #     """
-    #     cwd = os.path.join(OptionManager.instance()["--directory"], "wopmars_example_snp")
+    #     __cwd = os.path.join(OptionManager.instance()["--directory"], "wopmars_example_snp")
     #     example_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "wopmars_example_snp")
     #
-    #     # copy the folder wopmars_example in cwd
-    #     ExampleBuilder.copy(example_directory, cwd)
+    #     # copy the folder wopmars_example in __cwd
+    #     ExampleBuilder.copy(example_directory, __cwd)
     #
     #     # empty.txt is an empty text file used in order to take into account the output directory
-    #     os.remove(os.path.join(cwd, "output/empty.txt"))
+    #     os.remove(os.path.join(__cwd, "output/empty.txt"))
 
     @staticmethod
     # http://pythoncentral.io/how-to-recursively-copy-a-directory-folder-in-python/

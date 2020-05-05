@@ -24,7 +24,7 @@ let piece_car_modif_time2=$(sqlite3 wopmarsexample/db.sqlite "select mtime_epoch
 # Do not know why but it is not working
 #@tests "wopmars third run: forces execute" {
 # Third run with force: executes
-#wopmars -d wopmarsexample -w wopmarsexample/Wopfile -D "sqlite:///wopmarsexample/db.sqlite" -F
+#wopmars -d wopmarsexample -w wopmarsexample/Wopfile.yml -D "sqlite:///wopmarsexample/db.sqlite" -F
 #let piece_car_modif_time3=$(sqlite3 wopmarsexample/db.sqlite "select mtime_epoch_millis from wom_TableModificationTime where table_name=='piece_car'")
 #[[ "$piece_car_modif_time2" -ne "$piece_car_modif_time3" ]]
 
