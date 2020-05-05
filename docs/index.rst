@@ -43,7 +43,6 @@ Table of Contents
    content/overview
    content/installation
    content/quick-start
-   content/quick-start-snp
    content/wopfile
    content/wrapper
    content/model
