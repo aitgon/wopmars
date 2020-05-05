@@ -55,7 +55,7 @@ class TestExample(TestCase):
         subprocess.run(cmd_args_list)
 
         # import pdb; pdb.set_trace()
-        from model.Piece import Piece
+        from wopmars.example.wopexample.model.Piece import Piece
         test_engine = sqlalchemy.create_engine('sqlite:///{}'.format(sqlite_path), echo=False)
         test_session = (sqlalchemy.orm.sessionmaker(bind=test_engine))()
         self.assertEqual(20, test_session.query(Piece).order_by(Piece.id).count())
