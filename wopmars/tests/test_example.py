@@ -56,7 +56,6 @@ class TestExample(TestCase):
         # import pdb; pdb.set_trace()
         cmd_args_list = shlex.split(cmd)
         subprocess.run(cmd_args_list)
-        Logger.instance().info("Wopfile exists", os.path.exists(wopfile_path))
         # print("Sqlite path:", sqlite_path)
 
         # The ORM method does not work in Travis
