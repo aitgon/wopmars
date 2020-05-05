@@ -9,8 +9,6 @@ To build the workflow files architecture, go to any directory and type the follo
 
 You'll get the following files architecture::
 
-.. code-block:: shell
-
     wopexample
     |-- Wopfile.yml
     |-- Wopfile2
@@ -40,34 +38,32 @@ Move to `wopmars_example` directory and install the package *wopexample*::
 .. note::
     You have just installed your first **WopMars Package**, congratulations! Every *Toolwrapper* for WopMars is supposed to be built in a package in order to be easily installed.
 
-
-Now, let's look in the `Wopfile`
+Now, let's look at the `Wopfile`
 
 .. code-block:: yaml
 
     # Rule1 use SparePartsManufacturer to insert pieces informations into the table piece
     rule Rule1:
-        tool: 'wopexample.wrapper.SparePartsManufacturer'
+        tool: 'wrapper.SparePartsManufacturer'
         input:
             file:
                 pieces: 'input/pieces.txt'
         output:
             table:
-                piece: 'wopexample.model.Piece'
+                piece: 'model.Piece'
 
     # CarAssembler make the combinations of all possible pieces to build cars and calculate the final price
     rule Rule2:
-        tool: 'wopexample.wrapper.CarAssembler'
+        tool: 'wrapper.CarAssembler'
         input:
             table:
-                piece: 'wopexample.model.Piece'
+                piece: 'model.Piece'
         output:
             table:
-                piece_car: 'wopexample.model.PieceCar'
+                piece_car: 'model.PieceCar'
         params:
             # The price have to be under 2000!
             max_price: 2000
-
 
 There are two rules named `Rule1` and `Rule2`. It means that the workflow is composed of two steps. For each rule, the used *Toolwrapper*, its parameters (if needed), inputs and outputs are specified. If you look closely at the values of these inputs and outputs, you can notice that the output of the `Rule1` has the exact same value than the input of the `Rule2`: ``wopexamplesnp.model..Piece``. It means that the `Rule1` will write into the table associated with the Model `Piece` and the `Rule2` will iterate_wopfile_yml_dic_and_insert_rules_in_db these writes. Therefore, `Rule2` won't run before `Rule1` because there is a *dependency relation* between them.
 

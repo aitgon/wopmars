@@ -55,9 +55,13 @@ class TestExample(TestCase):
         cmd_args_list = shlex.split(cmd)
         subprocess.run(cmd_args_list)
         print("File exists", os.path.exists(sqlite_path))
-        
+
         # The ORM method does not work in Travis
         conn = sqlite3.connect(sqlite_path)
+        cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table';")
+        table_list = cursor.fetchall()
+        print(table_list)
+        print(len(table_list))
         # cursor = conn.execute('select * from Piece;')
         # self.assertEqual(20, len(cursor.fetchall()))
         conn.close()
