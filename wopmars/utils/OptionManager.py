@@ -66,7 +66,7 @@ class OptionManager(dict, SingletonMixin):
 
     def validate_definition_file(self):
         if self["--wopfile"] is None:
-            self["--wopfile"] = "Wopfile"
+            self["--wopfile"] = "Wopfile.yml"
 
     def validate_database(self):
         if self["--database"]:
@@ -112,7 +112,7 @@ class OptionManager(dict, SingletonMixin):
         OptionManager.instance()["--dry-run"] = None
         OptionManager.instance()["--touch"] = None
         OptionManager.instance()["tool"] = None
-        test_db_path = os.path.join(PathManager.get_test_path(), "outdir")
+        test_db_path = os.path.join(PathManager.get_test_path(), "outdir_path")
         pathlib.Path(test_db_path).mkdir(parents=True, exist_ok=True)
         OptionManager.instance()["--database"] = "sqlite:///{}".format(os.path.join(test_db_path, 'db.sqlite'))
         OptionManager.instance()["--directory"] = PathManager.get_test_path()

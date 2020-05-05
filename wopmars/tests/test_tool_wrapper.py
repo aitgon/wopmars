@@ -359,7 +359,7 @@ class TestToolWrapper(TestCase):
         modif = TableModificationTime(table_name="FooBase", mtime_epoch_millis=moment, mtime_human=mtime_human)
         modif.relation_tablemodiftime_to_tableioinfo.append(t1)
 
-        path_f1 = os.path.join(self.test_path, "outdir/path1")
+        path_f1 = os.path.join(self.test_path, "outdir_path/path1")
         time.sleep(2)
         p = subprocess.Popen(["touch", path_f1])
         p.wait()
@@ -393,7 +393,7 @@ class TestToolWrapper(TestCase):
     def tearDown(self):
         SQLManager.instance().get_session().close()
         SQLManager.instance().drop_all()
-        shutil.rmtree(os.path.join(self.test_path, "outdir"), ignore_errors=True)
+        shutil.rmtree(os.path.join(self.test_path, "outdir_path"), ignore_errors=True)
         OptionManager._drop()
         SQLManager._drop()
 

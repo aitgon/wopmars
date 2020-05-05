@@ -25,12 +25,12 @@ The value of the tool field are python paths to classes called *wrappers* compat
 
 .. code-block:: python
 
-    from wopmars.framework.database.tables.ToolWrapper import ToolWrapper
+    from wopmars.models.ToolWrapper import ToolWrapper
 
 
     class SparePartsManufacturer(ToolWrapper):
         __mapper_args__ = {
-            "polymorphic_identity": "wopmars.example.SparePartsManufacturer"
+            "polymorphic_identity": __module__
         }
 
         def specify_input_file(self):
@@ -67,7 +67,7 @@ Input or output fields can contain *file* fields with normal file paths or *tabl
 
 .. code-block:: python
 
-    from wopmars.framework.database.Base import Base
+    from wopmars.Base import Base
 
     from sqlalchemy import Column, Integer, String, Float
 
@@ -80,27 +80,31 @@ Input or output fields can contain *file* fields with normal file paths or *tabl
         type = Column(String)
         price = Column(Float)
 
+
 We recomend to organize wrappers and models for a particular aim in a python package to simplify development and installation of wrappers and classes.
 
 .. code-block:: shell
 
-    .
-    └── wopmars_example
-        ├── input
-        │   └── pieces.txt
-        ├── output
-        ├── setup.py
-        ├── wopexample
-        │   ├── __init__.py
-        │   ├── models
-        │   │   ├── __init__.py
-        │   │   ├── PieceCar.py
-        │   │   └── Piece.py
-        │   └── wrappers
-        │       ├── CarAssembler.py
-        │       ├── __init__.py
-        │       └── SparePartsManufacturer.py
-        └── Wopfile
+    wopexample
+    |-- Wopfile.yml
+    |-- Wopfile2
+    |-- Wopfile3
+    |-- __init__.py
+    |-- bats.sh
+    |-- input
+    |   `-- pieces.txt
+    |-- model
+    |   |-- DatedPiece.py
+    |   |-- Piece.py
+    |   |-- PieceCar.py
+    |   |-- __init__.py
+    |-- output
+    |-- setup.py
+    `-- wrapper
+        |-- AddDateToPiece.py
+        |-- CarAssembler.py
+        |-- SparePartsManufacturer.py
+        |-- __init__.py
 
 As shown in the next section (Quick start) After defining wrappers and modes in a dedicated python package and installing it you can run the workflow using a commands
 

@@ -100,7 +100,7 @@ class TestDAG(TestCase):
         SQLManager.instance().get_session().close() 
         SQLManager.instance().drop_all()
         OptionManager._drop()
-        PathManager.unlink("tests/outdir/output_file1.txt")
+        PathManager.unlink("tests/outdir_path/output_file1.txt")
         SQLManager._drop()
 
     def test_init(self):

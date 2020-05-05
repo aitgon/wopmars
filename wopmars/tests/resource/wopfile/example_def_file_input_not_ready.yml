@@ -5,4 +5,4 @@ rule rule1:
             input1: "resource/input_files/input_File_coucou.txt"
     output:
         file:
-            output1: "outdir/output_file1.txt"
+            output1: "outdir_path/output_file1.txt"

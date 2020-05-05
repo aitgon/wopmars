@@ -37,7 +37,7 @@ Example:
     wopmars example
     cd wopmars_example
     pip install .
-    wopmars -w Wopfile -D "sqlite:///db.sqlite" -v -F
+    wopmars -w Wopfile.yml -D "sqlite:///db.sqlite" -v -F
 """
 
 import os
@@ -82,7 +82,7 @@ class WopMars:
             sys.exit(2)
         try:
             schema_option = Schema({
-                '--wopfile': Or("Wopfile", str),
+                '--wopfile': Or("Wopfile.yml", str),
                 '--database': Use(PathManager.check_database_valid_url),
                 '-v': Or(0, And(int, lambda n: 1 <= n <= 2)),
                 '--dot': Or(None, And(Use(PathManager.check_valid_path), Use(PathManager.check_pygraphviz))),

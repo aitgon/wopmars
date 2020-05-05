@@ -32,7 +32,6 @@ Pros and Cons of WopMars
 
 - Cons:
 
-   - No parallel execution of rules but can be integrated in a parallel workflow that access partitioned databases (Database sharding)
    - Wrapper and model class definition is required
 
 Table of Contents
@@ -44,7 +43,6 @@ Table of Contents
    content/overview
    content/installation
    content/quick-start
-   content/quick-start-snp
    content/wopfile
    content/wrapper
    content/model

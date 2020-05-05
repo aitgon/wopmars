@@ -2,10 +2,10 @@ rule rule2:
     tool: wopmars.tests.resource.wrapper.FooWrapper5
     input:
         file:
-            input1: "outdir/output_file1.txt"
+            input1: "outdir_path/output_file1.txt"
     output:
         file:
-            output1: "outdir/output_file2.txt"
+            output1: "outdir_path/output_file2.txt"
         table:
             FooBase: wopmars.tests.resource.model.FooBase
 
