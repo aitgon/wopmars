@@ -50,14 +50,16 @@ class TestExample(TestCase):
         ################################################################################################################
 
         sqlite_path = os.path.join(self.outdir_path, "db.sqlite")
-        wopfile_path = os.path.join(self.example_path, "Wopfile.yml")
+        wopfile_path = os.path.join(PathManager.get_package_path(), "wopmars/example/wopexample/Wopfile.yml")
         cmd = "wopmars -w {} -D sqlite:///{} -v".format(wopfile_path, sqlite_path)
         # import pdb; pdb.set_trace()
         cmd_args_list = shlex.split(cmd)
         subprocess.run(cmd_args_list)
-        print("File exists", os.path.exists(sqlite_path))
+        print("Wopfile exists", os.path.exists(wopfile_path))
+        print("Sqlite path exists", os.path.exists(sqlite_path))
 
         # The ORM method does not work in Travis
+        # import pdb; pdb.set_trace()
         conn = sqlite3.connect(sqlite_path)
         cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table';")
         table_list = cursor.fetchall()
