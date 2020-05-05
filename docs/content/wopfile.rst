@@ -22,7 +22,7 @@ Since this kind of notation is not familiar to everyone, we'll describe it in cl
 
 .. note::
 
-    Some of you may have recognized the `yaml` syntax and you are right! The `yaml specifications <http://yaml.org/spec/>`_ must be respected in order to make WoPMars work properly. This means that you have to indent your new lines and make your file easily readable. Also, you can write comments in your workflow with the ``#`` character. Moreover, you can use double `"`, simple `'` or no quotes when assigning value to an identifier but if you choose one way, I recommand you to stick with it!
+    Some of you may have recognized the `yaml` syntax and you are right! The `yaml specifications <http://yaml.org/spec/>`_ must be respected in order to make WoMars work properly. This means that you have to indent your new lines and make your file easily readable. Also, you can write comments in your workflow with the ``#`` character. Moreover, you can use double `"`, simple `'` or no quotes when assigning value to an identifier but if you choose one way, I recommand you to stick with it!
     
 Wopfile example
 +++++++++++++++
@@ -33,31 +33,32 @@ Since one picture says more than one thousand words, here is a self-explaining e
 
     # Rule1 use SparePartsManufacturer to insert pieces informations into the table piece
     rule Rule1:
-        tool: 'wopexamplesnp.wrapper.SparePartsManufacturer'
+        tool: 'wrapper.SparePartsManufacturer'
         input:
             file:
                 pieces: 'input/pieces.txt'
         output:
             table:
-                piece: 'wopexamplesnp.model.Piece'
+                piece: 'model.Piece'
 
-    # CarAssembler make the combinations of all possible pieces and calculate the final price
+    # CarAssembler make the combinations of all possible pieces to build cars and calculate the final price
     rule Rule2:
-        tool: 'wopexamplesnp.wrapper.CarAssembler'
+        tool: 'wrapper.CarAssembler'
         input:
             table:
-                piece: 'wopexamplesnp.model.Piece'
+                piece: 'model.Piece'
         output:
             table:
-                piece_car: 'wopexamplesnp.model.PieceCar'
+                piece_car: 'model.PieceCar'
         params:
             # The price have to be under 2000!
             max_price: 2000
 
+
 rule
 ++++
 
-In **WoPMars**, like in other workflow managers, each ``rule`` is associated with a step of the workflow. Its name has to be unique in the whole workflow but it has no specific role for WoPMars except help you understand which step is currently running, during the execution.
+In **WoMars**, like in other workflow managers, each ``rule`` is associated with a step of the workflow. Its name has to be unique in the whole workflow but it has no specific role for WoMars except help you understand which step is currently running, during the execution.
 
 A rule is composed of:
 
@@ -73,7 +74,7 @@ Like it has been said previously, the ``tool`` must be specified with its "full 
 
    *Example*::
 
-       wopexamplesnp.wrapper.SparePartsManufacturer
+       wrapper.SparePartsManufacturer
 
    It is used for a package named 'wopexample' which itself contains an other package named 'wrappers' which itself contains the module of interest 'SparePartsManufacturer' (which contains the `Toolwrapper` `SparePartsManufacturer`).
 
@@ -95,7 +96,7 @@ Like files, each `table` is **required** and specified with a value associated t
 
    *Example*::
 
-       wopexamplesnp.model.Piece
+       model.Piece
 
    It is used for a package named 'wopexample' which itself contains an other package named 'models' which itself contains the module of interest 'Piece' (which contains the `model` `Piece`).
 
@@ -124,48 +125,47 @@ Like almost every software nowadays, you can get an help about *how to use WopMa
     WopMars: Workflow Python Manager for Reproducible Science.
 
     Usage:
-      wopmars [-n] [-p] [-F] [-v...] [-d DIR] [-g FILE] [-L FILE] [-f RULE | -t RULE] [-D DATABASE] [-w DEFINITION_FILE]
-      wopmars tool TOOLWRAPPER [-i DICT] [-o DICT] [-P DICT] [-p] [-F] [-D DATABASE] [-v...] [-d DIR] [-L FILE] [-g FILE]
+      wopmars (-D DATABASE) (-w DEFINITION_FILE) [-n] [-F] [-v...] [-d DIR] [-g FILE] [-L FILE] [-S RULE | -U RULE] [-c] [-t]
+      wopmars tool TOOLWRAPPER [-i DICT] [-o DICT] [-P DICT] [-F] [-D DATABASE] [-v...] [-d DIR] [-L FILE] [-g FILE] [-c] [-t]
       wopmars example [-d DIR]
+      wopmars example_snp [-d DIR]
 
     Arguments:
-      DEFINITION_FILE  Path to the definition file of the workflow [default: wopfile.yml].
-      DATABASE         Path to the sqlite database file
+      DEFINITION_FILE  Path to the definition file of the workflow (Required)
+      DATABASE         Path to the sqlite database file (Required)
       FILE             Path to a file.
       RULE             Name of a rule in the workflow definition file.
-      TOOLWRAPPER      Path the the toolwrapper
-      DICT             String formated like a dictionnary. Ex: "{'input1': 'path/to/input1', 'input2': 'path/to/input2'}"
+      TOOLWRAPPER      Path the the tool_python_path
+      DICT             String formatted like a dictionary. Ex: "{'input1': 'path/to/input1', 'input2': 'path/to/input2'}"
 
     Options:
-      -h --help                    Show this help.
-      -v                           Set verbosity level.
-      -g FILE --dot=FILE           Write dot representing the workflow in the FILE file (with .dot extension).
-      -L FILE --log=FILE           Write logs in FILE file [default: $HOME/.wopmars/wopmars.log].
-      -p --printtools              Write logs in standard output.
-      -f RULE --sourcerule=RULE    Execute the workflow from the given RULE.
-      -t RULE --targetrule=RULE    Execute the workflow to the given RULE.
+      -D --database=DATABASE       REQUIRED: Set the path to the database, e.g -D sqlite:///db.sqlite
+      -w --wopfile=DEFINITION_FILE REQUIRED: Set the path to the definition file.
+      -c --cleanup-metadata           Clear WoPMaRS history. Should be used in case of bug which seem to be related to the history. Be carefull, clearing history will result in a re-execution of the whole workflow.
+      -d --directory=DIR           Specify working directory (relative paths in the wopfile will use this as their origin). [default: $CWD].
       -F --forceall                Force the execution of the workflow, without checking for previous executions.
+      -S RULE --since=RULE    Execute the workflow from the given RULE.
+      -g FILE --dot=FILE           Write dot representing the workflow in the FILE file (with .dot extension). This option needs to install WopMars with pygraphviz (pip install wopmars[pygraphviz])
+      -h --help                    Show this help.
+      -i --input=DICT              Set the input of the tool_python_path you want to use in the dictionary format.
+      -L FILE --log=FILE           Write logs in FILE file.
       -n --dry-run                 Only display what would have been done.
-      -d --directory=DIR           Set the current working directory. Usefull for working with relative poths [default: $CWD].
-      -D --database=DATABASE       Set the path to the database [default: $CWD/Wopfile].
-      -w --wopfile=DEFINITION_FILE Set the path to the definition file [default: $CWD/wopmars.sqlite].
-      -i --input=DICT              Set the input of the toolwrapper you want to use in the dictionnary format.
-      -o --output=DICT             Set the output of the toolwrapper you want to use in the dictionnary format.
-      -P --params=DICT             Set the parameters of the toolwrapper you want to use in the dictionnary format.
-      -c --cleanup-metadata           Clear WopMars history. Should be used in case of bug which seem to be related to the history. Be carefull, clearing history will result in a re-execution of the whole workflow.
+      -t --touch                 Only display what would have been done.
+      -o --output=DICT             Set the output of the tool_python_path you want to use in the dictionary format.
+      -P --params=DICT             Set the parameters of the tool_python_path you want to use in the dictionary format.
+      -U RULE --until=RULE    Execute the workflow to the given RULE.
       -u --update                  Should be used when a file supposedly generated by the workflow already exists and should be used as it. (Not implemented)
-      -l --toolwrapper-log         Allow the toolwrapper to print its logs in the standard output. dictionnary format.
+      -v                           Set verbosity level, eg -v, -vv or -vvv
  
 Let's see what is interesting in there.
 
 Execution modes
 +++++++++++++++
 
-There are three mode for running WopMars:
+There are two modes for running WopMars:
 
 1. The main mode is by default, you have already used it in the :doc:`Quick Start section </content/quick-start>` and it allows to execute a workflow from the `Wopfile`
 2. The ``tool`` mode aims to execute only one `Toolwrapper`. It is usually used for debugging purposes while the `Toolwrapper` developer is actually developing the wrapper
-3. You're supposed to have already used the ``example`` mode in the :doc:`Quick Start section </content/quick-start>` but if not, you should know that it aims to build a ready-to-run project example
 
 Database engines
 ++++++++++++++++++
@@ -197,20 +197,17 @@ Options and arguments
 -L --log=FILE
     This option allows to specify an other file than ``$HOME/.wopmars/wopmars.log`` to write the logs of the current execution. The logs are very important, if you have issues that you don't understand, you should try to run WopMars with ``-vv`` and send us your log file to help us figure out what is going on.
 
--p --printtools
-    This option allows to actually display the output of WopMars in the Terminal, not only write it in the log file. You should use it sparingly, writing things at screen has an udge cost for your machine and can drastically lower your performances.
-
 .. _sourcerule-label:
 
--f --sourcerule=RULE
-    This option allows to say to WopMars from which rule you want to start the workflow. Each rule successing this one will be executed. 
+-S --since=RULE
+    This option allows to say to WopMars since which rule you want to start the workflow. Each rule successing this one will be executed. 
     
 .. figure::  ../images/from.png
    :align:   center
    
    *The tools executed are all the successors of the "source rule", here, rule 2. However, if output 1 is not available, this option will lead to an error*
 
--t --targetrule=RULE
+-U --until=RULE
     This option allows to say to WopMars to which rule you want the workflow to go to. Each rule predecessing this one will be executed.
 
 .. figure::  ../images/to.png
@@ -219,7 +216,7 @@ Options and arguments
    *The tools executed are all the predecessors of the "target rule", here, rule 4*
     
 -F --forceall=RULE
-    This option allows to force WopMars to execute each rule it encounters during the workflow. Actualy, WoPMars try to execute the less possible tasks. Each time he encounters a rule that he thinks he has already executed in previous execution and he still has the result, he skips the rule. This option allows to denie this behavior.
+    This option allows to force WopMars to execute each rule it encounters during the workflow. Actualy, WoMars try to execute the less possible tasks. Each time he encounters a rule that he thinks he has already executed in previous execution and he still has the result, he skips the rule. This option allows to denie this behavior.
 
 -n --dry-run
     This option allows to simulate an execution. WopMars will behave like a normal execution except he won't execute anything. This can be used to prevent mistakes in long workflows without actually suffer the error.
@@ -248,36 +245,5 @@ tool TOOLWRAPPER
 
 -c --cleanup-metadata
     This option is used when there is an error related to the history of WopMars. It allows to deleter all ``wom_`` like bases and start a new execution. Beware, even if a Tool shouldn't be re-executed, WopMars won't be able to say if it is right or not and then will re-execute every tools.
-
--l --toolwrapper-log
-    This option will print the logs written by the toolwrapper developper. It shouldn't be used by the common user and has been created for debugging purposes. This log won't be stored in the log file.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

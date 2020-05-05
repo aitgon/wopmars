@@ -120,5 +120,5 @@ The preceding workflow had two steps:
     C5ML0M7GI4|1763.82
     FHPL76QFZH|1772.96
 
-Now that you have run a working example you can go to the :doc:`Wopfile </content/wopfile>`, :doc:`Wrapper </content/wrapper>`, or :doc:`Model </content/model>` sections to develop your own Wopmars workflow. In the next section, you have a bioinformatics example.
+Now that you have run a working example you can go to the :doc:`Wopfile </content/wopfile>`, :doc:`Wrapper </content/wrapper>`, or :doc:`Model </content/model>` sections to develop your own Wopmars workflow.
 
