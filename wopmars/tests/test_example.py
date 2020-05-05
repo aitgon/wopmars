@@ -22,7 +22,7 @@ class TestExample(TestCase):
 
     def tearDown(self):
 
-        subprocess.run(shlex.split("python -m pip uninstall wopexamplecar -y"))
+        # subprocess.run(shlex.split("python -m pip uninstall wopexamplecar -y"))
         shutil.rmtree(self.example_path, ignore_errors=True)
         os.chdir(self.__cwd)
 
@@ -39,7 +39,7 @@ class TestExample(TestCase):
         subprocess.run(cmd_args_list)
         os.chdir(self.example_path)
         # import pdb; pdb.set_trace()
-        pip.main(['install', '-e', '.', '--upgrade', '-q'])  # not working in travis
+        pip.main(['install', '.', '--upgrade', '-q'])  # not working in travis
         # subprocess.run(shlex.split("python -m pip install ."))  # not working in travis
 
         ################################################################################################################
@@ -50,9 +50,11 @@ class TestExample(TestCase):
 
         sqlite_path = "db.sqlite"
         cmd = "wopmars -w Wopfile.yml -D sqlite:///db.sqlite".format(sqlite_path)
+        # import pdb; pdb.set_trace()
         cmd_args_list = shlex.split(cmd)
         subprocess.run(cmd_args_list)
 
+        # import pdb; pdb.set_trace()
         from model.Piece import Piece
         test_engine = sqlalchemy.create_engine('sqlite:///{}'.format(sqlite_path), echo=False)
         test_session = (sqlalchemy.orm.sessionmaker(bind=test_engine))()
