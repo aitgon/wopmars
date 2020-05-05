@@ -1,3 +1,4 @@
+import logging
 from unittest import TestCase
 
 import os
@@ -55,16 +56,20 @@ class TestExample(TestCase):
         # import pdb; pdb.set_trace()
         cmd_args_list = shlex.split(cmd)
         subprocess.run(cmd_args_list)
-        print("Wopfile exists", os.path.exists(wopfile_path))
-        print("Sqlite path exists", os.path.exists(sqlite_path))
+        Logger.instance().info("Wopfile exists", os.path.exists(wopfile_path))
+        # print("Sqlite path:", sqlite_path)
 
         # The ORM method does not work in Travis
         # import pdb; pdb.set_trace()
         conn = sqlite3.connect(sqlite_path)
         cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table';")
         table_list = cursor.fetchall()
-        print(table_list)
-        print(len(table_list))
+        # print(table_list)
+        # print(len(table_list))
         # cursor = conn.execute('select * from Piece;')
-        # self.assertEqual(20, len(cursor.fetchall()))
+        self.assertEqual(9, len(table_list))
+        self.assertEqual(sorted(table_list), [('Piece',), ('PieceCar',), ('wom_Execution',),
+                                      ('wom_FileInputOutputInformation',), ('wom_Option',),
+                                      ('wom_TableInputOutputInformation',), ('wom_TableModificationTime',),
+                                      ('wom_ToolWrapper',), ('wom_TypeInputOrOutput',)])
         conn.close()
