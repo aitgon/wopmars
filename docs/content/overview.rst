@@ -85,23 +85,26 @@ We recomend to organize wrappers and models for a particular aim in a python pac
 
 .. code-block:: shell
 
-    .
-    └── wopmars_example
-        ├── input
-        │   └── pieces.txt
-        ├── output
-        ├── setup.py
-        ├── wopexample
-        │   ├── __init__.py
-        │   ├── models
-        │   │   ├── __init__.py
-        │   │   ├── PieceCar.py
-        │   │   └── Piece.py
-        │   └── wrappers
-        │       ├── CarAssembler.py
-        │       ├── __init__.py
-        │       └── SparePartsManufacturer.py
-        └── Wopfile
+    wopexample
+    |-- Wopfile.yml
+    |-- Wopfile2
+    |-- Wopfile3
+    |-- __init__.py
+    |-- bats.sh
+    |-- input
+    |   `-- pieces.txt
+    |-- model
+    |   |-- DatedPiece.py
+    |   |-- Piece.py
+    |   |-- PieceCar.py
+    |   |-- __init__.py
+    |-- output
+    |-- setup.py
+    `-- wrapper
+        |-- AddDateToPiece.py
+        |-- CarAssembler.py
+        |-- SparePartsManufacturer.py
+        |-- __init__.py
 
 As shown in the next section (Quick start) After defining wrappers and modes in a dedicated python package and installing it you can run the workflow using a commands
 

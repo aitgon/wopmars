@@ -9,23 +9,28 @@ To build the workflow files architecture, go to any directory and type the follo
 
 You'll get the following files architecture::
 
-    .
-    |-- Wopfile
+.. code-block:: shell
+
+    wopexample
+    |-- Wopfile.yml
     |-- Wopfile2
     |-- Wopfile3
+    |-- __init__.py
+    |-- bats.sh
     |-- input
     |   `-- pieces.txt
+    |-- model
+    |   |-- DatedPiece.py
+    |   |-- Piece.py
+    |   |-- PieceCar.py
+    |   |-- __init__.py
     |-- output
     |-- setup.py
-    |-- wopexample
-    |   |-- model
-    |   |   |-- DatedPiece.py
-    |   |   |-- Piece.py
-    |   |   |-- PieceCar.py
-    |   `-- wrapper
-    |       |-- AddDateToPiece.py
-    |       |-- CarAssembler.py
-    |       |-- SparePartsManufacturer.py
+    `-- wrapper
+        |-- AddDateToPiece.py
+        |-- CarAssembler.py
+        |-- SparePartsManufacturer.py
+        |-- __init__.py
 
 Move to `wopmars_example` directory and install the package *wopexample*::
 
