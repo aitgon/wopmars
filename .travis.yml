@@ -4,6 +4,8 @@ python:
   - "3.6"
   - "3.7"
   - "3.8"
+before_install:
+  - python -m pip install --upgrade pip
 install:
   - sudo apt-get update
   # We do this conditionally because it saves us some downloading if the
@@ -30,6 +32,8 @@ install:
 
 script:
   # Your tests script goes here
+  - python --version
+  - pip --version
   - coverage run -m unittest discover
 
 after_success:

@@ -39,8 +39,8 @@ class TestExample(TestCase):
         subprocess.run(cmd_args_list)
         os.chdir(self.example_path)
         # import pdb; pdb.set_trace()
-        # pip.main(['install', '-e', '.', '--upgrade', '-q']) # not working in travis
-        subprocess.run(shlex.split("python -m pip install ."))
+        pip.main(['install', '-e', '.', '--upgrade', '-q'])  # not working in travis
+        # subprocess.run(shlex.split("python -m pip install ."))  # not working in travis
 
         ################################################################################################################
         #
