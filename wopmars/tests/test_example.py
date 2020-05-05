@@ -50,7 +50,8 @@ class TestExample(TestCase):
         ################################################################################################################
 
         sqlite_path = os.path.join(self.outdir_path, "db.sqlite")
-        cmd = "wopmars -w Wopfile.yml -D sqlite:///{} -v".format(sqlite_path)
+        wopfile_path = os.path.join(self.example_path, "Wopfile.yml")
+        cmd = "wopmars -w {} -D sqlite:///{} -v".format(wopfile_path, sqlite_path)
         # import pdb; pdb.set_trace()
         cmd_args_list = shlex.split(cmd)
         subprocess.run(cmd_args_list)
@@ -65,5 +66,3 @@ class TestExample(TestCase):
         # cursor = conn.execute('select * from Piece;')
         # self.assertEqual(20, len(cursor.fetchall()))
         conn.close()
-
-
