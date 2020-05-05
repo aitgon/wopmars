@@ -4,6 +4,8 @@ from unittest import TestCase
 import os
 import shutil
 
+import pip
+
 from wopmars import WopMars
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.PathManager import PathManager
@@ -16,17 +18,22 @@ class TestExample(TestCase):
         OptionManager.initial_test_setup()  # Set tests arguments
         self.db_url = OptionManager.instance()["--database"]
         self.db = self.db_url[10:]
-        self.wopfile = os.path.join(PathManager.get_package_path(), "wopmars/example/wopexample/Wopfile.yml")
+        self.wopexample_dir_path = os.path.join(PathManager.get_package_path(), "wopmars/example/wopexample")
+        self.wopfile = os.path.join(self.wopexample_dir_path, "Wopfile.yml")
         self.working_directory = os.path.join(PathManager.get_package_path(), "wopmars/example/wopexample")
     #
     def tearDown(self):
 
-        shutil.rmtree(os.path.join(self.test_path, "outdir_path"), ignore_errors=True)
+        pip.main(['uninstall', 'wopexamplecar', '-y'])
+        shutil.rmtree(os.path.join(self.working_directory, "build"), ignore_errors=True)
+        shutil.rmtree(os.path.join(self.working_directory, "wopexamplecar.egg-info"), ignore_errors=True)
         PathManager.unlink(self.db)
         OptionManager._drop()
         SQLManager._drop()
 
     def test_example(self):
+
+        pip.main(['install', '{}/.'.format(self.wopexample_dir_path), '--upgrade'])
 
         cmd_args = [None, "-v", "--database", self.db_url, "--wopfile", self.wopfile, "--directory", self.working_directory]
         with self.assertRaises(SystemExit) as se:
