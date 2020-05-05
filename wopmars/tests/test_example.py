@@ -7,6 +7,7 @@ import shlex
 import shutil
 import sqlalchemy
 import subprocess
+import sqlite3
 
 from wopmars.utils.PathManager import PathManager
 
@@ -54,9 +55,15 @@ class TestExample(TestCase):
         cmd_args_list = shlex.split(cmd)
         subprocess.run(cmd_args_list)
 
+        # from wopmars.example.wopexample.model.Piece import Piece
+        # test_engine = sqlalchemy.create_engine('sqlite:///{}'.format(sqlite_path), echo=False)
+        # test_session = (sqlalchemy.orm.sessionmaker(bind=test_engine))()
+        # self.assertEqual(20, test_session.query(Piece).order_by(Piece.id).count())
+
         # import pdb; pdb.set_trace()
-        from wopmars.example.wopexample.model.Piece import Piece
-        test_engine = sqlalchemy.create_engine('sqlite:///{}'.format(sqlite_path), echo=False)
-        test_session = (sqlalchemy.orm.sessionmaker(bind=test_engine))()
-        self.assertEqual(20, test_session.query(Piece).order_by(Piece.id).count())
+        # The ORM method does not work in Travis
+        conn = sqlite3.connect(sqlite_path)
+        cursor = conn.execute('select * from piece;')
+        self.assertEqual(20, len(cursor.fetchall()))
+        conn.close()
 
