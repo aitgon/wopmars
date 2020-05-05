@@ -1,3 +1,5 @@
+import os
+import shutil
 import unittest
 from unittest import TestCase
 
@@ -15,6 +17,7 @@ from wopmars.utils.PathManager import PathManager
 class TestDAG(TestCase):
 
     def setUp(self):
+        self.test_path = PathManager.get_test_path()  # Get tests path
         OptionManager.initial_test_setup()  # Set tests arguments
         SQLManager.instance().create_all()  # Create database with tables
         #        first
@@ -78,6 +81,14 @@ class TestDAG(TestCase):
         SQLManager.instance().get_session().add_all(list_tool)
         SQLManager.instance().get_session().commit()
 
+    def tearDown(self):
+
+        SQLManager.instance().get_session().close()
+        SQLManager.instance().drop_all()
+        OptionManager._drop()
+        shutil.rmtree(os.path.join(self.test_path, "outdir"), ignore_errors=True)
+        SQLManager._drop()
+
     def test_get_all_successors(self):
         my_dag = DAG(self.__set_tool)
 
@@ -95,13 +106,6 @@ class TestDAG(TestCase):
                             self.__set_tool.difference(set([self.__toolwrapper_second])))
         self.assertNotEqual(set(my_dag.get_all_predecessors(self.__toolwrapper_fourth)),
                             self.__set_tool.difference(set([self.__toolwrapper_fourth])))
-
-    def tearDown(self):
-        SQLManager.instance().get_session().close() 
-        SQLManager.instance().drop_all()
-        OptionManager._drop()
-        PathManager.unlink("tests/outdir_path/output_file1.txt")
-        SQLManager._drop()
 
     def test_init(self):
         try:
