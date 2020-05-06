@@ -1,0 +1,11 @@
+channels:
+  - defaults
+  - omnia
+dependencies:
+  - python=3.7
+  - docopt
+  - networkx
+  - pyyaml
+  - schema
+  - sqlalchemy
+  - termcolor

@@ -93,7 +93,6 @@ class WopMars:
                 "--forceall": Use(bool),
                 "--dry-run": Use(bool),
                 "--touch": Use(bool),
-                # "--directory": Use(PathManager.create_workingdir),
                 "--directory": Use(lambda path: pathlib.Path(path).mkdir(parents=True, exist_ok=True)),
                 "--input": Use(DictUtils.str_to_dict),
                 "--output": Use(DictUtils.str_to_dict),
