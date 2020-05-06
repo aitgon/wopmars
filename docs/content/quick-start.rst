@@ -4,15 +4,18 @@ Quick Start - Car Example
 Now you should be able to run WopMars for the first time and we have prepared a simple example of workflow to introduce you to the basics of WopMars.
 
 To build the workflow files architecture, go to any directory and type the following command::
-    
+
+.. code-block:: bash
+
     wopmars example
 
 You'll get the following files architecture::
 
+
     wopexample
     |-- Wopfile.yml
-    |-- Wopfile2
-    |-- Wopfile3
+    |-- Wopfile2.yml
+    |-- Wopfile3.yml
     |-- __init__.py
     |-- bats.sh
     |-- input
@@ -30,10 +33,11 @@ You'll get the following files architecture::
         |-- SparePartsManufacturer.py
         |-- __init__.py
 
+
 Move to `wopmars_example` directory and install the package *wopexample*::
 
     cd wopmarsexample
-    pip install .
+    pip install -e .
 
 .. note::
     You have just installed your first **WopMars Package**, congratulations! Every *Toolwrapper* for WopMars is supposed to be built in a package in order to be easily installed.
@@ -65,7 +69,9 @@ Now, let's look at the `Wopfile`
             # The price have to be under 2000!
             max_price: 2000
 
-There are two rules named `Rule1` and `Rule2`. It means that the workflow is composed of two steps. For each rule, the used *Toolwrapper*, its parameters (if needed), inputs and outputs are specified. If you look closely at the values of these inputs and outputs, you can notice that the output of the `Rule1` has the exact same value than the input of the `Rule2`: ``wopexamplesnp.model..Piece``. It means that the `Rule1` will write into the table associated with the Model `Piece` and the `Rule2` will iterate_wopfile_yml_dic_and_insert_rules_in_db these writes. Therefore, `Rule2` won't run before `Rule1` because there is a *dependency relation* between them.
+There are two rules named `Rule1` and `Rule2`. It means that the workflow is composed of two steps.
+For each rule, the used *Toolwrapper*, its parameters (if needed), inputs and outputs are specified. If you look closely at the values of these inputs and outputs, you can notice that the output of the `Rule1` has the exact same value than the input of the `Rule2`:
+``model..Piece``. It means that the `Rule1` will write into the table associated with the Model `Piece` and the `Rule2` will iterate_wopfile_yml_dic_and_insert_rules_in_db these writes. Therefore, `Rule2` won't run before `Rule1` because there is a *dependency relation* between them.
 
 .. note::
 
@@ -73,7 +79,7 @@ There are two rules named `Rule1` and `Rule2`. It means that the workflow is com
 
 It came time to start your first workflow!
 
-.. code-block:: python
+.. code-block:: shell
 
     wopmars -w Wopfile -D "sqlite:///db.sqlite" -v -p
 
@@ -82,7 +88,9 @@ You will see a little bit of output in the console thanks to the ``-p`` coupled 
 Looking at the Results
 *************************
 
-Now, I'll show you a brief overview of what you can do with the database. First, make sure you have installed `sqlite3` on your machine::
+Now, I'll show you a brief overview of what you can do with the database.
+First, make sure you have installed `sqlite3` on your machine::
+
 
     sudo apt-get install sqlite3
 
@@ -98,7 +106,7 @@ The preceding workflow had two steps:
 
 1. Get pieces references in the `input/pieces.txt` file and insert them in the table `piece` of the database
 
-.. code-block:: bash
+.. code-block:: shell
 
     $ sqlite3 -header db.sqlite "select * from piece limit 5;"
     id|serial_number|type|price
@@ -110,7 +118,7 @@ The preceding workflow had two steps:
 
 2. Build all possible cars composed of those three types of pieces and store those combinations in the table `piece_car`. Here, we select only those which have a wheel of price below 650 and the total price is below 1800
 
-.. code-block:: sql
+.. code-block:: shell
 
     $ sqlite3 -header db.sqlite "SELECT DISTINCT car_serial_number, PC.price FROM piece_car PC, piece P WHERE PC.wheel_serial_number=P.serial_number AND P.price<650 AND PC.price<1800 limit 5;"
     car_serial_number|price
@@ -120,5 +128,5 @@ The preceding workflow had two steps:
     C5ML0M7GI4|1763.82
     FHPL76QFZH|1772.96
 
-Now that you have run a working example you can go to the :doc:`Wopfile </content/wopfile>`, :doc:`Wrapper </content/wrapper>`, or :doc:`Model </content/model>` sections to develop your own Wopmars workflow.
-
+Now that you have run a working example you can go to the :doc:`Wopfile </content/wopfile>`, :doc:`Wrapper </content/wrapper>`,
+or :doc:`Model </content/model>` sections to develop your own Wopmars workflow.

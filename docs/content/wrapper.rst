@@ -30,12 +30,12 @@ Here is an example of the declaration of a class called ``SparePartsManufacturer
 
 .. code-block:: python
 
-    from wopmars.framework.bdd.tables.ToolWrapper import ToolWrapper
+    from wopmars.models.ToolWrapper import ToolWrapper
 
 
     class SparePartsManufacturer(ToolWrapper):
         __mapper_args__ = {
-            "polymorphic_identity": "wopmars.example.SparePartsManufacturer"
+            "polymorphic_identity": __module__
         }
         pass
 
@@ -62,7 +62,7 @@ The class ``SparePartsManufacturer`` takes a file in input but doesn't produce a
 
     class SparePartsManufacturer(ToolWrapper):
         __mapper_args__ = {
-            "polymorphic_identity": "wopmars.example.SparePartsManufacturer"
+            "polymorphic_identity": __module__
         }
 
         def specify_input_file(self):
@@ -85,7 +85,7 @@ Here is the rest of the `Toolwrapper` ``SparePartsManufacturer`` which writes it
 
     class SparePartsManufacturer(ToolWrapper):
         __mapper_args__ = {
-            "polymorphic_identity": "wopmars.example.SparePartsManufacturer"
+            "polymorphic_identity": __module__
         }
 
         def specify_input_file(self):
@@ -113,7 +113,7 @@ In the following class, the parameter ``max_price`` is an ``int`` and will be us
 
     class SparePartsManufacturer(ToolWrapper):
         __mapper_args__ = {
-            "polymorphic_identity": "wopmars.example.SparePartsManufacturer"
+            "polymorphic_identity": __module__
         }
 
         def specify_input_file(self):
@@ -140,7 +140,7 @@ The path to the files given by the final user are manipulated thanks to the meth
 .. code-block:: yaml
 
     rule Rule1:
-        tool: 'wopexamplesnp.wrapper.SparePartsManufacturer'
+        tool: 'wrapper.SparePartsManufacturer'
         input:
             file:
                 pieces: 'input/pieces.txt'
@@ -158,7 +158,7 @@ The models given by the user can be accessed thanks to the methodes ``self.input
 
         output:
             table:
-                piece: 'wopexamplesnp.model.Piece'
+                piece: 'model.Piece'
 
 We can access the model ``Piece`` with the following statement::
 
@@ -191,7 +191,7 @@ During the parsing of the configuration file, WopMars check first the validity o
 
     class CarAssembler(ToolWrapper):
         __mapper_args__ = {
-            "polymorphic_identity": "wopmars.example.CarAssembler"
+            "polymorphic_identity": __module__
         }
 
         def specify_output_file(self):
@@ -215,26 +215,26 @@ During the parsing of the configuration file, WopMars check first the validity o
                 "max_price": "int",
             }
 
-And there, the definition file (``Wopfile2`` in the example directory) look like this:
+And there, the definition file (``Wopfile2.yml`` in the example directory) look like this:
 
 .. code-block:: yaml
 
     # Rule1 use SparePartsManufacturer to insert pieces informations into the table piece
     rule Rule1:
-        tool: 'wopexamplesnp.wrapper.SparePartsManufacturer'
+        tool: 'wrapper.SparePartsManufacturer'
         input:
             file:
                 pieces: 'input/pieces.txt'
         output:
             table:
-                piece: 'wopexamplesnp.model.Piece'
+                piece: 'model.Piece'
 
     # CarAssembler make the combinations of all possible pieces to build cars and calculate the final price
     rule Rule2:
-        tool: 'wopexamplesnp.wrapper.CarAssembler'
+        tool: 'wrapper.CarAssembler'
         input:
             table:
-                piece: 'wopexamplesnp.model.Piece'
+                piece: 'model.Piece'
         output:
             # Here the output is written in a file
             file:
@@ -263,7 +263,7 @@ Taking back our model example ``Piece``, we need an other model which add the fi
     from sqlalchemy.sql.sqltypes import Date
     from sqlalchemy import Column
 
-    from wopexamplesnp.model.Piece import Piece
+    from model.Piece import Piece
 
 
     class DatedPiece(Piece):
@@ -281,7 +281,7 @@ With this model, there is an other `Toolwrapper` provided in the example: ``AddD
 
     class AddDateToPiece(ToolWrapper):
         __mapper_args__ = {
-            "polymorphic_identity": "wopmars.example.AddDateToPiece"
+            "polymorphic_identity": __module__
         }
 
         def specify_input_table(self):
@@ -381,31 +381,4 @@ Inside the `run` method of the tool wrapper, we need to retrieve a list of objec
                     my_input_model_new_objects=[{'col1': val1}]
                 # bunch insert list of value dics
                 engine.execute(my_input_model.__table__.insert(), [my_input_model_val1_dic])
-
-Pandas read_sql and to_sql
-----------------------------
-
-Inside the `run` method of the tool wrapper, we need to retrieve a list of object dictionaries in the database. Then we check if new objects are not already in the database and then insert a list of such object dictionnaries.
-
-        .. code-block:: python
-
-            # This code is for illustration purpose and has not been tested
-            # inside the run of a tool wrapper MyWrapper
-            def run(self):
-                session = self.session
-                engine = session._WopMarsSession__session.bind
-                conn = engine.connect()
-                #
-                my_input_model = self.output_table(MyWrapper.__input_table1)
-                #
-                # retrieve all objects in database
-                sql = select([my_input_model.col1])
-                my_input_model_in_db = [{'col1': row[0] for row in conn.execute(sql)}]
-                # check if new col1:val1 not already in db
-                if not {'col1': val1} in my_input_model_col1_db:
-                    # add to list of value dics
-                    my_input_model_new_objects=[{'col1': val1}]
-                # bunch insert list of value dics
-                engine.execute(my_input_model.__table__.insert(), [my_input_model_val1_dic])
-
 

@@ -1,0 +1,14 @@
+channels:
+  - defaults
+dependencies:
+  - python=3.7
+  - termcolor
+  - pyyaml
+  - sqlalchemy
+  - docopt
+  - schema
+  - networkx
+  - sphinx
+  - sphinx_rtd_theme
+  - pygments
+

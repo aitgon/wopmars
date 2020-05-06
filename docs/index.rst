@@ -3,22 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-WopMars: Workflow Python Manager for Reproducible Science
-======================================================================
-
-.. image:: https://travis-ci.org/aitgon/wopmars.svg?branch=master
-    :target: https://travis-ci.org/aitgon/wopmars
-
-.. image:: https://img.shields.io/pypi/pyversions/wopmars.svg
-    :target: https://www.python.org
-
-.. image:: https://readthedocs.org/projects/wopmars/badge/?version=latest
-    :target: http://wopmars.readthedocs.io/en/latest/?badge=latest
-
-.. image:: https://img.shields.io/pypi/v/wopmars.svg
-    :target: https://pypi.python.org/pypi/wopmars
-
-**WopMars** is an implicity workflow manager based on a workflow definition file written in Python that uses file and database input/outputs to create and follow the execution direct acyclic graph (DAG). It has been developed in a bioinformatics context and it is particularly useful when the analysis results must be stored in a relational database.
+.. include:: ../README.rst
 
 Pros and Cons of WopMars
 ---------------------------
@@ -46,8 +31,8 @@ Table of Contents
    content/wopfile
    content/wrapper
    content/model
-   content/developer
    content/cheatsheet
+..   content/developer # must be updated to latest version
 
 .. Indices and tables
 .. ==================

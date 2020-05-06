@@ -13,13 +13,13 @@ The *wopfile* defines the rules to convert inputs into outputs based on a tool:
 
     # Rule1 use SparePartsManufacturer to insert pieces informations into the table piece
     rule Rule1:
-        tool: 'wopexamplesnp.wrapper.SparePartsManufacturer'
+        tool: 'wrapper.SparePartsManufacturer'
         input:
             file:
                 pieces: 'input/pieces.txt'
         output:
             table:
-                piece: 'wopexamplesnp.model.Piece'
+                piece: 'model.Piece'
 
 The value of the tool field are python paths to classes called *wrappers* compatible with WopMars. These wrapper classes are able to process inputs and outputs.
 
@@ -63,7 +63,8 @@ The value of the tool field are python paths to classes called *wrappers* compat
             session.commit()
 
 
-Input or output fields can contain *file* fields with normal file paths or *table* fields. The values of *table* fields are python paths to SQL Alchemy models in the PYTHONPATH:
+Input or output fields can contain *file* fields with normal file paths or *table* fields. The values of *table* fields
+are python paths to SQL Alchemy models in the PYTHONPATH:
 
 .. code-block:: python
 
@@ -81,7 +82,8 @@ Input or output fields can contain *file* fields with normal file paths or *tabl
         price = Column(Float)
 
 
-We recomend to organize wrappers and models for a particular aim in a python package to simplify development and installation of wrappers and classes.
+We recomend to organize wrappers and models for a particular aim in a python package to simplify development and
+installation of wrappers and classes.
 
 .. code-block:: shell
 
@@ -106,11 +108,13 @@ We recomend to organize wrappers and models for a particular aim in a python pac
         |-- SparePartsManufacturer.py
         |-- __init__.py
 
-As shown in the next section (Quick start) After defining wrappers and modes in a dedicated python package and installing it you can run the workflow using a commands
+As shown in the next section (Quick start) After defining wrappers and modes in a dedicated python package and
+installing it you can run the workflow using a commands
 
 .. code-block:: shell
 
     wopmars -w Wopfile -D "sqlite:///db.sqlite" -v -p
 
-Now that you should understand the basics components of WopMars, I recommend you to go to the quick start section to try a working example.
+Now that you should understand the basics components of WopMars, I recommend you to go to the quick start section to
+try a working example.
 

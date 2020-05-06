@@ -167,45 +167,34 @@ There are two modes for running WopMars:
 1. The main mode is by default, you have already used it in the :doc:`Quick Start section </content/quick-start>` and it allows to execute a workflow from the `Wopfile`
 2. The ``tool`` mode aims to execute only one `Toolwrapper`. It is usually used for debugging purposes while the `Toolwrapper` developer is actually developing the wrapper
 
-Database engines
-++++++++++++++++++
-
-WopMars has been tested with three database engines: **SQLite**, **MySQL** and **PostgreSQL**. To run a workflow with these engines you will need a valid directory path for SQLite or existing databases and user for MySQL and PostgreSQL. Then you specifed the SQLAlchemy database URL in the wopmars option `D` as here.
-
-.. code-block:: bash
-
-    wopmars -D "sqlite:///output/db.sqlite"
-
-.. code-block:: bash
-
-    wopmars -D "mysql://wopuser:mypass@localhost/wopdb"
-
-.. code-block:: bash
-
-    wopmars -D "postgresql://wopuser:mypass@localhost/wopdb"
-
 
 Options and arguments
 +++++++++++++++++++++
 
 -v --verbosity
-    This option allows to set the verbosity of the logger. The more you add ``v`` after the dash, the more WopMars will be talkative. *Example*: ``wopmars -vv`` will output a lot of things because the level of logging will be set to debug. Usually, you'll use one to see the informations about the steps of execution.
+    This option allows to set the verbosity of the logger. The more you add ``v`` after the dash,
+    the more WopMars will be talkative. *Example*: ``wopmars -vv`` will output a lot of things because the level of
+    logging will be set to debug. Usually, you'll use one to see the informations about the steps of execution.
    
 -g --dot=FILE
-    This option allows to specify a file where you want WopMars to write the ``.dot`` and ``.ps`` files giving a graphical representation of your workflow in ``pdf``.
+    This option allows to specify a file where you want WopMars to write the ``.dot`` and ``.ps`` files giving a
+    graphical representation of your workflow in ``pdf``.
 
 -L --log=FILE
-    This option allows to specify an other file than ``$HOME/.wopmars/wopmars.log`` to write the logs of the current execution. The logs are very important, if you have issues that you don't understand, you should try to run WopMars with ``-vv`` and send us your log file to help us figure out what is going on.
+    This option allows to write the logs
+    of the current execution. The logs are very important, if you have issues that you don't understand,
+    you should try to run WopMars with ``-vv`` and send us your log file to help us figure out what is going on.
 
 .. _sourcerule-label:
 
 -S --since=RULE
-    This option allows to say to WopMars since which rule you want to start the workflow. Each rule successing this one will be executed. 
+    This option allows to say to WopMars since which rule you want to start the workflow. Each rule successing this one
+    will be executed.
     
 .. figure::  ../images/from.png
    :align:   center
-   
-   *The tools executed are all the successors of the "source rule", here, rule 2. However, if output 1 is not available, this option will lead to an error*
+
+   *The tools executed are all the successors of the "source rule", here, rule 2. However, if output 1 is not available, (if the link has no caption the label must precede a section header) this option will lead to an error*
 
 -U --until=RULE
     This option allows to say to WopMars to which rule you want the workflow to go to. Each rule predecessing this one will be executed.
@@ -216,16 +205,17 @@ Options and arguments
    *The tools executed are all the predecessors of the "target rule", here, rule 4*
     
 -F --forceall=RULE
-    This option allows to force WopMars to execute each rule it encounters during the workflow. Actualy, WoMars try to execute the less possible tasks. Each time he encounters a rule that he thinks he has already executed in previous execution and he still has the result, he skips the rule. This option allows to denie this behavior.
+    This option allows to force WopMars to execute each rule it encounters during the workflow.
+    Actually, WoMars try to execute the less possible tasks. Each time he encounters a rule that he thinks he has already executed in previous execution and he still has the result, he skips the rule. This option allows to denie this behavior.
 
 -n --dry-run
     This option allows to simulate an execution. WopMars will behave like a normal execution except he won't execute anything. This can be used to prevent mistakes in long workflows without actually suffer the error.
 
 -D --database=DATABASE
-    This option allows to specify the database where you want WopMars to store the results. The default is ./wopmars.sqlite.
+    This argument needs as SQLITE URL such as sqlite:///db.sqlite
 
 -w --wopfile=FILE
-     This option allows to specifty the workflow definition file you want to use. The default is ./Wopfile
+     This option allows to specify the workflow definition file you want to use. The default is ./Wopfile
 
 tool TOOLWRAPPER
     This command allows to run only one `Toolwrapper` without building the Wopfile. The Toolwrapper should be specified with its full name lgnome-tweak-toolike if you were calling it from the workflow definition file.
@@ -245,5 +235,3 @@ tool TOOLWRAPPER
 
 -c --cleanup-metadata
     This option is used when there is an error related to the history of WopMars. It allows to deleter all ``wom_`` like bases and start a new execution. Beware, even if a Tool shouldn't be re-executed, WopMars won't be able to say if it is right or not and then will re-execute every tools.
-
-
