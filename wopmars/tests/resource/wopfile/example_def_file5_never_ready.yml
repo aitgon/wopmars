@@ -5,13 +5,13 @@ rule rule4:
             input1: "resource/input_files/input_file1.txt"
     output:
         file:
-            output1: "outdir_path/output_file1.txt"
+            output1: "outdir/output_file1.txt"
 
 rule rule5:
     tool: FooWrapperNoRun
     input:
         file:
-            input1: "outdir_path/output_file1.txt"
+            input1: "outdir/output_file1.txt"
     output:
         file:
             output1: "resources/never_done.txt"
@@ -23,4 +23,4 @@ rule rule6:
             input1: "resources/never_done.txt"
     output:
         file:
-            output1: "outdir_path/output_file2.txt"
+            output1: "outdir/output_file2.txt"

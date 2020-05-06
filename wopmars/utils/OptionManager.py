@@ -3,6 +3,7 @@ Module containing the OptionManager class.
 """
 import os
 import pathlib
+import shutil
 
 from wopmars.utils.PathManager import PathManager
 from wopmars.utils.Singleton import SingletonMixin
@@ -112,9 +113,10 @@ class OptionManager(dict, SingletonMixin):
         OptionManager.instance()["--dry-run"] = None
         OptionManager.instance()["--touch"] = None
         OptionManager.instance()["tool"] = None
-        test_db_path = os.path.join(PathManager.get_test_path(), "outdir_path")
-        pathlib.Path(test_db_path).mkdir(parents=True, exist_ok=True)
-        OptionManager.instance()["--database"] = "sqlite:///{}".format(os.path.join(test_db_path, 'db.sqlite'))
+        test_outdir_path = os.path.join(PathManager.get_test_path(), "outdir")
+        # shutil.rmtree(test_outdir_path, ignore_errors=True)
+        pathlib.Path(test_outdir_path).mkdir(parents=True, exist_ok=True)
+        OptionManager.instance()["--database"] = "sqlite:///{}".format(os.path.join(test_outdir_path, 'db.sqlite'))
         OptionManager.instance()["--directory"] = PathManager.get_test_path()
         OptionManager.instance()["--cleanup-metadata"] = False
         os.chdir(OptionManager.instance()["--directory"])

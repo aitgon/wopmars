@@ -1,3 +1,5 @@
+import os
+import shutil
 import unittest
 from unittest import TestCase
 
@@ -13,6 +15,10 @@ from wopmars.utils.PathManager import PathManager
 
 
 class TestDAG(TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        shutil.rmtree(os.path.join(PathManager.get_test_path(), 'outdir'), ignore_errors=True)
 
     def setUp(self):
         OptionManager.initial_test_setup()  # Set tests arguments
@@ -100,7 +106,7 @@ class TestDAG(TestCase):
         SQLManager.instance().get_session().close() 
         SQLManager.instance().drop_all()
         OptionManager._drop()
-        PathManager.unlink("tests/outdir_path/output_file1.txt")
+        PathManager.unlink("tests/outdir/output_file1.txt")
         SQLManager._drop()
 
     def test_init(self):

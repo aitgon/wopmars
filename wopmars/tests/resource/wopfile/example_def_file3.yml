@@ -7,5 +7,5 @@ rule rule1:
             FooBasePackaged: wopmars.tests.resource.wrapper.fooPackage.FooBasePackaged
     output:
         file:
-            output1: "outdir_path/output_file1.txt"
+            output1: "outdir/output_file1.txt"
 

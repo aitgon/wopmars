@@ -693,7 +693,7 @@ class ToolWrapper(Base):
 
     def specify_input_file(self):
         """
-        Should be implemented by the tool_python_path developper.
+        Should be implemented by the tool_python_path developer.
 
         This method return a List of string containing the input file variable names as String.
         :return: [String]
@@ -702,7 +702,7 @@ class ToolWrapper(Base):
 
     def specify_input_table(self):
         """
-        Should be implemented by the tool_python_path developper.
+        Should be implemented by the tool_python_path developer.
 
         This method return a List of string containing the input table names names as String.
         :return: [String]
@@ -711,7 +711,7 @@ class ToolWrapper(Base):
 
     def specify_output_file(self):
         """
-        Should be implemented by the tool_python_path developper.
+        Should be implemented by the tool_python_path developer.
 
         This method return a List of string containing the output file variable names as String.
         :return: [String]

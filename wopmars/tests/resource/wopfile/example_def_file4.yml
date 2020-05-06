@@ -5,16 +5,16 @@ rule rule1:
             input1: "resource/input_files/input_file1.txt"
     output:
         file:
-            output1: "outdir_path/output_file1.txt"
+            output1: "outdir/output_file1.txt"
 
 rule rule2:
     tool: wopmars.tests.resource.wrapper.fooPackage.FooWrapper5
     input:
         file:
-            input1: "outdir_path/output_file1.txt"
+            input1: "outdir/output_file1.txt"
     output:
         file:
-            output1: "outdir_path/output_file2.txt"
+            output1: "outdir/output_file2.txt"
         table:
             FooBaseP: wopmars.tests.resource.wrapper.fooPackage.FooBaseP
 
@@ -22,11 +22,11 @@ rule rule3:
     tool: wopmars.tests.resource.wrapper.fooPackage.FooWrapper6
     input:
         file:
-            input1: "outdir_path/output_file1.txt"
+            input1: "outdir/output_file1.txt"
     output:
         file:
-            output1: "outdir_path/output_file3.txt"
-            output2: "outdir_path/output_file4.txt"
+            output1: "outdir/output_file3.txt"
+            output2: "outdir/output_file4.txt"
 
 rule rule4:
     tool: wopmars.tests.resource.wrapper.fooPackage.FooWrapper7
@@ -41,30 +41,30 @@ rule rule5:
     tool: wopmars.tests.resource.wrapper.fooPackage.FooWrapper8
     input:
         file:
-            input1: "outdir_path/output_file3.txt"
-            input2: "outdir_path/output_file2.txt"
+            input1: "outdir/output_file3.txt"
+            input2: "outdir/output_file2.txt"
     output:
         file:
-            output1: "outdir_path/output_file5.txt"
+            output1: "outdir/output_file5.txt"
 
 rule rule6:
     tool: wopmars.tests.resource.wrapper.fooPackage.FooWrapper9
     input:
         file:
-            input1: "outdir_path/output_file4.txt"
+            input1: "outdir/output_file4.txt"
         table:
             FooBase2P: "wopmars.tests.resource.wrapper.fooPackage.FooBase2P"
     output:
         file:
-            output1: "outdir_path/output_file6.txt"
+            output1: "outdir/output_file6.txt"
 
 rule rule7:
     tool: wopmars.tests.resource.wrapper.fooPackage.FooWrapper10
     input:
         file:
-            input1: "outdir_path/output_file1.txt"
-            input2: "outdir_path/output_file5.txt"
-            input3: "outdir_path/output_file6.txt"
+            input1: "outdir/output_file1.txt"
+            input2: "outdir/output_file5.txt"
+            input3: "outdir/output_file6.txt"
     output:
         file:
-            output1: "outdir_path/output_file7.txt"
+            output1: "outdir/output_file7.txt"

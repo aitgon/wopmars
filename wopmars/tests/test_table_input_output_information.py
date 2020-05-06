@@ -38,8 +38,8 @@ class TestTableInputOutputInformation(TestCase):
     def tearDown(self):
         SQLManager.instance().get_session().close()
         SQLManager.instance().drop_all()
-        # PathManager.dir_content_remove(os.path.join(self.test_path, "outdir_path"))
-        shutil.rmtree("outdir_path", ignore_errors=True)
+        # PathManager.dir_content_remove(os.path.join(self.test_path, "outdir"))
+        shutil.rmtree("outdir", ignore_errors=True)
         OptionManager._drop()
         SQLManager._drop()
 
