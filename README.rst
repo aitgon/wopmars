@@ -1,27 +1,9 @@
 WopMars: Workflow Python Manager for Reproducible Science
 ======================================================================
 
-.. image:: https://img.shields.io/pypi/v/wopmars.svg
-    :target: https://pypi.python.org/pypi/wopmarst
-
-.. image:: https://img.shields.io/pypi/pyversions/wopmars.svg
-    :target: https://www.python.org
-
-.. image:: https://readthedocs.org/projects/wopmars/badge/?version=latest
-    :target: http://wopmars.readthedocs.io/en/latest/?badge=latest
-
-.. image:: https://travis-ci.org/aitgon/wopmars.svg?branch=master
-    :target: https://travis-ci.org/aitgon/wopmars
-
-.. image:: https://codecov.io/gh/aitgon/wopmars/branch/master/graph/badge.svg
-   :target: https://codecov.io/gh/aitgon/wopmars
-
 WopMars is a database-driven workflow manager written in python similar to GNU Makefile or Snakemake.
 The difference is that the definition file of WopMars takes into account input/output SQLITE table defined as python
 paths to SQLAlchemy models.
-
-Installation
---------------
 
 To install wopmars, you have to get the sources on the git repository and then go to the source directory and type
 
@@ -29,10 +11,8 @@ To install wopmars, you have to get the sources on the git repository and then g
 
     pip install .
 
-Quick Start
-------------------
 
-Run an example:
+Run a quick example:
 
 .. code-block:: bash
 
@@ -60,10 +40,6 @@ If there were not errors, you can look at the content of the sqlite db.
     3|T808AHY3DS|engine|672.09
     4|977FPG7QJZ|bodywork|667.23
     5|KJ6WPB3N56|engine|678.83
-
-
-Documentation
--------------
 
 The `WopMars documentation <http://wopmars.readthedocs.org/>`_ with user guide and
 API reference is hosted at Read The Docs.

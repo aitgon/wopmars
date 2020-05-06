@@ -3,30 +3,33 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-.. include:: ../README.rst
+WopMars: Workflow Python Manager for Reproducible Science
+======================================================================
 
-Pros and Cons of WopMars
----------------------------
+.. image:: https://img.shields.io/pypi/v/wopmars.svg
+    :target: https://pypi.python.org/pypi/wopmarst
 
-- Pros:
+.. image:: https://img.shields.io/pypi/pyversions/wopmars.svg
+    :target: https://www.python.org
 
-   - Simplified data analysis and sharing based on relational database storage
-   - Full SQL power and flexibility based on the SQL Alchemy ORM
-   - Track of analysis history for more result reproducibility
-   - Feed your database over time
+.. image:: https://readthedocs.org/projects/wopmars/badge/?version=latest
+    :target: http://wopmars.readthedocs.io/en/latest/?badge=latest
 
-- Cons:
+.. image:: https://travis-ci.org/aitgon/wopmars.svg?branch=master
+    :target: https://travis-ci.org/aitgon/wopmars
 
-   - Wrapper and model class definition is required
+.. image:: https://codecov.io/gh/aitgon/wopmars/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/aitgon/wopmars
 
-Table of Contents
-=================
+WopMars is a database-driven workflow manager written in python similar to GNU Makefile or Snakemake.
+The difference is that the definition file of WopMars takes into account input/output SQLITE table defined as python
+paths to SQLAlchemy models.
 
 .. toctree::
    :maxdepth: 2
 
    content/overview
-   content/installation
+   content/install
    content/quick-start
    content/wopfile
    content/wrapper

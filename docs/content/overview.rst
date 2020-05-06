@@ -1,6 +1,11 @@
 Overview
 ============
 
+
+WopMars is a database-driven workflow manager written in python similar to GNU Makefile or Snakemake.
+The difference is that the definition file of WopMars takes into account input/output SQLITE table defined as python
+paths to SQLAlchemy models.
+
 A Wopmars workflow requires the definition of three types of files:
 
 - The workflow definition file or wopfile
