@@ -46,7 +46,7 @@ Programming Language :: Python :: 3.7
 Programming Language :: Python :: 3.8
 Programming Language :: Python :: 3 :: Only
 Topic :: Database :: Front-Ends
-Topic :: Scientific/Engineering :: Bioinformatics
+Topic :: Scientific/Engineering :: Bio-Informatics
 Topic :: Scientific/Engineering :: Information Analysis
 Topic :: Software Development
 Operating System :: POSIX :: Linux
@@ -60,7 +60,7 @@ setup(name='wopmars',
       author=read_setup_cfg_metadata(field='author'),
       author_email=read_setup_cfg_metadata(field='email'),
       license=read_setup_cfg_metadata(field='license'),
-      classifierss=[_f for _f in CLASSIFIERS.split('\n') if _f],
+      classifiers=[_f for _f in CLASSIFIERS.split('\n') if _f],
       download_url='https://github.com/aitgon/wopmars/archive/%s.tar.gz'%(read_setup_cfg_metadata(field='version')),
       keywords='workflow manager python object-oriented reproducible science database framework',
       packages=find_packages(exclude=['log', 'doc', '*.test_bak.*', 'soutenance', 'rapport']),
