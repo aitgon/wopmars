@@ -1,3 +1,10 @@
+CHANGES IN VERSION 0.0.12 (Mai 7, 2020)
+--------------------------------------------------
+
+- Fixed bugs
+- Fixed continuous integration with Travis and codecov
+- Refactored directory tree
+
 CHANGES IN VERSION 0.0.11 (Apr 9, 2020)
 --------------------------------------------------
 

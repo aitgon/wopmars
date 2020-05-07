@@ -7,7 +7,7 @@ WopMars: Workflow Python Manager for Reproducible Science
 ======================================================================
 
 .. image:: https://img.shields.io/pypi/v/wopmars.svg
-    :target: https://pypi.python.org/pypi/wopmarst
+    :target: https://pypi.python.org/pypi/wopmars
 
 .. image:: https://img.shields.io/pypi/pyversions/wopmars.svg
     :target: https://www.python.org

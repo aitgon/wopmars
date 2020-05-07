@@ -1,6 +1,21 @@
 WopMars: Workflow Python Manager for Reproducible Science
 ======================================================================
 
+.. image:: https://img.shields.io/pypi/v/wopmars.svg
+    :target: https://pypi.python.org/pypi/wopmars
+
+.. image:: https://img.shields.io/pypi/pyversions/wopmars.svg
+    :target: https://www.python.org
+
+.. image:: https://readthedocs.org/projects/wopmars/badge/?version=latest
+    :target: http://wopmars.readthedocs.io/en/latest/?badge=latest
+
+.. image:: https://travis-ci.org/aitgon/wopmars.svg?branch=master
+    :target: https://travis-ci.org/aitgon/wopmars
+
+.. image:: https://codecov.io/gh/aitgon/wopmars/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/aitgon/wopmars
+
 WopMars is a database-driven workflow manager written in python similar to GNU Makefile or Snakemake.
 The difference is that the definition file of WopMars takes into account input/output SQLITE table defined as python
 paths to SQLAlchemy models.
