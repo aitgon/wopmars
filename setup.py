@@ -64,12 +64,10 @@ setup(name='wopmars',
       download_url='https://github.com/aitgon/wopmars/archive/%s.tar.gz'%(read_setup_cfg_metadata(field='version')),
       keywords='workflow manager python object-oriented reproducible science database framework',
       packages=find_packages(exclude=['log', 'doc', '*.test_bak.*', 'soutenance', 'rapport']),
-      install_requires = ["SQLAlchemy>=1.1.11", "docopt>=0.6.2", "schema>=0.6.2", "termcolor>=1.1.0", "PyYAML>=3.12", "networkx>=2.4"],
+      install_requires=["PyYAML>=5.3.1", "SQLAlchemy>=1.3.16", "docopt>=0.6.2", "networkx>=2.4", "schema>=0.7.2", "termcolor>=1.1.0"],
       extras_require={'pygraphviz': ['pygraphviz',]},
       data_files=[],
-      entry_points={
-        'console_scripts':['wopmars=wopmars:run']
-    },
+      entry_points={'console_scripts': ['wopmars=wopmars:run']},
       package_data={},
       include_package_data=True
       )
