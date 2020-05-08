@@ -26,7 +26,7 @@ install:
   # Replace dep1 dep2 ... with your dependencies
   - conda create -q -n tests-environment
   - conda activate tests-environment
-  - pip install -r requirements.txt
+  - conda env update -f environment.yml
   - pip install coverage
   - python setup.py install
 
