@@ -298,27 +298,27 @@ class TestToolWrapper(TestCase):
 
     def test_same_input_than(self):
 
-        mtime_epoch_millis, mtime_human = get_current_time()
-        moment = mtime_epoch_millis
+        mtime_epoch_millis1, mtime_human1 = get_current_time()
+        # moment = mtime_epoch_millis
 
         t1 = TableInputOutputInformation(model_py_path="FooBase", table_key="FooBase", table_name="FooBase")
         # t1.set_table(FooBase)
         t1.model_declarative_meta = FooBase
         t1.relation_file_or_tableioinfo_to_typeio = self.input_entry
-        modif = TableModificationTime(table_name="FooBase", mtime_epoch_millis=moment, mtime_human=mtime_human)
+        modif = TableModificationTime(table_name="FooBase", mtime_epoch_millis=mtime_epoch_millis1, mtime_human=mtime_human1)
         modif.relation_tablemodiftime_to_tableioinfo.append(t1)
 
         t2 = TableInputOutputInformation(model_py_path="FooBase", table_key="FooBase", table_name="FooBase")
         # t2.set_table(FooBase)
         t2.model_declarative_meta = FooBase
         t2.relation_file_or_tableioinfo_to_typeio = self.input_entry
-        modif = TableModificationTime(table_name="FooBase", mtime_epoch_millis=moment, mtime_human=mtime_human)
+        modif = TableModificationTime(table_name="FooBase", mtime_epoch_millis=mtime_epoch_millis1, mtime_human=mtime_human1)
         modif.relation_tablemodiftime_to_tableioinfo.append(t2)
 
-        f1 = FileInputOutputInformation(file_key="input1", path="path1", mtime_epoch_millis=moment, size=0)
+        f1 = FileInputOutputInformation(file_key="input1", path="path1", mtime_epoch_millis=mtime_epoch_millis1, size=0)
         f1.relation_file_or_tableioinfo_to_typeio = self.input_entry
 
-        f2 = FileInputOutputInformation(file_key="input1", path="path1", mtime_epoch_millis=moment, size=0)
+        f2 = FileInputOutputInformation(file_key="input1", path="path1", mtime_epoch_millis=mtime_epoch_millis1, size=0)
         f2.relation_file_or_tableioinfo_to_typeio = self.input_entry
 
         toolwrapper1 = FooWrapper2(rule_name="rule1")
@@ -333,11 +333,12 @@ class TestToolWrapper(TestCase):
         # t3.set_table(FooBase)
         t3.model_declarative_meta = FooBase
         t3.relation_file_or_tableioinfo_to_typeio = self.input_entry
-        modif = TableModificationTime(table_name="FooBase", mtime_epoch_millis=moment, mtime_human=mtime_human)
+        modif = TableModificationTime(table_name="FooBase", mtime_epoch_millis=mtime_epoch_millis1, mtime_human=mtime_human1)
         modif.relation_tablemodiftime_to_tableioinfo.append(t3)
 
-        mtime_epoch_millis, mtime_human = get_current_time()
-        f3 = FileInputOutputInformation(file_key="input1", path="path1", mtime_epoch_millis=mtime_epoch_millis, size=0)
+        time.sleep(0.05)
+        mtime_epoch_millis2, mtime_human2 = get_current_time()
+        f3 = FileInputOutputInformation(file_key="input1", path="path1", mtime_epoch_millis=mtime_epoch_millis2, size=0)
         f3.relation_file_or_tableioinfo_to_typeio = self.input_entry
 
         toolwrapper3 = FooWrapper2(rule_name="rule1")

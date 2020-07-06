@@ -1,11 +1,17 @@
 language: python
+
 python:
   # We don't actually use the Travis Python, but this keeps it organized.
   - "3.6"
   - "3.7"
   - "3.8"
+
+os:
+  - linux
+
 before_install:
   - python -m pip install --upgrade pip
+
 install:
   - sudo apt-get update
   # We do this conditionally because it saves us some downloading if the
@@ -38,4 +44,3 @@ script:
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
-

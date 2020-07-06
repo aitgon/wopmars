@@ -370,41 +370,52 @@ class ToolWrapper(Base):
         """
         Never used.
 
-        Check if the other ToolWrapper have the same input than self.
+        Check if the other ToolWrapper have the same inputs than self.
 
         The input are say "the same" if:
             - The table have the same is_input and the same last modification mtime_epoch_millis
-            - The file have the same is_input, the same lastm modification mtime_epoch_millis and the same size
+            - The file have the same is_input, the same last modification mtime_epoch_millis and the same size
 
         :param other: an other Toolwrapper which maybe as the same inputs
         :type other: :class:`~.wopmars.framework.database.relation_toolwrapper_to_tableioinfo.ToolWrapper.ToolWrapper`
 
         :return: bool
         """
+
+        #############################################################
+        #
+        # Check file input
+        #
+        #############################################################
+
+        for f in [f for f in self.relation_toolwrapper_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
+            is_same = False
+            for f2 in [f2 for f2 in other.relation_toolwrapper_to_fileioinfo if f2.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
+                # two files are the same if they have the same is_input, path, size and modification mtime_epoch_millis
+                if (f.file_key == f2.file_key and f.path == f2.path and
+                        f.mtime_epoch_millis == f2.mtime_epoch_millis and f.size == f2.size):
+                    is_same = True
+                    break
+            if not is_same:
+                return False
+
+        #############################################################
+        #
+        # Check table input
+        #
+        #############################################################
+
         for t in [t for t in self.relation_toolwrapper_to_tableioinfo if t.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
             is_same = False
             for t2 in [t2 for t2 in other.relation_toolwrapper_to_tableioinfo if t2.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
                 # two tables are the same if they have the same model/table_key/modification mtime_epoch_millis
-                if (t.model_py_path == t2.model_py_path and
-                    t.table_key == t2.table_key and
+                if (t.model_py_path == t2.model_py_path and t.table_key == t2.table_key and
                        t.mtime_epoch_millis == t2.mtime_epoch_millis):
                     is_same = True
                     break
             if not is_same:
                 return False
 
-        for f in [f for f in self.relation_toolwrapper_to_fileioinfo if f.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
-            is_same = False
-            for f2 in [f2 for f2 in other.relation_toolwrapper_to_fileioinfo if f2.relation_file_or_tableioinfo_to_typeio.is_input == 1]:
-                # two files are the same if they have the same is_input, path, size and modification mtime_epoch_millis
-                if (f.file_key == f2.file_key and
-                        f.path == f2.path and
-                        f.mtime_epoch_millis == f2.mtime_epoch_millis and
-                        f.size == f2.size):
-                    is_same = True
-                    break
-            if not is_same:
-                return False
         return True
 
     def is_output_more_recent_than_input(self):
