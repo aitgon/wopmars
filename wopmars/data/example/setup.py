@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='wopexamplecar',
+    name='example',
     version='0.1.0',
     description='Simple car example for experimenting Wopmars',
     author='Luc Giffon - TAGC',

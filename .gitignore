@@ -19,4 +19,4 @@ wopmars.egg-info/*
 test/output
 wopmars/test_bak.ps
 db.sqlite
-wopexample
+example

@@ -24,15 +24,15 @@ You can install the latest WopMars version via "pypi":
 
 .. code-block:: bash
 
-    pip install .
+    pip install wopmars
 
 Run a quick example:
 
 .. code-block:: bash
 
     wopmars example
-    cd wopexample
-    pip install  --user -e .
+    cd example
+    pip install -e .
     wopmars -D sqlite:///db.sqlite -w Wopfile.yml -v
 
 If there were not errors, you can look at the content of the sqlite db.

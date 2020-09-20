@@ -5,14 +5,13 @@ Now you should be able to run WopMars for the first time and we have prepared a 
 
 To build the workflow files architecture, go to any directory and type the following command::
 
-.. code-block:: bash
 
     wopmars example
 
 You'll get the following files architecture::
 
 
-    wopexample
+    example/
     |-- Wopfile.yml
     |-- Wopfile2.yml
     |-- Wopfile3.yml
@@ -24,25 +23,26 @@ You'll get the following files architecture::
     |   |-- DatedPiece.py
     |   |-- Piece.py
     |   |-- PieceCar.py
-    |   |-- __init__.py
+    |   `-- __init__.py
     |-- output
+    |   `-- empty.txt
     |-- setup.py
     `-- wrapper
         |-- AddDateToPiece.py
         |-- CarAssembler.py
         |-- SparePartsManufacturer.py
-        |-- __init__.py
+        `-- __init__.py
 
 
-Move to `wopmars_example` directory and install the package *wopexample*::
+Move to the `example` directory and install the package *example*::
 
-    cd wopmarsexample
+    cd example
     pip install -e .
 
 .. note::
     You have just installed your first **WopMars Package**, congratulations! Every *Toolwrapper* for WopMars is supposed to be built in a package in order to be easily installed.
 
-Now, let's look at the `Wopfile`
+Now, let's look at the `Wopfile.yml`
 
 .. code-block:: yaml
 
@@ -81,7 +81,7 @@ It came time to start your first workflow!
 
 .. code-block:: shell
 
-    wopmars -w Wopfile -D "sqlite:///db.sqlite" -v -p
+    wopmars -w Wopfile.yml -D "sqlite:///db.sqlite" -v
 
 You will see a little bit of output in the console thanks to the ``-p`` coupled with the ``-v`` option which describes the work processed by WopMars. The ``-D`` option allows to specify the path to the database file and, you have probably realized, the ``-w`` option allows to specify the path to the **Workflow Definition File**.
 
