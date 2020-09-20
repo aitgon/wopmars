@@ -50,6 +50,7 @@ Topic :: Scientific/Engineering :: Bio-Informatics
 Topic :: Scientific/Engineering :: Information Analysis
 Topic :: Software Development
 Operating System :: POSIX :: Linux
+Operating System :: Microsoft :: Windows :: Windows 10
 """
 
 setup(name='wopmars',

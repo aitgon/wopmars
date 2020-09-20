@@ -9,7 +9,6 @@ from wopmars.DAG import DAG
 from wopmars.ToolWrapperThread import ToolWrapperThread
 from wopmars.ToolWrapperObserver import ToolWrapperObserver
 from wopmars.Parser import Parser
-from wopmars.utils.PathManager import PathManager
 from wopmars.utils.Logger import Logger
 from wopmars.utils.OptionManager import OptionManager
 from wopmars.utils.UniqueQueue import UniqueQueue

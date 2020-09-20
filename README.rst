@@ -20,20 +20,19 @@ WopMars is a database-driven workflow manager written in python similar to GNU M
 The difference is that the definition file of WopMars takes into account input/output SQLITE table defined as python
 paths to SQLAlchemy models.
 
-To install wopmars, you have to get the sources on the git repository and then go to the source directory and type
+You can install the latest WopMars version via "pypi":
 
 .. code-block:: bash
 
-    pip install .
-
+    pip install wopmars
 
 Run a quick example:
 
 .. code-block:: bash
 
     wopmars example
-    cd wopexample
-    pip install  --user -e .
+    cd example
+    pip install -e .
     wopmars -D sqlite:///db.sqlite -w Wopfile.yml -v
 
 If there were not errors, you can look at the content of the sqlite db.
