@@ -10,7 +10,7 @@ from os import path
 import sys
 import os
 from configparser import RawConfigParser
-
+import wopmars
 
 def read_setup_cfg_metadata(field):
     """Return package version from setup.cfg."""
@@ -54,7 +54,7 @@ Operating System :: Microsoft :: Windows :: Windows 10
 """
 
 setup(name='wopmars',
-      version=read_setup_cfg_metadata(field='version'),
+      version=wopmars.__version__,
       description='Workflow Python Manager for Reproducible Science',
       long_description=long_description,
       url='https://github.com/aitgon/wopmars',
@@ -62,7 +62,7 @@ setup(name='wopmars',
       author_email=read_setup_cfg_metadata(field='email'),
       license=read_setup_cfg_metadata(field='license'),
       classifiers=[_f for _f in CLASSIFIERS.split('\n') if _f],
-      download_url='https://github.com/aitgon/wopmars/archive/%s.tar.gz'%(read_setup_cfg_metadata(field='version')),
+      download_url='https://github.com/aitgon/wopmars/archive/%s.tar.gz'%(wopmars.__version__),
       keywords='workflow manager python object-oriented reproducible science database framework',
       packages=find_packages(exclude=['log', 'doc', '*.test_bak.*', 'soutenance', 'rapport']),
       install_requires=["PyYAML>=5.3.1", "SQLAlchemy>=1.3.16", "docopt>=0.6.2", "networkx>=2.4", "schema>=0.7.2", "termcolor>=1.1.0"],
