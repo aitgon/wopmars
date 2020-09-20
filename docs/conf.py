@@ -20,7 +20,7 @@
 from configparser import RawConfigParser
 import os
 import sys
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath('.')), 'wopmars')
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath('.')), 'wopmars'))
 import wopmars
 
 def read_setup_cfg_metadata(field):
