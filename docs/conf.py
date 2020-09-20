@@ -19,9 +19,10 @@
 
 from configparser import RawConfigParser
 import os
-import wopmars
-# import sys
+import sys
 # sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('../'))
+import wopmars
 
 def read_setup_cfg_metadata(field):
     """Return package version from setup.cfg."""

@@ -3,9 +3,6 @@ channels:
   - omnia
 dependencies:
   - python=3.7
-  - docopt
-  - networkx
-  - pyyaml
-  - schema
-  - sqlalchemy
-  - termcolor
+  - pip
+  - pip:
+    - -r file:requirements.txt
