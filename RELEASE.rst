@@ -1,3 +1,9 @@
+CHANGES IN VERSION 0.1.0 (Sep 20, 2020)
+--------------------------------------------------
+
+- ENH added '--version' information to command-line interface help
+- BUG fixed 'wopmars example' command
+
 CHANGES IN VERSION 0.0.13 (Mai 7, 2020)
 --------------------------------------------------
 
