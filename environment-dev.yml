@@ -2,13 +2,9 @@ channels:
   - defaults
 dependencies:
   - python=3.7
-  - docopt
-  - networkx
   - pygments
-  - pyyaml
-  - schema
   - sphinx
   - sphinx_rtd_theme
-  - sqlalchemy
-  - termcolor
-
+  - pip
+  - pip:
+  - -r file:requirements.txt
