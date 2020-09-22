@@ -9,22 +9,13 @@ from codecs import open
 from os import path
 import sys
 import os
-from configparser import RawConfigParser
-from setuptools import setup, find_packages
+import configparser
 
 try:
-    import wopmars
+    from setuptools import setup, find_packages
 except ImportError:
-    import pip
-    pip.main(['install', '-r', 'requirements.txt'])
-    import wopmars
-
-def read_setup_cfg_metadata(field):
-    """Return package version from setup.cfg."""
-    config = RawConfigParser()
-    config.read(os.path.join('.', 'setup.cfg'))
-    return str(config.get('metadata', field))
-
+    print("Please install setuptools before installing snakemake.", file=sys.stderr)
+    exit(1)
 
 if sys.version_info < (3, 6):
     print("Python version >= 3.6 required.")
@@ -63,16 +54,23 @@ def data_files_to_list(directory):
 
 data_file_list = data_files_to_list('wopmars/data')
 
+config = configparser.RawConfigParser()
+config.read(os.path.join('.', 'setup.cfg'))
+version = config['metadata']['version']
+author = config['metadata']['author']
+email = config['metadata']['email']
+license = config['metadata']['license']
+
 setup(name='wopmars',
-      version=wopmars.__version__,
+      version=version,
       description='Workflow Python Manager for Reproducible Science',
       long_description=long_description,
       url='https://github.com/aitgon/wopmars',
-      author=read_setup_cfg_metadata(field='author'),
-      author_email=read_setup_cfg_metadata(field='email'),
-      license=read_setup_cfg_metadata(field='license'),
+      author=author,
+      author_email=email,
+      license=license,
       classifiers=[_f for _f in CLASSIFIERS.split('\n') if _f],
-      download_url='https://github.com/aitgon/wopmars/archive/%s.tar.gz'%(wopmars.__version__),
+      download_url='https://github.com/aitgon/wopmars/archive/%s.tar.gz'%(version),
       keywords='workflow manager python object-oriented reproducible science database framework',
       extras_require={'pygraphviz': ['pygraphviz',]},
       data_files=[],
@@ -80,7 +78,7 @@ setup(name='wopmars',
       package_dir={'wopmars': 'wopmars'},
       package_data={'wopmars': data_file_list},
       include_package_data=True,
-      install_requires=["PyYAML>=5.3.1", "SQLAlchemy>=1.3.16", "docopt>=0.6.2", "networkx>=2.4", "schema>=0.7.2", "termcolor>=1.1.0"],
+      install_requires=["pyyaml", "sqlalchemy", "docopt", "networkx", "schema", "termcolor"],
       entry_points={'console_scripts': ['wopmars=wopmars:run']},
       )
 

@@ -1,2 +1,1 @@
-recursive-include wopmars/example/wopmars_example *
-recursive-include wopmars/example/wopmars_example_snp *
+recursive-include wopmars/data *
