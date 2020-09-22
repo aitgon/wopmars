@@ -16,7 +16,7 @@ from wopmars.utils.PathManager import PathManager
 from wopmars.utils.WopMarsException import WopMarsException
 from wopmars.utils.various import get_mtime, get_current_time
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 __doc__ = """wopmars %s
 
@@ -66,8 +66,6 @@ Description:
     https://wopmars.readthedocs.io
     https://github.com/aitgon/wopmars
 """%__version__
-
-
 
 
 class WopMars:
@@ -160,7 +158,7 @@ class WopMars:
         if OptionManager.instance()["example"]:
             # ExampleBuilder().build()
 
-            source_path = os.path.join(PathManager.get_package_path(), "wopmars/data/example")
+            source_path = os.path.join(PathManager.get_package_path(), "data/example")
             destination_path = os.path.join("example")
 
             shutil.rmtree(destination_path, ignore_errors=True)

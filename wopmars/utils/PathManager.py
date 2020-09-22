@@ -6,48 +6,39 @@ import errno
 import importlib
 import os
 import pathlib
+import wopmars
 
 
 class PathManager:
     """
     Static class for finding paths
     """
+
     @staticmethod
     def get_package_path():
         """
-        Find the root directory of the package
+        Returns the vtam.__path__[0]
 
-        :return: the path leading to the src file of the project
+        :return: path to the package
         """
 
-        package_path = os.path.join(os.path.dirname(__file__), "../..")
+        package_path = wopmars.__path__[0]
         return package_path
 
-    @staticmethod
-    def get_test_path():
+    @classmethod
+    def get_test_path(cls):
         """
         Find the tests output of the project
 
         :return: the output leading to the tests output of the project
         """
 
-        test_dir_path = os.path.join(os.path.dirname(__file__), "../tests")
-        pathlib.Path(test_dir_path).mkdir(parents=True, exist_ok=True)
-        return test_dir_path
+        test_path = os.path.join(cls.get_package_path(), "tests")
+        return test_path
 
     @staticmethod
     def check_pygraphviz(path):
         importlib.import_module("pygraphviz")
-
-    # @staticmethod
-    # def create_workingdir(path):
-    #     try:
-    #         os.makedirs(path)
-    #         return True
-    #     except OSError as exception:
-    #         if exception.errno != errno.EEXIST:
-    #             raise
-    #             return True
 
     @staticmethod
     def check_database_valid_url(url):
