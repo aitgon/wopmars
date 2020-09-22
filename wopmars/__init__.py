@@ -17,7 +17,7 @@ from wopmars.utils.WopMarsException import WopMarsException
 from wopmars.utils.various import get_mtime, get_current_time
 
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 
 __doc__ = """wopmars %s
 
