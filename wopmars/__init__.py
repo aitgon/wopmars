@@ -17,10 +17,7 @@ from wopmars.utils.WopMarsException import WopMarsException
 from wopmars.utils.various import get_mtime, get_current_time
 
 
-import configparser
-config = configparser.RawConfigParser()
-config.read(os.path.join('.', 'setup.cfg'))
-version = config['metadata']['version']
+__version__ = "0.1.2"
 
 __doc__ = """wopmars %s
 
@@ -69,7 +66,7 @@ Description:
     Gonzalez A., Giffon L., Spinelli L. 2016-2020
     https://wopmars.readthedocs.io
     https://github.com/aitgon/wopmars
-"""%version
+"""%__version__
 
 
 class WopMars:
@@ -150,7 +147,7 @@ class WopMars:
         ############################################################################################
 
         if OptionManager.instance()["--version"]:
-            print("wopmars {}".format(version), file=sys.stdout)
+            print("wopmars {}".format(__version__), file=sys.stdout)
             sys.exit(0)
 
         ############################################################################################

@@ -4,7 +4,7 @@
 # __copyright__ = "Copyright: since 2017, Aitor Gonzalez, Luc Giffon, Lionel Spinelli"
 # __email__ = "aitor.gonzalez@univ-amu.fr"
 # __license__ = "MIT"
-
+import codecs
 from codecs import open
 from os import path
 import sys
@@ -45,6 +45,19 @@ Operating System :: POSIX :: Linux
 Operating System :: Microsoft :: Windows :: Windows 10
 """
 
+def read(rel_path):
+    here = os.path.abspath(os.path.dirname(__file__))
+    with codecs.open(os.path.join(here, rel_path), 'r') as fp:
+        return fp.read()
+
+def get_version(rel_path):
+    for line in read(rel_path).splitlines():
+        if line.startswith('__version__'):
+            delim = '"' if '"' in line else "'"
+            return line.split(delim)[1]
+    else:
+        raise RuntimeError("Unable to find version string.")
+
 # Create list of package data files
 def data_files_to_list(directory):
     paths = []
@@ -57,13 +70,12 @@ data_file_list = data_files_to_list('wopmars/data')
 
 config = configparser.RawConfigParser()
 config.read(os.path.join('.', 'setup.cfg'))
-version = config['metadata']['version']
 author = config['metadata']['author']
 email = config['metadata']['email']
 license = config['metadata']['license']
 
 setup(name='wopmars',
-      version=version,
+      version=get_version("wopmars/__init__.py"),
       description='Workflow Python Manager for Reproducible Science',
       long_description=long_description,
       url='https://github.com/aitgon/wopmars',
@@ -71,7 +83,7 @@ setup(name='wopmars',
       author_email=email,
       license=license,
       classifiers=[_f for _f in CLASSIFIERS.split('\n') if _f],
-      download_url='https://github.com/aitgon/wopmars/archive/%s.tar.gz'%(version),
+      download_url='https://github.com/aitgon/wopmars/archive/%s.tar.gz'%(get_version("wopmars/__init__.py")),
       keywords='workflow manager python object-oriented reproducible science database framework',
       extras_require={'pygraphviz': ['pygraphviz',]},
       data_files=[],
