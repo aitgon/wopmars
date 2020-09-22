@@ -18,9 +18,9 @@ class TestExample(TestCase):
         OptionManager.initial_test_setup()  # Set tests arguments
         self.db_url = OptionManager.instance()["--database"]
         self.db = self.db_url[10:]
-        self.example_dir_path = os.path.join(PathManager.get_package_path(), "wopmars/data/example")
+        self.example_dir_path = os.path.join(PathManager.get_package_path(), "data/example")
         self.wopfile = os.path.join(self.example_dir_path, "Wopfile.yml")
-        self.working_directory = os.path.join(PathManager.get_package_path(), "wopmars/data/example")
+        self.working_directory = os.path.join(PathManager.get_package_path(), "data/example")
     #
     def tearDown(self):
         # pass

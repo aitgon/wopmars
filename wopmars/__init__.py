@@ -68,8 +68,6 @@ Description:
 """%__version__
 
 
-
-
 class WopMars:
 
     @staticmethod
@@ -160,7 +158,7 @@ class WopMars:
         if OptionManager.instance()["example"]:
             # ExampleBuilder().build()
 
-            source_path = os.path.join(PathManager.get_package_path(), "wopmars/data/example")
+            source_path = os.path.join(PathManager.get_package_path(), "data/example")
             destination_path = os.path.join("example")
 
             shutil.rmtree(destination_path, ignore_errors=True)
