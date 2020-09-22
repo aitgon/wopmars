@@ -27,6 +27,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as fin:
 
 CLASSIFIERS = """\
 Development Status :: 4 - Beta
+Environment :: Console
 Intended Audience :: Developers
 Intended Audience :: Science/Research
 License :: OSI Approved :: MIT License
