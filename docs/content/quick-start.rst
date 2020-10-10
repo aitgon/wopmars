@@ -85,6 +85,12 @@ It came time to start your first workflow!
 
 You will see a little bit of output in the console thanks to the ``-p`` coupled with the ``-v`` option which describes the work processed by WopMars. The ``-D`` option allows to specify the path to the database file and, you have probably realized, the ``-w`` option allows to specify the path to the **Workflow Definition File**.
 
+You can also run a single rule of the Wopfile using a dictionary to represent the rule:
+
+.. code-block:: shell
+
+    wopmars tool wrapper.SparePartsManufacturer -D "sqlite:///db.sqlite" --input "{'file': {'pieces': 'input/pieces.txt'}}" --output "{'table': {'piece': 'model.Piece'}}" -vv
+
 Looking at the Results
 *************************
 

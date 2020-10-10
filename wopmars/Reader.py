@@ -325,7 +325,7 @@ class Reader:
                         Logger.instance().debug("Object output file: " + s_output + " created.")
                 elif type == "table":
                     for s_output in dict_outputs[type]:
-                        model_py_path = dict_inputs[type][s_input]
+                        model_py_path = dict_outputs[type][s_output]
                         table_name = model_py_path.split('.')[-1]
                         obj_created = TableInputOutputInformation(model_py_path=model_py_path, table_key=s_output,
                                                                   table_name=table_name)
