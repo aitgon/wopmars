@@ -26,6 +26,17 @@ class PathManager:
         return package_path
 
     @classmethod
+    def get_project_path(cls):
+        """
+        Returns the path to the project root
+
+        :return: path to the root of the project
+        """
+
+        project_path = os.path.join(cls.get_package_path(), "..")
+        return project_path
+
+    @classmethod
     def get_test_path(cls):
         """
         Find the tests output of the project
