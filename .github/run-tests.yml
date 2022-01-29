@@ -1,0 +1,35 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build-linux:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      max-parallel: 5
+      matrix:
+        python-version: [3.6, 3.7, 3.8]
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        lfs: false
+    #- name: Checkout LFS objects
+    #  run: git lfs checkout
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Setup environment
+      run: |
+          $CONDA/bin/conda create -y -q --name wopmars python=${{ matrix.python-version }}
+          $CONDA/bin/conda env update -f environment.yml --name wopmars
+    - name: Run tests
+      env:
+        CI: true
+      run: |
+        export PATH="$CONDA/envs/wopmars/bin:$PATH"
+        $CONDA/envs/wopmars/bin/python --version
+        $CONDA/envs/wopmars/bin/python -m unittest discover -v -f
