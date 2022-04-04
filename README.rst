@@ -16,6 +16,9 @@ WopMars: Workflow Python Manager for Reproducible Science
 .. image:: https://codecov.io/gh/aitgon/wopmars/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/aitgon/wopmars
 
+.. image:: https://static.pepy.tech/personalized-badge/wopmars?period=month&units=international_system&left_color=black&right_color=blue&left_text=Downloads
+    :target: https://pepy.tech/project/wopmars
+
 WopMars is a database-driven workflow manager written in python similar to GNU Makefile or Snakemake.
 The difference is that the definition file of WopMars takes into account input/output SQLITE table defined as python
 paths to SQLAlchemy models.
