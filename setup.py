@@ -1,20 +1,20 @@
 # -*- coding: UTF-8 -*-
 
-# __author__ = "Aitor Gonzalez, Luc Giffon, Lionel Spinelli"
-# __copyright__ = "Copyright: since 2017, Aitor Gonzalez, Luc Giffon, Lionel Spinelli"
+# __author__ = "Aitor González, Luc Giffon, Lionel Spinelli"
+# __copyright__ = "Copyright: 2017-2022, Aitor González, Luc Giffon, Lionel Spinelli"
 # __email__ = "aitor.gonzalez@univ-amu.fr"
 # __license__ = "MIT"
-import codecs
 from codecs import open
 from os import path
-import sys
-import os
+import codecs
 import configparser
+import os
+import sys
 
 try:
     from setuptools import setup, find_packages
 except ImportError:
-    print("Please install setuptools before installing snakemake.", file=sys.stderr)
+    print("Please install setuptools before installing WopMars.", file=sys.stderr)
     exit(1)
 
 if sys.version_info < (3, 6):

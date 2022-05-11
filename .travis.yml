@@ -1,3 +1,4 @@
+dist: focal
 language: python
 
 python:
@@ -5,9 +6,8 @@ python:
   - "3.6"
   - "3.7"
   - "3.8"
-
-os:
-  - linux
+  - "3.9"
+  - "3.10"
 
 before_install:
   - python -m pip install --upgrade pip
