@@ -83,8 +83,10 @@ class Parser:
         set_toolwrappers = set()
         try:
             # query asking the db for the highest execution id
-            execution_id = session.query(func.max(ToolWrapper.execution_id))
-            Logger.instance().debug("Getting toolwrappers of the current execution. id = " + str(execution_id.one()[0]))
+            # execution_id = session.query(func.max(ToolWrapper.execution_id))
+            execution_id = session.query(func.max(ToolWrapper.execution_id)).first()[0]
+            # Logger.instance().debug("Getting toolwrappers of the current execution. id = " + str(execution_id.one()[0]))
+            Logger.instance().debug("Getting toolwrappers of the current execution. id = " + str(execution_id))
             set_toolwrappers = set(session.query(ToolWrapper).filter(ToolWrapper.execution_id == execution_id).all())
         except NoResultFound as e:
             raise e

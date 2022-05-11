@@ -116,8 +116,11 @@ class TableInputOutputInformation(InputOutput, Base):
         :return: ResultSet TableInputOutputInformation objects
         """
         session = SQLManager.instance().get_session()
-        execution_id = session.query(func.max(ToolWrapper.execution_id))
-        return session.query(TableInputOutputInformation).filter(TableInputOutputInformation.toolwrapper_id == ToolWrapper.id).filter(ToolWrapper.execution_id == execution_id).all()
+        # execution_id = session.query(func.max(ToolWrapper.execution_id))
+        execution_id = session.query(func.max(ToolWrapper.execution_id)).first()[0]
+        return session.query(TableInputOutputInformation)\
+            .filter(TableInputOutputInformation.toolwrapper_id == ToolWrapper.id)\
+            .filter(ToolWrapper.execution_id == execution_id).all()
 
     @staticmethod
     def import_models(model_names):

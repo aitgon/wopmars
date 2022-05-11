@@ -55,7 +55,7 @@ class RWLock:
         """Demote an already-acquired write lock to a iterate_wopfile_yml_dic_and_insert_rules_in_db lock"""
         self.monitor.acquire()
         self.lockrw = 1
-        self.readers_ok.notifyAll()
+        self.readers_ok.notify_all()
         self.monitor.release()
 
     def release(self):
@@ -74,7 +74,7 @@ class RWLock:
             self.writers_ok.release()
         elif wake_readers:
             self.readers_ok.acquire()
-            self.readers_ok.notifyAll()
+            self.readers_ok.notify_all()
             self.readers_ok.release()
 
 if __name__ == '__main__':
