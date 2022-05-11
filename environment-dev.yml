@@ -1,10 +1,9 @@
 channels:
   - defaults
 dependencies:
-  - python=3.7
   - pygments
   - sphinx
   - sphinx_rtd_theme
   - pip
   - pip:
-  - -r file:requirements.txt
+    - -r requirements.txt

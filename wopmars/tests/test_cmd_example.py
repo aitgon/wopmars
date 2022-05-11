@@ -19,6 +19,16 @@ class TestCommandExample(unittest.TestCase):
         self.outdir_path = os.path.join(self.test_path, 'outdir')
         pathlib.Path(self.outdir_path).mkdir(exist_ok=True, parents=True)
 
+        """This function is used in the tests when the vtam command is run"""
+
+        cmd = '{} -m pip install . -q --upgrade --use-feature=in-tree-build'.format(sys.executable)
+
+        if sys.platform.startswith("win"):
+            args = cmd
+        else:
+            args = shlex.split(cmd)
+        subprocess.run(args=args, cwd=PathManager.get_project_path())
+
     def test_command_example(self):
 
         cmd = "wopmars example"

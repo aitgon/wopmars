@@ -1,6 +1,8 @@
 """
 Module containing the SQLManager class.
 """
+import sqlalchemy
+
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import create_engine, select
 from sqlalchemy.schema import sort_tables
@@ -69,6 +71,7 @@ class SQLManager(SingletonMixin):
             self.engine = create_engine(self.d_database_config['db_url'], echo=False, connect_args={'check_same_thread': False})
         else:
             self.engine = create_engine(self.d_database_config['db_url'], echo=False)
+        self.inspect = sqlalchemy.inspect(self.engine)
 
         def _fk_pragma_on_connect(dbapi_con, con_record):
             if self.d_database_config['db_connection'] == "sqlite":
@@ -89,8 +92,7 @@ class SQLManager(SingletonMixin):
         from wopmars.models.FileInputOutputInformation import FileInputOutputInformation
         from wopmars.models.ToolWrapper import ToolWrapper
         # from wopmars.models.Execution import Execution
-
-        if self.engine.has_table(ToolWrapper.__tablename__):
+        if self.inspect.has_table(ToolWrapper.__tablename__):
 
             toolwrapper_result_tuple =  self.engine.execute(select([ToolWrapper.__table__.c.id]).where(ToolWrapper.status == 'NOT_EXECUTED')).fetchall()
             for toolwrapper_id_row in toolwrapper_result_tuple:
@@ -112,7 +114,7 @@ class SQLManager(SingletonMixin):
             for toolwrapper_id_row in toolwrapper_result_tuple:
                 self.engine.execute(ToolWrapper.__table__.delete().where(ToolWrapper.id == toolwrapper_id_row[0]))
 
-        # if self.engine.has_table(Execution.__tablename__):
+        # if self.inspect.has_table(Execution.__tablename__):
         #
         #         self.engine.execute(Execution.__table__.delete().where(Execution.status == None))
 
@@ -129,17 +131,17 @@ class SQLManager(SingletonMixin):
         from wopmars.models.ToolWrapper import ToolWrapper
         from wopmars.models.Execution import Execution
 
-        if self.engine.has_table(Option.__tablename__):
+        if self.inspect.has_table(Option.__tablename__):
             self.engine.execute(Option.__table__.delete())
-        if self.engine.has_table(TableInputOutputInformation.__tablename__):
+        if self.inspect.has_table(TableInputOutputInformation.__tablename__):
             self.engine.execute(TableInputOutputInformation.__table__.delete())
-        if self.engine.has_table(FileInputOutputInformation.__tablename__):
+        if self.inspect.has_table(FileInputOutputInformation.__tablename__):
             self.engine.execute(FileInputOutputInformation.__table__.delete())
-        if self.engine.has_table(TableModificationTime.__tablename__):
+        if self.inspect.has_table(TableModificationTime.__tablename__):
             self.engine.execute(TableModificationTime.__table__.delete())
-        if self.engine.has_table(ToolWrapper.__tablename__):
+        if self.inspect.has_table(ToolWrapper.__tablename__):
             self.engine.execute(ToolWrapper.__table__.delete())
-        if self.engine.has_table(Execution.__tablename__):
+        if self.inspect.has_table(Execution.__tablename__):
             self.engine.execute(Execution.__table__.delete())
 
     def get_session(self):
