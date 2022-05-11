@@ -16,6 +16,9 @@ WopMars: Workflow Python Manager for Reproducible Science
 .. image:: https://readthedocs.org/projects/wopmars/badge/?version=latest&color=blue
     :target: http://wopmars.readthedocs.io/en/latest/?badge=latest
 
+.. image:: https://app.travis-ci.com/aitgon/wopmars.svg?branch=master
+    :target: https://app.travis-ci.com/github/aitgon/wopmars
+
 .. image:: https://github.com/aitgon/wopmars/workflows/CI/badge.svg
     :target: https://github.com/aitgon/wopmars/actions?query=branch%3Amaster+workflow%3ACI
 
