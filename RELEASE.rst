@@ -1,3 +1,9 @@
+CHANGES IN VERSION 0.1.5 (May 11, 2022)
+--------------------------------------------------
+
+- ENH Fixed deprecations
+- ENH Updated to python 3.9 and 3.10
+
 CHANGES IN VERSION 0.1.4 (Oct 10, 2020)
 --------------------------------------------------
 
