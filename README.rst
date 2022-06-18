@@ -7,8 +7,8 @@ WopMars: Workflow Python Manager for Reproducible Science
 .. image:: https://img.shields.io/pypi/pyversions/wopmars.svg
     :target: https://www.python.org
 
-.. image:: https://static.pepy.tech/personalized-badge/wopmars?period=month&units=international_system&left_color=gray&right_color=blue&left_text=downloads
-    :target: https://pepy.tech/project/wopmars
+.. image:: https://static.pepy.tech/personalized-badge/wopmars?period=month&units=international_system&left_color=black&right_color=blue&left_text=Dwnlds/month
+   :target: https://pepy.tech/project/wopmars
 
 .. image:: https://codecov.io/gh/aitgon/wopmars/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/aitgon/wopmars
