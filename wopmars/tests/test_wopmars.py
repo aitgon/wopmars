@@ -199,6 +199,15 @@ class TestWopmars(TestCase):
         self.assertEqual(se.exception.code, 0)
 
     def test_dry_run(self):
+        cmd_line = ['python', '-D', self.__db_url, '-w', self.__example_def_file2_only_files, '-v']
+        (time_unix_ms, time_human) = get_current_time()
+        start = time_unix_ms
+        with self.assertRaises(SystemExit):
+            WopMars().run(cmd_line)
+        (time_unix_ms, time_human) = get_current_time()
+        end = time_unix_ms
+        runtime1 = (end - start)
+        PathManager.unlink('outdir/output_file1.txt')
         cmd_line = ["python", "--dry-run", "-D", self.__db_url, "-w", self.__example_def_file1, "-v", "-d",
                     self.test_path]
         with self.assertRaises(SystemExit) as se:
