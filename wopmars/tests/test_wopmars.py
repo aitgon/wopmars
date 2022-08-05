@@ -199,6 +199,7 @@ class TestWopmars(TestCase):
         self.assertEqual(se.exception.code, 0)
 
     def test_dry_run(self):
+        PathManager.unlink('outdir/output_file1.txt')
         cmd_line = ["python", "--dry-run", "-D", self.__db_url, "-w", self.__example_def_file1, "-v", "-d",
                     self.test_path]
         with self.assertRaises(SystemExit) as se:
